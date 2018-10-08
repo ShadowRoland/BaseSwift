@@ -1,0 +1,17 @@
+/* 
+  InfoPlist.strings
+  BaseSwift
+
+  Created by Gary on 2017/12/30.
+  Copyright © 2017年 shadowR. All rights reserved.
+*/
+
+CFBundleName                        = "Base Swift";
+CFBundleDisplayName                 = "Base Swift";
+
+NSCameraUsageDescription            = "Allow Base Swift to use your camera?";
+NSContactsUsageDescription          = "Allow Base Swift to access your contacts?";
+NSLocationWhenInUseUsageDescription = "Allow Base Swift to use your microphone?";
+NSMicrophoneUsageDescription        = "Allow Base Swift to access your media library?";
+NSPhotoLibraryUsageDescription      = "Allow Base Swift to use location?";
+NSRemindersUsageDescription         = "Allow this device to receive the push notification of Base Swift?";

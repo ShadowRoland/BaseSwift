@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>关于</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="styles/help_pub.css" type="text/css">
+	<script src="js/jquery.min.js"></script>
+	<script>
+        $(document).ready(function(){
+            $(".news-main ul li .article").each(function(){
+                $(this).css("display","none");}
+            );
+            $(".mybt").click(function(){
+                var article=$(this).parent().find(".article");
+                if(article.css("display")=="none"){
+                    $(this).attr("class","mybt off-point");
+                }else{
+                    $(this).attr("class","mybt more-point");
+                }
+                article.slideToggle("slow");
+            })
+        });
+
+	</script></head>
+<body>
+<style type="text/css">
+	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, caption, tbody, tfoot, thead {
+		-webkit-text-size-adjust:none;
+		-webkit-touch-callout: none;
+		-webkit-user-select:none
+	}
+	
+	.license {padding:0 1em}
+</style>
+<div class="license">
+<h3>LICENSE</h3>
+<p>The MIT License (MIT)</p>
+<p>Copyright (c) 2017 Shadow Roland</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+</div>
+
+</body></html>

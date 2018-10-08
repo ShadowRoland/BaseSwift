@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>帮助</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="styles/help_pub.css" type="text/css">
+	<script src="js/jquery.min.js"></script>
+	<script>
+        $(document).ready(function(){
+            $(".news-main ul li .article").each(function(){
+                $(this).css("display","none");}
+            );
+            $(".mybt").click(function(){
+                var article=$(this).parent().find(".article");
+                if(article.css("display")=="none"){
+                    $(this).attr("class","mybt off-point");
+                }else{
+                    $(this).attr("class","mybt more-point");
+                }
+                article.slideToggle("slow");
+            })
+        });
+
+	</script></head>
+<body>
+<style type="text/css">
+	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, caption, tbody, tfoot, thead {
+		-webkit-text-size-adjust:none;
+		-webkit-touch-callout: none;
+		-webkit-user-select:none
+	}
+</style>
+
+<div class="help_box_wai help_ner" style="padding-bottom: 64px;overflow: hidden;">
+	<ul>
+		<li class="help_ner_li">
+			<div class="mybt">如何从子页面回到主页？<span></span></div>
+			<ul class="article" style="display:none">
+				<li class="remark">● 社交
+				<br>若在登录页面，左滑退回主页
+				<br>若已登录成功，进入“社交”→“更多”→“设置”页面，点击“退出登录按钮”，确认后将退出到登录页面，再左滑退回主页</li>
+				<li class="remark last">● 新闻
+				<br>进入“新闻”→“黄页”（或“我呀”），点击左上角导航栏返回按钮返回主页</li>
+			</ul>
+		</li>
+
+		<li class="help_ner_li">
+			<div class="mybt">如何获得源码？<span></span></div>
+			<ul class="article" style="display:none">
+				<li class="remark last">请访问<a href="https://github.com/ShadowRoland/shadowroland.github.io">Github</a></li>
+			</ul>
+		</li>
+
+		<li class="help_ner_li">
+			<div class="mybt">如何联系作者？<span></span></div>
+			<ul class="article" style="display:none">		
+			    <li class="remark last">可以发送邮件到如下邮箱
+			        <br><a href="mailto:shadowroland@live.com">shadowroland@live.com</a>
+			        <br><a href="mailto:shadowroland@sina.com">shadowroland@sina.com</a>
+			        <br><a href="mailto:shadowr1431@gmail.com">shadowr1431@gmail.com</a>
+			    </li>
+			</ul>
+		</li>
+
+	</ul>
+</div>
+
+</body></html>

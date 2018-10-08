@@ -1,0 +1,309 @@
+/* 
+  Localizable.strings
+  BaseSwift
+
+  Created by Gary on 2017/12/30.
+  Copyright © 2017年 shadowR. All rights reserved.
+*/
+
+//MARK: - Common
+
+"LocalDate" = "yyyy年MM月dd日";
+
+//MARK: - Alert & Button & Tip
+
+"OK" = "确定";
+"Done" = "完成";
+"Cancel" = "取消";
+"Enter" = "进入";
+"Exit" = "退出";
+"Success" = "成功";
+"Fail" = "失败";
+"Alert" = "提示";
+"Previous" = "上一步";
+"Next" = "下一步";
+"Click Retry" = "点击重试";
+"Unknown" = "未知";
+"Yes" = "是";
+"No" = "否";
+"Are you sure?" = "确认";
+
+"Search" = "搜索";
+"New" = "新建";
+"Delete" = "删除";
+"Edit" = "编辑";
+"Save" = "保存";
+"Open" = "打开";
+"Close" = "关闭";
+"Submit" = "提交";
+"Select all" = "全选";
+"Refresh" = "刷新";
+"See" = "查看";
+"You have a new message" = "您有新的消息";
+
+//MARK: - Application
+
+"Take photo" = "拍照";
+"Photo album" = "从相册获取";
+"Preview" = "预览";
+"Scan QR Code" = "扫描二维码";
+"Setting" = "设置";
+"Option" = "选项";
+"Help" = "帮助";
+"About" = "关于";
+"Unable to connect to the network! Please click to refresh." = "无法连接到网络，请点击重试";
+"Unable to connect to the network! Check your network connection." = "无法连接到网络，请检查网络环境";
+"Authenticate not setup" = "您尚未设置手机解锁密码或Touch ID，请在手机系统[设置-Touch ID与密码]中设置";
+"Authenticate localized reason for login"     = "请验证您的指纹以完成登录";
+"Please allow %@ to access your camera in the \"Settings - Privacy - Camera\" option on your phone." = "请在手机的“设置-隐私-相机”选项中，允许%@访问您的相机";
+"Network request exception!" = "网络请求异常！";
+"I guess there are something wrong. You should never see me" = "一定是打开的姿势不对，为什么能看到我？";
+"Send message" = "发送短信";
+"The device does not support SMS function" = "该设备不支持短信功能";
+
+//MARK: - Framework
+
+"Business module (moduleId: %d)  does not exist" = "业务模块(Id: %d)不存在";
+"Business capability (funId: %d)  does not exist" = "业务功能(Id: %d)不存在";
+"Response serialization failed! " = "返回数据解析失败！";
+"Invalid response JSON format! " = "返回数据JSON格式错误";
+
+//MARK: - Load Data
+
+"Loading ..." = "加载中……";
+"Load success" = "加载失败";
+"Load fail" = "加载失败";
+"Reload" = "重新加载";
+"No record" = "无记录";
+"No more data" = "已经全部加载完毕";
+
+//MARK: MJRefresh
+"MJRefreshHeaderIdleText"             = "下拉可以刷新";
+"MJRefreshHeaderPullingText"          = "松开立即刷新";
+"MJRefreshHeaderRefreshingText"       = "正在刷新数据中...";
+
+"MJRefreshAutoFooterIdleText"         = "点击或上拉加载更多";
+"MJRefreshAutoFooterRefreshingText"   = "正在加载更多的数据...";
+"MJRefreshAutoFooterNoMoreDataText"   = "已经全部加载完毕";
+
+"MJRefreshBackFooterIdleText"         = "上拉可以加载更多";
+"MJRefreshBackFooterPullingText"      = "松开立即加载更多";
+"MJRefreshBackFooterRefreshingText"   = "正在加载更多的数据...";
+"MJRefreshBackFooterNoMoreDataText"   = "已经全部加载完毕";
+
+"MJRefreshHeaderLastTimeText"         = "最后更新：";
+"MJRefreshHeaderDateTodayText"        = "今天";
+"MJRefreshHeaderNoneLastDateText"     = "无记录";
+
+//MARK: - Unit
+
+//MARK: Quantity
+"ten" = "十";
+"hundred" = "百";
+"thousand" = "千";
+"tenThousand" = "万";
+"million" = "百万";
+"hundredMillion" = "亿";
+"billion" = "十亿";
+
+//MARK: Date & Time
+"year" = "年";
+"month" = "月";
+"day" = "天";
+"hour" = "小时";
+"hour2" = "小时";
+"minute" = "分";
+"minute2" = "分钟";
+"second" = "秒";
+
+//MARK: Length
+"metre" = "米";
+"kilometre" = "千米";
+"kilometre2" = "公里";
+"mile" = "英里";
+"centimetre" = "厘米";
+
+//MARK: Area
+
+"㎡" = "平方米";
+
+//MARK: Weight
+"kilogram" = "千克";
+"gram" = "克";
+"ton" = "吨";
+"pound" = "磅";
+
+//MARK: Others
+"yuan" = "元";
+"person" = "人";
+
+//MARK: - Player
+
+"Connecting to the Internet via a Cellular Data Network" = "正在使用移动网络，分分钟一套房就没了";
+"Continue play" = "雄安十套房";
+
+//MARK: - Share
+
+"Share to" = "分享到";
+"Share Success" = "分享成功";
+"Copy link" = "复制链接";
+"Open link in Safari" = "在Safari中打开链接";
+"Wechat moments" = "微信朋友圈";
+"Wechat" = "微信";
+"QQ Zone" = "QQ空间";
+"QQ" = "QQ";
+"Weibo" = "微博";
+"Facebook" = "404";
+"Twitter" = "404";
+"Link has been copied to clipboard" = "链接已复制到剪贴板";
+
+//MARK - Shortcut Item
+
+"Open webpage" = "打开网页";
+"Death is a surprise party" = "高能预警，胆小莫入";
+
+//MARK: - Profile
+
+"Male" = "男";
+"Female" = "女";
+
+//MARK: Login
+
+"Login" = "登录";
+"Sign in" = "登录";
+"Register" = "注册";
+"Sign up" = "注册";
+"Logout" = "退出登录";
+"Sign out" = "退出";
+"Click Login" = "点击登录";
+"More money, more power" = "充钱才能变更更强";
+"Your login has expired, please login again." = "登录已失效，请重新登录";
+
+//MARK: Register
+
+"Register Agreement Text" = "<span style=\"font-size: 13px; color: #666\">点击注册即表示您同意<a href=\"www.github.com\" style=\"color: #e066ff; text-decoration: none\">《隐私条款》</a></span>";
+"Privacy Agreement" = "《隐私条款》";
+"Get verification code" = "发送验证码";
+"Get again (%d)" = "再次发送(%d)";
+"Select country or region" = "选择国家或地区";
+"Please enter the correct password!" = "请输入正确的密码！";
+"Registered successfully" = "注册成功";
+"Please login again" = "请重新登录";
+"Forget Password" = "忘记密码";
+"Reset Password" = "重新设置密码";
+"Reset successfully" = "重新设置密码成功";
+"Please enter the correct new password!" = "请输入正确的新密码！";
+"The password you enter twice must be the same!" = "两次输入的密码不一致！";
+
+//MARK: Profile
+
+"Profile" = "个人中心";
+"Me" = "我";
+"Head portrait " = "头像";
+"Account" = "账号";
+"Email" = "邮箱";
+"Favorite" = "收藏";
+"Bind" = "绑定";
+"Update head portrait" = "更新头像";
+"Hideyoshi" = "秀吉";
+"Camera is not available" = "摄像头不可用";
+"Test your beauty level" = "测试您的颜值";
+"Use the iPhone self-timer, then upload the photo to the Microsoft ice for color value identification, this operation is best under the Wifi" = "使用iPhone自拍，随后会上传该照片给微软小冰进行颜值鉴定，此操作最好在Wifi下进行";
+"Clear the cache successfully!" = "清除缓存成功";
+"%@ can not be empty!" = "%@不可为空！";
+"Please enter the correct %@!" = "请输入正确的%@！";
+"Submit successfully" = "提交成功";
+"Select %@" = "选择%@";
+"Profile items data cannot be saved!" = "个人资料无法被保存";
+
+//MARK: - Main
+
+"Simple" = "简易";
+"SNS" = "社交";
+"News" = "新闻";
+"Aggregation" = "聚合";
+"Skip Ad.(%d)" = "跳过(%d)";
+"See Ad.(%d)" = "看看广告(%d)";
+"List" = "列表";
+"Find" = "发现";
+"Server Configuration" = "服务器配置";
+
+//MARK: - Simple
+
+"Single initialization request page" = "单初始化请求页面";
+"Winner Winner, Chicken Dinner!" = "大吉大利，晚上吃鸡！";
+
+//MARK: - SNS
+
+"Message" = "消息";
+"New Message" = "新消息";
+"Read" = "已读";
+"UnRead" = "未读";
+"Mark as read" = "标记为已读";
+"Mark as unread" = "标记为未读";
+"Reply" = "回复";
+"Forward" = "转发";
+"Share" = "分享";
+"More" = "更多";
+"Show more" = "查看更多";
+"More detail" = "显示详细";
+"Subscribe" = "订阅";
+"Follow" = "关注";
+"Unfollow" = "取消关注";
+"Followed" = "已关注";
+"Follower" = "粉丝";
+"New Followers" = "新增粉丝";
+"Like" = "赞";
+"Unlike" = "踩";
+"Report" = "举报";
+"Comment" = "评论";
+"Contacts" = "联系人";
+"Friends" = "好友";
+"Official Accounts" = "公众号";
+
+//MARK: Location
+
+"Please turn location on for your device" = "请开启定位";
+"Nearby hospitals" = "附近的医院";
+"Hospital" = "医院";
+"From you" = "距您";
+"Choose the way to arrive" = "选择抵达方式";
+"Computing" = "正在计算";
+"Arrived" = "已到达";
+"My position" = "我的位置";
+
+//MARK: Stock
+
+"Select stock exchange" = "选择股票交易所";
+"Reselect stock exchange" = "重选股票交易所";
+"Current stock exchange is %@" = "当前已选择%@";
+"Shanghai Composite Index" = "上海股票";
+"Shenzhen Composite Index" = "深圳股票";
+"Enter the stock code" = "输入股票代码";
+"Wrong stock code" = "错误的股票代码！";
+"30 minutes candlestick chart" = "分时线图";
+"Daily candlestick chart" = "日K线图";
+"Weekly candlestick chart" = "周K线图";
+"Monthly candlestick chart" = "月K线图";
+
+//MARK: - News
+
+"Current Channels" = "当前频道";
+"Channels Recommend" = "推荐频道";
+"Freedom,Democracy,Equality" = "自由,民主,平等";
+"Title Party" = "标题党";
+"Please enter the text you want to search for" = "请输入要搜索的文字";
+"Confirm clear all search history?" = "确认清除所有的历史搜索？";
+
+//MARK: - Aggregation
+
+"Reopen the program to enter Aggregation mode" = "重新打开程序进入聚合模式";
+"Reopen the program to enter Homepage" = "重新打开程序进入主页";
+"Please Login" = "请登录";
+"Latest" = "最新发布";
+"Hottest" = "最热上榜";
+"Jokers" = "段子笑话";
+"Videos" = "流出视频";
+"Pictures" = "不宜图片";
+"Favorites" = "我的收藏";
+"Day,Week,Month" = "日榜,周榜,月榜";

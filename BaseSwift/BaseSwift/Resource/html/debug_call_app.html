@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Safari呼叫应用</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="styles/help_pub.css" type="text/css">
+	<script src="js/jquery.min.js"></script>
+	<script>
+        $(document).ready(function(){
+            $(".news-main ul li .article").each(function(){
+                $(this).css("display","none");}
+            );
+            $(".mybt").click(function(){
+                var article=$(this).parent().find(".article");
+                if(article.css("display")=="none"){
+                    $(this).attr("class","mybt off-point");
+                }else{
+                    $(this).attr("class","mybt more-point");
+                }
+                article.slideToggle("slow");
+            })
+        });
+
+	</script></head>
+<body>
+<style type="text/css">
+	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, caption, tbody, tfoot, thead {
+		-webkit-text-size-adjust:none;
+		-webkit-touch-callout: none;
+		-webkit-user-select:none
+	}
+	
+	ul {
+		padding:0 1em;
+	}
+	li {
+		margin:1em
+	}
+	.description {
+		font-size:12px;
+		color: #666;
+	}
+</style>
+<h3/>
+<ul>
+<li>
+	<a class="text" href="baseswift://?action=more">更多</a><br>
+	<span class="description">(baseswift://?action=more)</span>
+</li>
+<li>
+	<a class="text" href="baseswift://?action=profile">个人信息</a><br>
+	<span class="description">(baseswift://?action=profile)</span>
+</li>
+<li>
+	<a class="text" href="baseswift://?action=setting">设置</a><br>
+	<span class="description">(baseswift://?action=setting)</span>
+</li>
+<li>
+	<a class="text" href="baseswift://?action=openWebpage&url=http%3a%2f%2fbaike.baidu.com%2flink%3furl%3dwg0mbCH5oS8BfaogPk70zgXJx-RAHYyyeZwhU2QPmx_FAxg9x4nwyf6KLxygH5EXJ_UvMkn6bOgCC84-JjGFqU7JeCzKwiBAsp4CeEGzThW">打开网页</a><br>
+	<span class="description">(baseswift://?action=openWebpage&url=http%3a%2f%2fbaike.baidu.com%2flink%3furl%3dwg0mbCH5oS8BfaogPk70zgXJx-RAHYyyeZwhU2QPmx_FAxg9x4nwyf6KLxygH5EXJ_UvMkn6bOgCC84-JjGFqU7JeCzKwiBAsp4CeEGzThW)</span>
+</li>
+</ul>
+
+</body></html>

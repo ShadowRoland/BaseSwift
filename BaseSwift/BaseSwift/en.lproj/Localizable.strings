@@ -1,0 +1,30 @@
+/* 
+  Localizable.strings
+  BaseSwift
+
+  Created by Gary on 2017/12/30.
+  Copyright © 2017年 shadowR. All rights reserved.
+*/
+
+//MARK: MJRefresh
+
+"MJRefreshHeaderIdleText" = "Pull down to refresh";
+"MJRefreshHeaderPullingText" = "Release to refresh";
+"MJRefreshHeaderRefreshingText" = "Loading...";
+
+"MJRefreshAutoFooterIdleText" = "Tap or pull up to load more";
+"MJRefreshAutoFooterRefreshingText" = "Loading...";
+"MJRefreshAutoFooterNoMoreDataText" = "No more data";
+
+"MJRefreshBackFooterIdleText" = "Pull up to load more";
+"MJRefreshBackFooterPullingText" = "Release to load more.";
+"MJRefreshBackFooterRefreshingText" = "Loading...";
+"MJRefreshBackFooterNoMoreDataText" = "No more data";
+
+"MJRefreshHeaderLastTimeText" = "Last update:";
+"MJRefreshHeaderDateTodayText" = "Today";
+"MJRefreshHeaderNoneLastDateText" = "No record";
+
+"Register Agreement Text" = "<span style=\"font-size: 13px; color: #666\">Click to register, you agree to the <a href=\"www.github.com\" style=\"color: #e066ff; text-decoration: none\">Privacy Agreement</a></span>";
+
+"LocalDate" = "yyyy/MM/dd";

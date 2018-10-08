@@ -1,0 +1,26 @@
+{
+  "current" : 0,
+  "version": "1",
+  "envs" : [
+    {
+      "name" : "开发",
+      "apiBaseUrl" : "http://127.0.0.1:9999",
+      "httpsCer" : "server_develop.cer"
+    },
+    {
+      "name" : "联调",
+      "apiBaseUrl" : "http://192.168.1.101:3000",
+      "httpsCer" : "server_test.cer"
+    },
+    {
+      "name" : "测试1",
+      "apiBaseUrl" : "http://test1.xxxxxx.com/open-api",
+      "httpsCer" : "server_test.cer"
+    },
+    {
+      "name" : "测试2",
+      "apiBaseUrl" : "http://test2.xxxxxx.com/open-api",
+      "httpsCer" : "server_test.cer"
+    }
+  ]
+}

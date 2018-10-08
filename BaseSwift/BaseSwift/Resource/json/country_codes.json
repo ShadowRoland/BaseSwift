@@ -1,0 +1,972 @@
+[
+  {
+    "name" : "阿尔巴尼亚",
+    "letter" : "A",
+    "code" : "355"
+  },
+  {
+    "name" : "阿尔及利亚",
+    "letter" : "A",
+    "code" : "213"
+  },
+  {
+    "name" : "阿富汗",
+    "letter" : "A",
+    "code" : "93"
+  },
+  {
+    "name" : "阿根廷",
+    "letter" : "A",
+    "code" : "54"
+  },
+  {
+    "name" : "阿拉伯联合酋长国",
+    "letter" : "A",
+    "code" : "971"
+  },
+  {
+    "name" : "阿曼",
+    "letter" : "A",
+    "code" : "968"
+  },
+  {
+    "name" : "阿塞拜疆",
+    "letter" : "A",
+    "code" : "994"
+  },
+  {
+    "name" : "阿森松",
+    "letter" : "A",
+    "code" : "247"
+  },
+  {
+    "name" : "埃及",
+    "letter" : "A",
+    "code" : "20"
+  },
+  {
+    "name" : "埃塞俄比亚",
+    "letter" : "A",
+    "code" : "251"
+  },
+  {
+    "name" : "爱尔兰",
+    "letter" : "A",
+    "code" : "353"
+  },
+  {
+    "name" : "爱沙尼亚",
+    "letter" : "A",
+    "code" : "372"
+  },
+  {
+    "name" : "安道尔共和国",
+    "letter" : "A",
+    "code" : "376"
+  },
+  {
+    "name" : "安哥拉",
+    "letter" : "A",
+    "code" : "244"
+  },
+  {
+    "name" : "安圭拉岛",
+    "letter" : "A",
+    "code" : "1264"
+  },
+  {
+    "name" : "安提瓜和巴布达",
+    "letter" : "A",
+    "code" : "1268"
+  },
+  {
+    "name" : "奥地利",
+    "letter" : "A",
+    "code" : "43"
+  },
+  {
+    "name" : "澳大利亚",
+    "letter" : "A",
+    "code" : "61"
+  },
+  {
+    "name" : "澳门",
+    "letter" : "A",
+    "code" : "853"
+  },
+  {
+    "name" : "巴巴多斯",
+    "letter" : "B",
+    "code" : "1246"
+  },
+  {
+    "name" : "巴布亚新几内亚",
+    "letter" : "B",
+    "code" : "675"
+  },
+  {
+    "name" : "巴哈马",
+    "letter" : "B",
+    "code" : "1242"
+  },
+  {
+    "name" : "巴基斯坦",
+    "letter" : "B",
+    "code" : "92"
+  },
+  {
+    "name" : "巴拉圭",
+    "letter" : "B",
+    "code" : "595"
+  },
+  {
+    "name" : "巴林",
+    "letter" : "B",
+    "code" : "973"
+  },
+  {
+    "name" : "巴拿马",
+    "letter" : "B",
+    "code" : "507"
+  },
+  {
+    "name" : "巴西",
+    "letter" : "B",
+    "code" : "55"
+  },
+  {
+    "name" : "白俄罗斯",
+    "letter" : "B",
+    "code" : "375"
+  },
+  {
+    "name" : "百慕大群岛",
+    "letter" : "B",
+    "code" : "1441"
+  },
+  {
+    "name" : "保加利亚",
+    "letter" : "B",
+    "code" : "359"
+  },
+  {
+    "name" : "贝宁",
+    "letter" : "B",
+    "code" : "229"
+  },
+  {
+    "name" : "比利时",
+    "letter" : "B",
+    "code" : "32"
+  },
+  {
+    "name" : "冰岛",
+    "letter" : "B",
+    "code" : "354"
+  },
+  {
+    "name" : "波多黎各",
+    "letter" : "B",
+    "code" : "1787"
+  },
+  {
+    "name" : "波兰",
+    "letter" : "B",
+    "code" : "48"
+  },
+  {
+    "name" : "玻利维亚",
+    "letter" : "B",
+    "code" : "591"
+  },
+  {
+    "name" : "伯利兹",
+    "letter" : "B",
+    "code" : "501"
+  },
+  {
+    "name" : "博茨瓦纳",
+    "letter" : "B",
+    "code" : "267"
+  },
+  {
+    "name" : "布基纳法索",
+    "letter" : "B",
+    "code" : "226"
+  },
+  {
+    "name" : "布隆迪",
+    "letter" : "B",
+    "code" : "257"
+  },
+  {
+    "name" : "朝鲜",
+    "letter" : "C",
+    "code" : "850"
+  },
+  {
+    "name" : "赤道几内亚",
+    "letter" : "C",
+    "code" : "240"
+  },
+  {
+    "name" : "丹麦",
+    "letter" : "D",
+    "code" : "45"
+  },
+  {
+    "name" : "德国",
+    "letter" : "D",
+    "code" : "49"
+  },
+  {
+    "name" : "东萨摩亚(美)",
+    "letter" : "D",
+    "code" : "684"
+  },
+  {
+    "name" : "多哥",
+    "letter" : "D",
+    "code" : "228"
+  },
+  {
+    "name" : "多米尼加共和国",
+    "letter" : "D",
+    "code" : "1890"
+  },
+  {
+    "name" : "俄罗斯",
+    "letter" : "E",
+    "code" : "7"
+  },
+  {
+    "name" : "厄瓜多尔",
+    "letter" : "E",
+    "code" : "593"
+  },
+  {
+    "name" : "法国",
+    "letter" : "F",
+    "code" : "33"
+  },
+  {
+    "name" : "法属玻利尼西亚",
+    "letter" : "F",
+    "code" : "689"
+  },
+  {
+    "name" : "法属圭亚那",
+    "letter" : "F",
+    "code" : "594"
+  },
+  {
+    "name" : "菲律宾",
+    "letter" : "F",
+    "code" : "63"
+  },
+  {
+    "name" : "斐济",
+    "letter" : "F",
+    "code" : "679"
+  },
+  {
+    "name" : "芬兰",
+    "letter" : "F",
+    "code" : "358"
+  },
+  {
+    "name" : "冈比亚",
+    "letter" : "G",
+    "code" : "220"
+  },
+  {
+    "name" : "刚果",
+    "letter" : "G",
+    "code" : "242"
+  },
+  {
+    "name" : "哥伦比亚",
+    "letter" : "G",
+    "code" : "57"
+  },
+  {
+    "name" : "哥斯达黎加",
+    "letter" : "G",
+    "code" : "506"
+  },
+  {
+    "name" : "格林纳达",
+    "letter" : "G",
+    "code" : "1809"
+  },
+  {
+    "name" : "格鲁吉亚",
+    "letter" : "G",
+    "code" : "995"
+  },
+  {
+    "name" : "古巴",
+    "letter" : "G",
+    "code" : "53"
+  },
+  {
+    "name" : "关岛",
+    "letter" : "G",
+    "code" : "1671"
+  },
+  {
+    "name" : "圭亚那",
+    "letter" : "G",
+    "code" : "592"
+  },
+  {
+    "name" : "哈萨克斯坦",
+    "letter" : "H",
+    "code" : "327"
+  },
+  {
+    "name" : "海地",
+    "letter" : "H",
+    "code" : "509"
+  },
+  {
+    "name" : "韩国",
+    "letter" : "H",
+    "code" : "82"
+  },
+  {
+    "name" : "荷兰",
+    "letter" : "H",
+    "code" : "31"
+  },
+  {
+    "name" : "荷属安的列斯",
+    "letter" : "H",
+    "code" : "599"
+  },
+  {
+    "name" : "洪都拉斯",
+    "letter" : "H",
+    "code" : "504"
+  },
+  {
+    "name" : "吉布提",
+    "letter" : "J",
+    "code" : "253"
+  },
+  {
+    "name" : "吉尔吉斯坦",
+    "letter" : "J",
+    "code" : "331"
+  },
+  {
+    "name" : "几内亚",
+    "letter" : "J",
+    "code" : "224"
+  },
+  {
+    "name" : "加拿大",
+    "letter" : "J",
+    "code" : "1"
+  },
+  {
+    "name" : "加纳",
+    "letter" : "J",
+    "code" : "233"
+  },
+  {
+    "name" : "加蓬",
+    "letter" : "J",
+    "code" : "241"
+  },
+  {
+    "name" : "柬埔寨",
+    "letter" : "J",
+    "code" : "855"
+  },
+  {
+    "name" : "捷克",
+    "letter" : "J",
+    "code" : "420"
+  },
+  {
+    "name" : "津巴布韦",
+    "letter" : "J",
+    "code" : "263"
+  },
+  {
+    "name" : "喀麦隆",
+    "letter" : "J",
+    "code" : "237"
+  },
+  {
+    "name" : "卡塔尔",
+    "letter" : "K",
+    "code" : "974"
+  },
+  {
+    "name" : "开曼群岛",
+    "letter" : "K",
+    "code" : "1345"
+  },
+  {
+    "name" : "科特迪瓦",
+    "letter" : "K",
+    "code" : "225"
+  },
+  {
+    "name" : "科威特",
+    "letter" : "K",
+    "code" : "965"
+  },
+  {
+    "name" : "利比里亚",
+    "letter" : "K",
+    "code" : "231"
+  },
+  {
+    "name" : "利比亚",
+    "letter" : "K",
+    "code" : "218"
+  },
+  {
+    "name" : "肯尼亚",
+    "letter" : "K",
+    "code" : "254"
+  },
+  {
+    "name" : "库克群岛",
+    "letter" : "K",
+    "code" : "682"
+  },
+  {
+    "name" : "拉脱维亚",
+    "letter" : "L",
+    "code" : "371"
+  },
+  {
+    "name" : "莱索托",
+    "letter" : "L",
+    "code" : "266"
+  },
+  {
+    "name" : "老挝",
+    "letter" : "L",
+    "code" : "856"
+  },
+  {
+    "name" : "黎巴嫩",
+    "letter" : "L",
+    "code" : "961"
+  },
+  {
+    "name" : "立陶宛",
+    "letter" : "L",
+    "code" : "370"
+  },
+  {
+    "name" : "列支敦士登",
+    "letter" : "L",
+    "code" : "423"
+  },
+  {
+    "name" : "留尼旺",
+    "letter" : "L",
+    "code" : "262"
+  },
+  {
+    "name" : "卢森堡",
+    "letter" : "L",
+    "code" : "352"
+  },
+  {
+    "name" : "罗马尼亚",
+    "letter" : "L",
+    "code" : "40"
+  },
+  {
+    "name" : "马达加斯加",
+    "letter" : "M",
+    "code" : "261"
+  },
+  {
+    "name" : "马尔代夫",
+    "letter" : "M",
+    "code" : "960"
+  },
+  {
+    "name" : "马耳他",
+    "letter" : "M",
+    "code" : "356"
+  },
+  {
+    "name" : "马拉维",
+    "letter" : "M",
+    "code" : "265"
+  },
+  {
+    "name" : "马来西亚",
+    "letter" : "M",
+    "code" : "60"
+  },
+  {
+    "name" : "马里",
+    "letter" : "M",
+    "code" : "223"
+  },
+  {
+    "name" : "马里亚那群岛",
+    "letter" : "M",
+    "code" : "1670"
+  },
+  {
+    "name" : "马提尼克",
+    "letter" : "M",
+    "code" : "596"
+  },
+  {
+    "name" : "毛里求斯",
+    "letter" : "M",
+    "code" : "230"
+  },
+  {
+    "name" : "美国",
+    "letter" : "M",
+    "code" : "1"
+  },
+  {
+    "name" : "蒙古",
+    "letter" : "M",
+    "code" : "976"
+  },
+  {
+    "name" : "蒙特塞拉特岛",
+    "letter" : "M",
+    "code" : "1664"
+  },
+  {
+    "name" : "孟加拉国",
+    "letter" : "M",
+    "code" : "880"
+  },
+  {
+    "name" : "秘鲁",
+    "letter" : "M",
+    "code" : "51"
+  },
+  {
+    "name" : "缅甸",
+    "letter" : "M",
+    "code" : "95"
+  },
+  {
+    "name" : "摩尔多瓦",
+    "letter" : "M",
+    "code" : "373"
+  },
+  {
+    "name" : "摩洛哥",
+    "letter" : "M",
+    "code" : "212"
+  },
+  {
+    "name" : "摩纳哥",
+    "letter" : "M",
+    "code" : "377"
+  },
+  {
+    "name" : "莫桑比克",
+    "letter" : "M",
+    "code" : "258"
+  },
+  {
+    "name" : "墨西哥",
+    "letter" : "M",
+    "code" : "52"
+  },
+  {
+    "name" : "纳米比亚",
+    "letter" : "M",
+    "code" : "264"
+  },
+  {
+    "name" : "南非",
+    "letter" : "N",
+    "code" : "27"
+  },
+  {
+    "name" : "南斯拉夫",
+    "letter" : "N",
+    "code" : "381"
+  },
+  {
+    "name" : "瑙鲁",
+    "letter" : "N",
+    "code" : "674"
+  },
+  {
+    "name" : "尼泊尔",
+    "letter" : "N",
+    "code" : "977"
+  },
+  {
+    "name" : "尼加拉瓜",
+    "letter" : "N",
+    "code" : "505"
+  },
+  {
+    "name" : "尼日尔",
+    "letter" : "N",
+    "code" : "227"
+  },
+  {
+    "name" : "尼日利亚",
+    "letter" : "N",
+    "code" : "234"
+  },
+  {
+    "name" : "挪威",
+    "letter" : "N",
+    "code" : "47"
+  },
+  {
+    "name" : "帕劳",
+    "letter" : "P",
+    "code" : "680"
+  },
+  {
+    "name" : "皮特凯恩群岛",
+    "letter" : "P",
+    "code" : "870"
+  },
+  {
+    "name" : "葡萄牙",
+    "letter" : "P",
+    "code" : "351"
+  },
+  {
+    "name" : "日本",
+    "letter" : "R",
+    "code" : "81"
+  },
+  {
+    "name" : "瑞典",
+    "letter" : "P",
+    "code" : "46"
+  },
+  {
+    "name" : "瑞士",
+    "letter" : "P",
+    "code" : "41"
+  },
+  {
+    "name" : "萨尔瓦多",
+    "letter" : "S",
+    "code" : "503"
+  },
+  {
+    "name" : "塞拉利昂",
+    "letter" : "S",
+    "code" : "232"
+  },
+  {
+    "name" : "塞内加尔",
+    "letter" : "S",
+    "code" : "221"
+  },
+  {
+    "name" : "塞浦路斯",
+    "letter" : "S",
+    "code" : "357"
+  },
+  {
+    "name" : "塞舌尔",
+    "letter" : "S",
+    "code" : "248"
+  },
+  {
+    "name" : "沙特阿拉伯",
+    "letter" : "S",
+    "code" : "966"
+  },
+  {
+    "name" : "圣多美和普林西比",
+    "letter" : "S",
+    "code" : "239"
+  },
+  {
+    "name" : "圣卢西亚",
+    "letter" : "S",
+    "code" : "1758"
+  },
+  {
+    "name" : "圣马力诺",
+    "letter" : "S",
+    "code" : "378"
+  },
+  {
+    "name" : "圣皮埃尔和密克隆群岛",
+    "letter" : "S",
+    "code" : "508"
+  },
+  {
+    "name" : "圣文森特和格林纳丁斯",
+    "letter" : "S",
+    "code" : "1784"
+  },
+  {
+    "name" : "斯里兰卡",
+    "letter" : "S",
+    "code" : "94"
+  },
+  {
+    "name" : "斯洛伐克",
+    "letter" : "S",
+    "code" : "421"
+  },
+  {
+    "name" : "斯洛文尼亚",
+    "letter" : "S",
+    "code" : "386"
+  },
+  {
+    "name" : "斯威士兰",
+    "letter" : "S",
+    "code" : "268"
+  },
+  {
+    "name" : "苏丹",
+    "letter" : "S",
+    "code" : "249"
+  },
+  {
+    "name" : "苏里南",
+    "letter" : "S",
+    "code" : "597"
+  },
+  {
+    "name" : "所罗门群岛",
+    "letter" : "S",
+    "code" : "677"
+  },
+  {
+    "name" : "索马里",
+    "letter" : "S",
+    "code" : "252"
+  },
+  {
+    "name" : "塔吉克斯坦",
+    "letter" : "S",
+    "code" : "992"
+  },
+  {
+    "name" : "台湾省",
+    "letter" : "T",
+    "code" : "886"
+  },
+  {
+    "name" : "泰国",
+    "letter" : "T",
+    "code" : "66"
+  },
+  {
+    "name" : "坦桑尼亚",
+    "letter" : "T",
+    "code" : "255"
+  },
+  {
+    "name" : "汤加",
+    "letter" : "T",
+    "code" : "676"
+  },
+  {
+    "name" : "特立尼达和多巴哥",
+    "letter" : "T",
+    "code" : "1809"
+  },
+  {
+    "name" : "突尼斯",
+    "letter" : "T",
+    "code" : "216"
+  },
+  {
+    "name" : "土耳其",
+    "letter" : "T",
+    "code" : "90"
+  },
+  {
+    "name" : "土库曼斯坦",
+    "letter" : "T",
+    "code" : "993"
+  },
+  {
+    "name" : "危地马拉",
+    "letter" : "W",
+    "code" : "502"
+  },
+  {
+    "name" : "委内瑞拉",
+    "letter" : "W",
+    "code" : "58"
+  },
+  {
+    "name" : "文莱",
+    "letter" : "W",
+    "code" : "673"
+  },
+  {
+    "name" : "乌干达",
+    "letter" : "W",
+    "code" : "256"
+  },
+  {
+    "name" : "乌克兰",
+    "letter" : "W",
+    "code" : "380"
+  },
+  {
+    "name" : "乌拉圭",
+    "letter" : "W",
+    "code" : "598"
+  },
+  {
+    "name" : "乌兹别克斯坦",
+    "letter" : "W",
+    "code" : "233"
+  },
+  {
+    "name" : "西班牙",
+    "letter" : "X",
+    "code" : "34"
+  },
+  {
+    "name" : "西萨摩亚",
+    "letter" : "X",
+    "code" : "685"
+  },
+  {
+    "name" : "希腊",
+    "letter" : "X",
+    "code" : "30"
+  },
+  {
+    "name" : "香港",
+    "letter" : "X",
+    "code" : "852"
+  },
+  {
+    "name" : "新加坡",
+    "letter" : "X",
+    "code" : "65"
+  },
+  {
+    "name" : "新西兰",
+    "letter" : "X",
+    "code" : "64"
+  },
+  {
+    "name" : "匈牙利",
+    "letter" : "X",
+    "code" : "36"
+  },
+  {
+    "name" : "叙利亚",
+    "letter" : "X",
+    "code" : "963"
+  },
+  {
+    "name" : "牙买加",
+    "letter" : "Y",
+    "code" : "1876"
+  },
+  {
+    "name" : "亚美尼亚",
+    "letter" : "Y",
+    "code" : "374"
+  },
+  {
+    "name" : "也门",
+    "letter" : "Y",
+    "code" : "967"
+  },
+  {
+    "name" : "伊拉克",
+    "letter" : "Y",
+    "code" : "964"
+  },
+  {
+    "name" : "伊朗",
+    "letter" : "Y",
+    "code" : "98"
+  },
+  {
+    "name" : "以色列",
+    "letter" : "Y",
+    "code" : "972"
+  },
+  {
+    "name" : "意大利",
+    "letter" : "Y",
+    "code" : "39"
+  },
+  {
+    "name" : "印度",
+    "letter" : "Y",
+    "code" : "91"
+  },
+  {
+    "name" : "印度尼西亚",
+    "letter" : "Y",
+    "code" : "62"
+  },
+  {
+    "name" : "英国",
+    "letter" : "Y",
+    "code" : "44"
+  },
+  {
+    "name" : "约旦",
+    "letter" : "Y",
+    "code" : "962"
+  },
+  {
+    "name" : "越南",
+    "letter" : "Y",
+    "code" : "84"
+  },
+  {
+    "name" : "赞比亚",
+    "letter" : "Z",
+    "code" : "260"
+  },
+  {
+    "name" : "扎伊尔",
+    "letter" : "Z",
+    "code" : "243"
+  },
+  {
+    "name" : "乍得",
+    "letter" : "Z",
+    "code" : "235"
+  },
+  {
+    "name" : "直布罗陀",
+    "letter" : "Z",
+    "code" : "350"
+  },
+  {
+    "name" : "智利",
+    "letter" : "Z",
+    "code" : "56"
+  },
+  {
+    "name" : "中非共和国",
+    "letter" : "Z",
+    "code" : "236"
+  },
+  {
+    "name" : "中国",
+    "letter" : "Z",
+    "code" : "86"
+  }
+]

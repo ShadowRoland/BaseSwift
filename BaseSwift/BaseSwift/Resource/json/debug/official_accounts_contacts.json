@@ -1,0 +1,47 @@
+[
+  {
+    "userId" : "10001",
+    "userName" : "user10001",
+    "headPortrait" : "http://c.hiphotos.baidu.com/baike/s%3D235/sign=1ec482cdd188d43ff4a996f1481fd2aa/79f0f736afc37931e892a391ecc4b74542a9118b.jpg",
+    "nickname" : "滴滴如厕",
+    "remarkName" : null,
+    "letter" : "d",
+    "type" : 0
+  },
+  {
+    "userId" : "10002",
+    "userName" : "user10002",
+    "headPortrait" : "http://f.hiphotos.baidu.com/baike/s%3D220/sign=57eb3c0469224f4a5399741139f79044/9213b07eca806538e9c7ee3193dda144ad3482e7.jpg",
+    "nickname" : "星座孽缘",
+    "remarkName" : null,
+    "letter" : "x",
+    "type" : 0
+  },
+  {
+    "userId" : "10003",
+    "userName" : "user10003",
+    "headPortrait" : "http://d.hiphotos.baidu.com/baike/s%3D220/sign=89c64a17a20f4bfb88d09956334e788f/4d086e061d950a7b09cc6b4c0cd162d9f3d3c9b8.jpg",
+    "nickname" : "心灵鸡汤自宫学",
+    "remarkName" : null,
+    "letter" : "x",
+    "type" : 0
+  },
+  {
+    "userId" : "10004",
+    "userName" : "user10004",
+    "headPortrait" : "",
+    "nickname" : "尴尬笑话集",
+    "remarkName" : null,
+    "letter" : "#",
+    "type" : 0
+  },
+  {
+    "userId" : "10005",
+    "userName" : "user10005",
+    "headPortrait" : "https://imgsa.baidu.com/baike/s%3D220/sign=59b545f1cb1349547a1eef66664f92dd/fd039245d688d43f80fe6c827d1ed21b0ef43b6e.jpg",
+    "nickname" : "股海神棍",
+    "remarkName" : null,
+    "letter" : "z",
+    "type" : 0
+  }
+]

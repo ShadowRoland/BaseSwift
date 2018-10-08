@@ -1,0 +1,17 @@
+/* 
+  InfoPlist.strings
+  BaseSwift
+
+  Created by Gary on 2017/12/30.
+  Copyright © 2017年 shadowR. All rights reserved.
+*/
+
+CFBundleName                        = "Swift基线";
+CFBundleDisplayName                 = "Swift基线";
+
+NSCameraUsageDescription            = "是否允许Swift基线使用你的相机？";
+NSContactsUsageDescription          = "是否允许Swift基线访问你的通讯录？";
+NSLocationWhenInUseUsageDescription = "是否允许Swift基线使用定位？";
+NSMicrophoneUsageDescription        = "是否允许Swift基线使用你的麦克风？";
+NSPhotoLibraryUsageDescription      = "是否允许Swift基线访问你的相册？";
+NSRemindersUsageDescription         = "是否允许接收Swift基线的推送消息？";

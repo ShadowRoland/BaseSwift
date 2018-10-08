@@ -1,0 +1,26 @@
+{
+    "id": "fff001",
+    "timestamp": 1482551999,
+    "userId": "101",
+    "password": "F379EAF3C831B04DE153469D1BEC345E",
+    "userName": "233",
+    "headPortrait": "http://img.woyaogexing.com/2016/01/16/5b873b2a9f237868!200x200.png",
+    "countryCode": 86,
+    "phone": "13123456789",
+    "status": 1,
+    "nickname": "尹天仇",
+    "signature": "他人即地狱",
+    "token": null,
+    "balance": 30000,
+    "name": {
+        "first": "尼古拉斯",
+        "last": "四",
+        "middle": "赵"
+    },
+    "gender": null,
+    "birthDate": "1985-04-11T00:00:00.000GMT+08:00",
+    "location": {
+        "province": "江苏省",
+        "city": "南京市"
+    }
+}
