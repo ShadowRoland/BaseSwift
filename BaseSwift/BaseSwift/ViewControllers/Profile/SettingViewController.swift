@@ -11,7 +11,7 @@ import LocalAuthentication
 import SDWebImage
 
 class SettingViewController: BaseViewController {
-    var indexPathSet: SRIndexPathSet!
+    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
     var lastSection = IntegerInvalid
     var lastSectionWillAdd = IntegerInvalid
     var lastRow = IntegerInvalid
@@ -122,7 +122,7 @@ class SettingViewController: BaseViewController {
     }
     
     func initSections() {
-        indexPathSet = SRIndexPathSet()
+        indexPathSet.removeAll()
         lastSection = IntegerInvalid
         lastSectionWillAdd = lastSection
         

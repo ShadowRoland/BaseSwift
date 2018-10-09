@@ -11,7 +11,7 @@ import DTCoreText
 import SwiftyJSON
 
 class RegisterViewController: BaseViewController {
-    var indexPathSet = SRIndexPathSet()
+    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
     @IBOutlet weak var tableView: UITableView!
     
     lazy var countryCell: UITableViewCell = {

@@ -39,6 +39,34 @@ public class SRIndexPathSet: NSObject {
         set.remove(item)
     }
     
+    public func removeAll() {
+        set.removeAll()
+    }
+    
+    public var numberOfSections: Int {
+        return numberOfIndexPathes(0 ..< 1)
+    }
+    
+    public func numberOfIndexPathes(_ range: Range<Int>) -> Int {
+        if range.count <= 0 || set.count == 0 {
+            return set.count
+        }
+        
+        var indexPathes = [] as [IndexPath]
+        enumerated.compactMap { item -> IndexPath? in
+            var indexPath = item.element.indexPath
+            let lower = indexPath.index(indexPath.startIndex, offsetBy: range.lowerBound)
+            let upper = indexPath.index(indexPath.startIndex, offsetBy: range.upperBound)
+            indexPath = indexPath[Range<IndexPath.Index>(uncheckedBounds: (lower: lower, upper: upper))]
+            return indexPath.count > 0 ? indexPath : nil
+            }.forEach { indexPath in
+                if indexPathes.first(where: { indexPath == $0 }) == nil { //去重
+                    indexPathes.append(indexPath)
+                }
+        }
+        return indexPathes.count
+    }
+    
     //MARK: - 通过下标获取和设置
     
     public subscript(key: Any) -> SRIndexPathItem? {

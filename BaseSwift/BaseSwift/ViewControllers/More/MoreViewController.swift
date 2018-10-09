@@ -12,7 +12,7 @@ import MJRefresh
 import BarrageRenderer
 
 class MoreViewController: BaseViewController {
-    var indexPathSet: SRIndexPathSet!
+    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
     var lastSection = IntegerInvalid
     var lastSectionWillAdd = IntegerInvalid
     var lastRow = IntegerInvalid
@@ -107,7 +107,7 @@ class MoreViewController: BaseViewController {
     }
     
     func initSections() {
-        indexPathSet = SRIndexPathSet()
+        indexPathSet.removeAll()
         lastSection = IntegerInvalid
         initSection1()
         initSection2()
@@ -122,7 +122,7 @@ class MoreViewController: BaseViewController {
         item(qiuQianCell)
         item(ceShiCell)
         item(guPiaoCell)
-        item(guPiaoCell)
+        item(qiuYiCell)
     }
     
     func initSection2() {
@@ -496,7 +496,7 @@ extension MoreViewController: UITextFieldDelegate {
 
 extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return lastSection + 1
+        return indexPathSet.numberOfSections
     }
     
     func tableView(_ tableView: UITableView,

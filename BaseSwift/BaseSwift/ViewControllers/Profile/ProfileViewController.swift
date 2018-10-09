@@ -55,7 +55,7 @@ extension SRIndexPathConfigKey {
 }
 
 class ProfileViewController: BaseViewController {
-    var indexPathSet: SRIndexPathSet!
+    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
     var lastSection = IntegerInvalid
     var lastSectionWillAdd = IntegerInvalid
     var lastRow = IntegerInvalid
@@ -157,7 +157,7 @@ class ProfileViewController: BaseViewController {
     }
     
     func initSections() {
-        indexPathSet = SRIndexPathSet()
+        indexPathSet.removeAll()
         lastSection = IntegerInvalid
         initBaseSection()
         initProfileSection()
@@ -1007,7 +1007,7 @@ extension ProfileViewController: SRPickerViewDelegate {
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return lastSection + 1
+        return indexPathSet.numberOfSections
     }
     
     func tableView(_ tableView: UITableView,

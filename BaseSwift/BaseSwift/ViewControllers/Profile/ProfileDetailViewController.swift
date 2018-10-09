@@ -24,7 +24,7 @@ extension SRIndexPathConfigKey {
 
 class ProfileDetailViewController: BaseViewController {
     var isFirstDidLoadSuccess = false //第一次加载已成功
-    var indexPathSet: SRIndexPathSet!
+    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
     var lastSection = IntegerInvalid
     var lastSectionWillAdd = IntegerInvalid
     var lastRow = IntegerInvalid
@@ -176,7 +176,7 @@ class ProfileDetailViewController: BaseViewController {
     }
     
     func initSections() {
-        indexPathSet = SRIndexPathSet()
+        indexPathSet.removeAll()
         lastSection = IntegerInvalid
         initBaseSection()
         initProfileSection()

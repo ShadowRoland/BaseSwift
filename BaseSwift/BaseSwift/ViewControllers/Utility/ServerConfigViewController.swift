@@ -10,7 +10,7 @@ import UIKit
 
 //仅用于调试
 class ServerConfigViewController: BaseViewController {
-    var indexPathSet: SRIndexPathSet!
+    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
     var lastSection = IntegerInvalid
     var lastSectionWillAdd = IntegerInvalid
     var lastRow = IntegerInvalid
@@ -66,7 +66,7 @@ class ServerConfigViewController: BaseViewController {
     }
     
     func initCells() {
-        indexPathSet = SRIndexPathSet()
+        indexPathSet.removeAll()
         lastSection = IntegerInvalid
         lastSectionWillAdd = lastSection
         
@@ -403,7 +403,7 @@ extension ServerConfigViewController: UITextFieldDelegate {
 
 extension ServerConfigViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return lastSection + 1
+        return indexPathSet.numberOfSections
     }
     
     func tableView(_ tableView: UITableView,

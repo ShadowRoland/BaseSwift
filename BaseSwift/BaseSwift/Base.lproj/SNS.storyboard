@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Ecv-jb-uQy">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Ecv-jb-uQy">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -39,7 +38,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qYv-zx-2Kf">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ukq-Pz-6mW" userLabel="First view, making tableView not be the first subview">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
@@ -78,7 +77,7 @@
                             <constraint firstItem="jYa-SW-sTG" firstAttribute="leading" secondItem="ZLw-U3-NAs" secondAttribute="leading" id="Hhb-aD-oKU"/>
                             <constraint firstItem="qYv-zx-2Kf" firstAttribute="leading" secondItem="ZLw-U3-NAs" secondAttribute="leading" id="TJe-NK-bVT"/>
                             <constraint firstAttribute="trailing" secondItem="qYv-zx-2Kf" secondAttribute="trailing" id="TOj-sJ-Bbf"/>
-                            <constraint firstItem="qYv-zx-2Kf" firstAttribute="top" secondItem="ZLw-U3-NAs" secondAttribute="top" id="YSy-j9-5qs"/>
+                            <constraint firstItem="qYv-zx-2Kf" firstAttribute="top" secondItem="qqR-eY-oNG" secondAttribute="bottom" id="YSy-j9-5qs"/>
                             <constraint firstAttribute="trailing" secondItem="jYa-SW-sTG" secondAttribute="trailing" id="cMa-zg-9pt"/>
                             <constraint firstAttribute="bottom" secondItem="jYa-SW-sTG" secondAttribute="bottom" id="sEq-p0-QZB"/>
                         </constraints>

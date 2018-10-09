@@ -88,7 +88,7 @@ public extension SRIndexPathSet {
     
     func items(headIndex: Int, count: Int = 0) -> [SRIndexPathItem] {
         return sorted.filter {
-            $0.indexPath.startIndex == headIndex && (count <= 0 || count == $0.indexPath.count)
+            $0.indexPath[$0.indexPath.startIndex] == headIndex && (count <= 0 || count == $0.indexPath.count)
         }
     }
     
