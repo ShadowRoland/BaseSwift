@@ -98,8 +98,10 @@ class QRCodeReaderViewController: BaseViewController {
     func initPreviewView() {
         previewView = UIView()
         view.addSubview(previewView)
-        constraintGroup = constrain(previewView, replace: constraintGroup) { (view) in
-            view.top == view.superview!.top + topLayoutGuide.length
+        constraintGroup = constrain(previewView,
+                                    self.car_topLayoutGuide,
+                                    replace: constraintGroup) { (view, topLayoutGuide) in
+            view.top == topLayoutGuide.bottom
             view.bottom == view.superview!.bottom
             view.leading == view.superview!.leading
             view.trailing == view.superview!.trailing
@@ -303,8 +305,10 @@ class QRCodeReaderViewController: BaseViewController {
     override func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
         super.deviceOrientationDidChange(sender)
         
-        constraintGroup = constrain(previewView, replace: constraintGroup) { (view) in
-            view.top == view.superview!.top + topLayoutGuide.length
+        constraintGroup = constrain(previewView,
+                                    self.car_topLayoutGuide,
+                                    replace: constraintGroup) { (view, topLayoutGuide) in
+            view.top == topLayoutGuide.bottom
             view.bottom == view.superview!.bottom
             view.leading == view.superview!.leading
             view.trailing == view.superview!.trailing

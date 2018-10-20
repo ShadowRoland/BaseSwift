@@ -14,8 +14,9 @@ extension UIViewController {
     public class PublicBusinessComponent {
         public weak var decorator: UIViewController?
         
-        fileprivate static let runtimeKey =
-            UnsafeRawPointer(bitPattern: "publicBusiness".hashValue)!
+        fileprivate struct AssociatedKeys {
+            static var publicBusiness = "UIViewController.PublicBusinessComponent.publicBusiness"
+        }
         
         deinit {
             LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
@@ -40,7 +41,7 @@ extension UIViewController {
         }
         
         func showAdvertising() {
-            guard let vc = decorator?.navigationController?.viewControllers.last else {
+            guard let vc = decorator?.navigationController?.topViewController else {
                 return
             }
             
@@ -64,7 +65,8 @@ extension UIViewController {
     }
     
     var publicBusinessComponent: PublicBusinessComponent {
-        if let component = objc_getAssociatedObject(self, PublicBusinessComponent.runtimeKey)
+        if let component =
+            objc_getAssociatedObject(self, &PublicBusinessComponent.AssociatedKeys.publicBusiness)
             as? PublicBusinessComponent {
             return component
         }
@@ -72,9 +74,9 @@ extension UIViewController {
         let component = PublicBusinessComponent()
         component.decorator = self
         objc_setAssociatedObject(self,
-                                 PublicBusinessComponent.runtimeKey,
+                                 &PublicBusinessComponent.AssociatedKeys.publicBusiness,
                                  component,
-                                 .OBJC_ASSOCIATION_RETAIN)
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return component
     }
 }

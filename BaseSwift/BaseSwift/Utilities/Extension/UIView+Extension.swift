@@ -47,17 +47,19 @@ public extension UIView {
 //MARK: - TagString
 
 public extension UIView {
-    fileprivate static let TagString = UnsafeRawPointer(bitPattern: "tagString".hashValue)!
+    fileprivate struct AssociatedKeys {
+        static var tagString = "UIView.TagString"
+    }
     
     var tagString: String? {
         get {
-            return objc_getAssociatedObject(self, UIView.TagString) as? String
+            return objc_getAssociatedObject(self, &AssociatedKeys.tagString) as? String
         }
         set {
             objc_setAssociatedObject(self,
-                                     UIView.TagString,
+                                     &AssociatedKeys.tagString,
                                      newValue,
-                                     .OBJC_ASSOCIATION_RETAIN)
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }

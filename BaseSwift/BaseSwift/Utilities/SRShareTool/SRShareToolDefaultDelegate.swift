@@ -36,7 +36,7 @@ class SRShareToolDefaultDelegate: NSObject {
                          shareTool.option.description ?? EmptyString,
                          shareTool.option.url ?? EmptyString)
         vc.messageComposeDelegate = self
-        let lastVC = Common.rootVC?.navigationController?.viewControllers.last!
+        let lastVC = Common.rootVC?.navigationController?.topViewController!
         lastVC?.present(vc, animated: true, completion: nil)
         vc.title = "Send message".localized
     }

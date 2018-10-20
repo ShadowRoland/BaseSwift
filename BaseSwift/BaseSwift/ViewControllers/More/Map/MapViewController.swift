@@ -94,8 +94,10 @@ class MapViewController: BaseViewController {
     }
     
     func initConstraint() {
-        constraintGroup = constrain(mapView, replace: constraintGroup) { (view) in
-            view.top == view.superview!.top + topLayoutGuide.length
+        constraintGroup = constrain(mapView,
+                                    self.car_topLayoutGuide,
+                                    replace: constraintGroup) { (view, topLayoutGuide) in
+            view.top == topLayoutGuide.bottom
             view.bottom == view.superview!.bottom
             view.leading == view.superview!.leading
             view.trailing == view.superview!.trailing

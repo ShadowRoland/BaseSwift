@@ -11,12 +11,13 @@ import UIKit
 import SwiftyJSON
 import SDWebImage
 import DTCoreText
+import Cartography
 
 public class BaseViewController: UIViewController,
     UIScrollViewDelegate,
     LoadDataStateDelegate,
     SRStateMachineDelegate,
-DTAttributedTextContentViewDelegate {
+DTAttributedTextContentViewDelegate {    
     override public func viewDidLoad() {
         super.viewDidLoad()
         stateMachine.delegate = self
@@ -84,6 +85,16 @@ DTAttributedTextContentViewDelegate {
         } else {
             resetProgressPosition()
             resetLoadDataFailViewPosition()
+        }
+        
+        if component.navigationBarBackgroundView.superview == view
+            && component.navigationBarBackgroundView.constraints.count == 0 {
+            constrain(component.navigationBarBackgroundView, self.car_topLayoutGuide) { (view, topLayoutGuide) in
+                view.top == view.superview!.top
+                view.leading == view.superview!.leading
+                view.trailing == view.superview!.trailing
+                view.bottom == topLayoutGuide.bottom
+            }
         }
     }
     
@@ -166,33 +177,31 @@ DTAttributedTextContentViewDelegate {
             self.title = title
         }
         
+        navigationBarBackgroundAlpha = NavigartionBar.backgroundBlurAlpha
+        navigationBarTintColor = NavigartionBar.tintColor
         initNavigationBar()
         
-        navigationController?.navigationBar.backIndicatorImage = UIImage("page_back")
-        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage("page_back")
-        let backBarButtonItem = UIBarButtonItem()
-        backBarButtonItem.title = " "
-        navigationItem.backBarButtonItem = backBarButtonItem
-        UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffsetMake(0, -200.0),
-                                                                          for: .default)
+        if let navigationController = navigationController {
+            let backImage = image == nil ? UIImage("page_back") : image
+            navigationController.navigationBar.backIndicatorImage = backImage
+            navigationController.navigationBar.backIndicatorTransitionMaskImage = backImage
+            let backBarButtonItem = UIBarButtonItem()
+            backBarButtonItem.title = " "
+            navigationItem.backBarButtonItem = backBarButtonItem
+            UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffsetMake(0, -200.0),
+                                                                              for: .default)
+        }
     }
     
     public func initNavigationBar() {
         guard let navigationController = navigationController else { return }
         
         let navigationBar = navigationController.navigationBar
-        //navigationBar.backItem?.backBarButtonItem = nil
-        
         navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white,
                                              .font : UIFont.heavyTitle]
-        navigationBar.tintColor = UIColor.white
-        
-        if NavigartionBar.backgroundImage == nil {
-            NavigartionBar.backgroundImage =
-                UIImage.rect(NavigartionBar.backgroundColor,
-                             size: CGSize(Common.screenSize().width, NavigationHeaderHeight))
-        }
-        navigationBar.setBackgroundImage(NavigartionBar.backgroundImage, for: .default)
+        //navigationBar.tintColor = UIColor.white
+        navigationBar.setBackgroundImage(nil, for: .default)
+        navigationBar.backgroundColor = UIColor.clear
     }
     
     public var navBarLeftButtonSettings: [[NavigartionBar.ButtonItemKey : Any]]? {

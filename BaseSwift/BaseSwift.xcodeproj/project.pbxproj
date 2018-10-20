@@ -739,10 +739,10 @@
 		4EABAEC11FF61EE70007CCA7 /* Simple */ = {
 			isa = PBXGroup;
 			children = (
-				4EABAEC21FF61EE70007CCA7 /* SimpleViewController.swift */,
 				4EABAEC31FF61EE70007CCA7 /* SimpleCell.swift */,
-				4EABAEC41FF61EE70007CCA7 /* SimpleTableViewController.swift */,
 				4EABAEC51FF61EE70007CCA7 /* SimpleSubmitViewController.swift */,
+				4EABAEC41FF61EE70007CCA7 /* SimpleTableViewController.swift */,
+				4EABAEC21FF61EE70007CCA7 /* SimpleViewController.swift */,
 			);
 			path = Simple;
 			sourceTree = "<group>";

@@ -280,7 +280,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let action = Common.currentActionParams()?[ParamKey.action] as? String,
             Event.Option.openWebpage == Event.option(action) {
             let rootVC = Common.rootVC
-            let vc = rootVC?.navigationController?.viewControllers.last as? BaseViewController
+            let vc = rootVC?.navigationController?.topViewController as? BaseViewController
             vc?.stateMachine.append(option: Event.Option.openWebpage)
             return
         }

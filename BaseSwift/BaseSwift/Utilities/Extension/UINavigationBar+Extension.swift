@@ -9,9 +9,12 @@
 import UIKit
 
 public extension UINavigationBar {
-    fileprivate static let runtimeKeyOverlay = UnsafeRawPointer(bitPattern: "overlay".hashValue)!
+    fileprivate struct AssociatedKeys {
+        static var overlay = "UINavigationBar.overlay"
+    }
+    
     var overlay: UIView {
-        if let overlay = objc_getAssociatedObject(self, UINavigationBar.runtimeKeyOverlay)
+        if let overlay = objc_getAssociatedObject(self, &AssociatedKeys.overlay)
             as? UIView {
             return overlay
         }
@@ -21,9 +24,9 @@ public extension UINavigationBar {
         overlay.autoresizingMask = [UIViewAutoresizing.flexibleHeight, UIViewAutoresizing.flexibleWidth]
         addSubview(overlay)
         objc_setAssociatedObject(self,
-                                 UINavigationBar.runtimeKeyOverlay,
+                                 &AssociatedKeys.overlay,
                                  overlay,
-                                 .OBJC_ASSOCIATION_RETAIN)
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return overlay
     }
     

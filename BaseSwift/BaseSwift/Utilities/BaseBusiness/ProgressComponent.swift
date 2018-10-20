@@ -35,7 +35,9 @@ extension UIView {
             LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
         }
         
-        fileprivate static let runtimeKey = UnsafeRawPointer(bitPattern: "progress".hashValue)!
+        fileprivate struct AssociatedKeys {
+            static var progress = "UIView.ProgressComponent.progress"
+        }
         
         fileprivate var maskView: UIView!
         fileprivate var progressHUD: SRProgressHUD!
@@ -183,7 +185,8 @@ extension ProgressProtocol where Self: UIView {
 
 extension UIView: ProgressProtocol {
     public var progressComponent: ProgressComponent {
-        if let component = objc_getAssociatedObject(self, ProgressComponent.runtimeKey)
+        if let component = objc_getAssociatedObject(self,
+                                                    &ProgressComponent.AssociatedKeys.progress)
             as? ProgressComponent {
             return component
         }
@@ -191,9 +194,9 @@ extension UIView: ProgressProtocol {
         let component = ProgressComponent()
         component.decorator = self
         objc_setAssociatedObject(self,
-                                 ProgressComponent.runtimeKey,
+                                 &ProgressComponent.AssociatedKeys.progress,
                                  component,
-                                 .OBJC_ASSOCIATION_RETAIN)
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return component
     }
     

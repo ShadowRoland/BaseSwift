@@ -15,6 +15,8 @@ class ViewController: BaseViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the vivar typically from a nib.
         self.title = "Root"
+        navigationBarBackgroundAlpha = NavigartionBar.backgroundBlurAlpha
+        navigationBarTintColor = NavigartionBar.tintColor
         initNavigationBar()
         navBarLeftButtonSettings = nil
         tableView.backgroundColor = UIColor.groupTableViewBackground

@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-public class SRModalViewController: SRNavigationController, UINavigationBarDelegate {
+public class SRModalViewController: SRNavigationController {
     public var completionHandler: (() -> Void)?
     private weak var rootVC: UIViewController?
     private weak var modalVC: UIViewController?
@@ -48,14 +48,14 @@ public class SRModalViewController: SRNavigationController, UINavigationBarDeleg
     //MARK: - UINavigationBarDelegate
     
     //拦截导航栏默认提供的返回按钮的点击
-    public func navigationBar(_ navigationBar: UINavigationBar,
+    public override func navigationBar(_ navigationBar: UINavigationBar,
                               shouldPop item: UINavigationItem) -> Bool {
         if viewControllers.count == 2 {
             DispatchQueue.main.async {
-                self.viewControllers.last?.popBack(true)
+                self.topViewController?.popBack(true)
             }
             return false
         }
-        return true
+        return super.navigationBar(navigationBar, shouldPop: item)
     }
 }

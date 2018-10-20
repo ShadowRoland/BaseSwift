@@ -12,7 +12,17 @@ extension UIViewController {
     public class BaseBusinessComponent: NSObject {
         public weak var decorator: UIViewController?
         
-        fileprivate static let runtimeKey = UnsafeRawPointer(bitPattern: "baseBusiness".hashValue)!
+        public lazy var navigationBarBackgroundView: UIView = {
+            let view = UIView(frame: CGRect(0, 0, ScreenWidth(), NavigationBarHeight))
+            decorator?.view.addSubview(view)
+            view.backgroundColor = NavigartionBar.backgroundColor
+            return view
+        }()
+        public var navigationBackgroundAlpha = 0.5 as CGFloat
+        
+        fileprivate struct AssociatedKeys {
+            static var baseBusiness = "UIViewController.BaseBusinessComponent.baseBusiness"
+        }
         
         deinit {
             LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
@@ -62,10 +72,14 @@ extension UIViewController {
                     switch navigartionBarAppear {
                     case .visible:
                         navigationController.isNavigationBarHidden = false
+                        navigationBarBackgroundView.isHidden = false
                     case .hidden:
                         navigationController.isNavigationBarHidden = true
+                        navigationBarBackgroundView.isHidden = true
                     default: break
                     }
+                } else {
+                    navigationBarBackgroundView.isHidden = false
                 }
             }
         }
@@ -141,7 +155,8 @@ extension UIViewController {
 
 extension UIViewController {
     public var baseBusinessComponent: BaseBusinessComponent {
-        if let component = objc_getAssociatedObject(self, BaseBusinessComponent.runtimeKey)
+        if let component =
+            objc_getAssociatedObject(self, &BaseBusinessComponent.AssociatedKeys.baseBusiness)
             as? BaseBusinessComponent {
             return component
         }
@@ -149,9 +164,9 @@ extension UIViewController {
         let component = BaseBusinessComponent()
         component.decorator = self
         objc_setAssociatedObject(self,
-                                 BaseBusinessComponent.runtimeKey,
+                                 &BaseBusinessComponent.AssociatedKeys.baseBusiness,
                                  component,
-                                 .OBJC_ASSOCIATION_RETAIN)
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         return component
     }
     

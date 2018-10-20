@@ -125,14 +125,14 @@ extension UIViewController {
     //本视图是否展现在最前面
     public var isFront: Bool {
         //guard let navigationController = navigationController else { return false }
-        //return self === navigationController.viewControllers.last
+        //return self === navigationController.topViewController
         //    && presentedViewController == nil
         //    && navigationController.presentedViewController == nil
         let frontVC = Common.frontVC()
         if self === frontVC {
             return true
         } else if let vc = frontVC as? UINavigationController,
-            self === vc.viewControllers.last {
+            self === vc.topViewController {
             return true
         } else {
             return false
@@ -142,7 +142,7 @@ extension UIViewController {
     //防止页面加载成功但是导航栏没有同步，限定在viewDidAppear使用
     public func ensureNavigationBarHidden(_ isHidden: Bool) {
         if let navigationController = navigationController,
-            navigationController.viewControllers.last === self
+            navigationController.topViewController === self
             && navigationController.navigationBar.topItem != self.navigationItem {
                 navigationController.setNavigationBarHidden(!isHidden, animated: false)
                 navigationController.setNavigationBarHidden(isHidden, animated: false)

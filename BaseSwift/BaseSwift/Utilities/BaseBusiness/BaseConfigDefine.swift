@@ -239,12 +239,12 @@ public struct StringAttributeKey : RawRepresentable, Equatable, Hashable {
 
 public struct NavigartionBar {
     static var buttonItemHeight = NavigationBarHeight
+    static var backgroundBlurAlpha = 0.2 as CGFloat
     static var tintColor = UIColor.white
     static var backgroundColor = UIColor(red: 255.0 / 255.0,
                                          green: 127.0 / 255.0,
                                          blue: 0 / 255.0,
                                          alpha: 1.0)
-    static var backgroundImage: UIImage? = nil
     
     //导航栏在视图控制器中的显示方式，默认为不隐藏导航栏，建议在viewDidLoad中重新设置
     public enum Appear {

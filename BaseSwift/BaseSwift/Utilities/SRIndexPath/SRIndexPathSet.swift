@@ -52,7 +52,7 @@ public class SRIndexPathSet: NSObject {
             return set.count
         }
         
-        var indexPathes = [] as [IndexPath]
+        var indexPaths = [] as [IndexPath]
         enumerated.compactMap { item -> IndexPath? in
             var indexPath = item.element.indexPath
             let lower = indexPath.index(indexPath.startIndex, offsetBy: range.lowerBound)
@@ -60,11 +60,11 @@ public class SRIndexPathSet: NSObject {
             indexPath = indexPath[Range<IndexPath.Index>(uncheckedBounds: (lower: lower, upper: upper))]
             return indexPath.count > 0 ? indexPath : nil
             }.forEach { indexPath in
-                if indexPathes.first(where: { indexPath == $0 }) == nil { //去重
-                    indexPathes.append(indexPath)
+                if indexPaths.first(where: { indexPath == $0 }) == nil { //去重
+                    indexPaths.append(indexPath)
                 }
         }
-        return indexPathes.count
+        return indexPaths.count
     }
     
     //MARK: - 通过下标获取和设置

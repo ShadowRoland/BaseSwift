@@ -10,17 +10,19 @@ import Foundation
 import Alamofire
 
 public extension DataRequest {
-    fileprivate static let requestSender = UnsafeRawPointer(bitPattern: "requestSender".hashValue)!
+    fileprivate struct AssociatedKeys {
+        static var requestSender = "DataRequest.requestSender"
+    }
     
     public var sender: String? {
         get {
-            return objc_getAssociatedObject(self, DataRequest.requestSender) as? String
+            return objc_getAssociatedObject(self, &AssociatedKeys.requestSender) as? String
         }
         set {
             objc_setAssociatedObject(self,
-                                     DataRequest.requestSender,
+                                     &AssociatedKeys.requestSender,
                                      newValue,
-                                     .OBJC_ASSOCIATION_RETAIN)
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
