@@ -1,5 +1,5 @@
 //
-//  CGPoint+Extension.swift
+//  Geometry+Extension.swift
 //  BaseSwift
 //
 //  Created by Shadow on 2017/12/22.
@@ -58,5 +58,19 @@ public extension CGRect {
     
     init(_ x: CGFloat, _ y: CGFloat, _ size: CGSize) {
         self.init(x: x, y: y, width: size.width, height: size.height)
+    }
+}
+
+public extension UIEdgeInsets {
+    init(_ top: CGFloat, _ left: CGFloat, _ bottom: CGFloat, _ right: CGFloat) {
+        self.init(top: top, left: left, bottom: bottom, right: right)
+    }
+    
+    init(_ inset: CGFloat) {
+        self.init(top: inset, left: inset, bottom: inset, right: inset)
+    }
+    
+    init(_ horizontal: CGFloat, _ vertical: CGFloat) {
+        self.init(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
     }
 }

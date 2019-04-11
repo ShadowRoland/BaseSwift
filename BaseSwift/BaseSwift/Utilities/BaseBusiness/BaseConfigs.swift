@@ -1,5 +1,5 @@
 //
-//  ConfigDefine.swift
+//  BaseConfig.swift
 //  BaseSwift
 //
 //  Created by Shadow on 2016/11/14.
@@ -106,18 +106,15 @@ extension Notification.Name {
 
 //MARK: - 常用的常量值
 
-let EmptyString                                 = "" //空字符串
-let IntegerInvalid                              = -1
-let IntegerZero                                 = 0
-let IntegerOne                                  = 1
-let PerformDelay                                = 0.1 as TimeInterval
-let DelayPerformForOldDevice                    = 0.5 as TimeInterval
-let ViewControllerTransitionInterval            = 0.3 as TimeInterval //视图切换动画
-let ReuseIdentifier                             = "reuseIdentifier"
-let AppCallUrlSchemeKey                         = "scheme"
-let Description                                 = "description"
-let HtmlTextFormat                              = "<span style=\"font-family: sans-serif;font-size: 15px;margin: 0;padding: 0\">%@</span>"
-let HtmlTitleFormat                             = "<p style=\"text-align: center;line-height: 120%%;font-family: sans-serif;font-size: 15px;\">%@</p>"
+let EmptyString = "" //空字符串
+var PerformDelay = 0.1 as TimeInterval
+var DelayPerformForOldDevice = 0.5 as TimeInterval
+var ViewControllerTransitionInterval = 0.3 as TimeInterval //视图切换动画
+var ReuseIdentifier = "reuseIdentifier"
+var AppCallUrlSchemeKey = "scheme"
+//var Description = "description"
+var HtmlTextFormat = "<span style=\"font-family: sans-serif;font-size: 15px;margin: 0;padding: 0\">%@</span>"
+var HtmlTitleFormat = "<p style=\"text-align: center;line-height: 120%%;font-family: sans-serif;font-size: 15px;\">%@</p>"
 
 //MARK: - 日志
 /* 在笔者所使用的版本中，swift下的DDLogxxx()函数不会主动打印控制台信息，所以特意自己添加了打印信息print语句
@@ -127,28 +124,28 @@ let HtmlTitleFormat                             = "<p style=\"text-align: center
  */
 
 public func LogDebug(_ message: @autoclosure () -> String) {
-    DDLogDebug(message)
+    DDLogDebug(message())
     #if DEBUG
     //print(String(date: Date()) + " " + message())
     #endif
 }
 
 public func LogInfo(_ message: @autoclosure () -> String) {
-    DDLogInfo(message)
+    DDLogInfo(message())
     #if DEBUG
     //print(String(date: Date()) + " " + message())
     #endif
 }
 
 public func LogWarn(_ message: @autoclosure () -> String) {
-    DDLogWarn(message)
+    DDLogWarn(message())
     #if DEBUG
     //print(String(date: Date()) + " " + message())
     #endif
 }
 
 public func LogError(_ message: @autoclosure () -> String) {
-    DDLogError(message)
+    DDLogError(message())
     #if DEBUG
     //print(String(date: Date()) + " " + message())
     #endif
@@ -160,7 +157,7 @@ let isZhHans = NSLocale.preferredLanguages[0].hasPrefix("zh-Hans")
 
 //MARK: - 格式化
 
-public struct DateFormat {
+public class DateFormat {
     static let date = date1
     static let date1 = "yyyy-MM-dd"
     static let date2 = "yyyy/MM/dd"
@@ -198,46 +195,29 @@ extension ObjectProperty {
     static var isEnabled: NSObject.property { return NSObject.property("isEnabled")}
 }
 
-var StatusBarHeight                 = 20.0 as CGFloat                                       //状态栏默认高度
-let NavigationBarHeight             = 44.0 as CGFloat                                       //导航栏默认高度（竖屏）
-var NavigationHeaderHeight          = StatusBarHeight + NavigationBarHeight                 //导航栏上部默认高度（竖屏）
-var TabBarHeight                    = 49.0 as CGFloat                                       //TabBar默认高度
-var SafeInsetTop                    = 0 as CGFloat                                          //iPhone X顶部预留的安全间距
-var SafeInsetBottom                 = 0 as CGFloat                                          //iPhone X底部部预留的安全
-let TabBarImageHeight               = 50.0 / 2.0 as CGFloat                                 //TabBar图片的默认高度
-let TableCellHeight                 = 44.0 as CGFloat                                       //UITableViewCell的默认高度
-let SectionHeaderTopHeight          = 20.0 as CGFloat                                       //列表的第一个Section的HeaderView的高度
-let SectionHeaderHeight             = 30.0 as CGFloat                                       //列表的非第一个Section的HeaderView的高度
-let SectionHeaderGroupNoHeight      = 0.5 as CGFloat                                        //列表Gourp模式下Section的HeaderView最小高度
-let TableCellSeperatorColor         = UIColor(white: 215.0)                                 //UITableViewCell分割线的近似颜色
-let ToastHeightAboveBottom          = 100.0 as CGFloat                                      //Toast底部栏高度
-let MaskAlpha                       = 0.7 as CGFloat                                        //默认灰底背景透明度
-let MaskBackgroundColor             = UIColor(white: 0.5, alpha: MaskAlpha)                 //默认灰底背景色
-let LabelHeight                     = 21.0 as CGFloat                                       //默认的UILabel控件的高度
-let SeperatorLineThickness          = 0.5 as CGFloat                                        //分割线粗细
-let SeperatorLineColor              = UIColor(197.0, 197.0, 212.0)                          //分割线颜色
-let SubviewMargin                   = 15.0 as CGFloat                                       //子视图内的默认外间距，多用于水平方向
-
-//MARK: - 以字符串为raw的字典key
-
-public struct StringAttributeKey : RawRepresentable, Equatable, Hashable {
-    public typealias RawValue = String
-    public var rawValue: String
-    
-    public init(_ rawValue: String) {
-        self.rawValue = rawValue
-    }
-    
-    public init(rawValue: String) {
-        self.rawValue = rawValue
-    }
-    
-    public var hashValue: Int { return self.rawValue.hashValue }
-}
+var StatusBarHeight = 20.0 as CGFloat //状态栏默认高度
+var NavigationBarHeight = 44.0 as CGFloat //导航栏默认高度（竖屏）
+var NavigationHeaderHeight = StatusBarHeight + NavigationBarHeight //导航栏上部默认高度（竖屏）
+var TabBarHeight = 49.0 as CGFloat //TabBar默认高度
+var SafeInsetTop = 0 as CGFloat //iPhone X顶部预留的安全间距
+var SafeInsetBottom = 0 as CGFloat //iPhone X底部部预留的安全
+var TabBarImageHeight = 50.0 / 2.0 as CGFloat //TabBar图片的默认高度
+var TableCellHeight = 44.0 as CGFloat //UITableViewCell的默认高度
+var SectionHeaderTopHeight = 20.0 as CGFloat //列表的第一个Section的HeaderView的高度
+var SectionHeaderHeight = 30.0 as CGFloat //列表的非第一个Section的HeaderView的高度
+var SectionHeaderGroupNoHeight = 0.5 as CGFloat //列表Gourp模式下Section的HeaderView最小高度
+var TableCellSeperatorColor = UIColor(white: 215.0) //UITableViewCell分割线的近似颜色
+var ToastHeightAboveBottom = 100.0 as CGFloat //Toast底部栏高度
+var MaskAlpha = 0.7 as CGFloat //默认灰底背景透明度
+var MaskBackgroundColor = UIColor(white: 0.5, alpha: MaskAlpha) //默认灰底背景色
+var LabelHeight = 21.0 as CGFloat //默认的UILabel控件的高度
+var SeperatorLineThickness = 0.5 as CGFloat //分割线粗细
+var SeperatorLineColor = UIColor(197.0, 197.0, 212.0) //分割线颜色
+var SubviewMargin = 15.0 as CGFloat //子视图内的默认外间距，多用于水平方向
 
 //MARK: - 在系统提供的Navigation Bar上做自定义
 
-public struct NavigartionBar {
+public class NavigartionBar {
     static var buttonItemHeight = NavigationBarHeight
     static var backgroundBlurAlpha = 0.2 as CGFloat
     static var tintColor = UIColor.white
@@ -258,7 +238,7 @@ public struct NavigartionBar {
         case none
         case text                //纯文字
         case image               //纯图片
-        case textAndImage        //文字和图片
+        //case textAndImage        //文字和图片
         case custom              //自定义
     }
     
@@ -268,9 +248,9 @@ public struct NavigartionBar {
          .font: EmptyString,
          .textColor: EmptyString,
          .image: EmptyString,
-         .highlightedImage: EmptyString,
-         .backgroundImage: EmptyString,
-         .highlightedBackgroundImage: EmptyString,
+         //.highlightedImage: EmptyString,
+         //.backgroundImage: EmptyString,
+         //.highlightedBackgroundImage: EmptyString,
          .customView: EmptyString]
     
     public struct ButtonItemKey : RawRepresentable, Equatable, Hashable {
@@ -292,15 +272,15 @@ public struct NavigartionBar {
         static let font = ButtonItemKey("font") //按钮标题字体，内容为UIFont类型，在样式为text和textAndImage时有效，可为空
         static let textColor = ButtonItemKey("textColor") //按钮标题颜色，内容为UIColor类型，在样式为text和textAndImage时有效，可为空
         static let image = ButtonItemKey("normal.image") //按钮图片，内容为UIImage类型, 在样式为image时有效，其中normal不能为空，highlighted可为空
-        static let highlightedImage = ButtonItemKey("highlighted.image")
-        static let backgroundImage = ButtonItemKey("normal.backgroundImage") //按钮背景图片，内容为UIImage类型, 在样式为textAndImage时有效，其中normal不能为空，highlighted可为空
-        static let highlightedBackgroundImage = ButtonItemKey("highlighted.backgroundImage")
+        //static let highlightedImage = ButtonItemKey("highlighted.image")
+        //static let backgroundImage = ButtonItemKey("normal.backgroundImage") //按钮背景图片，内容为UIImage类型, 在样式为textAndImage时有效，其中normal不能为空，highlighted可为空
+        //static let highlightedBackgroundImage = ButtonItemKey("highlighted.backgroundImage")
         static let customView = ButtonItemKey("customView") //自定义的视图，内容为UIView类型，在样式为custom有效，不可为空
     }
 }
 
 //提交按钮的样式
-public struct SubmitButton {
+public class SubmitButton {
     static var frame                        = CGRect(0,
                                                      0,
                                                      ScreenWidth() - SubviewMargin,
