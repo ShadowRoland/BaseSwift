@@ -20,7 +20,7 @@ class OfficialAccountsViewController: BaseViewController {
         
         tableView.separatorInset =
             UIEdgeInsets(top: 0, left: ContactCell.headPortraitMargin, bottom: 0, right: 0)
-        tableView.contentInset = UIEdgeInsetsMake(0, 0, TabBarHeight, 0)
+        tableView.contentInset = UIEdgeInsets(0, 0, TabBarHeight, 0)
         tableView.tableFooterView = UIView()
         ContactCell.updateCellHeight()
     }
@@ -171,9 +171,7 @@ extension OfficialAccountsViewController: UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView,
                    sectionForSectionIndexTitle title: String,
                    at index: Int) -> Int {
-        tableView.scrollToRow(at: IndexPath(row: 0, section: index),
-                              at: UITableViewScrollPosition.top,
-                              animated: true)
+        tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: .top, animated: true)
         return index;
     }
     

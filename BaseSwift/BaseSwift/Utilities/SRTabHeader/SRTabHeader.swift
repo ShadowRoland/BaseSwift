@@ -97,7 +97,7 @@ open class SRTabHeader: UIView {
     private var bottomLineView = UIView()
 
     open func layout() {
-        guard titles.count > 0 else {
+        guard !titles.isEmpty else {
             return
         }
         

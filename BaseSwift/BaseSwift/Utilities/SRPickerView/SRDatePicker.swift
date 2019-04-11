@@ -47,15 +47,15 @@ public class SRDatePicker: SRPickerView, UIPickerViewDelegate, UIPickerViewDataS
         currentDate = currentDate < maxDate ? currentDate : maxDate
         
         let dateComponents = currentDate.components()
-        let selectedYearIndex = alternativeYears.index(of: dateComponents.year!)!
+        let selectedYearIndex = alternativeYears.firstIndex(of: dateComponents.year!)!
         
         let monthRange = self.monthRange(dateComponents.year!)
         alternativeMonths = alternativeArray(monthRange.first!, to: monthRange.last!)
-        let selectedMonthIndex = alternativeMonths.index(of: dateComponents.month!)!
+        let selectedMonthIndex = alternativeMonths.firstIndex(of: dateComponents.month!)!
         
         let dayRange = self.dayRange(dateComponents.year!, month: dateComponents.month!)
         alternativeDays = alternativeArray(dayRange.first!, to: dayRange.last!)
-        let selectedDayIndex = alternativeDays.index(of: dateComponents.day!)!
+        let selectedDayIndex = alternativeDays.firstIndex(of: dateComponents.day!)!
         
         let window = UIApplication.shared.windows.last ?? UIApplication.shared.keyWindow!
         window.addSubview(self)
@@ -203,7 +203,7 @@ public class SRDatePicker: SRPickerView, UIPickerViewDelegate, UIPickerViewDataS
                 selectedMonth =  offsetFirst < offsetLast ? monthRange.first! : monthRange.last!
             }
             alternativeMonths = alternativeArray(monthRange.first!, to: monthRange.last!)
-            let selectedMonthIndex = alternativeMonths.index(of: selectedMonth)!
+            let selectedMonthIndex = alternativeMonths.firstIndex(of: selectedMonth)!
             
             selectedDay = alternativeDays[pickerView.selectedRow(inComponent: 2)]
             let dayRange = self.dayRange(selectedYear, month: selectedMonth)
@@ -213,7 +213,7 @@ public class SRDatePicker: SRPickerView, UIPickerViewDelegate, UIPickerViewDataS
                 selectedDay = offsetFirst < offsetLast ? dayRange.first! : dayRange.last!
             }
             alternativeDays = alternativeArray(dayRange.first!, to: dayRange.last!)
-            let selectedDayIndex = alternativeDays.index(of: selectedDay)!
+            let selectedDayIndex = alternativeDays.firstIndex(of: selectedDay)!
             
             DispatchQueue.main.async { [weak self] in
                 self?.pickerView.reloadComponent(1)
@@ -236,7 +236,7 @@ public class SRDatePicker: SRPickerView, UIPickerViewDelegate, UIPickerViewDataS
                 selectedDay = offsetFirst < offsetLast ? dayRange.first! : dayRange.last!
             }
             alternativeDays = alternativeArray(dayRange.first!, to: dayRange.last!)
-            let selectedDayIndex = alternativeDays.index(of: selectedDay)!
+            let selectedDayIndex = alternativeDays.firstIndex(of: selectedDay)!
             
             DispatchQueue.main.async { [weak self] in
                 self?.pickerView.reloadComponent(2)

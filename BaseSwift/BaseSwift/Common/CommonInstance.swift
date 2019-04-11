@@ -35,7 +35,7 @@ public class CommonInstance: NSObject {
         }
     }
     
-    public let maskButton = UIButton(type: UIButtonType.custom)
+    public let maskButton = UIButton(type: .custom)
     
      @objc func resetButtonEnabled(_ timer: Timer) {
         if let maskButton = timer.userInfo as? UIButton {

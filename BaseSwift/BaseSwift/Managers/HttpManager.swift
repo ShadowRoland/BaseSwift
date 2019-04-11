@@ -370,10 +370,10 @@ public class HttpManager: BusinessManager {
             //jsonP ->json
             let leadText = jsonCallback + "("
             let tailText = ");\n"
-            if jsonString.substring(to: leadText.length) == leadText
-                && jsonString.substring(from: max(jsonString.length - tailText.length, 0)) == tailText {
-                jsonString = jsonString.substring(from: leadText.length,
-                                                  to: jsonString.length - tailText.length)
+            if jsonString.substring(to: leadText.count) == leadText
+                && jsonString.substring(from: max(jsonString.count - tailText.count, 0)) == tailText {
+                jsonString = jsonString.substring(from: leadText.count,
+                                                  to: jsonString.count - tailText.count)
             }
         }
         
@@ -415,10 +415,10 @@ public class HttpManager: BusinessManager {
             !Common.isEmptyString(cb) {
             let leadText = "try{window.\(cb)&\(cb)("
             let tailText = ");}catch(e){}"
-            if jsonString.substring(to: leadText.length) == leadText
-                && jsonString.substring(from: max(jsonString.length - tailText.length, 0)) == tailText {
-                jsonString = jsonString.substring(from: leadText.length,
-                                                  to: jsonString.length - tailText.length)
+            if jsonString.substring(to: leadText.count) == leadText
+                && jsonString.substring(from: max(jsonString.count - tailText.count, 0)) == tailText {
+                jsonString = jsonString.substring(from: leadText.count,
+                                                  to: jsonString.count - tailText.count)
             }
         }
         

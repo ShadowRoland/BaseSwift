@@ -10,11 +10,11 @@ import UIKit
 
 //仅用于调试
 class ServerConfigViewController: BaseViewController {
-    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
-    var lastSection = IntegerInvalid
-    var lastSectionWillAdd = IntegerInvalid
-    var lastRow = IntegerInvalid
-    weak var currentItem: SRIndexPathForm?
+    lazy var indexPathSet: SRIndexPath.Set = SRIndexPath.Set()
+    var lastSection = -1
+    var lastSectionWillAdd = -1
+    var lastRow = -1
+    weak var currentItem: SRIndexPath.Form?
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var runEnvSC: UISegmentedControl!
@@ -67,11 +67,11 @@ class ServerConfigViewController: BaseViewController {
     
     func initCells() {
         indexPathSet.removeAll()
-        lastSection = IntegerInvalid
+        lastSection = -1
         lastSectionWillAdd = lastSection
         
         //Section 0
-        lastRow = IntegerInvalid
+        lastRow = -1
         item(apiBaseUrlCell, config: [.title : "Api Base Url",
                                       .paramKey : "apiBaseUrl",
                                       .isRequired : true])
@@ -82,7 +82,7 @@ class ServerConfigViewController: BaseViewController {
     
     @discardableResult
     func item(_ cell: UITableViewCell,
-              config: [SRIndexPathConfigKey : Any] = [:]) -> SRIndexPathForm? {
+              config: [SRIndexPath.AttributedString.Key : Any] = [:]) -> SRIndexPath.Form? {
         var paramValueType: JsonValueType = .string
         if let intValue = config[.paramValueType] as? Int,
             let enumInt = JsonValueType(rawValue: intValue) {
@@ -127,7 +127,7 @@ class ServerConfigViewController: BaseViewController {
             return nil
         }
         
-        var item = SRIndexPathForm(cell: cell)
+        var item = SRIndexPath.Form(cell: cell)
         item.config = config
         item.value = NonNull.check(value) ? value : nil
         item.isIgnoreParamValue = isIgnored
@@ -164,7 +164,7 @@ class ServerConfigViewController: BaseViewController {
     }
     
     //更新由键盘输入控件的item
-    func updateInput(_ item: inout SRIndexPathForm) {
+    func updateInput(_ item: inout SRIndexPath.Form) {
         guard let inputTextView = item.inputTextView,
             inputTextView.hasProperty(.text) else {
                 return
@@ -189,7 +189,7 @@ class ServerConfigViewController: BaseViewController {
             textField.delegate = self
             NotifyDefault.add(self,
                               selector: #selector(textFieldEditingChanged(_:)),
-                              name: .UITextFieldTextDidChange,
+                              name: UIResponder.keyboardWillChangeFrameNotification,
                               object: textField)
             if config.jsonValue(configKey: .placeholder,
                                 type: .string,
@@ -247,7 +247,7 @@ class ServerConfigViewController: BaseViewController {
     
     func checkEmpty() -> Bool {
         for item in indexPathSet.sorted {
-            let item = item as! SRIndexPathForm
+            let item = item as! SRIndexPath.Form
             if !item.isRequired {
                 continue
             }
@@ -278,7 +278,7 @@ class ServerConfigViewController: BaseViewController {
     
     func saveEnv() {
         indexPathSet.enumerated.forEach {
-            let item = $0.element as! SRIndexPathForm
+            let item = $0.element as! SRIndexPath.Form
             //key存在，value为空，在json中对应的是{key: null}
             env[item.paramKey!] = NonNull.check(item.value) ? item.value : NSNull()
         }
@@ -287,7 +287,7 @@ class ServerConfigViewController: BaseViewController {
         var local = Config.local!
         var envs = local["envs"] as! [Any]
         local["current"] = index
-        envs[index] = env
+        envs[index] = env as Any
         UserStandard[USKey.config] = local
         Config.reload()
     }
@@ -325,7 +325,7 @@ class ServerConfigViewController: BaseViewController {
             if let text = textField.text,
                 position == nil
                     && textMaxLength > 0
-                    && text.length > textMaxLength {
+                    && text.count > textMaxLength {
                 textField.text = text.substring(from: 0, length: textMaxLength)
             }
         } else { // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
@@ -341,7 +341,7 @@ class ServerConfigViewController: BaseViewController {
 
 extension ServerConfigViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        currentItem = indexPathSet[textField] as? SRIndexPathForm
+        currentItem = indexPathSet[textField] as? SRIndexPath.Form
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
@@ -349,7 +349,7 @@ extension ServerConfigViewController: UITextFieldDelegate {
         
         if "apiBaseUrl" == currentItem.paramKey, let text = textField.text {
             let trim = text.trim
-            if trim.length > 0 && !trim.hasSuffix("http://") && !trim.hasSuffix("https://") {
+            if !trim.isEmpty && !trim.hasSuffix("http://") && !trim.hasSuffix("https://") {
                 textField.text = "http://" + trim
             } else {
                 textField.text = EmptyString
@@ -375,10 +375,10 @@ extension ServerConfigViewController: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        var current: SRIndexPathForm?
-        var next: SRIndexPathForm?
+        var current: SRIndexPath.Form?
+        var next: SRIndexPath.Form?
         for member in indexPathSet.sorted {
-            let item = member as! SRIndexPathForm
+            let item = member as! SRIndexPath.Form
             if textField == item.inputTextView {
                 if current == nil {
                     current = item
@@ -413,7 +413,7 @@ extension ServerConfigViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView,
                    heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let item = indexPathSet[indexPath] as? SRIndexPathForm {
+        if let item = indexPathSet[indexPath] as? SRIndexPath.Form {
             return item.height
         }
         return 0
@@ -421,7 +421,7 @@ extension ServerConfigViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let item = indexPathSet[indexPath] as? SRIndexPathForm,
+        if let item = indexPathSet[indexPath] as? SRIndexPath.Form,
             let cell = item.cell {
             return cell
         }

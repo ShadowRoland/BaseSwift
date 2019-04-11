@@ -44,7 +44,7 @@ public struct HttpErrorCode {
 }
 
 public extension Manager {
-    public struct Http {
+    struct Http {
         public enum Capability {
             case function(Function)
             

@@ -40,7 +40,7 @@ class SNSViewController: BaseViewController {
     
     lazy var contactsSC: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Friends".localized, "Official Accounts".localized])
-        sc.setTitleTextAttributes([NSAttributedStringKey.font : UIFont.title],
+        sc.setTitleTextAttributes([.font : UIFont.title],
                                   for: .normal)
         sc.sizeToFit()
         sc.selectedSegmentIndex = 0
@@ -66,23 +66,21 @@ class SNSViewController: BaseViewController {
         tabBar.isTranslucent = true
         
         //查询当前指令而执行的操作
-        if let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            Event.Option.showMore == Event.option(action) {
+        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+            .showMore == option {
             tabBar.selectedItem = moreItem
             tabBar(tabBar, didSelect: moreItem)
-            Common.clearActionParams(Event.Option.showMore)
+            Common.clearActionParams(option: option)
         } else {
             tabBar.selectedItem = chatListItem
             tabBar(tabBar, didSelect: chatListItem)
         }
         
         //查询当前指令而执行的操作，加入状态机
-        if let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            let event = Event.option(action),
-            Event.Option.showProfile == event
-                || Event.Option.showSetting == event {
+        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+            .showProfile == option || .showSetting == option {
             DispatchQueue.main.async { [weak self] in
-                self?.stateMachine.append(option: event)
+                self?.stateMachine.append(option: option)
             }
         }
     }
@@ -152,11 +150,11 @@ class SNSViewController: BaseViewController {
     }
     
     func bringChildVC(toFront vc: UIViewController) {
-        vc.didMove(toParentViewController: self)
+        vc.didMove(toParent: self)
         vc.view.isUserInteractionEnabled = true
         currentChildVC?.view.removeFromSuperview()
-        currentChildVC?.willMove(toParentViewController: self)
-        currentChildVC?.removeFromParentViewController()
+        currentChildVC?.willMove(toParent: self)
+        currentChildVC?.removeFromParent()
         currentChildVC = vc
         childBackgroundView.addSubview(vc.view)
         updateChildViewFrame()
@@ -175,7 +173,7 @@ class SNSViewController: BaseViewController {
             findVC.deviceOrientationDidChange()
             if !(findVC.isTouched) {
                 findVC.isTouched = true
-                //self?.findVC.loadData(TableLoadData.new, progressType: .opaqueMask)
+                //self?.findVC.loadData(.new, progressType: .opaqueMask)
                 findVC.startRefreshNew()
             }
         } else if currentChildVC === moreVC {
@@ -202,14 +200,13 @@ class SNSViewController: BaseViewController {
     
     //在程序运行中收到指令，基本都可以通过走状态机实现
     @objc func newAction(_ notification: Notification) {
-        guard let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            let event = Event.option(action) else {
-                return
+        guard let option = Event.option(Common.currentActionParams?[ParamKey.action]) else {
+            return
         }
         
-        switch event {
-        case Event.Option.showMore, Event.Option.showProfile, Event.Option.showSetting:
-            stateMachine.append(option: event)
+        switch option {
+        case .showMore, .showProfile, .showSetting:
+            stateMachine.append(option: option)
         default:
             break
         }
@@ -218,8 +215,12 @@ class SNSViewController: BaseViewController {
     //MARK: - SRStateMachineDelegate
     
     override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
-        switch event {
-        case Event.Option.showMore:
+        guard let option = Event.Option(rawValue: event) else {
+            return
+        }
+        
+        switch option {
+        case .showMore:
             if !(isFront && moreVC === currentChildVC) {
                 Common.clearPops()
                 Common.clearModals(viewController: self)
@@ -227,17 +228,17 @@ class SNSViewController: BaseViewController {
                 tabBar.selectedItem = tabBar.items?[3]
                 bringChildVC(toFront: moreVC)
             }
-            Common.clearActionParams(event)
+            Common.clearActionParams(option: option)
             stateMachine.end(event)
             
-        case Event.Option.showProfile:
+        case .showProfile:
             let viewControllers = navigationController!.viewControllers
             let profileVCs = viewControllers.filter { $0.isKind(of: ProfileViewController.self) }
             if viewControllers.last!.isKind(of: ProfileViewController.self) { //当前页面是Profile页面
-                Common.clearActionParams(event)
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
-            } else if profileVCs.count > 0 { //Profile页面在当前页面之前
-                Common.clearActionParams(event)
+            } else if !profileVCs.isEmpty { //Profile页面在当前页面之前
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
                 Common.clearPops()
                 Common.clearModals(viewController: profileVCs.last!)
@@ -257,14 +258,14 @@ class SNSViewController: BaseViewController {
                 }
             }
             
-        case Event.Option.showSetting:
+        case .showSetting:
             let viewControllers = navigationController!.viewControllers
             let settingVCs = viewControllers.filter { $0 is SettingViewController }
             if viewControllers.last! is SettingViewController { //当前页面是Setting页面
-                Common.clearActionParams(event)
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
-            } else if settingVCs.count > 0 { //Setting页面在当前页面之前
-                Common.clearActionParams(event)
+            } else if !settingVCs.isEmpty { //Setting页面在当前页面之前
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
                 Common.clearPops()
                 Common.clearModals(viewController: settingVCs.last!)
@@ -292,7 +293,7 @@ class SNSViewController: BaseViewController {
     override func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) {
         super.stateMachine(stateMachine, didEnd: event)
         
-        if Event.Option.showProfile == event || Event.Option.showSetting == event {
+        if Event.Option.showProfile.rawValue == event || Event.Option.showSetting.rawValue == event {
             NotifyDefault.remove(self,
                                  name: Notification.Name.Base.didEndStateMachineEvent)
         }
@@ -344,17 +345,17 @@ extension SNSViewController: UITabBarDelegate {
             if newVC === chatListVC {
                 chatListVC.loadData()
             } else if newVC === findVC {
-                //findVC.loadData(TableLoadData.new, progressType: .clearMask)
+                //findVC.loadData(.new, progressType: .clearMask)
                 findVC.startRefreshNew()
             }
         } else if (newVC != nil) {
-            addChildViewController(newVC)
+            addChild(newVC)
             if let currentChildVC = currentChildVC {
                 currentChildVC.view.isUserInteractionEnabled = false
                 transition(from: currentChildVC,
                            to: newVC,
                            duration: 0,
-                           options: UIViewAnimationOptions(rawValue: 0),
+                           options: UIView.AnimationOptions(rawValue: 0),
                            animations: nil,
                            completion:
                     { (finished) in

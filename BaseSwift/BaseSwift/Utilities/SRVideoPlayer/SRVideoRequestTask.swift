@@ -84,7 +84,7 @@ class SRVideoRequestTask: NSObject, URLSessionDataDelegate {
         for fileName in subpaths! {
             var offset: UInt64 = 0
             var components = fileName.components(separatedBy: ".")
-            if components.count > 0 {
+            if !components.isEmpty {
                 components = components[0].components(separatedBy: "_")
                 if components.count > 1, let number = UInt64(components[1]) {
                     offset = number

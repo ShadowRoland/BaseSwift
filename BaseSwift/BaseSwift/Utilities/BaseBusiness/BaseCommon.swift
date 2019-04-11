@@ -35,66 +35,52 @@ open class BaseCommon: NSObject {
         return _devieModel!
     }
     
-    private static var _screenScale: ScreenScale = .none
-    
     @discardableResult
     open class func screenScale() -> ScreenScale {
-        if _screenScale == .none {
-            let size: CGSize = UIScreen.main.currentMode!.size
-            if UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.pad {
-                _screenScale = .iPad
-            } else if size.equalTo(CGSize(width: 640, height: 960)) {
-                _screenScale = .iPhone4
-            } else if size.equalTo(CGSize(width: 640, height: 1136)) {
-                _screenScale = .iPhone5
-            } else if size.equalTo(CGSize(width: 750, height: 1334)) {
-                _screenScale = .iPhone6
-            } else if size.equalTo(CGSize(width: 1242, height: 2208)) {
-                _screenScale = .iPhone6P
-            } else if size.equalTo(CGSize(width: 1125, height: 2436)) {
-                _screenScale = .iPhoneX
-                StatusBarHeight = 44.0
-                NavigationHeaderHeight = StatusBarHeight + NavigationBarHeight
-                TabBarHeight = 83.0
-                SafeInsetTop = 34.0
-                SafeInsetBottom = 34.0
-            } else {
-                _screenScale = .unknown
-            }
-            DispatchQueue.main.async {
-                LogInfo("Current screen size: \(size.width), \(size.height)")
-            }
+        if UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.pad {
+            return .iPad
         }
-        return _screenScale
+        
+        let size: CGSize = UIScreen.main.currentMode!.size
+        if size.equalTo(CGSize(width: 640, height: 960)) {
+            return .iPhone4
+        } else if size.equalTo(CGSize(width: 640, height: 1136)) {
+            return .iPhone5
+        } else if size.equalTo(CGSize(width: 750, height: 1334)) {
+            return .iPhone6
+        } else if size.equalTo(CGSize(width: 1242, height: 2208)) {
+            return .iPhone6P
+        } else if size.equalTo(CGSize(width: 1125, height: 2436)) {
+            StatusBarHeight = 44.0
+            NavigationHeaderHeight = StatusBarHeight + NavigationBarHeight
+            TabBarHeight = 83.0
+            SafeInsetTop = 34.0
+            SafeInsetBottom = 34.0
+            return .iPhoneX
+        } else {
+            return .unknown
+        }
     }
     
-    private static var screenPortraitSize: CGSize?
-    private static var screenLandscapeSize: CGSize?
-    
     open class func screenSize(_ interfaceOrientation: UIInterfaceOrientationMask = .portrait) -> CGSize {
-        if screenPortraitSize == nil {
-            let size: CGSize = (UIScreen.main.currentMode?.size)!
-            if size.width < size.height {
-                screenPortraitSize = CGSize(width: size.width / 2.0, height: size.height / 2.0)
-                screenLandscapeSize = CGSize(width: size.height / 2.0, height: size.width / 2.0)
-            } else {
-                screenPortraitSize = CGSize(width: size.height / 2.0, height: size.width / 2.0)
-                screenLandscapeSize = CGSize(width: size.width / 2.0, height: size.height / 2.0)
-            }
-        }
+        let size: CGSize = (UIScreen.main.currentMode?.size)!
         if interfaceOrientation == .portrait {
-            return screenPortraitSize!
+            return size.width < size.height
+                ? CGSize(size.width / 2.0, size.height / 2.0)
+                : CGSize(size.height / 2.0, size.width / 2.0);
         } else {
-            return screenLandscapeSize!
+            return size.width > size.height
+                ? CGSize(size.width / 2.0, size.height / 2.0)
+                : CGSize(size.height / 2.0, size.width / 2.0);
         }
     }
     
     //移动设备的唯一uuid，在登录时判断是否换移动设备
-    private static var _uuid: String?
+    private static var _uuid: String!
     
     open class func uuid() -> String {
         guard BaseCommon._uuid == nil else {
-            return BaseCommon._uuid!
+            return BaseCommon._uuid
         }
         
         let keychain = KeychainSwift()
@@ -208,7 +194,7 @@ open class BaseCommon: NSObject {
     
     //从iOS 10以后，取width和height时需要再加上ceil才准确
     open class func fitSize(_ text: String,
-                            attibutes: [NSAttributedStringKey : Any],
+                            attibutes: [NSAttributedString.Key : Any],
                             options: NSStringDrawingOptions? = nil,
                             maxWidth: CGFloat? = nil,
                             maxHeight: CGFloat? = nil) -> CGSize {
@@ -340,121 +326,57 @@ open class BaseCommon: NSObject {
             return nil
         }
         
-        var customView: UIView?
+        var item: UIBarButtonItem?
         switch style {
         case .text:
             guard  let title = setting[.title] as? String else {
-                break
+                return nil
             }
             
-            var width = Common.fitSize(title,
-                                       font: UIFont.text,
-                                       maxHeight: NavigartionBar.buttonItemHeight).width
-            width = min(width, ScreenWidth() / 2.0)
+            item = UIBarButtonItem(title: title, style: .plain, target: target, action: action)
+            var attributes : [NSAttributedString.Key : Any] =
+                [.font : UIFont.text, .foregroundColor : NavigartionBar.tintColor]
             
-            let button = UIButton(frame: CGRect(0, 0, width, NavigartionBar.buttonItemHeight))
-            button.title = title
             if let font = setting[.font] as? UIFont {
-                button.titleFont = font
-            } else {
-                button.titleFont = UIFont.text
+                attributes[.font] = font
             }
             if let textColor = setting[.textColor] as? UIColor {
-                button.titleColor = textColor
-            } else {
-                button.titleColor = NavigartionBar.tintColor
+                attributes[.foregroundColor] = textColor
             }
-            if let target = target, let action = action {
-                button.clicked(target, action: action)
-            }
-            if let tag = tag {
-                button.tag = tag
-            }
-            customView = button
+            
+            item?.setTitleTextAttributes(attributes, for: .normal)
             
         case .image:
             guard let normal = setting[.image] as? UIImage,
                 normal.size.width > 0 && normal.size.height > 0 else {
-                    break
+                    return nil
             }
             
-            let height = NavigartionBar.buttonItemHeight
-            let button = UIButton(frame: CGRect(0,
-                                                0,
-                                                height * normal.size.height / normal.size.width,
-                                                height))
-            button.image = normal
-            
-            if let highlighted = setting[.highlightedImage] as? UIImage {
-                button.setImage(highlighted, for: .highlighted)
-            }
-            
-            if let target = target, let action = action {
-                button.clicked(target, action: action)
-            }
+            let item = UIBarButtonItem(image: normal, style: .plain, target: target, action: action)
             if let tag = tag {
-                button.tag = tag
-            }
-            customView = button
-            
-        case .textAndImage:
-            guard let title = setting[.title] as? String,
-                let normal = setting[.backgroundImage] as? UIImage,
-                normal.size.width > 0 && normal.size.height > 0 else {
-                    break
+                item.tag = tag
             }
             
-            let height = NavigartionBar.buttonItemHeight
-            var titleWidth = Common.fitSize(title, font: UIFont.text, maxHeight:height).width
-            titleWidth = min(titleWidth, ScreenWidth() / 2.0)
-            let imageWidth = height * normal.size.height / normal.size.width
-            let width = max(titleWidth, imageWidth)
-            
-            let button = UIButton(frame: CGRect(0, 0, width, height))
-            button.title = title
-            if let font = setting[.font] as? UIFont {
-                button.titleFont = font
-            } else {
-                button.titleFont = UIFont.text
-            }
-            if let textColor = setting[.textColor] as? UIColor {
-                button.titleColor = textColor
-            } else {
-                button.titleColor = NavigartionBar.tintColor
-            }
-            if let target = target, let action = action {
-                button.clicked(target, action: action)
-            }
-            if let tag = tag {
-                button.tag = tag
-            }
-            button.backgroundImage = normal
-            if let highlighted = setting[.highlightedBackgroundImage] as? UIImage {
-                button.setBackgroundImage(highlighted, for: .highlighted)
-            }
-            customView = button
+            return item
             
         case .custom:
             guard let view = setting[.customView] as? UIView else {
                 break
             }
             
-            let width = view.width
-            let height = view.height
-            if width == 0 || height == 0 { break }
-            view.frame = CGRect(0,
-                                0,
-                                NavigartionBar.buttonItemHeight * height / width,
-                                NavigartionBar.buttonItemHeight)
+            let gestureRecognizers = view.gestureRecognizers
+            gestureRecognizers?.forEach { view.removeGestureRecognizer($0) }
+            view.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
+            item = UIBarButtonItem(customView: view)
             
         default: break
         }
         
-        if let customView = customView {
-            return UIBarButtonItem(customView: customView)
+        if let tag = tag {
+            item?.tag = tag
         }
         
-        return nil
+        return item
     }
     
     //MARK: - ViewController
@@ -468,9 +390,9 @@ open class BaseCommon: NSObject {
     
     open class func frontVC() -> UIViewController? {
         var window = UIApplication.shared.keyWindow
-        if window != nil && window!.windowLevel != UIWindowLevelNormal {
+        if window != nil && window!.windowLevel != .normal {
             if let normalWindow = UIApplication.shared.windows.first(where: {
-                $0.windowLevel == UIWindowLevelNormal
+                $0.windowLevel == .normal
             }) {
                 window = normalWindow
             }
@@ -489,7 +411,7 @@ open class BaseCommon: NSObject {
     open class func submitButton(_ title: String,
                                  normalColor: UIColor? = nil,
                                  highlightedColor: UIColor? = nil) ->UIButton {
-        let button = UIButton(type: UIButtonType.custom)
+        let button = UIButton(type: .custom)
         button.frame = SubmitButton.frame
         button.layer.cornerRadius = SubmitButton.cornerRadius
         button.clipsToBounds = true

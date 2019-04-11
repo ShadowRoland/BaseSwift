@@ -142,32 +142,32 @@ public final class SRKeyboardManager: NSObject {
             //Registering for textField notification.
             center.addObserver(self,
                                selector: #selector(textFieldViewDidBeginEditing(_:)),
-                               name: .UITextViewTextDidBeginEditing,
+                               name: UITextView.textDidBeginEditingNotification,
                                object: nil)
             center.addObserver(self,
                                selector: #selector(textFieldViewDidEndEditing(_:)),
-                               name: .UITextViewTextDidEndEditing,
+                               name: UITextView.textDidEndEditingNotification,
                                object: nil)
             center.addObserver(self,
                                selector: #selector(textFieldViewDidBeginEditing(_:)),
-                               name: .UITextFieldTextDidBeginEditing,
+                               name: UITextField.textDidBeginEditingNotification,
                                object: nil)
             center.addObserver(self,
                                selector: #selector(textFieldViewDidEndEditing(_:)),
-                               name: .UITextFieldTextDidEndEditing,
+                               name: UITextField.textDidEndEditingNotification,
                                object: nil)
         } else {
             center.removeObserver(self,
-                                  name: .UITextViewTextDidBeginEditing,
+                                  name: UITextView.textDidBeginEditingNotification,
                                   object: nil)
             center.removeObserver(self,
-                                  name: .UITextViewTextDidEndEditing,
+                                  name: UITextView.textDidEndEditingNotification,
                                   object: nil)
             center.removeObserver(self,
-                                  name: .UITextFieldTextDidBeginEditing,
+                                  name: UITextField.textDidBeginEditingNotification,
                                   object: nil)
             center.removeObserver(self,
-                                  name: .UITextFieldTextDidEndEditing,
+                                  name: UITextField.textDidEndEditingNotification,
                                   object: nil)
         }
     }

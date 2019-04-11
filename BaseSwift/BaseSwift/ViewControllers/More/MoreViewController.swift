@@ -12,10 +12,10 @@ import MJRefresh
 import BarrageRenderer
 
 class MoreViewController: BaseViewController {
-    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
-    var lastSection = IntegerInvalid
-    var lastSectionWillAdd = IntegerInvalid
-    var lastRow = IntegerInvalid
+    lazy var indexPathSet: SRIndexPath.Set = SRIndexPath.Set()
+    var lastSection = -1
+    var lastSectionWillAdd = -1
+    var lastRow = -1
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -57,10 +57,10 @@ class MoreViewController: BaseViewController {
         
         NotifyDefault.add(self,
                           selector: #selector(getProfile),
-                          name: Notification.Name.This.refreshProfile)
+                          name: Configs.refreshProfileNotification)
         NotifyDefault.add(self,
                           selector: #selector(reloadProfile),
-                          name: Notification.Name.This.reloadProfile)
+                          name: Configs.reloadProfileNotification)
         updateCellHeight()
         initView()
     }
@@ -108,7 +108,7 @@ class MoreViewController: BaseViewController {
     
     func initSections() {
         indexPathSet.removeAll()
-        lastSection = IntegerInvalid
+        lastSection = -1
         initSection1()
         initSection2()
         initSection3()
@@ -116,7 +116,7 @@ class MoreViewController: BaseViewController {
     
     func initSection1() {
         lastSection = lastSectionWillAdd
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         item(huangLiCell)
         item(qiuQianCell)
@@ -127,7 +127,7 @@ class MoreViewController: BaseViewController {
     
     func initSection2() {
         lastSection = lastSectionWillAdd
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         item(danMuCell)
         item(youXiCell)
@@ -135,14 +135,14 @@ class MoreViewController: BaseViewController {
     
     func initSection3() {
         lastSection = lastSectionWillAdd
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         item(settingCell)
     }
     
     @discardableResult
-    func item(_ cell: UITableViewCell) -> SRIndexPathTable? {
-        let item = SRIndexPathTable()
+    func item(_ cell: UITableViewCell) -> SRIndexPath.Table? {
+        let item = SRIndexPath.Table()
         item.cell = cell
         lastSectionWillAdd = lastSection + 1 //确保section会自增
         lastRow += 1
@@ -179,11 +179,11 @@ class MoreViewController: BaseViewController {
     @objc func reloadProfile() {
         if let profile = Common.currentProfile(), profile.isLogin {
             headPortraitImageView.sd_setImage(with: URL(string: NonNull.string(profile.headPortrait)),
-                                              placeholderImage: Resource.defaultHeadPortrait(.normal))
+                                              placeholderImage: Configs.Resource.defaultHeadPortrait(.normal))
             nameLabel.text = profile.name?.fullName
             userNameLabel.text = profile.userName
         } else {
-            headPortraitImageView.image = Resource.defaultHeadPortrait(.normal)
+            headPortraitImageView.image = Configs.Resource.defaultHeadPortrait(.normal)
             nameLabel.text = "Click Login".localized
             userNameLabel.text = "More money, more power".localized
         }
@@ -255,7 +255,7 @@ class MoreViewController: BaseViewController {
                             let text = String(data: data, encoding: String.Encoding(rawValue: encoding))
                             print("stockListResponse:\n\(text ?? EmptyString)")
                             if let components = text?.components(separatedBy: "\""),
-                                components.count > 0,
+                                !components.isEmpty,
                                 let stockName = components[1].components(separatedBy: ",").first,
                                 !stockName.isEmpty {
                                 self?.stockName = stockName
@@ -384,7 +384,7 @@ class MoreViewController: BaseViewController {
             var value: Any?
             descriptor.params["text"] = NonNull.string(barrage["text"])
             if barrage.jsonValue("textColor", type: .string, outValue: &value) {
-                descriptor.params["textColor"] = UIColor(hex: value as! String)
+                descriptor.params["textColor"] = (value as! String).color
             } else {
                 descriptor.params["textColor"] = UIColor.white
                 //descriptor.params["shadowColor"] = UIColor.black
@@ -485,8 +485,8 @@ extension MoreViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        if string.length > 0 {
-            return string.regex(Regex.number) //Stock
+        if !string.isEmpty {
+            return string.regex(String.Regex.number) //Stock
         }
         return true
     }
@@ -523,7 +523,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let item = indexPathSet[indexPath] as? SRIndexPathTable,
+        if let item = indexPathSet[indexPath] as? SRIndexPath.Table,
             let cell = item.cell {
             return cell
         }

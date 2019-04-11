@@ -17,17 +17,17 @@ class ProfileDetailForm: ProfileForm {
     var isShowSelectAll = true //在可多选的情况下是否显示全选的选项
 }
 
-extension SRIndexPathConfigKey {
-    public static let isMultiple: SRIndexPathConfigKey = SRIndexPathConfigKey("isMultiple")
-    public static let isShowSelectAll: SRIndexPathConfigKey = SRIndexPathConfigKey("isShowSelectAll")
+extension SRIndexPath.AttributedString.Key {
+    public static let isMultiple: SRIndexPath.AttributedString.Key = SRIndexPath.AttributedString.Key("isMultiple")
+    public static let isShowSelectAll: SRIndexPath.AttributedString.Key = SRIndexPath.AttributedString.Key("isShowSelectAll")
 }
 
 class ProfileDetailViewController: BaseViewController {
     var isFirstDidLoadSuccess = false //第一次加载已成功
-    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
-    var lastSection = IntegerInvalid
-    var lastSectionWillAdd = IntegerInvalid
-    var lastRow = IntegerInvalid
+    lazy var indexPathSet: SRIndexPath.Set = SRIndexPath.Set()
+    var lastSection = -1
+    var lastSectionWillAdd = -1
+    var lastRow = -1
     weak var currentItem: ProfileDetailForm?
     
     lazy var profile: ParamDictionary = EmptyParams()
@@ -177,7 +177,7 @@ class ProfileDetailViewController: BaseViewController {
     
     func initSections() {
         indexPathSet.removeAll()
-        lastSection = IntegerInvalid
+        lastSection = -1
         initBaseSection()
         initProfileSection()
         updateItemsByGender()
@@ -213,7 +213,7 @@ class ProfileDetailViewController: BaseViewController {
     
     func initBaseSection() {
         lastSectionWillAdd = lastSection
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         if let item = item(headPortraitCell,
                            config: [.height : Const.headPortraitCellHeight,
@@ -221,7 +221,7 @@ class ProfileDetailViewController: BaseViewController {
                                     .isIgnoreParamValue : true]) {
             let url = URL(string: item.value as? String ?? EmptyString)
             headPortraitImageView.sd_setImage(with: url,
-                                              placeholderImage: Resource.defaultImage(.normal))
+                                              placeholderImage: Configs.Resource.defaultImage(.normal))
             headPortraitImageView.isUserInteractionEnabled = isEditingProfile
             headPortraitURL = url
             headPortraitTrailingConstraint.constant = 0
@@ -276,7 +276,7 @@ class ProfileDetailViewController: BaseViewController {
     
     func initProfileSection() {
         lastSectionWillAdd = lastSection
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         if let item = item(genderCell,
                            config: [.paramKey : ParamKey.gender,
@@ -361,7 +361,7 @@ class ProfileDetailViewController: BaseViewController {
                            config: [.paramKey : ParamKey.height,
                                     .paramValueType : JsonValueType.number.rawValue,
                                     .inputRegex : floatRegex,
-                                    .textRegex : Regex.uNumberValue,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .isRequired : true,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
@@ -370,17 +370,17 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
                 
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
         }
         
         if let item = item(weightCell,
                            config: [.paramKey : ParamKey.weight,
                                     .paramValueType : JsonValueType.number.rawValue,
                                     .inputRegex : floatRegex,
-                                    .textRegex : Regex.uNumberValue,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
                 item.inputText = EmptyString
@@ -388,16 +388,16 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Unit.kilogram)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.kilogram)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.kilogram)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.kilogram)
         }
         
         if let item = item(dickLengthCell,
                            config: [.paramKey : ParamKey.dickLength,
                                     .paramValueType : JsonValueType.number.rawValue,
                                     .inputRegex : floatRegex,
-                                    .textRegex : Regex.uNumberValue,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
                 item.inputText = EmptyString
@@ -405,16 +405,16 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
         }
         
         if let item = item(fuckDurationCell,
                            config: [.paramKey : ParamKey.fuckDuration,
                                     .paramValueType : JsonValueType.number.rawValue,
-                                    .inputRegex : Regex.number,
-                                    .textRegex : Regex.uNumberValue,
+                                    .inputRegex : String.Regex.number,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
                 item.inputText = EmptyString
@@ -422,16 +422,16 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Unit.minute)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.minute)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.minute)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.minute)
         }
         
         if let item = item(houseAreaCell,
                            config: [.paramKey : ParamKey.houseArea,
                                     .paramValueType : JsonValueType.number.rawValue,
                                     .inputRegex : floatRegex,
-                                    .textRegex : Regex.uNumberValue,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
                 item.inputText = EmptyString
@@ -439,16 +439,16 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Unit.squareMeter)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.squareMeter)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.squareMeter)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.squareMeter)
         }
         
         if let item = item(bustCell,
                            config: [.paramKey : ParamKey.bust,
                                     .paramValueType : JsonValueType.number.rawValue,
                                     .inputRegex : floatRegex,
-                                    .textRegex : Regex.uNumberValue,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
                 item.inputText = EmptyString
@@ -456,16 +456,16 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
         }
         
         if let item = item(waistlineCell,
                            config: [.paramKey : ParamKey.waistline,
                                     .paramValueType : JsonValueType.number.rawValue,
                                     .inputRegex : floatRegex,
-                                    .textRegex : Regex.uNumberValue,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
                 item.inputText = EmptyString
@@ -473,16 +473,16 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
         }
         
         if let item = item(hiplineCell,
                            config: [.paramKey : ParamKey.hipline,
                                     .paramValueType : JsonValueType.number.rawValue,
                                     .inputRegex : floatRegex,
-                                    .textRegex : Regex.uNumberValue,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
                 item.inputText = EmptyString
@@ -490,16 +490,16 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
         }
         
         if let item = item(annualIncomeCell,
                            config: [.paramKey : ParamKey.annualIncome,
                                     .paramValueType : JsonValueType.number.rawValue,
-                                    .inputRegex : Regex.number,
-                                    .textRegex : Regex.uNumberValue,
+                                    .inputRegex : String.Regex.number,
+                                    .textRegex : String.Regex.uNumberValue,
                                     .textMaxLength : 11,
                                     .isIgnoreParamValue : isEditingProfile]) {
             if !NonNull.check(item.value) {
@@ -511,7 +511,7 @@ class ProfileDetailViewController: BaseViewController {
                 item.inputTextView?.setProperty(.text,
                                                 value: item.inputText.tenThousands(number.uintValue))
             }
-            item.inputTextView?.setProperty(.placeholder, value: Unit.yuan)
+            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.yuan)
         }
         
         lastSection = lastSectionWillAdd
@@ -519,7 +519,7 @@ class ProfileDetailViewController: BaseViewController {
     
     func initExtraSection() {
         lastSectionWillAdd = lastSection
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         if let _ = item(sexualOrientationCell,
                         config: [.paramKey : ParamKey.sexualOrientation,
@@ -583,7 +583,7 @@ class ProfileDetailViewController: BaseViewController {
     
     //在获取了基本的item后可以做一些adapter的工作
     func item(_ cell: UITableViewCell,
-              config: [SRIndexPathConfigKey : Any] = [:]) -> ProfileDetailForm? {
+              config: [SRIndexPath.AttributedString.Key : Any] = [:]) -> ProfileDetailForm? {
         var paramValueType: JsonValueType = .string
         if let intValue = config[.paramValueType] as? Int,
             let enumInt = JsonValueType(rawValue: intValue) {
@@ -702,7 +702,7 @@ class ProfileDetailViewController: BaseViewController {
             textField.textAlignment = .right
             NotifyDefault.add(self,
                               selector: #selector(textFieldEditingChanged(_:)),
-                              name: .UITextFieldTextDidChange,
+                              name: UIResponder.keyboardWillChangeFrameNotification,
                               object: textField)
             if config.jsonValue(configKey: .placeholder, type: .string, outValue: &value),
                 NonNull.check(value) {
@@ -712,7 +712,7 @@ class ProfileDetailViewController: BaseViewController {
             textView.delegate = self
             NotifyDefault.add(self,
                               selector: #selector(textViewEditingChanged(_:)),
-                              name: .UITextFieldTextDidChange,
+                              name: UIResponder.keyboardWillChangeFrameNotification,
                               object: textView)
         }
         
@@ -937,7 +937,7 @@ class ProfileDetailViewController: BaseViewController {
                 if item.cell === transvestismCell {
                     if let enumInt = item.value as? EnumInt {
                         item.value = enumInt == IntForBool.True.rawValue
-                    } else if let array = item.value as? [EnumInt], array.count > 0 {
+                    } else if let array = item.value as? [EnumInt], !array.isEmpty {
                         item.value = array.first! == IntForBool.True.rawValue
                     } else {
                         item.value = nil
@@ -1036,7 +1036,7 @@ class ProfileDetailViewController: BaseViewController {
             let item = currentItem
             //adapter
             if item.cell === strongSelf.genderCell {
-                item.value = array.count == 0 ? NSNull() : array.first
+                item.value = array.isEmpty ? NSNull() : array.first
                 strongSelf.updateItemsByGender()
                 DispatchQueue.main.async { [weak self] in
                     guard let strongSelf = self else { return }
@@ -1109,7 +1109,7 @@ class ProfileDetailViewController: BaseViewController {
                 names.append(region)
             }
             let divisions = Division.divisions(names: names)
-            divisionPicker.currentDivisions = divisions.count != 0 ? divisions : Division.default
+            divisionPicker.currentDivisions = !divisions.isEmpty ? divisions : Division.default
             self?.pickerView = divisionPicker
             divisionPicker.show()
         }
@@ -1189,7 +1189,7 @@ class ProfileDetailViewController: BaseViewController {
             var array = [] as [String]
             cookie.components(separatedBy: ";").forEach {
                 let components = $0.components(separatedBy: "=")
-                if components.count > 0 {
+                if !components.isEmpty {
                     let first = components.first!
                     if "cpid" == first || "salt" == first {
                         array.append($0)
@@ -1222,7 +1222,7 @@ class ProfileDetailViewController: BaseViewController {
         httpRequest(.post(.faceImageAnalyze),
                     ["MsgId" : String(long: CLong(Date().timeIntervalSince1970)) + "063",
                      "CreateTime" : String(long: CLong(Date().timeIntervalSince1970)),
-                     "Content[imageUrl]" : faceImageUrl],
+                     "Content[imageUrl]" : faceImageUrl as Any],
                     url: "http://kan.msxiaobing.com/Api",
                     encoding: URLEncoding.default,
                     headers: ["Referer" : "https://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi",
@@ -1405,7 +1405,7 @@ class ProfileDetailViewController: BaseViewController {
             if let text = textField.text,
                 position == nil
                     && textMaxLength > 0
-                    && text.length > textMaxLength {
+                    && text.count > textMaxLength {
                 textField.text = text.substring(from: 0, length: textMaxLength)
             }
         } else { // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
@@ -1434,7 +1434,7 @@ class ProfileDetailViewController: BaseViewController {
             if let text = textView.text,
                 position == nil
                     && textMaxLength > 0
-                    && text.length > textMaxLength {
+                    && text.count > textMaxLength {
                 textView.text = text.substring(from: 0, length: textMaxLength)
             }
         } else { // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
@@ -1485,7 +1485,7 @@ class ProfileDetailViewController: BaseViewController {
         let item = indexPathSet[headPortraitCell] as! ProfileDetailForm
         let url = URL(string: item.value as? String ?? EmptyString)
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Resource.defaultImage(.normal))
+                                          placeholderImage: Configs.Resource.defaultImage(.normal))
         headPortraitURL = url
         headPortraitTrailingConstraint.constant = 0
         cleanHeadPortraitButton.isHidden = true
@@ -1519,14 +1519,13 @@ class ProfileDetailViewController: BaseViewController {
 //MARK: - UIImagePickerControllerDelegate
 
 extension ProfileDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [String : Any]) {
-        let image = info[UIImagePickerControllerEditedImage] as! UIImage //获取裁剪过的图像
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let image = info[.editedImage] as! UIImage //获取裁剪过的图像
         if headPortraitCell == currentItem?.cell {
             let size = Const.headPortraitSize
             let cropImage = image.cropped(size.width / size.height) //继续按定制比例裁剪
             let resizedImage = cropImage.resized(size) //再按尺寸缩放
-            let data = UIImagePNGRepresentation(resizedImage)
+            let data = resizedImage.pngData()
             let directory = Common.currentProfile()!.directory(.upload)!
             let filePath = directory.appending(pathComponent: Const.editedHeadPortraitFileName)
             let url = URL(fileURLWithPath: filePath) //保存到缓存图片
@@ -1538,9 +1537,9 @@ extension ProfileDetailViewController: UIImagePickerControllerDelegate, UINaviga
                 })
                 return
             }
-            SDImageCache.shared().removeImage(forKey: url.absoluteString) //删除缓存中的图片再刷新图片
+            SDImageCache.shared.removeImage(forKey: url.absoluteString) //删除缓存中的图片再刷新图片
             headPortraitImageView.sd_setImage(with: url,
-                                              placeholderImage: Resource.defaultImage(.normal))
+                                              placeholderImage: Configs.Resource.defaultImage(.normal))
             headPortraitURL = url
             headPortraitTrailingConstraint.constant = headPortraitTopConstraint.constant
             cleanHeadPortraitButton.isHidden = false
@@ -1624,7 +1623,7 @@ extension ProfileDetailViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        if string.length > 0 {
+        if !string.isEmpty {
             if let currentItem = currentItem, !Common.isEmptyString(currentItem.inputRegex) {
                 return string.regex(currentItem.inputRegex!)
             }
@@ -1672,7 +1671,7 @@ extension ProfileDetailViewController: UITextViewDelegate {
     func textView(_ textView: UITextView,
                   shouldChangeTextIn range: NSRange,
                   replacementText text: String) -> Bool {
-        if text.length > 0 {
+        if !text.isEmpty {
             if let currentItem = currentItem, !Common.isEmptyString(currentItem.inputRegex) {
                 return text.regex(currentItem.inputRegex!)
             }

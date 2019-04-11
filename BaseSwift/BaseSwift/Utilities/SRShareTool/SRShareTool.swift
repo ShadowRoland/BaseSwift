@@ -125,7 +125,7 @@ public class SRShareTool: UIViewController {
     public func show() {
         NotifyDefault.add(self,
                           selector: #selector(SRShareTool.deviceOrientationDidChange(_:) as (SRShareTool) -> (AnyObject?) -> ()),
-                          name: .UIDeviceOrientationDidChange)
+                          name: UIDevice.orientationDidChangeNotification)
         UIApplication.shared.keyWindow!.addSubview(view)
         orientation = UIDevice.current.orientation
         reloadData()
@@ -272,8 +272,7 @@ public class SRShareTool: UIViewController {
     func initView() {
         initConstVariable()
         
-        view.autoresizingMask =
-            [UIViewAutoresizing.flexibleHeight, UIViewAutoresizing.flexibleWidth]
+        view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         view.backgroundColor = MaskBackgroundColor
         
         contentView.backgroundColor = UIColor(white: 1.0, alpha: 0.8)
@@ -318,7 +317,7 @@ public class SRShareTool: UIViewController {
         var types: [SRShareTool.CellType]!
         if let delegate = delegate,
             let delegateTypes = delegate.shareTool(types: self),
-            delegateTypes.count > 0 {
+            !delegateTypes.isEmpty {
             types = delegateTypes
         } else {
             types = defaultDelegate.shareTool(types: self)!
@@ -339,7 +338,7 @@ public class SRShareTool: UIViewController {
         let toolCells = cells(types: toolTypes)
         let shareCells = cells(types: shareTypes)
         
-        let isPortrait = UIInterfaceOrientationIsPortrait(UIApplication.shared.statusBarOrientation)
+        let isPortrait = UIApplication.shared.statusBarOrientation.isPortrait
         let screenWidth = isPortrait ? Const.screenWidth : Const.screenHeight
         let screenHeight = isPortrait ? Const.screenHeight : Const.screenWidth
         let cellMargin = isPortrait ? Const.cellMarginPortrait : Const.cellMarginLandscape
@@ -347,7 +346,7 @@ public class SRShareTool: UIViewController {
         var originY = Const.subviewMargin
         var subviews = toolScrollView.subviews
         subviews.forEach{ $0.removeFromSuperview() }
-        if toolCells.count > 0 {
+        if !toolCells.isEmpty {
             toolScrollView.frame = CGRect(0, originY, screenWidth, Const.cellHeight)
             contentView.addSubview(toolScrollView)
             layout(scrollView: toolScrollView, cells: cells, cellMargin: cellMargin)
@@ -358,7 +357,7 @@ public class SRShareTool: UIViewController {
         
         subviews = shareScrollView.subviews
         subviews.forEach{ $0.removeFromSuperview() }
-        if shareCells.count > 0 {
+        if !shareCells.isEmpty {
             shareSectionLabel.frame = CGRect(Const.subviewMargin,
                                              originY,
                                              screenWidth - 2.0 * Const.subviewMargin,

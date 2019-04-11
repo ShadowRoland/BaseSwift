@@ -11,7 +11,7 @@ import MJRefresh
 import SDWebImage
 
 protocol NewsListDelegate: class {
-    func getNewsList(_ loadType: String?, sendVC: NewsListViewController)
+    func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController)
     func newsListVC(_ newsListVC: NewsListViewController, didSelect model: SinaNewsModel)
 }
 
@@ -67,11 +67,11 @@ class NewsListViewController: BaseViewController {
         
         //Refresh header & footer
         tableView.mj_header = SRMJRefreshHeader(refreshingBlock: { [weak self] in
-            self?.loadData(TableLoadData.new, progressType: .none)
+            self?.loadData(.new, progressType: .none)
         })
         tableView.mj_header.endRefreshing()
         tableView.mj_footer = MJRefreshAutoNormalFooter(refreshingBlock: { [weak self] in
-            self?.loadData(TableLoadData.more, progressType: .none)
+            self?.loadData(.more, progressType: .none)
         })
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -85,7 +85,8 @@ class NewsListViewController: BaseViewController {
     
     //MARK: - 业务处理
     
-    func loadData(_ loadType: String, progressType: TableLoadData.ProgressType) {
+    func loadData(_ loadType: TableLoadData.Page,
+                  progressType: TableLoadData.ProgressType) {
         isTouched = true
         switch progressType {
         case .clearMask:
@@ -109,7 +110,7 @@ class NewsListViewController: BaseViewController {
         }
         
         dataArray = NonNull.array(dictionary[HttpKey.Response.data]) as! [SinaNewsModel]
-        guard dataArray.count > 0 else { //没有数据
+        guard !dataArray.isEmpty else { //没有数据
             showNoDataView()
             return
         }
@@ -117,7 +118,7 @@ class NewsListViewController: BaseViewController {
         tableView.tableHeaderView = nil
         
         tableView.mj_footer.isHidden = false
-        if dataArray.count < ParamDefaultValue.limit { //若加载的数据小于一页的数据，表示已经全部加载完毕
+        if dataArray.isEmpty {
             tableView.mj_footer.endRefreshingWithNoMoreData()
         } else {
             tableView.mj_footer.resetNoMoreData()
@@ -143,7 +144,7 @@ class NewsListViewController: BaseViewController {
         }
         
         let list = NonNull.array(dictionary[HttpKey.Response.data]) as! [SinaNewsModel]
-        if list.count < ParamDefaultValue.limit { //小于一页的数据
+        if list.isEmpty {
             tableView.mj_footer.endRefreshingWithNoMoreData()
         } else {
             tableView.mj_footer.endRefreshing()
@@ -202,7 +203,7 @@ class NewsListViewController: BaseViewController {
     //MARK: - LoadDataStateDelegate
     
     override func retryLoadData() {
-        loadData(TableLoadData.new, progressType: .opaqueMask)
+        loadData(.new, progressType: .opaqueMask)
     }
 }
 
@@ -262,4 +263,8 @@ extension NewsListViewController: UITableViewDelegate, UITableViewDataSource {
             backToTopButton.isHidden = true
         }
     }
+}
+
+func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController) {
+    
 }

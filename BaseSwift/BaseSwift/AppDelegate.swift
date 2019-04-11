@@ -18,8 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     //MARK: - UIApplicationDelegate
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions
-        launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         // Override point for customization after application launch.
         print(try! String(contentsOfFile: ResourceDirectory.appending(pathComponent: "welcome.txt"),
                           encoding: String.Encoding.utf8))
@@ -75,7 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         registerForRemoteNotifications()
         
         //其他程序调起程序添加了启动参数，
-        if let url = launchOptions?[UIApplicationLaunchOptionsKey.url] as? URL {
+        if let url = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL {
             let _ = self.application(application, handleOpen: url)
         } else if let options = launchOptions {
             self.application(application, handleOptions: options)
@@ -153,7 +152,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //called by spotlight, universal link
     func application(_ application: UIApplication,
                      continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
             let url = userActivity.webpageURL {
             restorationHandler(nil)
@@ -165,9 +164,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //called by third application
     func application(_ app: UIApplication,
                      open url: URL,
-                     options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+                     options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         if let sourceApplication =
-            options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String {
+            options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String {
             LogInfo("called by \(sourceApplication)")
         }
         return application(app, handleOpen: url)
@@ -188,7 +187,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         LogInfo("\(#function), url: \(url.absoluteString)")
         
         //调用本应用
-        if Scheme.base == url.scheme || Scheme.base2 == url.scheme {
+        if Configs.Scheme.base == url.scheme || Configs.Scheme.base2 == url.scheme {
             self.application(application, handleOptions: url.queryDictionary)
             return true
         }
@@ -241,12 +240,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      *  alert为苹果推送自带的推送文字参数
      */
     func application(_ application: UIApplication, handleOptions options: [AnyHashable : Any]) {
-        guard let action = options[ParamKey.action] as? String,
-            Action.more == action
-                || Action.profile == action
-                || Action.setting == action
-                || Action.openWebpage == action else {
-                    return
+        guard Event.option(options[ParamKey.action] as? String) != nil else {
+            return
         }
         
         self.options = options
@@ -277,11 +272,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func handleOptions() {
         Common.updateActionParams(self.options as? ParamDictionary)
-        if let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            Event.Option.openWebpage == Event.option(action) {
-            let rootVC = Common.rootVC
-            let vc = rootVC?.navigationController?.topViewController as? BaseViewController
-            vc?.stateMachine.append(option: Event.Option.openWebpage)
+        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+            .openWebpage == option {
+            let vc = Common.rootVC?.navigationController?.topViewController as? BaseViewController
+            vc?.stateMachine.append(option: option)
             return
         }
         
@@ -318,7 +312,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //日志系统初始化
     func initLogger() {
         if RunInEnvironment == .production {
-            CocoaLumberjack.defaultDebugLevel = .info
+            CocoaLumberjack.dynamicLogLevel = .info
         }
         DDLog.add(DDASLLogger.sharedInstance)
         
@@ -359,26 +353,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                       localizedTitle: "More".localized,
                                       localizedSubtitle: nil,
                                       icon: nil,
-                                      userInfo: [ParamKey.action : Action.more])
+                                      userInfo: [ParamKey.action : Event.Action.more.rawValue as NSSecureCoding])
         let profileItem =
             UIApplicationShortcutItem(type: "Profile".localized,
                                       localizedTitle: "Profile".localized,
                                       localizedSubtitle: "Please Login".localized,
                                       icon: UIApplicationShortcutIcon(type: .contact),
-                                      userInfo: [ParamKey.action : Action.profile])
+                                      userInfo: [ParamKey.action : Event.Action.profile.rawValue as NSSecureCoding])
         let settingItem =
             UIApplicationShortcutItem(type: "Setting".localized,
                                       localizedTitle: "Setting".localized,
                                       localizedSubtitle: nil,
                                       icon: UIApplicationShortcutIcon(templateImageName: "settings"),
-                                      userInfo: [ParamKey.action : Action.setting])
+                                      userInfo: [ParamKey.action : Event.Action.setting.rawValue as NSSecureCoding])
         let openWebpageItem =
             UIApplicationShortcutItem(type: "Open webpage".localized,
                                       localizedTitle: "Open webpage".localized,
                                       localizedSubtitle: "Death is a surprise party".localized,
                                       icon: UIApplicationShortcutIcon(type: .bookmark),
-                                      userInfo: [ParamKey.action : Action.openWebpage,
-                                                 ParamKey.url : "http://www.gzbz.com.cn/dead_men/"])
+                                      userInfo: [ParamKey.action : Event.Action.openWebpage.rawValue as NSSecureCoding,
+                                                 ParamKey.url : "http://www.gzbz.com.cn/dead_men/" as NSSecureCoding])
         UIApplication.shared.shortcutItems = [moreItem,
                                               profileItem,
                                               settingItem,
@@ -386,7 +380,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func createSlideMenu() {
-        Entrance = .aggregation
+        Configs.entrance = .aggregation
         
         SlideMenuOptions.leftViewWidth = 240.0
         let mainMenuVC = Common.viewController("MainMenuViewController", storyboard: "Aggregation")

@@ -41,12 +41,12 @@ public class SRStateMachine: NSObject {
         idleState = TKState(name: "idle")
         busyState = TKState(name: "busy")
         resetEvent = TKEvent(name: "reset", transitioningFromStates: nil, to: idleState)
-        watingEvent = TKEvent(name: "wating", transitioningFromStates: [idleState], to: busyState)
+        watingEvent = TKEvent(name: "wating", transitioningFromStates: [idleState as Any], to: busyState)
         currentEndEvent =
-            TKEvent(name: "currentEnd", transitioningFromStates: [busyState], to: idleState)
+            TKEvent(name: "currentEnd", transitioningFromStates: [busyState as Any], to: idleState)
         
         idleState.setDidEnter { [weak self] (state, transition) in
-            guard let strongSelf = self, strongSelf.events.count > 0 else { return }
+            guard let strongSelf = self, !strongSelf.events.isEmpty else { return }
             try! strongSelf.stateMachine.fireEvent(strongSelf.watingEvent, userInfo: nil)
         }
         
@@ -92,7 +92,7 @@ public class SRStateMachine: NSObject {
     
     func remove(_ event: Int) {
         objc_sync_enter(events)
-        if let index = events.index(of: event) {
+        if let index = events.firstIndex(of: event) {
             events.remove(at: index)
         }
         objc_sync_exit(events)

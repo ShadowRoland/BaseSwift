@@ -55,7 +55,7 @@ class SimpleTableViewController: BaseViewController {
         tableHeaderView.frame = CGRect(0, 0, Common.screenSize().width, Const.headerImageHeight)
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .singleLine
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        tableView.separatorInset = UIEdgeInsets()
         
         //Refresh header & footer
         tableView.mj_header = MJRefreshNormalHeader(refreshingBlock: { [weak self] in
@@ -63,7 +63,7 @@ class SimpleTableViewController: BaseViewController {
         })
         tableView.mj_header.endRefreshing()
         tableView.mj_footer = MJRefreshBackNormalFooter(refreshingBlock: { [weak self] in
-            self?.getSimpleList(TableLoadData.more)
+            self?.getSimpleList(.more)
         })
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -101,7 +101,7 @@ class SimpleTableViewController: BaseViewController {
         
         self.images = images!
         tableHeaderScrollView.subviews.forEach { $0.removeFromSuperview() }
-        if self.images.count == 0 {
+        if self.images.isEmpty {
             tableView.tableHeaderView = nil
             return
         }
@@ -115,13 +115,13 @@ class SimpleTableViewController: BaseViewController {
                                                       Common.screenSize().width,
                                                       Const.headerImageHeight))
            //imageView.sd_setImage(with: URL(string: url),
-            //                      placeholderImage: Resource.defaultImage(.normal))
+            //                      placeholderImage: Configs.Resource.defaultImage(.normal))
             imageView.showProgress(.clear,
                                    progressType: .srvRing,
                                    progress: nil,
                                    options: [ProgressOptionKey.imageProgressSize : ProgressOptionImageSize.normal])
             imageView.sd_setImage(with: URL(string: url),
-                                  placeholderImage: Resource.defaultImage(.normal),
+                                  placeholderImage: Configs.Resource.defaultImage(.normal),
                                   options: [],
                                   progress:
                 { (current, total, url) in
@@ -144,7 +144,7 @@ class SimpleTableViewController: BaseViewController {
         dismissProgress(true)
         tableView.mj_header.endRefreshing()
         guard let dictionary = dictionary else {
-            if dataArray.count == 0 {
+            if dataArray.isEmpty {
                 showLoadDataFailView(errMsg) //加载失败
                 tableView.reloadData()
             }
@@ -153,20 +153,14 @@ class SimpleTableViewController: BaseViewController {
         
         updateHeaderImages(NonNull.array(dictionary[ParamKey.images]) as? [String])
         dataArray = NonNull.array(dictionary[ParamKey.list]) as! [ParamDictionary]
-        guard dataArray.count > 0 else { //没有数据
+        guard !dataArray.isEmpty else { //没有数据
             showNoDataView()
             tableView.reloadData()
             return
         }
         
         tableView.tableFooterView = UIView()
-        
         tableView.mj_footer.isHidden = false
-        if dataArray.count < ParamDefaultValue.limit { //若加载的数据小于一页的数据，表示已经全部加载完毕
-            tableView.mj_footer.endRefreshingWithNoMoreData()
-        } else {
-            tableView.mj_footer.resetNoMoreData()
-        }
         
         currentOffset = 0 //页数重置
         tableView.reloadData()
@@ -179,7 +173,7 @@ class SimpleTableViewController: BaseViewController {
     func updateMore(_ dictionary: [AnyHashable : Any]?, errMsg: String? = nil) {
         dismissProgress(true)
         guard let dictionary = dictionary else {
-            if dataArray.count == 0 {
+            if dataArray.isEmpty {
                 showLoadDataFailView(errMsg) //加载失败
                 tableView.reloadData()
             } else {
@@ -189,7 +183,7 @@ class SimpleTableViewController: BaseViewController {
         }
         
         let list = NonNull.array(dictionary[ParamKey.list]) as! [ParamDictionary]
-        if list.count < ParamDefaultValue.limit { //小于一页的数据
+        if list.isEmpty { //已无数据
             tableView.mj_footer.endRefreshingWithNoMoreData()
         } else {
             tableView.mj_footer.endRefreshing()
@@ -245,20 +239,17 @@ class SimpleTableViewController: BaseViewController {
     
     //MARK: Http request
     
-    func getSimpleList(_ loadType: String? = TableLoadData.new) {
+    func getSimpleList(_ loadType: TableLoadData.Page? = .new) {
         var params = EmptyParams()
-        params[ParamKey.limit] = ParamDefaultValue.limit
-        params[TableLoadData.key] = loadType
-        params[ParamKey.offset] = loadType == TableLoadData.more ? currentOffset + 1 : 0
-        //httpReq(.get(.simpleList), params, [ParamKey.offset : params[ParamKey.offset]!,
-        //                                    TableLoadData.key : loadType!])
+        params[ParamKey.limit] = TableLoadData.row
+        params[ParamKey.offset] = loadType == .more ? currentOffset + 1 : 0
         httpRequest(.get(.simpleList),
                     params,
                     success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
                 let responseData = NonNull.dictionary((response as! JSON)[HttpKey.Response.data].rawValue)
-                if loadType == TableLoadData.more {
+                if loadType == .more {
                     let offset = params[ParamKey.offset] as! Int
                     if offset == strongSelf.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                         strongSelf.updateMore(responseData)
@@ -268,10 +259,10 @@ class SimpleTableViewController: BaseViewController {
                 }
         }, bfail: { [weak self] response in
             guard let strongSelf = self else { return }
-            if loadType == TableLoadData.more {
+            if loadType == .more {
                 let offset = params[ParamKey.offset] as! Int
                 if offset == strongSelf.currentOffset + 1 {
-                    if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
+                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
                         strongSelf.updateMore(nil)
                     } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
                         strongSelf.updateMore(nil, errMsg: strongSelf.logBFail(.get(.simpleList),
@@ -280,7 +271,7 @@ class SimpleTableViewController: BaseViewController {
                     }
                 }
             } else {
-                if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出提示框的交互
+                if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
                     strongSelf.updateNew(nil)
                 } else { //当前为空的话则交给列表展示错误信息
                     strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(.get(.simpleList),
@@ -290,17 +281,17 @@ class SimpleTableViewController: BaseViewController {
             }
         }, fail: { [weak self] error in
             guard let strongSelf = self else { return }
-            if loadType == TableLoadData.more {
+            if loadType == .more {
                 let offset = params[ParamKey.offset] as! Int
                 if offset == strongSelf.currentOffset + 1 {
-                    if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
+                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                         strongSelf.updateMore(nil)
                     } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
                         strongSelf.updateMore(nil, errMsg: error.errorDescription)
                     }
                 }
             } else {
-                if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互
+                if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
                     strongSelf.updateNew(nil)
                 } else { //当前为空的话则交给列表展示错误信息
                     strongSelf.updateNew(nil, errMsg: error.errorDescription)

@@ -11,7 +11,7 @@ import ObjectMapper
 
 public class Config: BaseModel {
     var isProduction: Bool = true
-    var apiBaseUrl: String = BaseServerURLProduction //服务器api的基础地质
+    var apiBaseUrl: String = Configs.BaseServerURLProduction //服务器api的基础地质
     var httpsCer: String = "" //https证书
     
     public class var shared: Config {
@@ -56,7 +56,7 @@ public class Config: BaseModel {
         get {
             if let config = UserStandard[USKey.config] as? ParamDictionary {
                 if let version = config[ParamKey.version] as? String,
-                    let newestConfig = Common.readJsonFile(ConfigFilePath) as? ParamDictionary,
+                    let newestConfig = Common.readJsonFile(Configs.configFilePath) as? ParamDictionary,
                     let newestVersion = newestConfig[ParamKey.version] as? String,
                     version != newestVersion {
                     UserStandard[USKey.config] = newestConfig
@@ -65,7 +65,7 @@ public class Config: BaseModel {
                 return config
             }
             
-            return Common.readJsonFile(ConfigFilePath) as? ParamDictionary
+            return Common.readJsonFile(Configs.configFilePath) as? ParamDictionary
         }
         
         set {

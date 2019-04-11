@@ -23,7 +23,7 @@
 		4EABAF791FF61EE70007CCA7 /* CommonInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE981FF61EE60007CCA7 /* CommonInstance.swift */; };
 		4EABAF7A1FF61EE70007CCA7 /* ModuleDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE991FF61EE60007CCA7 /* ModuleDefine.swift */; };
 		4EABAF7B1FF61EE70007CCA7 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE9A1FF61EE60007CCA7 /* Common.swift */; };
-		4EABAF7C1FF61EE70007CCA7 /* ConfigDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE9B1FF61EE60007CCA7 /* ConfigDefine.swift */; };
+		4EABAF7C1FF61EE70007CCA7 /* Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE9B1FF61EE60007CCA7 /* Configs.swift */; };
 		4EABAF7D1FF61EE70007CCA7 /* HttpDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE9C1FF61EE60007CCA7 /* HttpDefine.swift */; };
 		4EABAF7E1FF61EE70007CCA7 /* AddressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE9E1FF61EE60007CCA7 /* AddressModel.swift */; };
 		4EABAF7F1FF61EE70007CCA7 /* ProfileDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE9F1FF61EE60007CCA7 /* ProfileDetailModel.swift */; };
@@ -155,7 +155,7 @@
 		4EC3133D2119A123007E30C6 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312EA2119A121007E30C6 /* String+Extension.swift */; };
 		4EC3133E2119A123007E30C6 /* UserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312EB2119A121007E30C6 /* UserDefaults+Extension.swift */; };
 		4EC3133F2119A123007E30C6 /* Dictionary+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312EC2119A121007E30C6 /* Dictionary+Extension.swift */; };
-		4EC313402119A123007E30C6 /* CGGeometry+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312ED2119A121007E30C6 /* CGGeometry+Extension.swift */; };
+		4EC313402119A123007E30C6 /* Geometry+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312ED2119A121007E30C6 /* Geometry+Extension.swift */; };
 		4EC313412119A123007E30C6 /* SRVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312F02119A121007E30C6 /* SRVProgressHUD.m */; };
 		4EC313422119A123007E30C6 /* SRDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312F22119A121007E30C6 /* SRDatePicker.swift */; };
 		4EC313432119A123007E30C6 /* SRDivisionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312F32119A121007E30C6 /* SRDivisionPicker.swift */; };
@@ -168,8 +168,7 @@
 		4EC3134A2119A124007E30C6 /* SRScrollTabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312FC2119A121007E30C6 /* SRScrollTabItem.swift */; };
 		4EC3134B2119A124007E30C6 /* SRTabHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312FD2119A121007E30C6 /* SRTabHeader.swift */; };
 		4EC3134C2119A124007E30C6 /* SRTabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC312FE2119A121007E30C6 /* SRTabItem.swift */; };
-		4EC3134D2119A124007E30C6 /* SRIndexPathSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC313002119A121007E30C6 /* SRIndexPathSet.swift */; };
-		4EC3134E2119A124007E30C6 /* SRIndexPathItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC313012119A121007E30C6 /* SRIndexPathItem.swift */; };
+		4EC3134D2119A124007E30C6 /* SRIndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC313002119A121007E30C6 /* SRIndexPath.swift */; };
 		4EC3134F2119A124007E30C6 /* SRIndexPathTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC313022119A121007E30C6 /* SRIndexPathTable.swift */; };
 		4EC313502119A124007E30C6 /* SRIndexPathForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC313032119A121007E30C6 /* SRIndexPathForm.swift */; };
 		4EC313522119A124007E30C6 /* SRModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC313082119A121007E30C6 /* SRModalViewController.swift */; };
@@ -185,7 +184,7 @@
 		4EC3135E2119A124007E30C6 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC3131B2119A121007E30C6 /* BaseViewController.swift */; };
 		4EC3135F2119A124007E30C6 /* ProgressComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC3131C2119A121007E30C6 /* ProgressComponent.swift */; };
 		4EC313602119A124007E30C6 /* UIViewController+BaseBusiness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC3131D2119A121007E30C6 /* UIViewController+BaseBusiness.swift */; };
-		4EC313612119A124007E30C6 /* BaseConfigDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC3131E2119A121007E30C6 /* BaseConfigDefine.swift */; };
+		4EC313612119A124007E30C6 /* BaseConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC3131E2119A121007E30C6 /* BaseConfigs.swift */; };
 		4EC313622119A124007E30C6 /* BaseKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC3131F2119A121007E30C6 /* BaseKeyboard.swift */; };
 		4EC313632119A124007E30C6 /* BaseCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC313202119A121007E30C6 /* BaseCommon.swift */; };
 		4EC313642119A124007E30C6 /* LoadDataStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC313212119A121007E30C6 /* LoadDataStateView.swift */; };
@@ -254,7 +253,7 @@
 		4EABAE981FF61EE60007CCA7 /* CommonInstance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonInstance.swift; sourceTree = "<group>"; };
 		4EABAE991FF61EE60007CCA7 /* ModuleDefine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModuleDefine.swift; sourceTree = "<group>"; };
 		4EABAE9A1FF61EE60007CCA7 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
-		4EABAE9B1FF61EE60007CCA7 /* ConfigDefine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigDefine.swift; sourceTree = "<group>"; };
+		4EABAE9B1FF61EE60007CCA7 /* Configs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configs.swift; sourceTree = "<group>"; };
 		4EABAE9C1FF61EE60007CCA7 /* HttpDefine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpDefine.swift; sourceTree = "<group>"; };
 		4EABAE9E1FF61EE60007CCA7 /* AddressModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressModel.swift; sourceTree = "<group>"; };
 		4EABAE9F1FF61EE60007CCA7 /* ProfileDetailModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileDetailModel.swift; sourceTree = "<group>"; };
@@ -419,7 +418,7 @@
 		4EC312EA2119A121007E30C6 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		4EC312EB2119A121007E30C6 /* UserDefaults+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extension.swift"; sourceTree = "<group>"; };
 		4EC312EC2119A121007E30C6 /* Dictionary+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extension.swift"; sourceTree = "<group>"; };
-		4EC312ED2119A121007E30C6 /* CGGeometry+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGGeometry+Extension.swift"; sourceTree = "<group>"; };
+		4EC312ED2119A121007E30C6 /* Geometry+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Geometry+Extension.swift"; sourceTree = "<group>"; };
 		4EC312EF2119A121007E30C6 /* SRVProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRVProgressHUD.h; sourceTree = "<group>"; };
 		4EC312F02119A121007E30C6 /* SRVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRVProgressHUD.m; sourceTree = "<group>"; };
 		4EC312F22119A121007E30C6 /* SRDatePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRDatePicker.swift; sourceTree = "<group>"; };
@@ -433,8 +432,7 @@
 		4EC312FC2119A121007E30C6 /* SRScrollTabItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRScrollTabItem.swift; sourceTree = "<group>"; };
 		4EC312FD2119A121007E30C6 /* SRTabHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRTabHeader.swift; sourceTree = "<group>"; };
 		4EC312FE2119A121007E30C6 /* SRTabItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRTabItem.swift; sourceTree = "<group>"; };
-		4EC313002119A121007E30C6 /* SRIndexPathSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRIndexPathSet.swift; sourceTree = "<group>"; };
-		4EC313012119A121007E30C6 /* SRIndexPathItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRIndexPathItem.swift; sourceTree = "<group>"; };
+		4EC313002119A121007E30C6 /* SRIndexPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRIndexPath.swift; sourceTree = "<group>"; };
 		4EC313022119A121007E30C6 /* SRIndexPathTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRIndexPathTable.swift; sourceTree = "<group>"; };
 		4EC313032119A121007E30C6 /* SRIndexPathForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRIndexPathForm.swift; sourceTree = "<group>"; };
 		4EC313082119A121007E30C6 /* SRModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRModalViewController.swift; sourceTree = "<group>"; };
@@ -450,7 +448,7 @@
 		4EC3131B2119A121007E30C6 /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		4EC3131C2119A121007E30C6 /* ProgressComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressComponent.swift; sourceTree = "<group>"; };
 		4EC3131D2119A121007E30C6 /* UIViewController+BaseBusiness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+BaseBusiness.swift"; sourceTree = "<group>"; };
-		4EC3131E2119A121007E30C6 /* BaseConfigDefine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseConfigDefine.swift; sourceTree = "<group>"; };
+		4EC3131E2119A121007E30C6 /* BaseConfigs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseConfigs.swift; sourceTree = "<group>"; };
 		4EC3131F2119A121007E30C6 /* BaseKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseKeyboard.swift; sourceTree = "<group>"; };
 		4EC313202119A121007E30C6 /* BaseCommon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseCommon.swift; sourceTree = "<group>"; };
 		4EC313212119A121007E30C6 /* LoadDataStateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadDataStateView.swift; sourceTree = "<group>"; };
@@ -616,7 +614,7 @@
 		4EABAE971FF61EE60007CCA7 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				4EABAE9B1FF61EE60007CCA7 /* ConfigDefine.swift */,
+				4EABAE9B1FF61EE60007CCA7 /* Configs.swift */,
 				4EABAE9A1FF61EE60007CCA7 /* Common.swift */,
 				4EABAE981FF61EE60007CCA7 /* CommonInstance.swift */,
 				4EABAE991FF61EE60007CCA7 /* ModuleDefine.swift */,
@@ -1143,7 +1141,7 @@
 		4EC312DF2119A120007E30C6 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				4EC312ED2119A121007E30C6 /* CGGeometry+Extension.swift */,
+				4EC312ED2119A121007E30C6 /* Geometry+Extension.swift */,
 				4E1A420E211E789F00F69ADA /* Date+Extension.swift */,
 				4EC312EC2119A121007E30C6 /* Dictionary+Extension.swift */,
 				4EC312E42119A121007E30C6 /* NonNull.swift */,
@@ -1208,8 +1206,7 @@
 		4EC312FF2119A121007E30C6 /* SRIndexPath */ = {
 			isa = PBXGroup;
 			children = (
-				4EC313002119A121007E30C6 /* SRIndexPathSet.swift */,
-				4EC313012119A121007E30C6 /* SRIndexPathItem.swift */,
+				4EC313002119A121007E30C6 /* SRIndexPath.swift */,
 				4EC313022119A121007E30C6 /* SRIndexPathTable.swift */,
 				4EC313032119A121007E30C6 /* SRIndexPathForm.swift */,
 			);
@@ -1274,7 +1271,7 @@
 			children = (
 				4E236019211A844700506BFD /* BaseBusinessComponent.swift */,
 				4EC313202119A121007E30C6 /* BaseCommon.swift */,
-				4EC3131E2119A121007E30C6 /* BaseConfigDefine.swift */,
+				4EC3131E2119A121007E30C6 /* BaseConfigs.swift */,
 				4EC3131F2119A121007E30C6 /* BaseKeyboard.swift */,
 				4EC3131B2119A121007E30C6 /* BaseViewController.swift */,
 				4EC313212119A121007E30C6 /* LoadDataStateView.swift */,
@@ -1581,10 +1578,10 @@
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/Popover/Popover.framework",
 				"${BUILT_PRODUCTS_DIR}/REMenu/REMenu.framework",
+				"${BUILT_PRODUCTS_DIR}/ReSwift/ReSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/SlideMenuControllerSwift/SlideMenuControllerSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/TBIconTransitionKit/TBIconTransitionKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Toast/Toast.framework",
@@ -1610,10 +1607,10 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Popover.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/REMenu.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SlideMenuControllerSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TBIconTransitionKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast.framework",
@@ -1653,7 +1650,7 @@
 				4EABAFB21FF61EE70007CCA7 /* SettingViewController.swift in Sources */,
 				4EABAF7E1FF61EE70007CCA7 /* AddressModel.swift in Sources */,
 				4EABAF901FF61EE70007CCA7 /* ContactsViewController.swift in Sources */,
-				4EC3134D2119A124007E30C6 /* SRIndexPathSet.swift in Sources */,
+				4EC3134D2119A124007E30C6 /* SRIndexPath.swift in Sources */,
 				4EABAFCF1FF61EE70007CCA7 /* ProfileManager.swift in Sources */,
 				4EABAFA21FF61EE70007CCA7 /* M2ScoreView.m in Sources */,
 				4EABAF841FF61EE70007CCA7 /* TitleChoiceModel.swift in Sources */,
@@ -1663,7 +1660,7 @@
 				4EC3135B2119A124007E30C6 /* SRStateMachine.swift in Sources */,
 				4EC3133D2119A123007E30C6 /* String+Extension.swift in Sources */,
 				4EABAF921FF61EE70007CCA7 /* SingleContactViewController.swift in Sources */,
-				4EABAF7C1FF61EE70007CCA7 /* ConfigDefine.swift in Sources */,
+				4EABAF7C1FF61EE70007CCA7 /* Configs.swift in Sources */,
 				4EC3133A2119A123007E30C6 /* Numeric+Extension.swift in Sources */,
 				4EC3134B2119A124007E30C6 /* SRTabHeader.swift in Sources */,
 				4EC313632119A124007E30C6 /* BaseCommon.swift in Sources */,
@@ -1703,7 +1700,7 @@
 				4EC313472119A123007E30C6 /* SRShareTool.swift in Sources */,
 				4EABAFD91FF61EE70007CCA7 /* NBMetadataCore.m in Sources */,
 				4E23601C211C0A8B00506BFD /* UINavigationBar+Extension.swift in Sources */,
-				4EC313402119A123007E30C6 /* CGGeometry+Extension.swift in Sources */,
+				4EC313402119A123007E30C6 /* Geometry+Extension.swift in Sources */,
 				4EC313682119A124007E30C6 /* SRAssetResourceLoader.swift in Sources */,
 				4EC313672119A124007E30C6 /* SRBrightnessView.swift in Sources */,
 				4EABAFB71FF61EE70007CCA7 /* ForgetPasswordViewController的.swift in Sources */,
@@ -1740,7 +1737,7 @@
 				4EC3134A2119A124007E30C6 /* SRScrollTabItem.swift in Sources */,
 				4EABAF9A1FF61EE70007CCA7 /* SimpleTableViewController.swift in Sources */,
 				4EABAFD31FF61EE70007CCA7 /* NBAsYouTypeFormatter.m in Sources */,
-				4EC313612119A124007E30C6 /* BaseConfigDefine.swift in Sources */,
+				4EC313612119A124007E30C6 /* BaseConfigs.swift in Sources */,
 				4EABAF791FF61EE70007CCA7 /* CommonInstance.swift in Sources */,
 				4EC313552119A124007E30C6 /* BusinessResult.swift in Sources */,
 				4EABAFA81FF61EE70007CCA7 /* LineDashPolyline.m in Sources */,
@@ -1790,7 +1787,6 @@
 				4E9B80BD211C6416006BB9D0 /* SRProgressHUD.swift in Sources */,
 				4EABAFD71FF61EE70007CCA7 /* NBNumberFormat.m in Sources */,
 				4EABAFC01FF61EE70007CCA7 /* NewsSecondaryViewController.swift in Sources */,
-				4EC3134E2119A124007E30C6 /* SRIndexPathItem.swift in Sources */,
 				4EABAFD01FF61EE70007CCA7 /* HttpManager.swift in Sources */,
 				4EABAFD51FF61EE70007CCA7 /* NBPhoneMetaData.m in Sources */,
 				4EABAF991FF61EE70007CCA7 /* SimpleCell.swift in Sources */,
@@ -2071,7 +2067,7 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/$(PROJECT_NAME)/$(PROJECT_NAME)-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2094,7 +2090,7 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/$(PROJECT_NAME)/$(PROJECT_NAME)-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

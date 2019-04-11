@@ -16,7 +16,8 @@ class AdvertisingViewController: BaseViewController {
             for i in 0 ..< viewControllers.count {
                 if self === viewControllers[i] && i > 0,
                     let previousVC = viewControllers[i - 1] as? BaseViewController,
-                    Event.showAdvertising == previousVC.stateMachine.currentEvent {
+                    let currentEvent = previousVC.stateMachine.currentEvent,
+                    Event.Option(rawValue: currentEvent) == .showAdvertising {
                     previousVC.stateMachine.endCurrentEvent()
                     break
                 }

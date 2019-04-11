@@ -11,10 +11,10 @@ import LocalAuthentication
 import SDWebImage
 
 class SettingViewController: BaseViewController {
-    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
-    var lastSection = IntegerInvalid
-    var lastSectionWillAdd = IntegerInvalid
-    var lastRow = IntegerInvalid
+    lazy var indexPathSet: SRIndexPath.Set = SRIndexPath.Set()
+    var lastSection = -1
+    var lastSectionWillAdd = -1
+    var lastRow = -1
     
     @IBOutlet weak var tableView: UITableView!
     lazy var lockScreenCell: UITableViewCell = {
@@ -123,11 +123,11 @@ class SettingViewController: BaseViewController {
     
     func initSections() {
         indexPathSet.removeAll()
-        lastSection = IntegerInvalid
+        lastSection = -1
         lastSectionWillAdd = lastSection
         
         //Section 0
-        lastRow = IntegerZero
+        lastRow = 0
         
         item(lockScreenCell)
         item(wifiLoadImagesCell)
@@ -136,7 +136,7 @@ class SettingViewController: BaseViewController {
         //Section 1
         lastSection = lastSectionWillAdd
         lastSectionWillAdd = lastSection
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         item(nightModeCell)
         item(fontCell)
@@ -146,7 +146,7 @@ class SettingViewController: BaseViewController {
         //Section 2
         lastSection = lastSectionWillAdd
         lastSectionWillAdd = lastSection
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         item(clearCacheCell)
         item(helpCell)
@@ -154,10 +154,10 @@ class SettingViewController: BaseViewController {
     }
     
     @discardableResult
-    func item(_ cell: UITableViewCell) -> SRIndexPathTable? {
+    func item(_ cell: UITableViewCell) -> SRIndexPath.Table? {
         lastSectionWillAdd = lastSection + 1 //确保section会自增
         lastRow += 1
-        let item = SRIndexPathTable(cell: cell)
+        let item = SRIndexPath.Table(cell: cell)
         indexPathSet[IndexPath(row: lastRow, section: lastSectionWillAdd)] = item
         return item
     }
@@ -255,9 +255,9 @@ class SettingViewController: BaseViewController {
     //MARK: - Cache
     
     func updateCacheSize() {
-        var size = UInt64(SDWebImageManager.shared().imageCache?.getSize() ?? 0)
-        size += Common.fileSize(VideosDirectory)
-        size += Common.fileSize(VideosCacheDirectory)
+        var size = UInt64(SDImageCache.shared.totalDiskSize())
+        size += Common.fileSize(Configs.VideosDirectory)
+        size += Common.fileSize(Configs.VideosCacheDirectory)
         if size == 0 {
             cacheLabel.text = "0M"
         } else if size >= 1000 * 1000 * 1000 {
@@ -297,9 +297,9 @@ class SettingViewController: BaseViewController {
                 }
             }
             
-            SDWebImageManager.shared().cancelAll()
-            SDWebImageManager.shared().imageCache?.clearMemory()
-            SDWebImageManager.shared().imageCache?.clearDisk(onCompletion: {
+            SDWebImageManager.shared.cancelAll()
+            SDWebImageManager.shared.imageCache.clear(with: .memory, completion: nil)
+            SDWebImageManager.shared.imageCache.clear(with: .disk, completion: {
                 DispatchQueue.main.async { [weak self] in
                     self?.updateCacheSize()
                     Common.showToast("Clear the cache successfully!".localized)
@@ -307,8 +307,8 @@ class SettingViewController: BaseViewController {
             })
             
             do {
-                try FileManager.default.removeItem(atPath: VideosDirectory)
-                try FileManager.default.removeItem(atPath: VideosCacheDirectory)
+                try FileManager.default.removeItem(atPath: Configs.VideosDirectory)
+                try FileManager.default.removeItem(atPath: Configs.VideosCacheDirectory)
             } catch {
                 DispatchQueue.main.async {
                     LogError("Remove video files failed: \(error.localizedDescription)")
@@ -354,9 +354,9 @@ class SettingViewController: BaseViewController {
                             action:
                 {
                     BF.callBusiness(BF.businessId(.profile, Manager.Profile.funcId(.logout)))
-                    if Entrance == .sns {
+                    if Configs.entrance == .sns {
                         Common.clearForLogin()
-                    } else if Entrance == .news || Entrance == .aggregation {
+                    } else if Configs.entrance == .news || Configs.entrance == .aggregation {
                         self.initSections()
                         self.initTableFooterView()
                         self.tableView.reloadData()
@@ -399,7 +399,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let item = indexPathSet[indexPath] as? SRIndexPathTable, let cell = item.cell {
+        if let item = indexPathSet[indexPath] as? SRIndexPath.Table, let cell = item.cell {
             if let label = cell.contentView.viewWithTag(Const.textLabelTag) as? UILabel {
                 label.adjustsFontSizeToFitWidth = true
                 label.font = Const.textFont

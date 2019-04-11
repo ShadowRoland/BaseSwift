@@ -38,7 +38,7 @@ class QRCodeReaderViewController: BaseViewController {
         super.viewWillAppear(animated)
         NotifyDefault.add(self,
                           selector: #selector(didBecomeActive(_:)),
-                          name: .UIApplicationDidBecomeActive)
+                          name: UIApplication.didBecomeActiveNotification)
     }
     
     override func viewDidAppear(_ animated: Bool) {

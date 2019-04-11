@@ -49,7 +49,7 @@ public class Common: BaseCommon {
     
     private static var actionParams: ParamDictionary?
     
-    public class func currentActionParams() -> ParamDictionary? {
+    public class var currentActionParams: ParamDictionary? {
         return actionParams
     }
     
@@ -59,8 +59,15 @@ public class Common: BaseCommon {
     
     //清空指令
     public class func clearActionParams(_ event: Int) {
-        if let action = actionParams?[ParamKey.action],
-            Action.actions(event).contains(String(describing: action)) {
+        clearActionParams(option: Event.Option(rawValue: event))
+    }
+    
+    //清空指令
+    public class func clearActionParams(option: Event.Option?) {
+        if let option = option,
+            let string = actionParams?[ParamKey.action] as? String,
+            let action = Event.Action(rawValue: string),
+            Event.actions(option).contains(action) {
             Common.updateActionParams(nil)
         }
     }
@@ -112,7 +119,7 @@ public class Common: BaseCommon {
         SRAlertController.dismissAll() //系统弹出框
         SRShareTool.shared.dismiss(false) //分享
         
-        if Entrance == .sns { //退出到登录页面
+        if Configs.entrance == .sns { //退出到登录页面
             //将modal出来的视图dismiss
             for vc in navigationController.viewControllers.reversed() {
                 if vc.isKind(of: LoginViewController.self) {
@@ -122,7 +129,7 @@ public class Common: BaseCommon {
                 }
             }
             rootvC.popBack(toClasses: [LoginViewController.self])
-        } else if Entrance == .news { //在当前页面弹出登录页
+        } else if Configs.entrance == .news { //在当前页面弹出登录页
             if let rootVC = Common.rootVC, rootVC.presentedViewController == nil {
                 let vc = Common.viewController("LoginViewController", storyboard: "Profile")
                 let navVC = SRModalViewController.standard(vc)

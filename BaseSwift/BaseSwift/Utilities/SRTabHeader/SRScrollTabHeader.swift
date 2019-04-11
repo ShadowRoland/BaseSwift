@@ -142,13 +142,13 @@ public class SRScrollTabHeader: SRTabHeader, UIScrollViewDelegate {
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
-        scrollView.decelerationRate = UIScrollViewDecelerationRateFast
+        scrollView.decelerationRate = .fast
         addSubview(scrollView)
         constrain(scrollView) { $0.edges == inset($0.superview!.edges, 0) }
     }
     
     override public func layout() {
-        guard titles.count > 0 else {
+        guard !titles.isEmpty else {
             return
         }
         

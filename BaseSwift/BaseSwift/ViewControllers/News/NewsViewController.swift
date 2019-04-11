@@ -38,31 +38,29 @@ class NewsViewController: BaseViewController {
         initView()
         
         //查询当前指令而执行的操作
-        if let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            Event.Option.showMore == Event.option(action) {
+        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+            .showMore == option {
             tabBar.selectedItem = tabBar.items?[3]
-            addChildViewController(moreVC)
+            addChild(moreVC)
             childBackgroundView.addSubview(moreVC.view)
             currentChildVC = moreVC
             title = "Me".localized
             moreVC.deviceOrientationDidChange()
             
-            Common.clearActionParams(Event.Option.showMore)
+            Common.clearActionParams(option: option)
         } else {
             tabBar.selectedItem = tabBar.items?.first
-            addChildViewController(mainVC)
+            addChild(mainVC)
             childBackgroundView.addSubview(mainVC.view)
             currentChildVC = mainVC
-            mainVC.currentNewsListVC?.loadData(TableLoadData.new, progressType: .clearMask)
+            mainVC.currentNewsListVC?.loadData(.new, progressType: .clearMask)
         }
         
         //查询当前指令而执行的操作，加入状态机
-        if let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            let event = Event.option(action),
-            Event.Option.showProfile == event
-                || Event.Option.showSetting == event {
+        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+            .showProfile == option || .showSetting == option {
             DispatchQueue.main.async { [weak self] in
-                self?.stateMachine.append(option: event)
+                self?.stateMachine.append(option: option)
             }
         }
     }
@@ -185,36 +183,36 @@ class NewsViewController: BaseViewController {
         }
         
         currentChildVC?.view.isUserInteractionEnabled = false
-        addChildViewController(childVC)
+        addChild(childVC)
         transition(from: currentChildVC!,
                    to: childVC,
                    duration: 0,
-                   options: UIViewAnimationOptions(rawValue: 0),
+                   options: UIView.AnimationOptions(rawValue: 0),
                    animations: nil,
                    completion:
             { [weak self] (finished) in
                 guard finished else {
-                    childVC.removeFromParentViewController()
+                    childVC.removeFromParent()
                     self?.currentChildVC?.view.isUserInteractionEnabled = true
                     return
                 }
                 
-                childVC.didMove(toParentViewController: self)
+                childVC.didMove(toParent: self)
                 childVC.view.isUserInteractionEnabled = true
-                self?.currentChildVC?.willMove(toParentViewController: self)
-                self?.currentChildVC?.removeFromParentViewController()
+                self?.currentChildVC?.willMove(toParent: self)
+                self?.currentChildVC?.removeFromParent()
                 self?.currentChildVC = childVC
                 self?.childBackgroundView.addSubview((self?.currentChildVC.view)!)
                 self?.updateChildViewFrame()
                 if self?.currentChildVC === self?.mainVC {
                     self?.navigationController?.isNavigationBarHidden = true
                     if let vc = self?.mainVC.currentNewsListVC, !vc.isTouched {
-                        vc.loadData(TableLoadData.new, progressType: .clearMask)
+                        vc.loadData(.new, progressType: .clearMask)
                     }
                 } else if self?.currentChildVC === self?.secondaryVC {
                     self?.navigationController?.isNavigationBarHidden = true
                     if let vc = self?.secondaryVC.currentNewsListVC, !vc.isTouched {
-                        vc.loadData(TableLoadData.new, progressType: .clearMask)
+                        vc.loadData(.new, progressType: .clearMask)
                     }
                 } else  if self?.currentChildVC === self?.yellowVC {
                     self?.navigationController?.isNavigationBarHidden = false
@@ -246,14 +244,13 @@ class NewsViewController: BaseViewController {
     
     //在程序运行中收到指令，基本都可以通过走状态机实现
     @objc func newAction(_ notification: Notification) {
-        guard let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            let event = Event.option(action) else {
-                return
+        guard let option = Event.option(Common.currentActionParams?[ParamKey.action]) else {
+            return
         }
         
-        switch event {
-        case Event.Option.showMore, Event.Option.showProfile, Event.Option.showSetting:
-            stateMachine.append(option: event)
+        switch option {
+        case .showMore, .showProfile, .showSetting:
+            stateMachine.append(option: option)
         default:
             break
         }
@@ -262,8 +259,12 @@ class NewsViewController: BaseViewController {
     //MARK: - SRStateMachineDelegate
     
     override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
-        switch event {
-        case Event.Option.showMore:
+        guard let option = Event.Option(rawValue: event) else {
+            return
+        }
+        
+        switch option {
+        case .showMore:
             if !(isFront && moreVC === currentChildVC) {
                 Common.clearPops()
                 Common.clearModals(viewController: self)
@@ -271,17 +272,17 @@ class NewsViewController: BaseViewController {
                 tabBar.selectedItem = tabBar.items?[3]
                 bringChildVCFront(moreVC)
             }
-            Common.clearActionParams(event)
+            Common.clearActionParams(option: option)
             stateMachine.end(event)
             
-        case Event.Option.showProfile:
+        case .showProfile:
             let viewControllers = navigationController!.viewControllers
             let profileVCs = viewControllers.filter { $0.isKind(of: ProfileViewController.self) }
             if viewControllers.last!.isKind(of: ProfileViewController.self) { //当前页面是Profile页面
-                Common.clearActionParams(event)
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
-            } else if profileVCs.count > 0 { //Profile页面在当前页面之前
-                Common.clearActionParams(event)
+            } else if !profileVCs.isEmpty { //Profile页面在当前页面之前
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
                 Common.clearPops()
                 Common.clearModals(viewController: profileVCs.last!)
@@ -307,14 +308,14 @@ class NewsViewController: BaseViewController {
                 }
             }
             
-        case Event.Option.showSetting:
+        case .showSetting:
             let viewControllers = navigationController!.viewControllers
             let settingVCs = viewControllers.filter { $0 is SettingViewController }
             if viewControllers.last! is SettingViewController { //当前页面是Setting页面
-                Common.clearActionParams(event)
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
-            } else if settingVCs.count > 0 { //Setting页面在当前页面之前
-                Common.clearActionParams(event)
+            } else if !settingVCs.isEmpty { //Setting页面在当前页面之前
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
                 Common.clearPops()
                 Common.clearModals(viewController: settingVCs.last!)
@@ -342,7 +343,8 @@ class NewsViewController: BaseViewController {
     override func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) {
         super.stateMachine(stateMachine, didEnd: event)
         
-        if Event.Option.showProfile == event || Event.Option.showSetting == event {
+        if Event.Option.showProfile.rawValue == event
+            || Event.Option.showSetting.rawValue == event {
             NotifyDefault.remove(self, name: Notification.Name.Base.didEndStateMachineEvent)
         }
     }
@@ -352,14 +354,14 @@ class NewsViewController: BaseViewController {
 
 extension NewsViewController: NewsListDelegate {
     //使用第三方新闻客户端的请求参数
-    func getNewsList(_ loadType: String?, sendVC: NewsListViewController) {
+    func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController) {
         var params = sendVC.params
         let time = CLongLong(Date().timeIntervalSince1970 * 1000)
         params["t"] = String(longLong: time)
         params["_"] = String(longLong: time + 2)
         params["show_num"] = "10"
-        params["act"] = loadType == TableLoadData.more ? "more" : "new"
-        let offset = loadType == TableLoadData.more ? sendVC.currentOffset + 1 : 0
+        params["act"] = loadType == .more ? "more" : "new"
+        let offset = loadType == .more ? sendVC.currentOffset + 1 : 0
         params["page"] = String(int: offset + 1)
         var sendChildVC: String?
         if let parentVC = sendVC.parentVC {
@@ -377,7 +379,7 @@ extension NewsViewController: NewsListDelegate {
                                                     return
                 }
                 
-                if loadType == TableLoadData.more {
+                if loadType == .more {
                     let offset = params[ParamKey.offset] as! Int
                     if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                         vc.updateMore(NonNull.dictionary(response))
@@ -391,13 +393,13 @@ extension NewsViewController: NewsListDelegate {
                                                 return
             }
             
-            if loadType == TableLoadData.more {
+            if loadType == .more {
                 let offset = params[ParamKey.offset] as! Int
                 if offset == vc.currentOffset + 1 {
                     return
                 }
             } else {
-                if vc.dataArray.count > 0 { //已经有数据，保留原数据，显示提示框
+                if !vc.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
                     vc.updateNew(nil)
                 } else { //当前为空的话则交给列表展示错误信息
                     vc.updateNew(nil, errMsg: self.logBFail(.get(.sinaNewsList),
@@ -411,17 +413,17 @@ extension NewsViewController: NewsListDelegate {
                                                 return
             }
             
-            if loadType == TableLoadData.more {
+            if loadType == .more {
                 let offset = params[ParamKey.offset] as! Int
                 if offset == vc.currentOffset + 1 {
-                    if vc.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
+                    if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                         vc.updateMore(nil)
                     } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
                         vc.updateMore(nil, errMsg: error.errorDescription)
                     }
                 }
             } else {
-                if vc.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互
+                if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
                     vc.updateNew(nil)
                 } else { //当前为空的话则交给列表展示错误信息
                     vc.updateNew(nil, errMsg: error.errorDescription)
@@ -494,9 +496,9 @@ extension NewsViewController: UITabBarDelegate {
             bringChildVCFront(childVC)
             if childVC === currentChildVC { //重复点击下方，会重新加载列表或发送请求
                 if childVC === mainVC {
-                    mainVC.currentNewsListVC?.loadData(TableLoadData.new, progressType: .opaqueMask)
+                    mainVC.currentNewsListVC?.loadData(.new, progressType: .opaqueMask)
                 } else if childVC === secondaryVC {
-                    secondaryVC.currentNewsListVC?.loadData(TableLoadData.new,
+                    secondaryVC.currentNewsListVC?.loadData(.new,
                                                             progressType: .opaqueMask)
                 }
             }

@@ -89,7 +89,7 @@ public extension String {
             string = string.substring(from: 1)
         }
         
-        let length = string.length
+        let length = string.count
         switch length {
         case 1, 2: //"#6" -> "#666666", "#6E" -> "#6E6E6E"
             var hexInt = 0 as CUnsignedInt
@@ -156,31 +156,26 @@ public extension String {
     subscript(range: Range<Int>) -> String {
         let lower = index(startIndex, offsetBy: range.lowerBound)
         let upper = index(startIndex, offsetBy: range.upperBound)
-        //return substring(with: Range<String.Index>(uncheckedBounds: (lower: lower,
-        //                                                             upper: upper)))
         return String(self[Range<String.Index>(uncheckedBounds: (lower: lower, upper: upper))])
     }
     
     func substring(from: Int) -> String {
-        let start = min(from, length)
-        return self[start ..< length]
+        return self[min(from, count) ..< count]
     }
     
     func substring(to: Int) -> String {
-        return self[0 ..< min(to, length)]
+        return self[0 ..< min(to, count)]
     }
     
     func substring(from: Int, length: Int) -> String {
-        let start = min(from, length)
-        var end = start + length
-        end = min(end, length)
+        let start = min(from, count)
+        let end = min(start + count, count)
         return self[from ..< end]
     }
     
     func substring(from:Int, to:Int) -> String {
-        let start = min(from, length)
-        var end = min(to + 1, length)
-        end = max(start, end)
+        let start = min(from, count)
+        let end = max(start, min(to + 1, count))
         return self[start ..< end]
     }
 }
@@ -243,19 +238,21 @@ public extension String {
 
 //MARK: - 常用的正则表达式
 
-public struct Regex {
-    public static let number = "^[\\d]+$"
-    public static let numberValue = "^[+-]?[\\d]+(\\.[\\d]+)?$"
-    public static let uNumberValue = "^[+]?[\\d]+(\\.[\\d]+)?$" //正数
-    
-    public static let account = "^\\w{1,16}$"
-    public static let accountInputing = "^\\w+$"
-    public static let password = "^[0-9a-zA-Z!@#$%*()_+^&]{6,20}$"
-    public static let passwordInputing = "^[0-9a-zA-Z!@#$%*()_+^&]+$"
-    public static let verificationCode = "^[0-9a-zA-Z]+$"
-    public static let email = "[A-Z0-9a-z_%]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
-    public static let chinaId = "^(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$)|(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)$" //中华人民共和国第一代和第二代身份证号码
-    public static let chinaIdInputing = "^[0-9xX]+$"
+public extension String {
+    struct Regex {
+        public static let number = "^[\\d]+$"
+        public static let numberValue = "^[+-]?[\\d]+(\\.[\\d]+)?$"
+        public static let uNumberValue = "^[+]?[\\d]+(\\.[\\d]+)?$" //正数
+        
+        public static var account = "^\\w{1,16}$"
+        public static var accountInputing = "^\\w+$"
+        public static var password = "^[0-9a-zA-Z!@#$%*()_+^&]{6,20}$"
+        public static var passwordInputing = "^[0-9a-zA-Z!@#$%*()_+^&]+$"
+        public static var verificationCode = "^[0-9a-zA-Z]+$"
+        public static var email = "[A-Z0-9a-z_%]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
+        public static var chinaId = "^(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$)|(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)$" //中华人民共和国第一代和第二代身份证号码
+        public static var chinaIdInputing = "^[0-9xX]+$"
+    }
 }
 
 //MARK: - Regex
@@ -266,15 +263,15 @@ public extension String {
         return NSPredicate(format: "SELF MATCHES %@", match).evaluate(with: self)
     }
     
-    var isAccount: Bool { return regex(Regex.account) } //账号匹配
+    var isAccount: Bool { return regex(String.Regex.account) } //账号匹配
     
-    var isPassword: Bool { return regex(Regex.password) } //密码匹配
+    var isPassword: Bool { return regex(String.Regex.password) } //密码匹配
     
-    var isEmail: Bool { return regex(Regex.email) } //邮箱匹配
+    var isEmail: Bool { return regex(String.Regex.email) } //邮箱匹配
     
-    var isNumberValue: Bool { return regex(Regex.numberValue) } //数值匹配
+    var isNumberValue: Bool { return regex(String.Regex.numberValue) } //数值匹配
     
-    var isChinaId: Bool { return regex(Regex.chinaId) } //中国居民身份证号码匹配
+    var isChinaId: Bool { return regex(String.Regex.chinaId) } //中国居民身份证号码匹配
     
     func isMobileNumber(regionCode: String) -> Bool {
         let phoneUtil = NBPhoneNumberUtil()
@@ -381,7 +378,6 @@ public extension String {
         return Bundle.main.localizedString(forKey: self, value: nil, table: "Localizable")
     }
 }
-
 
 public extension NSStringDrawingOptions {
     static var calculateTextSize: NSStringDrawingOptions {

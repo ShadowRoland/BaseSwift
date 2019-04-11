@@ -39,7 +39,7 @@ public class LoadDataStateView: UIView {
         super.init(frame: CGRect())
         NotifyDefault.add(self,
                           selector: #selector(contentSizeCategoryDidChange),
-                          name: .UIContentSizeCategoryDidChange)
+                          name: UIContentSizeCategory.didChangeNotification)
         initView(state)
     }
     
@@ -164,7 +164,7 @@ public class LoadDataStateView: UIView {
         superview.addSubview(self)
         if state != .none {
             self.text = text
-            if let text = self.text, text.length > 100 {
+            if let text = self.text, text.count > 100 {
                 self.text = text.substring(to: 99)
             }
         }

@@ -27,7 +27,7 @@ public extension Date {
     static func dayCount(_ year: Int, month: Int) -> Int {
         switch month {
         case 2:
-            if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) {
+            if (year.isMultiple(of: 400) || (year.isMultiple(of: 4) && !year.isMultiple(of: 100))) {
                 return 29
             } else {
                 return 28

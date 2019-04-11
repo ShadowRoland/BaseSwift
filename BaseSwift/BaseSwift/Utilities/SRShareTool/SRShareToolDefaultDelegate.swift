@@ -97,7 +97,7 @@ class SRShareToolDefaultDelegate: NSObject {
         if let image = shareTool.option.image {
             previewImageData = UIImagePNGRepresentation(image)
         } else {
-            previewImageData = UIImagePNGRepresentation(Resource.defaultImage(.min)!)
+            previewImageData = UIImagePNGRepresentation(Configs.Resource.defaultImage(.min)!)
         }
         let newsObject =
             QQApiNewsObject(url: URL(string: shareTool.option.url ?? EmptyString),

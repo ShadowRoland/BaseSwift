@@ -182,7 +182,7 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
   
   // Commit tile movements.
   [_grid forEach:^(M2Position position) {
-    M2Tile *tile = [_grid tileAtPosition:position];
+      M2Tile *tile = [self->_grid tileAtPosition:position];
     if (tile) {
       [tile commitPendingActions];
       if (tile.level >= GSTATE.winningLevel) _won = YES;

@@ -34,7 +34,7 @@ public class IMManager: BusinessManager {
         
         //随机生成字符串
         var nonce = ""
-        (0 ..< Const.nonceLength).forEach { _ in nonce.append(String(int: Int.random(0, 10))) }
+        (0 ..< Const.nonceLength).forEach { _ in nonce.append(String(int: Int.random(in: 0 ..< 10))) }
         headers[Const.headerKeyNonce] = nonce
         
         let timestamp = String(long: CLong(Date().timeIntervalSince1970))

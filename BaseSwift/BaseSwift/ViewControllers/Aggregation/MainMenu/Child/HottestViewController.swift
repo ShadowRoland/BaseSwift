@@ -89,7 +89,7 @@ class HottestViewController: BaseViewController {
             let newsListVC = NewsMainViewController.createNewsListVC(channel)
             newsListVC.parentVC = self
             newsListVC.delegate = parentVC
-            addChildViewController(newsListVC)
+            addChild(newsListVC)
             scrollView.addSubview((newsListVC.view)!)
             array.append(newsListVC)
         }
@@ -110,7 +110,7 @@ class HottestViewController: BaseViewController {
                                    0,
                                    ScreenWidth(),
                                    scrollView.height)
-            vc.tableView.contentInset = UIEdgeInsetsMake(Const.tabHeaderHeight, 0, 0, 0)
+            vc.tableView.contentInset = UIEdgeInsets(Const.tabHeaderHeight, 0, 0, 0)
             vc.contentInset = vc.tableView.contentInset
             if let channelId = vc.channelId, channelId == selectedChannelId {
                 selectedIndex = i
@@ -144,28 +144,27 @@ class HottestViewController: BaseViewController {
     }
     
     //列表停止滑动后恢复图片下载
-    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             resetAfterScrollViewDidEndScroll(scrollView)
         }
     }
     
-    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         resetAfterScrollViewDidEndScroll(scrollView)
     }
     
-    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         resetAfterScrollViewDidEndScroll(scrollView)
     }
     
     func resetAfterScrollViewDidEndScroll(_ scrollView: UIScrollView) {
-        SDWebImageManager.shared().imageDownloader?.setSuspended(false)
         let index = Int(scrollView.contentOffset.x / ScreenWidth())
         tabHeader.activeTab(index, animated: true)
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
             currentNewsListVC?.backToTopButtonBottomConstraint.constant = 0
-            currentNewsListVC?.loadData(TableLoadData.new, progressType: .clearMask)
+            currentNewsListVC?.loadData(.new, progressType: .clearMask)
         }
         isSilent = false
     }
@@ -179,7 +178,7 @@ extension HottestViewController: SRTabHeaderDelegate {
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
-                currentNewsListVC?.loadData(TableLoadData.new, progressType: .clearMask)
+                currentNewsListVC?.loadData(.new, progressType: .clearMask)
             }
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
@@ -189,7 +188,7 @@ extension HottestViewController: SRTabHeaderDelegate {
             if !animated {
                 currentNewsListVC = newsListVCs[index]
                 if !(currentNewsListVC?.isTouched)! {
-                    currentNewsListVC?.loadData(TableLoadData.new, progressType: .clearMask)
+                    currentNewsListVC?.loadData(.new, progressType: .clearMask)
                 }
             }
         }

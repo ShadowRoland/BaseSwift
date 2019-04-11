@@ -58,7 +58,7 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
             super.pullingPercent = self.pullingPercent
             guard state == .idle,
                 let images = stateImages[MJRefreshState.idle.rawValue],
-                images.count > 0 else {
+                !images.isEmpty else {
                     return
             }
             gifView.stopAnimating() //停止动画
@@ -92,7 +92,7 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
             super.state = state
             
             if state == .pulling || state == .refreshing {
-                guard let images = stateImages[state.rawValue], images.count > 0 else {
+                guard let images = stateImages[state.rawValue], !images.isEmpty else {
                     return
                 }
                 

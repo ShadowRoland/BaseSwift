@@ -45,7 +45,7 @@ class SimpleCell: UITableViewCell {
         } else {
             headerImageWidthConstraint.constant = Const.headerImageWidthShowing
             headerImageView.sd_setImage(with: URL(string: image),
-                                        placeholderImage: Resource.defaultImage(.min))
+                                        placeholderImage: Configs.Resource.defaultImage(.min))
         }
         titleLabel.attributedText = NSAttributedString(string: NonNull.string(dictionary[ParamKey.title]))
         var string: String?

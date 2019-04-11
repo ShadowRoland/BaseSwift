@@ -66,7 +66,7 @@ class SRAssetResourceLoader: NSObject, AVAssetResourceLoaderDelegate, SRVideoReq
     }
     
     func update() {
-        guard loadingRequests.count > 0 else {
+        guard !loadingRequests.isEmpty else {
             return
         }
         

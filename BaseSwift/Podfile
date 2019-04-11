@@ -1,164 +1,154 @@
-# Uncomment this line to define a global platform for your project
-platform :ios, '9.0'
-inhibit_all_warnings!
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
 
 target 'BaseSwift' do
-    # Comment this line if you're not using Swift and don't want to use dynamic frameworks
-    use_frameworks!
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for BaseSwift
+
+  target 'BaseSwiftTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'BaseSwiftUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+    ## Keychain，一般用于获取唯一设备标识
+    pod 'KeychainSwift', '~> 14.0.0' # Required
     
-    # Pods for BaseSwift
+    ## 键盘管理
+    pod 'IQKeyboardManagerSwift', '~> 6.2.1' # Required
     
-    # Keychain，一般用于获取唯一设备标识
-    pod 'KeychainSwift', '~> 12.0.0' # Required
+    ## 日志系统
+    pod 'CocoaLumberjack/Swift', '~> 3.5.2' # Required
     
-    # 键盘
-    pod 'IQKeyboardManagerSwift', '~> 6.1.1' # Required
-    
-    # 日志系统
-    # pod 'CocoaLumberjackSwiftHelper', '~> 0.1.1' # Recommended
-    pod 'CocoaLumberjack/Swift', '~> 3.4.2' # Required
-    
-    # Swfit项目语言本地化支持框架
+    ## Swfit项目语言本地化支持框架
     pod 'Localize-Swift', '~> 2.0.0' # Required
     
-    # 数据库
-    # pod 'FMDB', '~> 2.6.2' # Recommended
+    ## 数据库
+    # pod 'FMDB', '~> 2.7.5' # Recommended
     
-    # 在iOS下搭建web服务器
-    pod 'GCDWebServer', '~> 3.4.2' # Optional
+    ## 在iOS下搭建web服务器
+    pod 'GCDWebServer', '~> 3.5.2' # Optional
     
-    # 通过使用CocoaLumberjack 和GCDWebServer实现日志NSLog打印的重定向，并且可以使用浏览器访问日志
-    # pod 'CocoaLogToWebServer', '~> 1.0.0' # Recommended
+    ## Http
+    pod 'Alamofire', '~> 4.8.2' # Required
     
-    # 网络
-    pod 'Alamofire', '~> 4.7.3' # Required
-    
-    # 图片请求
-    pod 'SDWebImage', '~> 4.4.2' # Optional 将会被其他的第三方库所依赖
+    ## 图片请求
+    pod 'SDWebImage', '~> 5.0.0' # Optional 将会被其他的第三方库所依赖
     # pod 'UIActivityIndicator-for-SDWebImage', '~> 1.2'
     # pod 'UIActivityIndicator-for-SDWebImage+UIButton', '~> 1.2'
-    # pod 'AlamofireImage', '~> 2.4.1'
+    # pod 'AlamofireImage', '~> 3.5.2'
     
-    # Json解析与封装
-    pod 'SwiftyJSON', '~> 4.2.0' # Required
+    ## Json解析与封装
+    pod 'SwiftyJSON', '~> 4.3.0' # Required
     
-    # Json与数据模型
-    pod 'ObjectMapper', '~> 3.3.0'
+    ## Json与数据模型
+    pod 'ObjectMapper', '~> 3.4.2'
     
-    # gzip压缩和解压缩
-    # pod 'GzipSwift', '~> 4.0.4' # Recommended, 可以精简http请求和返回的数据量
+    ## gzip压缩和解压缩
+    # pod 'GzipSwift', '~> 5.0.0' # Recommended, 可以精简http请求和返回的数据量
     
-    # 加密与解密
+    ## 加密与解密
     pod 'CryptoSwift', :git => "https://github.com/krzyzanowskim/CryptoSwift", :branch => "master" # Optional
     
-    # Animation
-    pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'  # Optional
-    
-    # Toast
-    pod 'Toast', '~> 4.0.0' # Required
-    #pod 'Toast-Swift', '~> 3.0.1' # Required
+    ## Animation
+    # pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'  # Optional
 
-    # 富文字
+    ## Toast
+    pod 'Toast', '~> 4.0.0' # Required
+    #pod 'Toast-Swift', '~> 5.0.0' # Required
+    
+    ## 富文本
     pod 'DTCoreText', '~> 1.6.21' # Required
     
-    # 进度控件
+    ## 进度控件
     pod 'MBProgressHUD', '~> 1.1.0' # Required
     pod 'M13ProgressSuite', '~> 1.2.9' # Required
     pod 'SVProgressHUD', '~> 2.2.5' # Optional
     
-    # 图片浏览控件
+    ## 图片浏览控件
     # pod 'MWPhotoBrowser', '~> 2.1.2' # Optional
     # pod 'DACircularProgress', '~> 2.3.1'
     # pod 'PSTCollectionView', '~> 1.2.3'
     # pod 'HTProgressHUD', '~> 0.2.1'
     
-    # 上下拉刷新数据的列表控件
-    pod 'MJRefresh', '~> 3.1.15.7' # Required
+    ## 上下拉刷新数据的列表控件
+    pod 'MJRefresh', '~> 3.1.16' # Required
     
-    # 滚动文字
-    # pod 'MarqueeLabel', '~> 2.7.10' # Recommended
+    ## 滚动文字
+    # pod 'MarqueeLabel', '~> 4.0.0' # Recommended
     
-    # 地图
-    pod 'AMap3DMap', '~> 6.4.0' # Recommended
-    pod 'AMapSearch', '~> 6.1.1' # Recommended
+    ## 地图
+    pod 'AMap3DMap', '~> 6.7.0' # Recommended
+    pod 'AMapSearch', '~> 6.6.0' # Recommended
     # pod 'BaiduMap-iOS-SDK', '~> 3.0' # Recommended
     
-    # 坐标转换工具
+    ## 坐标转换工具
     pod 'JZLocationConverter', '~> 1.0.0' # Optional
     
-    # 状态机
+    ## Redux
+    pod 'ReSwift', '~> 4.1.1'
+    
+    ## 状态机
     pod 'TransitionKit', '~> 2.2.1' # Optional
     
-    # 弹出框
+    ## 弹出框
     pod 'REMenu', '~> 1.10' # Optional
     
-    # 定制弹出框
+    ## 定制弹出框
     # pod 'SCLAlertView', '~> 0.8' # Required, added in project->"ThirdParty" 因SCLAlertView.appearance没有设置为public，已添加到项目工程中的ThirdParty
-    pod 'Popover', '~> 1.2.0' # Optional
+    pod 'Popover', '~> 1.2.2' # Optional
     
-    # 顶部消息栏
+    ## 顶部消息栏
     # pod 'TWMessageBarManager', '~> 1.8.1' # Recommended
     
-    # 统计图表
-    # pod 'Charts', '~> 3.0.2' # Recommended
+    ## 统计图表
+    # pod 'Charts', '~> 3.2.2' # Recommended
     
-    # 日期时间选择
+    ## 日期时间选择
     # pod 'WWCalendarTimeSelector', '~> 1.3.13' # Recommended
     
-    # 日历行程选择
-    # pod 'JTAppleCalendar', '~> 7.0.1' # Recommended
+    ## 日历行程选择
+    # pod 'JTAppleCalendar', '~> 7.1.7' # Recommended
     
-    # 动态菜单展示
-    # pod 'CircleMenu', '~> 2.0.5' # Recommended
+    ## 动态菜单展示
+    # pod 'CircleMenu', '~> 4.1.0' # Recommended
     
-    # 颜色选取
+    ## 颜色选取
     # pod 'ChameleonFramework/Swift', :git => 'https://github.com/ViccAlexander/Chameleon.git' # Recommended
-    # pod 'Hue', '~> 2.0.1' # Recommended
+    # pod 'Hue', '~> 4.0.0' # Recommended
     
-    # 折叠单元格
-    # pod 'FoldingCell', '~> 2.0.5' # Recommended
+    ## 折叠单元格
+    # pod 'FoldingCell', '~> 5.0.0' # Recommended
     
-    # 二维码扫描解码及生成二维码
+    ## 二维码扫描解码及生成二维码
     # pod 'SwiftQRCode', '~> 3.0.2' # Optional
     
-    # 图标动态变化
+    ## 图标动态变化
     pod 'TBIconTransitionKit', '~> 1.0.2' # Optional
     
-    # 约束布局
+    ## 约束布局
     pod 'Cartography', '~> 3.1.0' # Required
     
-    # 侧滑视图
-    pod 'SlideMenuControllerSwift', '~> 4.0.0' # Optional
+    ## 侧滑视图
+    # pod 'SlideMenuControllerSwift', '~> 4.0.0' # Optional
+    pod 'SlideMenuControllerSwift', :git => 'https://github.com/grizzly/SlideMenuControllerSwift.git'
     
-    # 第三方聊天工具
-    pod 'RongCloudIM/IMLib', '~> 2.9.6' # Optional
-    pod 'RongCloudIM/IMKit', '~> 2.9.6' # Optional
+    ## 第三方聊天工具
+    pod 'RongCloudIM/IMLib', '~> 2.9.13' # Optional
+    pod 'RongCloudIM/IMKit', '~> 2.9.13' # Optional
     
-    # 弹幕控件
+    ## 弹幕控件
     pod 'BarrageRenderer', '~> 2.1.0' # Optional
-
-    # 第三方视频视频播放库
-    # pod 'MobileVLCKit', '~> 2.2.2' # Optional
     
-    # IM通讯协议
-    # pod 'Protobuf', '~> 3.3.0' # Optional
+    ## 第三方视频视频播放库
+    # pod 'MobileVLCKit', '~> 3.3.1' # Optional
     
-    target 'BaseSwiftTests' do
-        inherit! :search_paths
-        # Pods for testing
-    end
-    
-    target 'BaseSwiftUITests' do
-        inherit! :search_paths
-        # Pods for testing
-    end
-    
+    ## IM通讯协议
+    # pod 'Protobuf', '~> 3.7.0' # Optional
 end
-
-# post_install do |installer|
-#   installer.pods_project.build_configurations.each do |config|
-#     # Configure Pod targets for Xcode 8 compatibility
-#     config.build_settings['SWIFT_VERSION'] = '3.0'
-#     config.build_settings['ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES'] = 'NO'
-#   end
-# end

@@ -52,7 +52,7 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
     var debugMenu: REMenu!
     
     override public func viewDidLoad() {
-        SRNavigationController.swizzle()
+        //SRNavigationController.swizzle()
         super.viewDidLoad()
         //CommonShare.addNavigationController(self)
         initPopRecognizer()
@@ -258,7 +258,7 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
         let fromViewController = coordinator.viewController(forKey: .from)
         let toViewController = coordinator.viewController(forKey: .to)
         
-        // Bg Alpha
+        // Background Alpha
         let fromAlpha = fromViewController?.navigationBarBackgroundAlpha ?? 0
         let toAlpha = toViewController?.navigationBarBackgroundAlpha ?? 0
         let newAlpha = fromAlpha + (toAlpha - fromAlpha) * percentComplete

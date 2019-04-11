@@ -63,10 +63,10 @@ class NewsSearchViewController: BaseViewController {
         updateTableHeaderView()
         tableView.tableFooterView = UIView()
         
-        let channel = ChannelModel(JSON: [ParamKey.id : String(int: Int.random(1, 10000))])!
+        let channel = ChannelModel(JSON: [ParamKey.id : String(int: Int.random(in: 1 ..< 10000))])!
         newsListVC = NewsMainViewController.createNewsListVC(channel)
         newsListVC.delegate = self
-        addChildViewController(newsListVC)
+        addChild(newsListVC)
         view.addSubview(newsListVC.view)
         constrain(newsListVC.view, searchBar) { (view1, view2) in
             view1.top == view2.bottom
@@ -119,7 +119,7 @@ class NewsSearchViewController: BaseViewController {
         var params = ["ver" : "1", "Refer" : "sina_sug"]
         params[ParamKey.cb] =
             "func_" + String(longLong: CLongLong(Date().timeIntervalSince1970 * 1000))
-        params[ParamKey.t] = String(float: Float(Int.random(1, 10000)) / 10000.0)
+        params[ParamKey.t] = String(float: Float(Int.random(in: 1 ..< 10000)) / 10000.0)
         params[ParamKey.key] = key
         //httpReq(.get(.newsSuggestions), params, userInfo, url : "http://s.weibo.com")
         httpRequest(.get(.newsSuggestions), success: { response in
@@ -140,7 +140,7 @@ class NewsSearchViewController: BaseViewController {
     
     func updateTableHeaderView() {
         tableView.tableHeaderView =
-            pageStatus == .history && history.count > 0 ? tableHeaderView : nil
+            pageStatus == .history && !history.isEmpty ? tableHeaderView : nil
     }
     
     func updateHistory(_ newKey: String) {
@@ -248,7 +248,7 @@ extension NewsSearchViewController: UISearchBarDelegate {
         updateHistory(searchBar.text!)
         Keyboard.hide { [weak self] in
             self?.newsListVC.view.isHidden = false
-            self?.newsListVC.loadData(TableLoadData.new, progressType: .opaqueMask)
+            self?.newsListVC.loadData(.new, progressType: .opaqueMask)
         }
     }
     
@@ -274,19 +274,19 @@ extension NewsSearchViewController: UISearchBarDelegate {
 
 extension NewsSearchViewController: NewsListDelegate {
     //使用第三方新闻客户端的请求参数
-    func getNewsList(_ loadType: String?, sendVC: NewsListViewController) {
+    func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController) {
         var params = sendVC.params
         let time = CLongLong(Date().timeIntervalSince1970 * 1000)
         params["t"] = String(longLong: time)
         params["_"] = String(longLong: time + 2)
         params["show_num"] = "10"
-        params["act"] = loadType == TableLoadData.more ? "more" : "new"
-        let offset = loadType == TableLoadData.more ? sendVC.currentOffset + 1 : 0
+        params["act"] = loadType == .more ? "more" : "new"
+        let offset = loadType == .more ? sendVC.currentOffset + 1 : 0
         params["page"] = String(int: offset + 1)
         //httpReq(.get(.sinaNewsList), params, userInfo, url: "http://interface.sina.cn")
         httpRequest(.get(.sinaNewsList), success: { response in
             let responseData = NonNull.dictionary(response)
-            if TableLoadData.more == loadType {
+            if .more == loadType {
                 let offset = Int(params[ParamKey.offset] as! String)
                 if offset == self.newsListVC.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                     self.newsListVC.updateMore(responseData)
@@ -295,13 +295,13 @@ extension NewsSearchViewController: NewsListDelegate {
                 self.newsListVC.updateNew(responseData)
             }
         }, bfail: { response in
-            if TableLoadData.more == loadType {
+            if .more == loadType {
                 let offset = Int(params[ParamKey.offset] as! String)
                 if offset == self.newsListVC.currentOffset + 1 {
                     return
                 }
             } else {
-                if self.newsListVC.dataArray.count > 0 { //已经有数据，保留原数据，显示提示框
+                if !self.newsListVC.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
                     self.newsListVC?.updateNew(nil)
                 } else { //当前为空的话则交给列表展示错误信息
                     self.newsListVC.updateNew(nil, errMsg: self.logBFail(.get(.sinaNewsList),
@@ -310,17 +310,17 @@ extension NewsSearchViewController: NewsListDelegate {
                 }
             }
         }, fail: { error in
-            if TableLoadData.more == loadType {
+            if .more == loadType {
                 let offset = Int(params[ParamKey.offset] as! String)
                 if offset == self.newsListVC.currentOffset + 1 {
-                    if self.newsListVC.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
+                    if !self.newsListVC.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                         self.newsListVC.updateMore(nil)
                     } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
                         self.newsListVC.updateMore(nil, errMsg: error.errorDescription)
                     }
                 }
             } else {
-                if self.newsListVC.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互
+                if !self.newsListVC.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
                     self.newsListVC.updateNew(nil)
                 } else { //当前为空的话则交给列表展示错误信息
                     self.newsListVC.updateNew(nil, errMsg: error.errorDescription)
@@ -371,7 +371,7 @@ extension NewsSearchViewController: UITableViewDelegate, UITableViewDataSource {
             searchBar.text = label.text
             Keyboard.hide { [weak self] in
                 self?.newsListVC.view.isHidden = false
-                self?.newsListVC.loadData(TableLoadData.new, progressType: .opaqueMask)
+                self?.newsListVC.loadData(.new, progressType: .opaqueMask)
             }
         }
     }

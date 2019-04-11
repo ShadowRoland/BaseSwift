@@ -231,7 +231,7 @@ public class SRHttpServer: NSObject {
         
         //校验
         if query?[ParamKey.userId] != nil,
-            let token = request.headers[ParamKey.token] as? String,
+            let token = request.headers[ParamKey.token],
             token == self.token {
             return nil
         }
@@ -253,7 +253,7 @@ public class SRHttpServer: NSObject {
             return body.appendingFormat("<h2>获取日志文件列表失败</h2><p>%@</p>", error.localizedDescription)
         }
         
-        if contents?.count == 0 {
+        if contents!.isEmpty {
             return body.appending("<h2>日志文件列表为空</h2>")
         }
         
@@ -326,7 +326,7 @@ public class SRHttpServer: NSObject {
                                         error.localizedDescription)
         }
         
-        let fileLength = fileContents!.length
+        let fileLength = fileContents!.count
         if length > 0 && length < fileLength {
             return fileContents!.substring(from: max(fileLength - length, 0))
         }
@@ -533,7 +533,7 @@ public class SRHttpServer: NSObject {
         guard let countryCode = query?[ParamKey.countryCode],
             let phone = query?[ParamKey.phone],
             !Common.isEmptyString(phone),
-            (phone as! String).isMobileNumber(countryCode: Number.int(countryCode) ?? 0) else {
+            phone.isMobileNumber(countryCode: Number.int(countryCode) ?? 0) else {
                 return BFResult.bfailure("无效的手机号码")
         }
         
@@ -545,7 +545,7 @@ public class SRHttpServer: NSObject {
         if enumType == .forgetPassword {
             let profile = getLocalProfile()
             guard Number.int(countryCode) == Number.int(profile[ParamKey.countryCode]),
-                phone as! String == profile[ParamKey.phone] as! String else {
+                phone == profile[ParamKey.phone] as! String else {
                     return BFResult.bfailure("手机号码没有被注册")
             }
         }
@@ -553,7 +553,7 @@ public class SRHttpServer: NSObject {
         //随机生成字符串
         var code = ""
         for _ in (0 ..< 4) {
-            let randomNumber = Int.random(0, 36)
+            let randomNumber = Int.random(in: 0 ..< 36)
             if randomNumber <= 9 {
                 code.append(String(int: Int(randomNumber)))
             } else {
@@ -561,7 +561,7 @@ public class SRHttpServer: NSObject {
             }
         }
         
-        let phoneNumber = String(int: Number.int(countryCode)!) + (phone as! String)
+        let phoneNumber = String(int: Number.int(countryCode)!) + phone
         switch enumType {
         case .login:
             VerificationCode.loginDic[phoneNumber] = code

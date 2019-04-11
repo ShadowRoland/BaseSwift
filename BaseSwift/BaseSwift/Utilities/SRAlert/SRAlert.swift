@@ -26,13 +26,13 @@ open class SRAlert: SCLAlertView {
     static var allAlerts: [SRAlert] = []
     
     class func append(_ alert: SRAlert) {
-        if allAlerts.index(of: alert) == nil {
+        if allAlerts.firstIndex(of: alert) == nil {
             allAlerts.append(alert)
         }
     }
     
     class func remove(_ alert: SRAlert) {
-        if let index = allAlerts.index(of: alert) {
+        if let index = allAlerts.firstIndex(of: alert) {
             allAlerts.remove(at: index)
         }
     }

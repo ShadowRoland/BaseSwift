@@ -99,7 +99,7 @@ public class SRPickerView: UIView {
         cancelButton = UIButton(type: .custom)
         cancelButton.title = "Cancel".localized
         cancelButton.titleColor = UIColor.darkText
-        cancelButton.contentEdgeInsets = UIEdgeInsetsMake(0, SubviewMargin, 0, 0)
+        cancelButton.contentEdgeInsets = UIEdgeInsets(0, SubviewMargin, 0, 0)
         cancelButton.clicked(self, action: #selector(clickCancelButton(_:)))
         bottomView.addSubview(cancelButton)
         constrain(cancelButton) { (view) in
@@ -112,7 +112,7 @@ public class SRPickerView: UIView {
         confirmButton = UIButton(type: .custom)
         confirmButton.title = "OK".localized
         confirmButton.titleColor = UIColor.darkText
-        confirmButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, SubviewMargin)
+        confirmButton.contentEdgeInsets = UIEdgeInsets(0, 0, 0, SubviewMargin)
         confirmButton.clicked(self, action: #selector(clickConfirmButton(_:)))
         bottomView.addSubview(confirmButton)
         constrain(confirmButton) { (view) in

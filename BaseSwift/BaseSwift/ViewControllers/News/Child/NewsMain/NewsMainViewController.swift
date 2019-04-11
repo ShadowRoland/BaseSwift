@@ -10,7 +10,7 @@ import UIKit
 import Cartography
 import SDWebImage
 import TBIconTransitionKit
-import Spring
+//import Spring
 
 class NewsMainViewController: BaseViewController,
     UICollectionViewDataSource,
@@ -40,7 +40,8 @@ SRTabHeaderDelegate {
     
     @IBOutlet var channelEditBackgroundView: UIView!
     @IBOutlet var channelEditBackgroundBlurView: UIVisualEffectView!
-    @IBOutlet var channelEditView: SpringView!
+    //@IBOutlet var channelEditView: SpringView!
+    @IBOutlet var channelEditView: UIView!
     @IBOutlet var channelCollectionView: UICollectionView!
     var isChannelsEditing = false
     var isChannelsEdited = false //频道是否被编辑并保存过，若没有编辑并保存过，不需要更新主页列表
@@ -236,7 +237,7 @@ SRTabHeaderDelegate {
                     let newsListVC = NewsMainViewController.createNewsListVC(channel)
                     newsListVC.parentVC = self
                     newsListVC.delegate = parentVC
-                    addChildViewController(newsListVC)
+                    addChild(newsListVC)
                     scrollView.addSubview(newsListVC.view)
                     return newsListVC
                 }
@@ -245,7 +246,7 @@ SRTabHeaderDelegate {
             //remove旧的vc
             newsListVCs.forEach { vc in
                 if !array.contains(vc) {
-                    vc.removeFromParentViewController()
+                    vc.removeFromParent()
                     vc.view.removeFromSuperview()
                 }
             }
@@ -335,7 +336,7 @@ SRTabHeaderDelegate {
                                    ScreenWidth(),
                                    scrollView.height)
             vc.tableView.contentInset =
-                UIEdgeInsetsMake(Const.tabScrollHeaderHeight, 0, TabBarHeight, 0)
+                UIEdgeInsets(top: Const.tabScrollHeaderHeight, left: 0, bottom: TabBarHeight, right: 0)
             vc.contentInset = vc.tableView.contentInset
             if let channelId = vc.channelId, channelId == selectedChannelId {
                 selectedIndex = i
@@ -388,15 +389,19 @@ SRTabHeaderDelegate {
                    0,
                    channelEditView.width - 2.0 * Const.channelCollectionViewMarginHorizontal,
                    channelEditView.height)
-        channelEditView.animation = Spring.AnimationPreset.SlideDown.rawValue
-        channelEditView.animateNext(completion: { [weak self] in
-            self?.isEditViewAnimating = false
-            self?.searchHeaderView.addGestureRecognizer((self?.searchHeaderGr)!)
-            self?.searchButton.isUserInteractionEnabled = false
-        })
+//        channelEditView.animation = Spring.AnimationPreset.SlideDown.rawValue
+//        channelEditView.animateNext(completion: { [weak self] in
+//            self?.isEditViewAnimating = false
+//            self?.searchHeaderView.addGestureRecognizer((self?.searchHeaderGr)!)
+//            self?.searchButton.isUserInteractionEnabled = false
+//        })
         UIView.animate(withDuration: Const.channelAnimationDuration, animations: { [weak self] in
             self?.parentVC?.tabBarBottomConstraint.constant = -TabBarHeight
             self?.parentVC?.view.layoutIfNeeded()
+            
+            self?.isEditViewAnimating = false
+            self?.searchHeaderView.addGestureRecognizer((self?.searchHeaderGr)!)
+            self?.searchButton.isUserInteractionEnabled = false
         })
     }
     
@@ -474,7 +479,7 @@ SRTabHeaderDelegate {
     //MARK: - 事件响应
     
     @IBAction func handleSearchHeaderTap(_ sender: Any) {
-        clickTabAddButton(tabAddButton)
+        clickTabAddButton(tabAddButton as Any)
     }
     
     @IBAction func clickSearchButton(_ sender: Any) {
@@ -551,7 +556,7 @@ SRTabHeaderDelegate {
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
-                currentNewsListVC?.loadData(TableLoadData.new, progressType: .clearMask)
+                currentNewsListVC?.loadData(.new, progressType: .clearMask)
             }
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
@@ -562,7 +567,7 @@ SRTabHeaderDelegate {
                 currentNewsListVC = newsListVCs[index]
                 if !(currentNewsListVC?.isTouched)! {
                     DispatchQueue.main.async { [weak self] in
-                        self?.currentNewsListVC?.loadData(TableLoadData.new,
+                        self?.currentNewsListVC?.loadData(.new,
                                                           progressType: .clearMask)
                     }
                 }
@@ -585,21 +590,18 @@ SRTabHeaderDelegate {
     }
     
     //列表停止滑动后恢复图片下载
-    override func scrollViewDidEndDragging(_ scrollView: UIScrollView,
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView,
                                            willDecelerate decelerate: Bool) {
-        super.scrollViewDidEndDragging(scrollView, willDecelerate: decelerate)
         if !decelerate {
             resetAfterScrollViewDidEndScroll(scrollView)
         }
     }
     
-    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        super.scrollViewDidEndDecelerating(scrollView)
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         resetAfterScrollViewDidEndScroll(scrollView)
     }
     
-    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        super.scrollViewDidEndScrollingAnimation(scrollView)
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         resetAfterScrollViewDidEndScroll(scrollView)
     }
     
@@ -609,7 +611,7 @@ SRTabHeaderDelegate {
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
             DispatchQueue.main.async { [weak self] in
-                self?.currentNewsListVC?.loadData(TableLoadData.new, progressType: .clearMask)
+                self?.currentNewsListVC?.loadData(.new, progressType: .clearMask)
             }
         }
         isSilent = false

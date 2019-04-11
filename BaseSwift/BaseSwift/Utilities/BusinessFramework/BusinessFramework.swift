@@ -97,7 +97,7 @@ public class BusinessFramework {
     public func remove(_ listener: BusinessListenerProtocol) {
         objc_sync_enter(listeners)
         listeners = Array<BusinessObject>(listeners.drop { $0.listener == nil })
-        if let index = listeners.index(where: {
+        if let index = listeners.firstIndex(where: {
             String(pointer: $0.listener as AnyObject) == String(pointer: listener as AnyObject)
         }) {
             listeners.remove(at: index)

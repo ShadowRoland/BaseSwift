@@ -11,7 +11,7 @@ import DTCoreText
 import SwiftyJSON
 
 class RegisterViewController: BaseViewController {
-    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
+    lazy var indexPathSet: SRIndexPath.Set = SRIndexPath.Set()
     @IBOutlet weak var tableView: UITableView!
     
     lazy var countryCell: UITableViewCell = {
@@ -44,7 +44,7 @@ class RegisterViewController: BaseViewController {
             verifyButton.constraints.first { "verifyWidthConstraint" == $0.identifier }
         let getTitle = "Get verification code".localized
         let againTitle = String(format: "Get again (%d)".localized, Const.verifyInterval)
-        let title = getTitle.length > againTitle.length ? getTitle : againTitle
+        let title = getTitle.count > againTitle.count ? getTitle : againTitle
         let width = Common.fitSize(title,
                                    font: verifyButton.titleLabel!.font,
                                    maxWidth: ScreenWidth() - SubviewMargin).width
@@ -81,15 +81,15 @@ class RegisterViewController: BaseViewController {
         deviceOrientationDidChange()
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: phoneTextField)
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: verifyTextField)
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: passwordTextField)
     }
     
@@ -107,10 +107,10 @@ class RegisterViewController: BaseViewController {
     }
     
     func initView() {
-        indexPathSet[IndexPath(row: 0, section: 0)] = SRIndexPathTable(cell: countryCell)
-        indexPathSet[IndexPath(row: 1, section: 0)] = SRIndexPathTable(cell: countryCodeCell)
-        indexPathSet[IndexPath(row: 2, section: 0)] = SRIndexPathTable(cell: verifyCell)
-        indexPathSet[IndexPath(row: 3, section: 0)] = SRIndexPathTable(cell: passwordCell)
+        indexPathSet[IndexPath(row: 0, section: 0)] = SRIndexPath.Table(cell: countryCell)
+        indexPathSet[IndexPath(row: 1, section: 0)] = SRIndexPath.Table(cell: countryCodeCell)
+        indexPathSet[IndexPath(row: 2, section: 0)] = SRIndexPath.Table(cell: verifyCell)
+        indexPathSet[IndexPath(row: 3, section: 0)] = SRIndexPath.Table(cell: passwordCell)
         
         agreementLabel.delegate = self
         agreementLabel.attributedString = "Register Agreement Text".localized.attributedString
@@ -143,7 +143,7 @@ class RegisterViewController: BaseViewController {
                                      selector: #selector(countDown),
                                      userInfo: nil,
                                      repeats: true)
-        RunLoop.current.add(timer!, forMode: RunLoopMode.commonModes)
+        RunLoop.current.add(timer!, forMode: .common)
     }
     
     func checkPhoneNO() -> Bool {
@@ -309,13 +309,13 @@ extension RegisterViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        if string.length > 0 {
+        if !string.isEmpty {
             if phoneTextField == textField {
-                return string.regex(Regex.number)
+                return string.regex(String.Regex.number)
             } else if verifyTextField == textField {
-                return string.regex(Regex.verificationCode)
+                return string.regex(String.Regex.verificationCode)
             } else if passwordTextField == textField {
-                return string.regex(Regex.passwordInputing)
+                return string.regex(String.Regex.passwordInputing)
             }
         }
         return true
@@ -343,7 +343,7 @@ extension RegisterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let item = indexPathSet[indexPath] as? SRIndexPathTable {
+        if let item = indexPathSet[indexPath] as? SRIndexPath.Table {
             return item.height
         }
         return 0
@@ -351,7 +351,7 @@ extension RegisterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let item = indexPathSet[indexPath] as? SRIndexPathTable, let cell = item.cell {
+        if let item = indexPathSet[indexPath] as? SRIndexPath.Table, let cell = item.cell {
             return cell
         }
         return UITableViewCell()

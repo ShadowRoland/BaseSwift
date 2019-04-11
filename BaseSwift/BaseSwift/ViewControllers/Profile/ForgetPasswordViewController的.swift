@@ -26,7 +26,7 @@ class ForgetPasswordViewController: BaseViewController {
         phoneTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: phoneTextField)
         return cell
     }()
@@ -39,7 +39,7 @@ class ForgetPasswordViewController: BaseViewController {
         verifyTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: verifyTextField)
         verifyButton = cell.contentView.viewWithTag(101) as? UIButton
         verifyButton.clicked(self, action: #selector(clickVerifyButton(_:)))
@@ -48,7 +48,7 @@ class ForgetPasswordViewController: BaseViewController {
         
         let getTitle = "Get verification code".localized
         let againTitle = String(format: "Get again (%d)".localized, Const.verifyInterval)
-        let title = getTitle.length > againTitle.length ? getTitle : againTitle
+        let title = getTitle.count > againTitle.count ? getTitle : againTitle
         let width = Common.fitSize(title,
                                    font: verifyButton.titleLabel!.font,
                                    maxWidth: ScreenWidth() - SubviewMargin).width
@@ -97,7 +97,7 @@ class ForgetPasswordViewController: BaseViewController {
                                      selector: #selector(countDown),
                                      userInfo: nil,
                                      repeats: true)
-        RunLoop.current.add(timer!, forMode: RunLoopMode.commonModes)
+        RunLoop.current.add(timer!, forMode: .common)
     }
     
     func checkPhoneNO() -> Bool {
@@ -234,11 +234,11 @@ extension ForgetPasswordViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        if string.length > 0 {
+        if !string.isEmpty {
             if phoneTextField == textField {
-                return string.regex(Regex.number)
+                return string.regex(String.Regex.number)
             } else if verifyTextField == textField {
-                return string.regex(Regex.verificationCode)
+                return string.regex(String.Regex.verificationCode)
             }
         }
         return true

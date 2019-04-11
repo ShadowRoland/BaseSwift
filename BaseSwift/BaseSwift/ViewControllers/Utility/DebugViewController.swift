@@ -32,7 +32,7 @@ class DebugViewController: BaseViewController {
         safariCell.detailTextLabel?.text = url.absoluteString
         
         localDuration = 10.0
-        localParams = [ParamKey.action : Action.openWebpage,
+        localParams = [ParamKey.action : Event.Action.openWebpage.rawValue,
                        ParamKey.url : "http://baike.baidu.com/link?url=wg0mbCH5oS8BfaogPk70zgXJx-RAHYyyeZwhU2QPmx_FAxg9x4nwyf6KLxygH5EXJ_UvMkn6bOgCC84-JjGFqU7JeCzKwiBAsp4CeEGzThW",
                        ParamKey.message: "打开特定的网页"]
         localNotificationCell.detailTextLabel?.text =

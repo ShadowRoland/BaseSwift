@@ -27,7 +27,7 @@ class ContactCell: UITableViewCell {
     //MARK: - 视图初始化
     
     func initView() {
-        selectionStyle = UITableViewCellSelectionStyle.default
+        selectionStyle = .default
         
         contentView.addSubview(headPortraitImageView)
         headPortraitImageView.clipsToBounds = true
@@ -94,9 +94,9 @@ class ContactCell: UITableViewCell {
         let url = URL(string: NonNull.string(model.headPortrait))
         var headPortrait: UIImage?
         if contactType == .officialAccount {
-            headPortrait = Resource.defaultImage(.min)
+            headPortrait = Configs.Resource.defaultImage(.min)
         } else {
-            headPortrait = Resource.defaultHeadPortrait(.min)
+            headPortrait = Configs.Resource.defaultHeadPortrait(.min)
         }
         headPortraitImageView.contentMode = .scaleToFill
         headPortraitImageView.sd_setImage(with: url,

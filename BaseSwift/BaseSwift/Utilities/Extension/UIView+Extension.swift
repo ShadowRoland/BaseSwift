@@ -11,28 +11,48 @@ import Foundation
 //MARK: Frame
 
 public extension UIView {
-    var top: CGFloat {
-        return frame.origin.x
-    }
-    
-    var bottom: CGFloat {
-        return frame.origin.y + frame.size.height
-    }
-    
     var left: CGFloat {
-        return frame.origin.x
+        get {
+            return frame.origin.x
+        }
+        set {
+            frame = CGRect(newValue, top, width, height)
+        }
     }
     
     var right: CGFloat {
         return frame.origin.x + frame.size.width
     }
     
+    var top: CGFloat {
+        get {
+            return frame.origin.x
+        }
+        set {
+            frame = CGRect(left, newValue, width, height)
+        }
+    }
+    
+    var bottom: CGFloat {
+        return frame.origin.y + frame.size.height
+    }
+    
     var width: CGFloat {
-        return frame.size.width
+        get {
+            return frame.size.width
+        }
+        set {
+            frame = CGRect(left, top, newValue, height)
+        }
     }
     
     var height: CGFloat {
-        return frame.size.height
+        get {
+            return frame.size.height
+        }
+        set {
+            frame = CGRect(left, top, width, newValue)
+        }
     }
 }
 
@@ -91,13 +111,13 @@ extension UIView: CAAnimationDelegate {
     public func animation(_ type: AnimationType, subtype: String?) -> AnyObject? {
         switch (type) {
         case .fade:
-            return catransition(kCATransitionFade, subtype: subtype)
+            return catransition(CATransitionType.fade.rawValue, subtype: subtype)
         case .push:
-            return catransition(kCATransitionPush, subtype: subtype)
+            return catransition(CATransitionType.push.rawValue, subtype: subtype)
         case .reveal:
-            return catransition(kCATransitionReveal, subtype: subtype)
+            return catransition(CATransitionType.reveal.rawValue, subtype: subtype)
         case .moveIn:
-            return catransition(kCATransitionMoveIn, subtype: subtype)
+            return catransition(CATransitionType.moveIn.rawValue, subtype: subtype)
         case .cube:
             return catransition("cube", subtype: subtype)
         case .suckEffect:
@@ -115,26 +135,26 @@ extension UIView: CAAnimationDelegate {
         case .cameraIrisHollowClose:
             return catransition("cameraIrisHollowClose", subtype: subtype)
         case .curlDown:
-            antransition(UIViewAnimationTransition.curlDown)
+            antransition(.curlDown)
         case .curlUp:
-            antransition(UIViewAnimationTransition.curlUp)
+            antransition(.curlUp)
         case .flipFromLeft:
-            antransition(UIViewAnimationTransition.flipFromLeft)
+            antransition(.flipFromLeft)
         case .flipFromRight:
-            antransition(UIViewAnimationTransition.flipFromRight)
+            antransition(.flipFromRight)
         case .easeInEaseOut:
             alpha = 1;
             let animation = CAKeyframeAnimation.init(keyPath: "transform")
             animation.duration = 0.2;
             animation.isRemovedOnCompletion = false
-            animation.fillMode = kCAFillModeForwards
+            animation.fillMode = .forwards
             var values = Array<Any>()
             values.append(CATransform3DMakeScale(0.1, 0.1, 1.0))
             values.append(CATransform3DMakeScale(1.1, 1.1, 1.0))
             values.append(CATransform3DMakeScale(0.9, 0.9, 0.9))
             values.append(CATransform3DMakeScale(1.0, 1.0, 1.0))
             animation.values = values
-            animation.timingFunction = CAMediaTimingFunction(name:kCAMediaTimingFunctionEaseInEaseOut)
+            animation.timingFunction = CAMediaTimingFunction(name:.easeInEaseOut)
             layer.add(animation, forKey: nil)
             return animation
         case .easeInEaseIn:
@@ -142,14 +162,14 @@ extension UIView: CAAnimationDelegate {
             animation.delegate = self;
             animation.duration = 0.2;
             animation.isRemovedOnCompletion = false
-            animation.fillMode = kCAFillModeForwards
+            animation.fillMode = .forwards
             var values = Array<Any>()
             values.append(CATransform3DMakeScale(1.0, 1.0, 1.0))
             values.append(CATransform3DMakeScale(0.9, 0.9, 0.9))
             values.append(CATransform3DMakeScale(1.1, 1.1, 1.0))
             values.append(CATransform3DMakeScale(0.1, 0.1, 1.0))
             animation.values = values
-            animation.timingFunction = CAMediaTimingFunction(name:kCAMediaTimingFunctionEaseInEaseOut)
+            animation.timingFunction = CAMediaTimingFunction(name:.easeInEaseOut)
             layer.add(animation, forKey: nil)
             return animation
         }
@@ -159,20 +179,20 @@ extension UIView: CAAnimationDelegate {
     public func catransition(_ type: String?, subtype: String?) -> CATransition? {
         let animation = CATransition()//创建CATransition对象
         animation.duration = 0.5//设置运动时间
-        animation.type = type!//设置运动type
+        animation.type = CATransitionType(rawValue: type!)//设置运动type
         if (subtype != nil) {
-            animation.subtype = subtype;//设置子类
+            animation.subtype = subtype.map { CATransitionSubtype(rawValue: $0) };//设置子类
         }
         
         //设置运动速度
-        animation.timingFunction = CAMediaTimingFunction(name:kCAMediaTimingFunctionEaseInEaseOut)
+        animation.timingFunction = CAMediaTimingFunction(name:.easeInEaseOut)
         layer.add(animation, forKey: "animation")
         return animation;
     }
     
-    public func antransition(_ transition: UIViewAnimationTransition) {
+    public func antransition(_ transition: UIView.AnimationTransition) {
         UIView.animate(withDuration: 0.5, animations: { () -> Void in
-            UIView.setAnimationCurve(UIViewAnimationCurve.easeInOut)
+            UIView.setAnimationCurve(.easeInOut)
             UIView.setAnimationTransition(transition, for: self, cache: true)
         })
     }

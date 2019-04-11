@@ -27,7 +27,7 @@ class FindCell: UITableViewCell {
             let url = URL(string: NonNull.string(model?.headPortrait))
             headPortraitImageView.contentMode = .scaleToFill
             headPortraitImageView.sd_setImage(with: url,
-                                              placeholderImage: Resource.defaultHeadPortrait(.min),
+                                              placeholderImage: Configs.Resource.defaultHeadPortrait(.min),
                                               options: [],
                                               completed:
                 { [weak headPortraitImageView] (image, error, cacheType, url) in
@@ -127,10 +127,10 @@ class FindCell: UITableViewCell {
         static let bottomHeight = 30.0 as CGFloat
         static let bottomWidth = 2.0 * (likeButtonWidth + likeMarginRight) + bottomShareButtonWidth
         static let bottomShareButtonWidth = 30.0 as CGFloat
-        static let bottomShareButtonEdgeInsets = UIEdgeInsetsMake(5.0, 0, 10.0, 15.0)
+        static let bottomShareButtonEdgeInsets = UIEdgeInsets(5.0, 0, 10.0, 15.0)
         static let likeMarginRight = 5.0 as CGFloat
         static let likeButtonWidth = 50.0 as CGFloat
-        static let likeButtonEdgeInsets = UIEdgeInsetsMake(7.0, 0, 8.0, 35.0)
+        static let likeButtonEdgeInsets = UIEdgeInsets(7.0, 0, 8.0, 35.0)
         static let likeLabelWidth = 30.0 as CGFloat
         static let likeLabelFont = UIFont.system(10.0)
         static let likeLabelTextColor = UIColor(100.0, 50.0, 5.0)
@@ -169,7 +169,7 @@ class FindCell: UITableViewCell {
         switch model.blogType {
         case .image:
             var count = 0
-            if let images = model.images, images.count > 0 {
+            if let images = model.images, !images.isEmpty {
                 count = min(Const.groupImageMaxCount, images.count)
                 if count == 1 {
                     cellHeight +=
@@ -428,7 +428,7 @@ class FindCell: UITableViewCell {
             weak var weakSelf = self
             imageButton.sd_setImage(with: url,
                                     for: .normal,
-                                    placeholderImage: Resource.defaultImage(imagesCount > 1 ? .min : .normal),
+                                    placeholderImage: Configs.Resource.defaultImage(imagesCount > 1 ? .min : .normal),
                                     options: [],
                                     completed:
                 { [weak imageButton] (image, error, cacheType, url) in
@@ -472,8 +472,8 @@ class FindCell: UITableViewCell {
             }
             images[0].frame = CGRect(0, 0, frame.size)
         } else { //多张图片
-            var rows = IntegerOne
-            var columns = IntegerOne
+            var rows = 1
+            var columns = 1
             if count == 4 { //4张图片的时候正方排列
                 rows = 2
                 columns = 2
@@ -506,7 +506,7 @@ class FindCell: UITableViewCell {
         imagesView.removeFromSuperview()
         
         let url = URL(string: NonNull.string(model.thumbnail))
-        shareThumbnail.sd_setImage(with: url, placeholderImage: Resource.defaultImage(.normal))
+        shareThumbnail.sd_setImage(with: url, placeholderImage: Configs.Resource.defaultImage(.normal))
         shareLabel.text = model.shareText
         //文字内容宽度
         let shareTextwidth = width - Const.shareThumbnailSide - 3.0 * Const.shareThumbnailMargin

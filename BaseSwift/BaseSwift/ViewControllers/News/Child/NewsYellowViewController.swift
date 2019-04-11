@@ -16,7 +16,7 @@ class NewsYellowViewController: UIViewController, UITableViewDelegate, UITableVi
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        tableView.contentInset = UIEdgeInsetsMake(0, 0, TabBarHeight, 0)
+        tableView.contentInset = UIEdgeInsets(0, 0, TabBarHeight, 0)
         let jsonFile = ResourceDirectory.appending(pathComponent: "json/debug/title_party.json")
         dataArray = NonNull.array(Common.readJsonFile(jsonFile)) as! [[AnyHashable : Any]]
     }

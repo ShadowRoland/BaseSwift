@@ -160,14 +160,14 @@ extension UIImage {
     func compressedJPGData(_ maxSize: CGSize, maxLength: Int = 0) -> Data? {
         let image = compressed(maxSize)
         if maxLength <= 0 {
-            return UIImageJPEGRepresentation(image, 1.0)
+            return image.jpegData(compressionQuality: 1.0)
         }
         
         var quality = 1.0 as CGFloat
-        var data = UIImageJPEGRepresentation(image, quality)
+        var data = image.jpegData(compressionQuality: quality)
         while (data != nil && data!.count > maxLength && quality > 0) {
             quality -= 0.1
-            data = UIImageJPEGRepresentation(image, quality)
+            data = image.jpegData(compressionQuality: quality)
         }
         
         return data

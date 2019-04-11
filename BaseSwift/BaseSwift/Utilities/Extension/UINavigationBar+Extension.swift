@@ -21,7 +21,7 @@ public extension UINavigationBar {
         
         let overlay = UIView()
         overlay.isUserInteractionEnabled = false
-        overlay.autoresizingMask = [UIViewAutoresizing.flexibleHeight, UIViewAutoresizing.flexibleWidth]
+        overlay.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         addSubview(overlay)
         objc_setAssociatedObject(self,
                                  &AssociatedKeys.overlay,
@@ -36,6 +36,6 @@ public extension UINavigationBar {
     }
     
     func srLayout() {
-        bringSubview(toFront: overlay)
+        bringSubviewToFront(overlay)
     }
 }

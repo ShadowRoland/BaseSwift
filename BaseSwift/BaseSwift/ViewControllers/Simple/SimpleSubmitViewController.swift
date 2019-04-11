@@ -47,7 +47,7 @@ class SimpleSubmitViewController: BaseViewController {
         textField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: textField)
         Common.change(submitButton: submitButton, enabled: false)
     }
@@ -108,7 +108,7 @@ extension SimpleSubmitViewController: UITableViewDelegate, UITableViewDataSource
 extension SimpleSubmitViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if submitButton.isEnabled {
-            clickSubmitButton(submitButton)
+            clickSubmitButton(submitButton!)
         } else {
             textField.resignFirstResponder()
         }

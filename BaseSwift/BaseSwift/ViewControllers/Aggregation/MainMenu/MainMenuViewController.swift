@@ -41,25 +41,23 @@ class MainMenuViewController: BaseViewController {
                           name: Notification.Name.Base.newAction)
         initView()
         
-        addChildViewController(latestVC)
+        addChild(latestVC)
         childBackgroundView.addSubview(latestVC.view)
         currentChildVC = latestVC
         title = "Latest".localized
         latestVC.backToTopButtonBottomConstraint.constant = 0
-        latestVC.loadData(TableLoadData.new, progressType: .clearMask)
+        latestVC.loadData(.new, progressType: .clearMask)
         
         if UserStandard[USKey.showAdvertisingGuide] != nil {
             UserStandard[USKey.showAdvertisingGuide] = nil
-            stateMachine.append(Event.showAdvertisingGuard)
+            stateMachine.append(Event.Option.showAdvertisingGuard.rawValue)
         }
         
         //查询当前指令而执行的操作，加入状态机
-        if let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            let event = Event.option(action),
-            Event.Option.showProfile == event
-                || Event.Option.showSetting == event {
+        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+            .showProfile == option || .showSetting == option {
             DispatchQueue.main.async { [weak self] in
-                self?.stateMachine.append(option: event)
+                self?.stateMachine.append(option: option)
             }
         }
     }
@@ -153,24 +151,24 @@ class MainMenuViewController: BaseViewController {
         }
         
         currentChildVC?.view.isUserInteractionEnabled = false
-        addChildViewController(childVC)
+        addChild(childVC)
         transition(from: currentChildVC!,
                    to: childVC,
                    duration: 0,
-                   options: UIViewAnimationOptions(rawValue: 0),
+                   options: UIView.AnimationOptions(rawValue: 0),
                    animations: nil,
                    completion:
             { [weak self] (finished) in
-                guard finished else {
-                    childVC.removeFromParentViewController()
+                guard finished, self != nil else {
+                    childVC.removeFromParent()
                     self?.currentChildVC?.view.isUserInteractionEnabled = true
                     return
                 }
                 
-                childVC.didMove(toParentViewController: self)
+                childVC.didMove(toParent: self)
                 childVC.view.isUserInteractionEnabled = true
-                self?.currentChildVC?.willMove(toParentViewController: self)
-                self?.currentChildVC?.removeFromParentViewController()
+                self?.currentChildVC?.willMove(toParent: self)
+                self?.currentChildVC?.removeFromParent()
                 self?.currentChildVC = childVC
                 self?.childBackgroundView.addSubview((self?.currentChildVC.view)!)
                 self?.updateChildViewFrame()
@@ -179,42 +177,42 @@ class MainMenuViewController: BaseViewController {
                     self?.navigationController?.isNavigationBarHidden = true
                     if let vc = self?.hottestVC.currentNewsListVC, !vc.isTouched {
                         vc.backToTopButtonBottomConstraint.constant = 0
-                        vc.loadData(TableLoadData.new, progressType: .clearMask)
+                        vc.loadData(.new, progressType: .clearMask)
                     }
                 } else if self?.currentChildVC === self?.latestVC {
                     self?.navigationController?.isNavigationBarHidden = false
                     self?.title = "Latest".localized
                     if !(self?.latestVC.isTouched)! {
                         self?.latestVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.latestVC.loadData(TableLoadData.new, progressType: .clearMask)
+                        self?.latestVC.loadData(.new, progressType: .clearMask)
                     }
                 } else if self?.currentChildVC === self?.jokersVC {
                     self?.navigationController?.isNavigationBarHidden = false
                     self?.title = "Jokers".localized
                     if !(self?.jokersVC.isTouched)! {
                         self?.jokersVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.jokersVC.loadData(TableLoadData.new, progressType: .clearMask)
+                        self?.jokersVC.loadData(.new, progressType: .clearMask)
                     }
                 } else  if self?.currentChildVC === self?.videosVC {
                     self?.navigationController?.isNavigationBarHidden = false
                     self?.title = "Videos".localized
                     if !(self?.videosVC.isTouched)! {
                         self?.videosVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.videosVC.loadData(TableLoadData.new, progressType: .clearMask)
+                        self?.videosVC.loadData(.new, progressType: .clearMask)
                     }
                 } else if self?.currentChildVC === self?.picturesVC {
                     self?.navigationController?.isNavigationBarHidden = false
                     self?.title = "Pictures".localized
                     if !(self?.picturesVC.isTouched)! {
                         self?.picturesVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.picturesVC.loadData(TableLoadData.new, progressType: .clearMask)
+                        self?.picturesVC.loadData(.new, progressType: .clearMask)
                     }
                 } else if self?.currentChildVC === self?.favoritesVC {
                     self?.navigationController?.isNavigationBarHidden = false
                     self?.title = "Favorites".localized
                     if !(self?.favoritesVC.isTouched)! {
                         self?.favoritesVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.favoritesVC.loadData(TableLoadData.new, progressType: .clearMask)
+                        self?.favoritesVC.loadData(.new, progressType: .clearMask)
                     }
                 }
         })
@@ -267,14 +265,14 @@ class MainMenuViewController: BaseViewController {
     
     //在程序运行中收到指令，基本都可以通过走状态机实现
     @objc func newAction(_ notification: Notification) {
-        guard let action = Common.currentActionParams()?[ParamKey.action] as? String,
-            let event = Event.option(action) else {
-                return
+        guard let option = Event.option(Common.currentActionParams?[ParamKey.action]) else {
+            return
         }
         
-        switch event {
-        case Event.Option.showProfile, Event.Option.showSetting:
-            stateMachine.append(option: event)
+        switch option {
+        case .showProfile, .showSetting:
+            stateMachine.append(option: option)
+            
         default:
             break
         }
@@ -283,30 +281,34 @@ class MainMenuViewController: BaseViewController {
     //MARK: - SRStateMachineDelegate
     
     override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
-        switch event {
-        case Event.Option.openWebpage:
+        guard let option = Event.Option(rawValue: event) else {
+            return
+        }
+        
+        switch option {
+        case .openWebpage:
             if aggregationVC.isLeftOpen() {
                 aggregationVC.closeLeft()
             }
             super.stateMachine(stateMachine, didFire: event)
             
-        case Event.showAdvertisingGuard:
+        case .showAdvertisingGuard:
             publicBusinessComponent.showAdvertisingGuard()
             
-        case Event.showAdvertising:
+        case .showAdvertising:
             publicBusinessComponent.showAdvertising()
             
-        case Event.Option.showProfile:
+        case .showProfile:
             if aggregationVC.isLeftOpen() {
                 aggregationVC.closeLeft()
             }
             let viewControllers = navigationController!.viewControllers
             let profileVCs = viewControllers.filter { $0.isKind(of: ProfileViewController.self) }
             if viewControllers.last!.isKind(of: ProfileViewController.self) { //当前页面是Profile页面
-                Common.clearActionParams(event)
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
-            } else if profileVCs.count > 0 { //Profile页面在当前页面之前
-                Common.clearActionParams(event)
+            } else if !profileVCs.isEmpty { //Profile页面在当前页面之前
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
                 Common.clearPops()
                 Common.clearModals(viewController: profileVCs.last!)
@@ -332,17 +334,17 @@ class MainMenuViewController: BaseViewController {
                 }
             }
             
-        case Event.Option.showSetting:
+        case .showSetting:
             if aggregationVC.isLeftOpen() {
                 aggregationVC.closeLeft()
             }
             let viewControllers = navigationController!.viewControllers
             let settingVCs = viewControllers.filter { $0 is SettingViewController }
             if viewControllers.last! is SettingViewController { //当前页面是Setting页面
-                Common.clearActionParams(event)
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
-            } else if settingVCs.count > 0 { //Setting页面在当前页面之前
-                Common.clearActionParams(event)
+            } else if !settingVCs.isEmpty { //Setting页面在当前页面之前
+                Common.clearActionParams(option: option)
                 stateMachine.end(event)
                 Common.clearPops()
                 Common.clearModals(viewController: settingVCs.last!)
@@ -369,7 +371,8 @@ class MainMenuViewController: BaseViewController {
     override func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) {
         super.stateMachine(stateMachine, didEnd: event)
         
-        if Event.Option.showProfile == event || Event.Option.showSetting == event {
+        if Event.Option.showProfile.rawValue == event
+            || Event.Option.showSetting.rawValue == event {
             NotifyDefault.remove(self, name: Notification.Name.Base.didEndStateMachineEvent)
         }
     }
@@ -379,14 +382,14 @@ class MainMenuViewController: BaseViewController {
 
 extension MainMenuViewController: NewsListDelegate {
     //使用第三方新闻客户端的请求参数
-    func getNewsList(_ loadType: String?, sendVC: NewsListViewController) {
+    func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController) {
         var params = sendVC.params
         let time = CLongLong(Date().timeIntervalSince1970 * 1000)
         params["t"] = String(longLong: time)
         params["_"] = String(longLong: time + 2)
         params["show_num"] = "10"
-        params["act"] = loadType == TableLoadData.more ? "more" : "new"
-        let offset = loadType == TableLoadData.more ? sendVC.currentOffset + 1 : 0
+        params["act"] = loadType == .more ? "more" : "new"
+        let offset = loadType == .more ? sendVC.currentOffset + 1 : 0
         params["page"] = String(int: offset + 1)
         var sendChildVC: String?
         if let parentVC = sendVC.parentVC {
@@ -403,7 +406,7 @@ extension MainMenuViewController: NewsListDelegate {
                                                     return
                 }
                 
-                if loadType == TableLoadData.more {
+                if loadType == .more {
                     let offset = params[ParamKey.offset] as! Int
                     if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                         vc.updateMore(NonNull.dictionary(response))
@@ -417,13 +420,13 @@ extension MainMenuViewController: NewsListDelegate {
                                                 return
             }
             
-            if loadType == TableLoadData.more {
+            if loadType == .more {
                 let offset = params[ParamKey.offset] as! Int
                 if offset == vc.currentOffset + 1 {
                     return
                 }
             } else {
-                if vc.dataArray.count > 0 { //已经有数据，保留原数据，显示提示框
+                if !vc.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
                     vc.updateNew(nil)
                 } else { //当前为空的话则交给列表展示错误信息
                     vc.updateNew(nil, errMsg: self.logBFail(.get(.sinaNewsList),
@@ -437,17 +440,17 @@ extension MainMenuViewController: NewsListDelegate {
                                                 return
             }
             
-            if loadType == TableLoadData.more {
+            if loadType == .more {
                 let offset = params[ParamKey.offset] as! Int
                 if offset == vc.currentOffset + 1 {
-                    if vc.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
+                    if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                         vc.updateMore(nil)
                     } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
                         vc.updateMore(nil, errMsg: error.errorDescription)
                     }
                 }
             } else {
-                if vc.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互
+                if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
                     vc.updateNew(nil)
                 } else { //当前为空的话则交给列表展示错误信息
                     vc.updateNew(nil, errMsg: error.errorDescription)

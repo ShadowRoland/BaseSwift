@@ -53,7 +53,7 @@ class TitleChoicesViewController: BaseViewController {
         guard isMultiple, isShowSelectAll else { return}
         
         let model = TitleChoiceModel()
-        model.id = String(int: IntegerInvalid)
+        model.id = String(int: -1)
         model.title = "Select all".localized
         titleChoices.insert(model, at: 0)
     }
@@ -80,7 +80,7 @@ class TitleChoicesViewController: BaseViewController {
     func confirmSelectedChoices() {
         if let didSelectBlock = didSelectBlock {
             didSelectBlock(titleChoices.filter {
-                $0.id != String(int: IntegerInvalid) && $0.isSelected
+                $0.id != String(int: -1) && $0.isSelected
             })
         }
         popBack()

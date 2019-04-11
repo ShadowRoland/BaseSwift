@@ -134,13 +134,13 @@ SRAssetResourceLoaderTaskDelegate {
         superview = inView
         NotifyDefault.add(self,
                           selector: #selector(deviceOrientationDidChange(_:)),
-                          name: .UIDeviceOrientationDidChange)
+                          name: UIDevice.orientationDidChangeNotification)
         NotifyDefault.add(self,
                           selector: #selector(didEnterBackground(_:)),
-                          name: .UIApplicationDidEnterBackground)
+                          name: UIApplication.didEnterBackgroundNotification)
         NotifyDefault.add(self,
                           selector: #selector(didBecomeActive(_:)),
-                          name: .UIApplicationDidBecomeActive)
+                          name: UIApplication.didBecomeActiveNotification)
         if !autoFullScreen {
             show()
         } else {
@@ -199,7 +199,7 @@ SRAssetResourceLoaderTaskDelegate {
         }
         
         playButton.image = UIImage(named: "player_play")
-        playButton.contentEdgeInsets = UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
+        playButton.contentEdgeInsets = UIEdgeInsets(8.0)
         playButton.clicked(self, action: #selector(clickPlayButton(_:)))
         bottomView.addSubview(playButton)
         constrain(playButton) { (view) in
@@ -210,7 +210,7 @@ SRAssetResourceLoaderTaskDelegate {
         }
         
         screenButton.image = UIImage(named: "player_full_screen")
-        screenButton.contentEdgeInsets = UIEdgeInsetsMake(8.0, 8.0, 8.0, 8.0)
+        screenButton.contentEdgeInsets = UIEdgeInsets(8.0)
         screenButton.clicked(self, action: #selector(clickScreenButton(_:)))
         bottomView.addSubview(screenButton)
         constrain(screenButton) { (view) in
@@ -359,7 +359,7 @@ SRAssetResourceLoaderTaskDelegate {
         }
         
         repeatButton.image = UIImage(named: "player_repeat")
-        repeatButton.contentEdgeInsets = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0)
+        repeatButton.contentEdgeInsets = UIEdgeInsets(10.0)
         repeatButton.clicked(self, action: #selector(clickRepeatButton(_:)))
         repeatButton.isHidden = true
         playerView.addSubview(repeatButton)
@@ -764,7 +764,7 @@ SRAssetResourceLoaderTaskDelegate {
         player.pause()
         playButton.image = UIImage(named: "player_pause")
         isIndicatorHidden = false
-        player.seek(to: CMTimeMake(seconds, Int32(NSEC_PER_SEC))) { [weak self] (finished) in
+        player.seek(to: CMTimeMake(value: seconds, timescale: Int32(NSEC_PER_SEC))) { [weak self] (finished) in
             guard let strongSelf = self else {
                 return
             }
@@ -843,7 +843,7 @@ SRAssetResourceLoaderTaskDelegate {
         alertCancelButton.isHidden = true
         alertSeperatorLineView.isHidden = true
         alertView.isHidden = false
-        playerView.bringSubview(toFront: alertView)
+        playerView.bringSubviewToFront(alertView)
     }
     
     func showWwanAlert() {
@@ -870,7 +870,7 @@ SRAssetResourceLoaderTaskDelegate {
         }
         alertSeperatorLineView.isHidden = false
         alertView.isHidden = false
-        playerView.bringSubview(toFront: alertView)
+        playerView.bringSubviewToFront(alertView)
     }
     
     func hideAlert() {
@@ -918,7 +918,7 @@ SRAssetResourceLoaderTaskDelegate {
                 progressSlider.minimumValue = 0
                 progressSlider.maximumValue = totalDuration
                 progressSlider.value = 0
-                playbackTimeObserver = player.addPeriodicTimeObserver(forInterval: CMTimeMake(1, 1),
+                playbackTimeObserver = player.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 1),
                                                                       queue: nil,
                                                                       using:
                     { [weak self] (time) in
@@ -1006,7 +1006,7 @@ SRAssetResourceLoaderTaskDelegate {
             screenButton.image = UIImage(named: "player_resize")
             var orientation: UIInterfaceOrientation = .landscapeRight
             let statusBarOrientation = UIApplication.shared.statusBarOrientation
-            if UIInterfaceOrientationIsLandscape(orientation) { //若当前视图的方向为横向
+            if orientation.isLandscape { //若当前视图的方向为横向
                 orientation = statusBarOrientation //全屏方向与视图方向保持一致
             }
             showFullScreen(orientation: orientation)
@@ -1086,13 +1086,13 @@ SRAssetResourceLoaderTaskDelegate {
             
         case .changed:
             //如果移动的距离过短, 判断为没有移动
-            if fabs(point.x - touchBeginPoint.x) < Const.moveMinOffset
-                && fabs(point.y - touchBeginPoint.y) < Const.moveMinOffset {
+            if abs(point.x - touchBeginPoint.x) < Const.moveMinOffset
+                && abs(point.y - touchBeginPoint.y) < Const.moveMinOffset {
                 return
             }
             
             if moveControlType == .none { //初次判断滑动的控制类型
-                let tan = fabs(point.y - touchBeginPoint.y) / fabs(point.x - touchBeginPoint.x)
+                let tan = abs(point.y - touchBeginPoint.y) / abs(point.x - touchBeginPoint.x)
                 if tan < 1.0 / sqrt(3.0) { //滑动角度小于30度的时候, 控制播放进度
                     moveControlType = .play
                     brightnessView.hide()

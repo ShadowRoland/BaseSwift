@@ -8,16 +8,6 @@
 
 import Foundation
 
-public extension Int {
-    static func random(_ lower: Int = 0, _ upper: Int = Int.max) -> Int {
-        return lower + Int(arc4random_uniform(UInt32(upper - lower + 1)))
-    }
-    
-    static func random(range: Range<Int>) -> Int {
-        return random(range.lowerBound, range.upperBound)
-    }
-}
-
 private let trueNumber = NSNumber(value: true)
 private let falseNumber = NSNumber(value: false)
 private let trueObjCType = String(cString: trueNumber.objCType)
@@ -164,11 +154,11 @@ public extension UInt {
         
         if self < million {
             let number = CLong(self)
-            if 0 == number % thousand {
+            if number.isMultiple(of: thousand) {
                 return String(format: "%lldK", number / thousand)
-            } else if 0 == number % 100 && decimalPlaces >= 1 {
+            } else if number.isMultiple(of: 100) && decimalPlaces >= 1 {
                 return String(format: "%.1fK", Float(number) / Float(thousand))
-            } else if 0 == number % 10 && decimalPlaces >= 2 {
+            } else if number.isMultiple(of: 10) && decimalPlaces >= 2 {
                 return String(format: "%.2fK", Float(number) / Float(thousand))
             } else if decimalPlaces >= 3 {
                 return String(format: "%.3fK", Float(number) / Float(thousand))
@@ -177,11 +167,11 @@ public extension UInt {
             }
         } else if self < billion {
             let number = CLongLong(self)
-            if 0 == number % million {
+            if number.isMultiple(of: million) {
                 return String(format: "%lldM", number / million)
-            } else if 0 == number % CLongLong(100 * thousand) && decimalPlaces >= 1 {
+            } else if number.isMultiple(of: CLongLong(100 * thousand)) && decimalPlaces >= 1 {
                 return String(format: "%.1fM", Float(number) / Float(million))
-            } else if 0 == number % CLongLong(10 * thousand) && decimalPlaces >= 2 {
+            } else if number.isMultiple(of: CLongLong(10 * thousand)) && decimalPlaces >= 2 {
                 return String(format: "%.2fM", Float(number) / Float(million))
             } else if decimalPlaces >= 3 {
                 return String(format: "%.3fM", Float(number) / Float(million))
@@ -190,11 +180,11 @@ public extension UInt {
             }
         } else {
             let number = CLongLong(self)
-            if 0 == number % billion {
+            if number.isMultiple(of: billion) {
                 return String(format: "%lldB", number / billion)
-            } else if 0 == number % CLongLong(100 * million) && decimalPlaces >= 1 {
+            } else if number.isMultiple(of: CLongLong(100 * million)) && decimalPlaces >= 1 {
                 return String(format: "%.1fB", Float(number) / Float(billion))
-            } else if 0 == number % CLongLong(10 * million) && decimalPlaces >= 2 {
+            } else if number.isMultiple(of: CLongLong(10 * million)) && decimalPlaces >= 2 {
                 return String(format: "%.2fB", Float(number) / Float(billion))
             } else if decimalPlaces >= 3 {
                 return String(format: "%.3fB", Float(number) / Float(billion))
@@ -215,13 +205,13 @@ public extension UInt {
         
         if self < hundredMillion {
             let number = CLong(self)
-            if 0 == number % tenThousand {
+            if number.isMultiple(of: tenThousand) {
                 return String(format: "%ld%@", number / tenThousand, "万")
-            } else if 0 == number % 1000 && decimalPlaces >= 1 {
+            } else if number.isMultiple(of: 1000) && decimalPlaces >= 1 {
                 return String(format: "%.1f%@", Float(number) / Float(tenThousand), "万")
-            } else if 0 == number % 100 && decimalPlaces >= 2 {
+            } else if number.isMultiple(of: 100) && decimalPlaces >= 2 {
                 return String(format: "%.2f%@", Float(number) / Float(tenThousand), "万")
-            } else if 0 == number % 10 && decimalPlaces >= 3 {
+            } else if number.isMultiple(of: 10) && decimalPlaces >= 3 {
                 return String(format: "%.3f%@", Float(number) / Float(tenThousand), "万")
             } else if decimalPlaces >= 4 {
                 return String(format: "%.4f%@", Float(number) / Float(tenThousand), "万")
@@ -230,13 +220,13 @@ public extension UInt {
             }
         } else {
             let number = CLongLong(self)
-            if 0 == number % hundredMillion {
+            if number.isMultiple(of: hundredMillion) {
                 return String(format: "%lld%@", number / hundredMillion, "万")
-            } else if 0 == number % CLongLong(1000 * tenThousand) && decimalPlaces >= 1 {
+            } else if number.isMultiple(of: CLongLong(1000 * tenThousand)) && decimalPlaces >= 1 {
                 return String(format: "%.1f%@", Float(number) / Float(hundredMillion), "百万")
-            } else if 0 == number % CLongLong(100 * tenThousand) && decimalPlaces >= 2 {
+            } else if number.isMultiple(of: CLongLong(100 * tenThousand)) && decimalPlaces >= 2 {
                 return String(format: "%.2f%@", Float(number) / Float(hundredMillion), "百万")
-            } else if 0 == number % CLongLong(10 * tenThousand) && decimalPlaces >= 3 {
+            } else if number.isMultiple(of: CLongLong(10 * tenThousand)) && decimalPlaces >= 3 {
                 return String(format: "%.3f%@", Float(number) / Float(hundredMillion), "百万")
             } else if decimalPlaces >= 4 {
                 return String(format: "%.4f%@", Float(number) / Float(hundredMillion), "百万")

@@ -718,7 +718,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
             // if (self.defaultStyle != SVProgressHUDStyleCustom && greateriOS9) {
-            if (self.defaultStyle != SVProgressHUDStyleCustom && !_flatHud) {
+            if (self.defaultStyle != SVProgressHUDStyleCustom && !self.flatHud) {
                 // Fade in blur effect
                 [self addBlur];
 
@@ -820,7 +820,7 @@ notificationUserInfo]];
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
                 //bool greateriOS9 = kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_9_0;
                 // if (self.defaultStyle != SVProgressHUDStyleCustom && greateriOS9) {
-                if (self.defaultStyle != SVProgressHUDStyleCustom && !_flatHud) {
+                if (self.defaultStyle != SVProgressHUDStyleCustom && !self.flatHud) {
                     // Fade out blur effect == remove, and update alpha
                     strongSelf.hudView.effect = nil;
                     strongSelf.hudVibrancyView.effect = nil;
@@ -850,7 +850,7 @@ notificationUserInfo]];
                 //}
 
                 // if (strongSelf.hudView.contentView.alpha == 0.0f) {
-                if ((_flatHud ? strongSelf.flatHudView.alpha : strongSelf.hudView.contentView.alpha) == 0.f) {
+                if ((self.flatHud ? strongSelf.flatHudView.alpha : strongSelf.hudView.contentView.alpha) == 0.f) {
 #else
                 if (strongSelf.hudView.alpha == 0.0f) {
 #endif

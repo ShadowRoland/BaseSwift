@@ -24,10 +24,9 @@ class ChatListViewController: BaseViewController {
         tableView.backgroundColor = UIColor.groupTableViewBackground
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .singleLine
-        tableView.separatorInset =
-            UIEdgeInsets(top: 0, left: ChatListCell.Const.headerMargin, bottom: 0, right: 0)
+        tableView.separatorInset = UIEdgeInsets(0, ChatListCell.Const.headerMargin, 0, 0)
         view.progressMaskColor = tableView.backgroundColor!
-        tableView.contentInset = UIEdgeInsetsMake(0, 0, TabBarHeight, 0)
+        tableView.contentInset = UIEdgeInsets(0, 0, TabBarHeight, 0)
         
         return tableView
     }()
@@ -76,7 +75,7 @@ class ChatListViewController: BaseViewController {
         }
         
         var params = EmptyParams()
-        params[ParamKey.limit] = ParamDefaultValue.limit
+        params[ParamKey.limit] = TableLoadData.row
         params[ParamKey.offset] = 1000
         httpRequest(.get(.messages), success:
             { [weak self] response in
@@ -84,7 +83,7 @@ class ChatListViewController: BaseViewController {
                 strongSelf.update(response as? JSON)
             }, bfail: { [weak self] response in
                 guard let strongSelf = self else { return }
-                if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出提示框的交互
+                if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
                     strongSelf.update(nil)
                     strongSelf.showToast(strongSelf.logBFail(.get(.messages),
                                                              response: response,
@@ -96,7 +95,7 @@ class ChatListViewController: BaseViewController {
                 }
             }, fail: { [weak self] error in
                 guard let strongSelf = self else { return }
-                if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互
+                if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
                     strongSelf.update(nil)
                     strongSelf.showToast(error.errorDescription)
                 } else { //当前为空的话则交给列表展示错误信息
@@ -115,7 +114,7 @@ class ChatListViewController: BaseViewController {
         }
         
         dataArray = messageModels(json[ParamKey.list])
-        guard dataArray.count > 0 else { //没有数据
+        guard !dataArray.isEmpty else { //没有数据
             showNoDataView()
             return
         }
@@ -239,7 +238,7 @@ extension ChatListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView,
-                   commit editingStyle: UITableViewCellEditingStyle,
+                   commit editingStyle: UITableViewCell.EditingStyle,
                    forRowAt indexPath: IndexPath) {
         dataArray.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .automatic)

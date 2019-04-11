@@ -60,10 +60,10 @@ class LoginViewController: BaseViewController {
         
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange)
+                          name: UIResponder.keyboardWillChangeFrameNotification)
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange)
+                          name: UIResponder.keyboardWillChangeFrameNotification)
         
         accountTextField.text = "233" //FIXME: for debug, remember to remark when submit
         //passwordTextField.text = "666666"
@@ -155,9 +155,9 @@ class LoginViewController: BaseViewController {
     }
     
     func initView() {
-        if Entrance == .sns {
+        if Configs.entrance == .sns {
             closeButton.isHidden = true
-        } else if Entrance == .news {
+        } else if Configs.entrance == .news {
             closeButton.isHidden = false
         }
         loginView.layer.borderWidth = 0.5
@@ -348,10 +348,10 @@ class LoginViewController: BaseViewController {
                 UserStandard[USKey.lastLoginUserName] = strongSelf.accountTextField.text!
                 UserStandard[USKey.lastLoginPassword] = strongSelf.passwordTextField.text!
                 BF.callBusiness(BF.businessId(.im, Manager.IM.funcId(.login)))
-                if Entrance == .sns {
+                if Configs.entrance == .sns {
                     strongSelf.show("SNSViewController", storyboard: "SNS")
-                } else if Entrance == .news || Entrance == .aggregation {
-                    NotifyDefault.post(name: Notification.Name.This.reloadProfile, object: nil)
+                } else if Configs.entrance == .news || Configs.entrance == .aggregation {
+                    NotifyDefault.post(name:Configs.reloadProfileNotification, object: nil)
                     strongSelf.popBack()
                 }
         }, bfail: { [weak self] response in

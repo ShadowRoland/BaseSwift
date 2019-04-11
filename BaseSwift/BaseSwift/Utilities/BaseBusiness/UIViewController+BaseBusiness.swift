@@ -46,7 +46,7 @@ extension UIViewController {
     
     var isModalRootViewController: Bool {
         if let vc = navigationController as? SRModalViewController,
-            vc.viewControllers.count > 0,
+            vc.viewControllers.count > 1,
             self === vc.viewControllers[1] {
             return true
         } else {
@@ -95,7 +95,7 @@ extension UIViewController {
                         clear: Bool = true) -> UIViewController? {
         guard let navigationController = navigationController else { return nil }
         
-        if let viewController = navigationController.viewControllers.reversed().first(where: { vc in
+        if let viewController = navigationController.viewControllers.last(where: { vc in
             toClasses.first { vc.isKind(of: $0) } != nil
         }) {
             popBack(to: viewController, animated: animated, clear: clear)

@@ -141,11 +141,11 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
                                           viewFor string: NSAttributedString!,
                                           frame: CGRect) -> UIView! {
         let attributes = string.attributes(at: 0, effectiveRange: nil)
-        let url = attributes[NSAttributedStringKey(DTLinkAttribute)]
-        let identifier = attributes[NSAttributedStringKey(DTGUIDAttribute)]
+        let url = attributes[NSAttributedString.Key(DTLinkAttribute)]
+        let identifier = attributes[NSAttributedString.Key(DTGUIDAttribute)]
         
         let button = DTLinkButton(frame: frame)
-        button.url = url as! URL
+        button.url = url as? URL
         button.minimumHitSize = CGSize(25.0, 25.0) // adjusts it's bounds so that button is always large enough
         button.guid = identifier as? String
         

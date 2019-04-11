@@ -41,7 +41,7 @@ class LeftMenuViewController: BaseViewController {
     @IBOutlet weak var exitButton: UIButton!
     
     var cells: [UITableViewCell] = []
-    private var _selectedIndex = IntegerInvalid
+    private var _selectedIndex = -1
     var selectedIndex: Int {
         get {
             return _selectedIndex
@@ -52,7 +52,7 @@ class LeftMenuViewController: BaseViewController {
             }
             
             var index = newValue
-            if cells.count > 0 && newValue > cells.count - 1 {
+            if !cells.isEmpty && newValue > cells.count - 1 {
                 index = cells.count - 1
             }
             
@@ -69,7 +69,7 @@ class LeftMenuViewController: BaseViewController {
         // Do any additional setup after loading the view.
         NotifyDefault.add(self,
                           selector: #selector(reloadProfile),
-                          name: Notification.Name.This.reloadProfile)
+                          name:Configs.reloadProfileNotification)
         initView()
     }
     
@@ -163,14 +163,14 @@ class LeftMenuViewController: BaseViewController {
     
     @objc func reloadProfile() {
         if !Common.isLogin() {
-            headPortraitImageView.image = Resource.defaultHeadPortrait(.normal)
+            headPortraitImageView.image = Configs.Resource.defaultHeadPortrait(.normal)
             nameLabel.text = "Please Login".localized
             return
         }
         
         let url = URL(string: NonNull.string(Common.currentProfile()?.headPortrait))
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Resource.defaultHeadPortrait(.normal))
+                                          placeholderImage: Configs.Resource.defaultHeadPortrait(.normal))
         nameLabel.text = Common.currentProfile()?.name?.fullName
     }
     

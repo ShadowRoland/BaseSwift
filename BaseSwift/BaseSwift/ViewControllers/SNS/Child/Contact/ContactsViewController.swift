@@ -55,10 +55,10 @@ class ContactsViewController: BaseViewController {
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
         
-        addChildViewController(singleVC)
+        addChild(singleVC)
         scrollView.addSubview(singleVC.view)
         
-        addChildViewController(officialAccountVC)
+        addChild(officialAccountVC)
         scrollView.addSubview(officialAccountVC.view)
     }
     
@@ -93,8 +93,7 @@ class ContactsViewController: BaseViewController {
     
     //MARK: - UIScrollViewDelegate
     
-    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        super.scrollViewDidEndDecelerating(scrollView)
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let index = floor(scrollView.contentOffset.x  / ScreenWidth())
         if index == 0 {
             currentChildVC = singleVC
@@ -104,8 +103,7 @@ class ContactsViewController: BaseViewController {
         parentVC?.contactsSC.selectedSegmentIndex = Int(index)
     }
     
-    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        super.scrollViewDidEndScrollingAnimation(scrollView)
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         let index = floor(scrollView.contentOffset.x  / ScreenWidth())
         if index == 0 {
             currentChildVC = singleVC

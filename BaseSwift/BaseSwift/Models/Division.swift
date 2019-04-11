@@ -61,14 +61,14 @@ class Division {
             division.name = $0.value
             
             let code = Int(division.code) ?? 0
-            if code % 10000 == 0 { //获取所有的省级行政单位
+            if code.isMultiple(of: 10000) { //获取所有的省级行政单位
                 division.index = _provinces.count
                 division.level = .province
                 _provinces.append(division)
-            } else if code % 100 == 0 { //获取所有的市级行政单位
+            } else if code.isMultiple(of: 100) { //获取所有的市级行政单位
                 division.level = .city
                 _cities.append(division)
-                if let province = _provinces.reversed().first(where: {
+                if let province = _provinces.last(where: {
                     if let pCode = Int($0.code), 0 < code - pCode && code - pCode <= 10000 {
                         return true
                     } else {
@@ -83,7 +83,7 @@ class Division {
                 division.level = .region
                 _regions.append(division)
                 
-                if let city = _cities.reversed().first(where: {
+                if let city = _cities.last(where: {
                     if let pCode = Int($0.code), 0 < code - pCode && code - pCode <= 100 {
                         return true
                     } else {
@@ -94,7 +94,7 @@ class Division {
                     division.parent = city
                     city.children.append(division)
                 } else {
-                    if let province = _provinces.reversed().first(where: {
+                    if let province = _provinces.last(where: {
                         if let pCode = Int($0.code), 0 < code - pCode && code - pCode <= 10000 {
                             return true
                         } else {

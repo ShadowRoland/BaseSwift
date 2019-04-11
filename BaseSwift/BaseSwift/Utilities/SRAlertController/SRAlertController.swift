@@ -12,13 +12,13 @@ open class SRAlertController: UIAlertController { //代替UIAlertController
     static var allAlerts: [SRAlertController] = []
     
     class func append(_ alert: SRAlertController) {
-        if SRAlertController.allAlerts.index(of: alert) == nil {
+        if SRAlertController.allAlerts.firstIndex(of: alert) == nil {
             SRAlertController.allAlerts.append(alert)
         }
     }
     
     class func remove(_ alert: SRAlertController) {
-        if let index = SRAlertController.allAlerts.index(of: alert) {
+        if let index = SRAlertController.allAlerts.firstIndex(of: alert) {
             SRAlertController.allAlerts.remove(at: index)
         }
     }

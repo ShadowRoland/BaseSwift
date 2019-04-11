@@ -18,7 +18,7 @@ class ResetPasswordViewController: BaseViewController {
         passwordTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: passwordTextField)
         return cell
     }()
@@ -30,7 +30,7 @@ class ResetPasswordViewController: BaseViewController {
         newPasswordTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: newPasswordTextField)
         return cell
     }()
@@ -42,7 +42,7 @@ class ResetPasswordViewController: BaseViewController {
         confirmPasswordTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: .UITextFieldTextDidChange,
+                          name: UIResponder.keyboardWillChangeFrameNotification,
                           object: confirmPasswordTextField)
         return cell
     }()
@@ -134,11 +134,11 @@ class ResetPasswordViewController: BaseViewController {
                             if self?.resetPasswordType == .smsCode {
                                 self?.popBack(toClasses: [LoginViewController.self])
                             } else {
-                                if Entrance == .sns {
+                                if Configs.entrance == .sns {
                                     self?.popBack(toClasses: [LoginViewController.self])
-                                } else if Entrance == .news || Entrance == .aggregation {
+                                } else if Configs.entrance == .news || Configs.entrance == .aggregation {
                                     Common.currentProfile()?.isLogin = false
-                                    NotifyDefault.post(Notification.Name.This.reloadProfile)
+                                    NotifyDefault.post(Configs.reloadProfileNotification)
                                     self?.popBack(toClasses: [MoreViewController.self])
                                 }
                             }
@@ -157,8 +157,8 @@ extension ResetPasswordViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        if string.length > 0 {
-            return string.regex(Regex.passwordInputing)
+        if !string.isEmpty {
+            return string.regex(String.Regex.passwordInputing)
         }
         return true
     }

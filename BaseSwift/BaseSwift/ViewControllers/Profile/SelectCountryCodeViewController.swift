@@ -67,7 +67,7 @@ class SelectCountryCodeViewController: BaseViewController {
         var letterTitles = [] as [String]
         for model in countryCodes {
             var array: [CountryCodeModel]?
-            var index = IntegerInvalid
+            var index = -1
             for models in letters {
                 index += 1
                 if model.letter?.uppercased() == models[0].letter?.uppercased() {
@@ -113,7 +113,7 @@ extension SelectCountryCodeViewController: UITableViewDelegate, UITableViewDataS
                    sectionForSectionIndexTitle title: String,
                    at index: Int) -> Int {
         tableView.scrollToRow(at: IndexPath(row: 0, section: index),
-                              at: UITableViewScrollPosition.top,
+                              at: .top,
                               animated: true)
         return index;
     }

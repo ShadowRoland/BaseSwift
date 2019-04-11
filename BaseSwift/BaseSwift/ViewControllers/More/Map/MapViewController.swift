@@ -80,7 +80,7 @@ class MapViewController: BaseViewController {
         gpsButton.setImage(UIImage(named: "gps_stat1"), for: .normal)
         gpsButton.setImage(UIImage(named: "gps_stat2"), for: .selected)
         gpsButton.clicked(self, action: #selector(clickGpsButton(_:)))
-        gpsButton.contentEdgeInsets = UIEdgeInsets(top: 8.0, left: 8.0, bottom: 8.0, right: 8.0)
+        gpsButton.contentEdgeInsets = UIEdgeInsets(8.0, 8.0, 8.0, 8.0)
         mapView.addSubview(gpsButton)
         constrain(gpsButton) { (view) in
             view.bottom == view.superview!.bottom - 15.0
@@ -235,6 +235,9 @@ extension MapViewController: MAMapViewDelegate {
                     
                 case .riding:
                     annotationView?.image = UIImage(named: "ride")
+                    
+                default:
+                    break
                 }
             }
             return annotationView
@@ -411,10 +414,10 @@ extension MapViewController: AMapSearchDelegate {
                 
                 var distanceString = EmptyString
                 if distance < 1000 {
-                    distanceString = String(int: distance) + Unit.metre
+                    distanceString = String(int: distance) + Configs.Unit.metre
                 } else {
                     distanceString =
-                        String(format: "%.2f", Float(distance) / 1000.0) + Unit.kilometre2
+                        String(format: "%.2f", Float(distance) / 1000.0) + Configs.Unit.kilometre2
                 }
                 distanceString = distanceString.isEmpty ? EmptyString : distanceString + " "
                 
@@ -425,8 +428,8 @@ extension MapViewController: AMapSearchDelegate {
                     minutes += 1
                 }
                 var durationString =
-                    (hours != 0 ? String(format: "%d%@", hours, Unit.hour2) : EmptyString)
-                        + (minutes != 0 ? String(format: "%d%@", minutes, Unit.minute2) : EmptyString)
+                    (hours != 0 ? String(format: "%d%@", hours, Configs.Unit.hour2) : EmptyString)
+                        + (minutes != 0 ? String(format: "%d%@", minutes, Configs.Unit.minute2) : EmptyString)
                 durationString = durationString.isEmpty ? "Arrived".localized : durationString
                 
                 currentCalloutView?.durationLabel.text = distanceString + durationString
@@ -445,9 +448,9 @@ extension MapViewController: CustomCalloutDelegate {
                                 longitude: CLLocationDegrees(calloutView.poi.location.longitude))
         let distance = current.distance(from: target)
         if distance < 1000 {
-            return String(int: Int(distance)) + Unit.metre
+            return String(int: Int(distance)) + Configs.Unit.metre
         } else {
-            return String(format: "%.2f", distance / 1000.0) + Unit.kilometre2
+            return String(format: "%.2f", distance / 1000.0) + Configs.Unit.kilometre2
         }
     }
     
@@ -478,15 +481,15 @@ extension MapViewController: CustomCalloutDelegate {
             : applicationName
         //iOS9以后需要在“Info.plist”中将要使用的URL Schemes列为白名单，才可正常检查其他应用是否安装
         //具体查看Info.plist文件中的LSApplicationQueriesSchemes对应的值
-        if let url = URL(string: Scheme.amap + "://"),
+        if let url = URL(string: Configs.Scheme.amap + "://"),
             UIApplication.shared.canOpenURL(url) { //首选高德地图，uri文档参考 http://lbs.amap.com/api/amap-mobile/guide/ios/ios-uri-information
             if routePlanningType == .none { //地图标注
                 let query = ["sourceApplication" : applicationName ?? EmptyString,
-                             "poiname" : calloutView.poi.name,
+                             "poiname" : calloutView.poi.name ?? EmptyString,
                              "lat" : calloutView.poi.location.latitude,
                              "lon" : calloutView.poi.location.longitude,
                              "dev" : 0] as ParamDictionary
-                let string = String(format: "%@://viewMap?%@", Scheme.amap, query.urlQuery)
+                let string = String(format: "%@://viewMap?%@", Configs.Scheme.amap, query.urlQuery)
                 print(string)
                 UIApplication.shared.openURL(URL(string: string)!)
             } else if routePlanningType == .car || routePlanningType == .foot { //导航，uri仅支持驾车和步行，高德地图当前版本v8.1.0.2063
@@ -502,9 +505,9 @@ extension MapViewController: CustomCalloutDelegate {
                     break
                 }
                 var query = ["sourceApplication" : applicationName ?? EmptyString,
-                             "backScheme" : Scheme.base,
-                             "poiname" : calloutView.poi.name,
-                             "poiid" : calloutView.poi.uid,
+                             "backScheme" : Configs.Scheme.base,
+                             "poiname" : calloutView.poi.name ?? EmptyString,
+                             "poiid" : calloutView.poi.uid ?? EmptyString,
                              "lat" : calloutView.poi.location.latitude,
                              "lon" : calloutView.poi.location.longitude,
                              "dev" : 0,
@@ -512,7 +515,7 @@ extension MapViewController: CustomCalloutDelegate {
                 if t != nil {
                     query["t"] = t!
                 }
-                let string = String(format: "%@://navi?%@", Scheme.amap, query.urlQuery)
+                let string = String(format: "%@://navi?%@", Configs.Scheme.amap, query.urlQuery)
                 print(string)
                 UIApplication.shared.openURL(URL(string: string)!)
             } else if routePlanningType == .bus || routePlanningType == .bike { //路线规划
@@ -533,24 +536,24 @@ extension MapViewController: CustomCalloutDelegate {
                              "sname" : "My position".localized,
                              "dlat" : calloutView.poi.location.latitude,
                              "dlon" : calloutView.poi.location.longitude,
-                             "dname" : calloutView.poi.name,
+                             "dname" : calloutView.poi.name ?? EmptyString,
                              "dev" : 0] as ParamDictionary
                 if t != nil {
                     query["t"] = t!
                 }
-                let string = String(format: "%@://path?%@", Scheme.amap, query.urlQuery)
+                let string = String(format: "%@://path?%@", Configs.Scheme.amap, query.urlQuery)
                 print(string)
                 UIApplication.shared.openURL(URL(string: string)!)
             }
-        } else if let url = URL(string: Scheme.baiduMap + "://"),
+        } else if let url = URL(string: Configs.Scheme.baiduMap + "://"),
             UIApplication.shared.canOpenURL(url) { //备选百度地图，uri文档参考 http://lbsyun.baidu.com/index.php?title=uri/api/ios
             if routePlanningType == .none {
                 let query = ["src" : applicationName ?? EmptyString,
                              "location" : "\(calloutView.poi.location.latitude),\(calloutView.poi.location.longitude)",
-                    "title" : calloutView.poi.name,
-                    "content" : calloutView.poi.address,
+                    "title" : calloutView.poi.name ?? EmptyString,
+                    "content" : calloutView.poi.address ?? EmptyString,
                     "coord_type" : "gcj02"] as ParamDictionary
-                let string = String(format: "%@://map/marker?%@", Scheme.baiduMap, query.urlQuery)
+                let string = String(format: "%@://map/marker?%@", Configs.Scheme.baiduMap, query.urlQuery)
                 print(string)
                 UIApplication.shared.openURL(URL(string: string)!)
             } else {
@@ -576,7 +579,7 @@ extension MapViewController: CustomCalloutDelegate {
                     "destination" : "\(calloutView.poi.location.latitude),\(calloutView.poi.location.longitude)",
                     "mode" : mode,
                     "coord_type" : "gcj02"] as ParamDictionary
-                let string = String(format: "%@://map/direction?%@", Scheme.baiduMap, query.urlQuery)
+                let string = String(format: "%@://map/direction?%@", Configs.Scheme.baiduMap, query.urlQuery)
                 print(string)
                 UIApplication.shared.openURL(URL(string: string)!)
             }

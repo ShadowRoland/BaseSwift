@@ -89,7 +89,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         view.progressMaskColor = tableView.backgroundColor!
         tableView.mj_footer = MJRefreshBackNormalFooter(refreshingBlock: { [weak self] in
-            self?.loadData(TableLoadData.more, progressType: .none)
+            self?.loadData(.more, progressType: .none)
         })
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -180,7 +180,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     func reloadProfile() {
         let url = URL(string: NonNull.string(Common.currentProfile()?.headPortrait))
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Resource.defaultHeadPortrait(.normal))
+                                          placeholderImage: Configs.Resource.defaultHeadPortrait(.normal))
         nameLabel.text = Common.currentProfile()?.name?.fullName
     }
     
@@ -196,7 +196,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
             self?.refreshNewImageView.frame = Const.refreshNewFrameShown
             self?.refreshNewImageView.alpha = 1.0
         }) { [weak self] (finished) in
-            self?.loadData(TableLoadData.new, progressType: .none)
+            self?.loadData(.new, progressType: .none)
         }
     }
     
@@ -213,7 +213,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         }
     }
     
-    func loadData(_ loadType: String, progressType: TableLoadData.ProgressType) {
+    func loadData(_ loadType: TableLoadData.Page, progressType: TableLoadData.ProgressType) {
         switch progressType {
         case .clearMask:
             view.showProgress()
@@ -224,14 +224,13 @@ class FindViewController: BaseViewController, FindCellDelegate {
         }
         
         var params = EmptyParams()
-        params[ParamKey.limit] = ParamDefaultValue.limit
-        params[TableLoadData.key] = loadType
-        let offset = loadType == TableLoadData.more ? currentOffset + 1 : 0
+        params[ParamKey.limit] = TableLoadData.limit
+        let offset = loadType == .more ? currentOffset + 1 : 0
         params[ParamKey.offset] = offset
         httpRequest(.get(.messages), success: { [weak self] response in
             guard let strongSelf = self else { return }
             let currentOffset = strongSelf.currentOffset
-            if TableLoadData.more == loadType {
+            if .more == loadType {
                 if offset == currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                     strongSelf.updateMore(response as? JSON)
                 }
@@ -240,9 +239,9 @@ class FindViewController: BaseViewController, FindCellDelegate {
             }
             }, bfail: { [weak self] response in
                 guard let strongSelf = self else { return }
-                if TableLoadData.more == loadType {
+                if .more == loadType {
                     if offset == strongSelf.currentOffset + 1 {
-                        if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
+                        if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
                             strongSelf.updateMore(nil)
                         } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
                             strongSelf.updateMore(nil,
@@ -252,7 +251,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
                         }
                     }
                 } else {
-                    if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出提示框的交互
+                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
                         strongSelf.updateNew(nil)
                     } else { //当前为空的话则交给列表展示错误信息
                         strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(.get(.messages),
@@ -262,16 +261,16 @@ class FindViewController: BaseViewController, FindCellDelegate {
                 }
             }, fail: { [weak self] error in
                 guard let strongSelf = self else { return }
-                if TableLoadData.more == loadType {
+                if .more == loadType {
                     if offset == strongSelf.currentOffset + 1 {
-                        if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
+                        if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                             strongSelf.updateMore(nil)
                         } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
                             strongSelf.updateMore(nil, errMsg: error.errorDescription)
                         }
                     }
                 } else {
-                    if strongSelf.dataArray.count > 0 { //若当前有数据，则进行弹出toast的交互
+                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
                         strongSelf.updateNew(nil)
                     } else { //当前为空的话则交给列表展示错误信息
                         strongSelf.updateNew(nil, errMsg: error.errorDescription)
@@ -293,7 +292,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         
         dataArray = messageModels(json[ParamKey.list])
         
-        guard dataArray.count > 0 else { //没有数据
+        guard !dataArray.isEmpty else { //没有数据
             showNoDataView()
             tableView.reloadData()
             return
@@ -303,7 +302,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         tableView.tableFooterView = UIView()
         
         tableView.mj_footer.isHidden = false
-        if dataArray.count < ParamDefaultValue.limit { //若加载的数据小于一页的数据，表示已经全部加载完毕
+        if dataArray.isEmpty { //第一页即无数据
             tableView.mj_footer.endRefreshingWithNoMoreData()
         } else {
             tableView.mj_footer.resetNoMoreData()
@@ -521,9 +520,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         }
     }
     
-    override func scrollViewDidEndDragging(_ scrollView: UIScrollView,
-                                           willDecelerate decelerate: Bool) {
-        super.scrollViewDidEndDragging(scrollView, willDecelerate: decelerate)
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if scrollView.contentOffset.y <= -Const.dragDiffForRefreshNew {
             startRefreshNew()
         }
@@ -532,7 +529,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     //MARK: - LoadDataStateDelegate
     
     override func retryLoadData() {
-        //loadData(TableLoadData.new, progressType: .opaqueMask)
+        //loadData(.new, progressType: .opaqueMask)
         startRefreshNew()
     }
 }

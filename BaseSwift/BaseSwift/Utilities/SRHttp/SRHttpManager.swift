@@ -14,7 +14,7 @@ public extension DataRequest {
         static var requestSender = "DataRequest.requestSender"
     }
     
-    public var sender: String? {
+    var sender: String? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.requestSender) as? String
         }

@@ -24,8 +24,8 @@ public struct ObjectProperty: RawRepresentable, Equatable, Hashable {
 }
 
 public extension NSObject {
-    public typealias property = ObjectProperty
-    
+    typealias property = ObjectProperty
+
     func setProperty(_ property: NSObject.property, value: Any?) {
         setValue(value, forKey: property.rawValue)
     }

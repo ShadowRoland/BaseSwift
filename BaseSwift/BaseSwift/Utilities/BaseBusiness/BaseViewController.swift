@@ -23,7 +23,7 @@ DTAttributedTextContentViewDelegate {
         stateMachine.delegate = self
         NotifyDefault.add(self,
                           selector: .contentSizeCategoryDidChange,
-                          name: .UIContentSizeCategoryDidChange)
+                          name: UIContentSizeCategory.didChangeNotification)
     }
     
     override public func viewWillAppear(_ animated: Bool) {
@@ -42,7 +42,7 @@ DTAttributedTextContentViewDelegate {
         
         NotifyDefault.add(self,
                           selector: .deviceOrientationDidChange,
-                          name: .UIDeviceOrientationDidChange,
+                          name: UIDevice.orientationDidChangeNotification,
                           object: nil)
     }
     
@@ -88,7 +88,7 @@ DTAttributedTextContentViewDelegate {
         }
         
         if component.navigationBarBackgroundView.superview == view
-            && component.navigationBarBackgroundView.constraints.count == 0 {
+            && component.navigationBarBackgroundView.constraints.isEmpty {
             constrain(component.navigationBarBackgroundView, self.car_topLayoutGuide) { (view, topLayoutGuide) in
                 view.top == view.superview!.top
                 view.leading == view.superview!.leading
@@ -107,7 +107,7 @@ DTAttributedTextContentViewDelegate {
             baseBusinessComponent.isNavigationBarButtonsActive = false
         }
         
-        NotifyDefault.remove(self, name: .UIDeviceOrientationDidChange)
+        NotifyDefault.remove(self, name: UIDevice.orientationDidChangeNotification)
     }
     
     deinit {
@@ -177,36 +177,30 @@ DTAttributedTextContentViewDelegate {
             self.title = title
         }
         
-        navigationBarBackgroundAlpha = NavigartionBar.backgroundBlurAlpha
-        navigationBarTintColor = NavigartionBar.tintColor
         initNavigationBar()
         
-        if let navigationController = navigationController {
-            let backImage = image == nil ? UIImage("page_back") : image
-            navigationController.navigationBar.backIndicatorImage = backImage
-            navigationController.navigationBar.backIndicatorTransitionMaskImage = backImage
-            let backBarButtonItem = UIBarButtonItem()
-            backBarButtonItem.title = " "
-            navigationItem.backBarButtonItem = backBarButtonItem
-            UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffsetMake(0, -200.0),
-                                                                              for: .default)
-        }
+        var setting = NavigartionBar.buttonFullSetting
+        setting[.style] = NavigartionBar.ButtonItemStyle.image
+        setting[.image] = image == nil ? UIImage("page_back") : image
+        navBarLeftButtonSettings = [setting]
     }
     
     public func initNavigationBar() {
         guard let navigationController = navigationController else { return }
         
+        navigationBarBackgroundAlpha = NavigartionBar.backgroundBlurAlpha
+        navigationBarTintColor = NavigartionBar.tintColor
+        
         let navigationBar = navigationController.navigationBar
         navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white,
                                              .font : UIFont.heavyTitle]
-        //navigationBar.tintColor = UIColor.white
         navigationBar.setBackgroundImage(nil, for: .default)
         navigationBar.backgroundColor = UIColor.clear
     }
     
     public var navBarLeftButtonSettings: [[NavigartionBar.ButtonItemKey : Any]]? {
         didSet {
-            guard let settings = navBarLeftButtonSettings, settings.count > 0 else { //左边完全无按钮
+            guard let settings = navBarLeftButtonSettings, !settings.isEmpty else { //左边完全无按钮
                 navigationController?.navigationBar.backIndicatorImage = nil
                 navigationController?.navigationBar.backIndicatorTransitionMaskImage = nil
                 navigationItem.backBarButtonItem = nil
@@ -216,10 +210,10 @@ DTAttributedTextContentViewDelegate {
                 return
             }
             
-            if settings.first!.count == 0 { //使用默认的返回
-                navigationController?.navigationBar.backIndicatorImage = UIImage("page_back")
-                navigationController?.navigationBar.backIndicatorTransitionMaskImage =
-                    UIImage("page_back")
+            if settings.first!.isEmpty { //使用默认的返回
+                //navigationController?.navigationBar.backIndicatorImage = UIImage("page_back")
+                //navigationController?.navigationBar.backIndicatorTransitionMaskImage =
+                //    UIImage("page_back")
                 navigationItem.backBarButtonItem =
                     UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
                 
@@ -231,7 +225,7 @@ DTAttributedTextContentViewDelegate {
                 }
                 
                 //再添加新的按钮
-                if items.count == 0 {
+                if items.isEmpty {
                     navigationItem.leftBarButtonItem = nil
                     navigationItem.leftBarButtonItems = nil
                 } else if items.count == 1 {
@@ -249,7 +243,7 @@ DTAttributedTextContentViewDelegate {
                 }
                 
                 navigationItem.backBarButtonItem = nil
-                if items.count == 0 {
+                if items.isEmpty {
                     navigationItem.leftBarButtonItem = nil
                     navigationItem.leftBarButtonItems = nil
                 } else if items.count == 1 {
@@ -263,7 +257,7 @@ DTAttributedTextContentViewDelegate {
     
     public var navBarRightButtonSettings: [[NavigartionBar.ButtonItemKey : Any]]? {
         didSet {
-            guard let settings = navBarRightButtonSettings, settings.count > 0 else {
+            guard let settings = navBarRightButtonSettings, !settings.isEmpty else {
                 navigationItem.rightBarButtonItem = nil
                 navigationItem.rightBarButtonItems = nil
                 return
@@ -277,7 +271,7 @@ DTAttributedTextContentViewDelegate {
             }
             
             
-            if items.count == 0 {
+            if items.isEmpty {
                 navigationItem.rightBarButtonItem = nil
                 navigationItem.rightBarButtonItems = nil
             } else {
@@ -558,8 +552,8 @@ DTAttributedTextContentViewDelegate {
                                           viewFor string: NSAttributedString!,
                                           frame: CGRect) -> UIView! {
         let attributes = string.attributes(at: 0, effectiveRange: nil)
-        let url = attributes[NSAttributedStringKey(DTLinkAttribute)]
-        let identifier = attributes[NSAttributedStringKey(DTGUIDAttribute)]
+        let url = attributes[NSAttributedString.Key(DTLinkAttribute)]
+        let identifier = attributes[NSAttributedString.Key(DTGUIDAttribute)]
         
         let button = DTLinkButton(frame: frame)
         button.url = url as? URL
@@ -583,29 +577,6 @@ DTAttributedTextContentViewDelegate {
         return button;
     }
     
-    //MARK: - UIScrollViewDelegate
-    
-    //为了不因图片加载而使得滑动列表时发生卡顿，这里在滑动列表时禁止了图片加载
-    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        SDWebImageManager.shared().imageDownloader?.setSuspended(true)
-    }
-    
-    //列表停止滑动后恢复图片下载
-    public func scrollViewDidEndDragging(_ scrollView: UIScrollView,
-                                         willDecelerate decelerate: Bool) {
-        if !decelerate {
-            SDWebImageManager.shared().imageDownloader?.setSuspended(false)
-        }
-    }
-    
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        SDWebImageManager.shared().imageDownloader?.setSuspended(false)
-    }
-    
-    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        SDWebImageManager.shared().imageDownloader?.setSuspended(false)
-    }
-    
     //MARK: SRStateMachineDelegate
     
     public func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
@@ -613,18 +584,18 @@ DTAttributedTextContentViewDelegate {
             //FIXME: FOR DEBUG，在所有的视图上弹出网页视图
             //也可以处理其他全局型的业务，如跳转到聊天页面
         //此处业务不是必需的，可按照具体需求操作
-        case Event.Option.openWebpage:
+        case Event.Option.openWebpage.rawValue:
             guard isFront else { break }
             
             var string = EmptyString
-            if let url = Common.currentActionParams()?[ParamKey.url] as? String {
+            if let url = Common.currentActionParams?[ParamKey.url] as? String {
                 string = url
             }
             if let vc = self as? WebpageViewController {
                 Common.clearPops()
                 Common.clearModals()
                 var params = [ParamKey.url : URL(string: string)!] as ParamDictionary
-                if let title = Common.currentActionParams()?[ParamKey.title] as? String {
+                if let title = Common.currentActionParams?[ParamKey.title] as? String {
                     params[ParamKey.title] = title
                 }
                 vc.params = params
@@ -637,7 +608,7 @@ DTAttributedTextContentViewDelegate {
                 Common.clearPops()
                 Common.clearModals(viewController: self)
                 showWebpage(URL(string: string)!,
-                            title: Common.currentActionParams()?[ParamKey.title] as? String,
+                            title: Common.currentActionParams?[ParamKey.title] as? String,
                             params: [ParamKey.sender : String(pointer: self),
                                      ParamKey.event : event])
             }
@@ -647,11 +618,16 @@ DTAttributedTextContentViewDelegate {
     }
     
     public func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) {
-        Common.clearActionParams(event)
+        guard let option = Event.Option(rawValue: event) else {
+            return
+        }
         
-        switch event {
-        case Event.Option.openWebpage:
+        Common.clearActionParams(option: option)
+        
+        switch option {
+        case .openWebpage:
             NotifyDefault.remove(self, name: Notification.Name.Base.didEndStateMachineEvent)
+            
         default:
             break
         }
@@ -665,13 +641,13 @@ extension SRStateMachine {
     //如首页正在展示引导页（当前事件进行中），此时来了推送消息，点击推送消息，将推送消息里的action1加入到等待队列中。
     //若此时来了新推送消息，或者被其他应用所调用，转化成新的action2，在加入到等待队列中之前应该将action1给删除
     //这样引导页展示完毕后（当前事件已完成）就直接执行action2，而非先执行action1，再执行action2
-    public func append(option: Int) {
-        guard !events.contains(option) else {
+    public func append(option: Event.Option) {
+        guard !events.contains(option.rawValue) else {
             return
         }
         
-        Event.Option.range.forEach { remove($0) }
-        append(option)
+        Event.Option.allCases.forEach { remove($0.rawValue) }
+        append(option.rawValue)
     }
 }
 

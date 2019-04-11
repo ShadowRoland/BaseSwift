@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Ecv-jb-uQy">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Ecv-jb-uQy">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -30,7 +28,7 @@
         <!--News-->
         <scene sceneID="GmE-Hy-SMI">
             <objects>
-                <viewController storyboardIdentifier="NewsViewController" title="News" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ywS-YO-fNK" customClass="NewsViewController" customModule="Base_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewsViewController" title="News" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ywS-YO-fNK" customClass="NewsViewController" customModule="BaseSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="qqR-eY-oNG"/>
                         <viewControllerLayoutGuide type="bottom" id="VKv-oW-Tvu"/>
@@ -103,7 +101,7 @@
         <!--Main-->
         <scene sceneID="b56-EC-123">
             <objects>
-                <viewController storyboardIdentifier="NewsMainViewController" title="Main" useStoryboardIdentifierAsRestorationIdentifier="YES" id="jn9-qu-BGO" customClass="NewsMainViewController" customModule="Base_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewsMainViewController" title="Main" useStoryboardIdentifierAsRestorationIdentifier="YES" id="jn9-qu-BGO" customClass="NewsMainViewController" customModule="BaseSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="HOL-DW-8iB"/>
                         <viewControllerLayoutGuide type="bottom" id="XpS-d1-ROV"/>
@@ -203,7 +201,7 @@
                                     <constraint firstItem="gKB-wk-JMw" firstAttribute="top" secondItem="hyi-uD-KHc" secondAttribute="top" id="zie-sX-kpz"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oN8-kq-Yek" customClass="SpringView" customModule="Spring">
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oN8-kq-Yek">
                                 <rect key="frame" x="67" y="269" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
@@ -218,7 +216,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="reuseIdentifier" id="fox-7x-AoB" customClass="ChannelCell" customModule="Base_Swift" customModuleProvider="target">
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="reuseIdentifier" id="fox-7x-AoB" customClass="ChannelCell" customModule="BaseSwift" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="50" width="50" height="50"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -268,12 +266,12 @@
                                                 </connections>
                                             </collectionViewCell>
                                         </cells>
-                                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="reuseIdentifier" id="qDI-QK-Apu" customClass="CollectionHeader" customModule="Base_Swift" customModuleProvider="target">
+                                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="reuseIdentifier" id="qDI-QK-Apu" customClass="CollectionHeader" customModule="BaseSwift" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="240" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="当前频道" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ncx-PJ-3AB">
-                                                    <rect key="frame" x="0.0" y="15.5" width="61.5" height="18"/>
+                                                    <rect key="frame" x="0.0" y="16" width="61.5" height="18"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -366,7 +364,7 @@
         <!--Secondary-->
         <scene sceneID="KHG-t0-J2w">
             <objects>
-                <viewController storyboardIdentifier="NewsSecondaryViewController" title="Secondary" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Tek-oE-ZFJ" customClass="NewsSecondaryViewController" customModule="Base_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewsSecondaryViewController" title="Secondary" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Tek-oE-ZFJ" customClass="NewsSecondaryViewController" customModule="BaseSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="GEl-nj-r5R"/>
                         <viewControllerLayoutGuide type="bottom" id="bk5-Sv-tWk"/>
@@ -392,7 +390,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="euN-3p-WZR">
                                 <rect key="frame" x="0.0" y="64" width="375" height="40"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Esi-OS-2yT" customClass="SRTabHeader" customModule="Base_Swift" customModuleProvider="target">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Esi-OS-2yT" customClass="SRTabHeader" customModule="BaseSwift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
@@ -433,7 +431,7 @@
         <!--Yellow-->
         <scene sceneID="2UI-Lw-Ahx">
             <objects>
-                <viewController storyboardIdentifier="NewsYellowViewController" title="Yellow" useStoryboardIdentifierAsRestorationIdentifier="YES" id="igq-4K-SE0" customClass="NewsYellowViewController" customModule="Base_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewsYellowViewController" title="Yellow" useStoryboardIdentifierAsRestorationIdentifier="YES" id="igq-4K-SE0" customClass="NewsYellowViewController" customModule="BaseSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="b0H-Y0-LKQ"/>
                         <viewControllerLayoutGuide type="bottom" id="opC-9E-XXq"/>
@@ -480,7 +478,7 @@
         <!--News List-->
         <scene sceneID="0xd-ch-KQX">
             <objects>
-                <viewController storyboardIdentifier="NewsListViewController" title="News List" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wVR-si-22Y" customClass="NewsListViewController" customModule="Base_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewsListViewController" title="News List" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wVR-si-22Y" customClass="NewsListViewController" customModule="BaseSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Obf-Nx-RNR"/>
                         <viewControllerLayoutGuide type="bottom" id="BEv-jt-cCZ"/>
@@ -493,7 +491,7 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="reuseIdentifier" rowHeight="70" id="uYo-om-fhh" customClass="NewsCell" customModule="Base_Swift" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="reuseIdentifier" rowHeight="70" id="uYo-om-fhh" customClass="NewsCell" customModule="BaseSwift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="uYo-om-fhh" id="ODG-K2-QKX">
@@ -616,7 +614,7 @@
         <!--Seach-->
         <scene sceneID="UAS-ll-PqG">
             <objects>
-                <viewController storyboardIdentifier="NewsSearchViewController" title="Seach" useStoryboardIdentifierAsRestorationIdentifier="YES" id="VCS-NB-XBK" customClass="NewsSearchViewController" customModule="Base_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewsSearchViewController" title="Seach" useStoryboardIdentifierAsRestorationIdentifier="YES" id="VCS-NB-XBK" customClass="NewsSearchViewController" customModule="BaseSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="kb6-GI-Zfy"/>
                         <viewControllerLayoutGuide type="bottom" id="AKE-tW-b3b"/>
@@ -640,7 +638,7 @@
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sXg-Hu-5bZ">
-                                            <rect key="frame" x="129.5" y="0.5" width="115" height="29"/>
+                                            <rect key="frame" x="130" y="0.5" width="115" height="29"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <state key="normal" title="清除所有历史搜索"/>
                                             <connections>
@@ -655,7 +653,7 @@
                                     </constraints>
                                 </view>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="historyIdentifier" id="1Hf-kC-nMq" customClass="HistoryCell" customModule="Base_Swift" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="historyIdentifier" id="1Hf-kC-nMq" customClass="HistoryCell" customModule="BaseSwift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="58" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1Hf-kC-nMq" id="z49-v3-1gx">
@@ -663,14 +661,14 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="time" translatesAutoresizingMaskIntoConstraints="NO" id="SC7-34-Ghe">
-                                                    <rect key="frame" x="15" y="11" width="20" height="20"/>
+                                                    <rect key="frame" x="15" y="12" width="20" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="eUy-KI-Vay"/>
                                                         <constraint firstAttribute="width" secondItem="SC7-34-Ghe" secondAttribute="height" multiplier="1:1" id="mFk-bm-hTF"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VD0-nX-eVS">
-                                                    <rect key="frame" x="38" y="21.5" width="290" height="0.0"/>
+                                                    <rect key="frame" x="38" y="22" width="290" height="0.0"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -707,14 +705,14 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="search" translatesAutoresizingMaskIntoConstraints="NO" id="F9f-ab-uJB">
-                                                    <rect key="frame" x="15" y="11" width="20" height="20"/>
+                                                    <rect key="frame" x="15" y="12" width="20" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="F9f-ab-uJB" secondAttribute="height" multiplier="1:1" id="UTz-BC-jGZ"/>
                                                         <constraint firstAttribute="height" constant="20" id="q5J-hv-JZ3"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tUF-ty-Jgp">
-                                                    <rect key="frame" x="38" y="21.5" width="322" height="0.0"/>
+                                                    <rect key="frame" x="38" y="22" width="322" height="0.0"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>

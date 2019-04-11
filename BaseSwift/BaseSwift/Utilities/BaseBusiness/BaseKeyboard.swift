@@ -26,20 +26,20 @@ final class BaseKeyboard: NSObject {
                 IQKeyboardManager.shared.enable = true
                 SRKeyboardManager.shared.enable = false
                 center.removeObserver(self,
-                                      name: .UIKeyboardWillChangeFrame,
+                                      name: UIResponder.keyboardWillChangeFrameNotification,
                                       object: nil)
             } else if .sr == manager {
                 IQKeyboardManager.shared.enable = false
                 SRKeyboardManager.shared.enable = true
                 center.addObserver(self,
                                    selector: #selector(keyboardWillChangeFrame(_:)),
-                                   name: .UIKeyboardWillChangeFrame,
+                                   name: UIResponder.keyboardWillChangeFrameNotification,
                                    object: nil)
             } else {
                 IQKeyboardManager.shared.enable = false
                 SRKeyboardManager.shared.enable = false
                 center.removeObserver(self,
-                                      name: .UIKeyboardWillChangeFrame,
+                                      name: UIResponder.keyboardWillChangeFrameNotification,
                                       object: nil)
             }
         }
@@ -55,23 +55,23 @@ final class BaseKeyboard: NSObject {
             let center = NotificationCenter.default as NotificationCenter
             center.addObserver(sharedInstance!,
                                selector: #selector(keyboardWillShow),
-                               name: .UIKeyboardWillShow,
+                               name: UIResponder.keyboardWillShowNotification,
                                object: nil)
             center.addObserver(sharedInstance!,
                                selector: #selector(keyboardDidShow),
-                               name: .UIKeyboardDidShow,
+                               name: UIResponder.keyboardDidShowNotification,
                                object: nil)
             center.addObserver(sharedInstance!,
                                selector: #selector(keyboardWillHide(_:)),
-                               name: .UIKeyboardWillHide,
+                               name: UIResponder.keyboardWillHideNotification,
                                object: nil)
             center.addObserver(sharedInstance!,
                                selector: #selector(keyboardDidHide),
-                               name: .UIKeyboardDidHide,
+                               name: UIResponder.keyboardDidHideNotification,
                                object: nil)
             center.addObserver(sharedInstance!,
                                selector: #selector(keyboardWillChangeFrame(_:)),
-                               name: .UIKeyboardWillChangeFrame,
+                               name: UIResponder.keyboardWillChangeFrameNotification,
                                object: nil)
         }
         return sharedInstance!
@@ -118,7 +118,7 @@ final class BaseKeyboard: NSObject {
     @objc func keyboardWillHide(_ notification: Notification) {
         if .sr == manager {
             if let userInfo = notification.userInfo {
-                let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? TimeInterval
+                let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
                 SRKeyboardManager.shared.keyboardWillHide(duration)
             }
         }
@@ -134,11 +134,11 @@ final class BaseKeyboard: NSObject {
     
     @objc func keyboardWillChangeFrame(_ notification: Notification) {
         if let userInfo = notification.userInfo {
-            if let frameValue = userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            if let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
                 let frame = frameValue.cgRectValue
                 keyboardHeight = frame.size.height
                 if .sr == manager && isVisible {
-                    let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? TimeInterval
+                    let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
                     SRKeyboardManager.shared.riseView(duration)
                 }
             }

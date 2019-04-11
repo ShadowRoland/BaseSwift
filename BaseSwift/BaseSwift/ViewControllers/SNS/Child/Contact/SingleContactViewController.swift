@@ -19,7 +19,7 @@ class SingleContactViewController: BaseViewController {
         
         tableView.separatorInset =
             UIEdgeInsets(top: 0, left: ContactCell.headPortraitMargin, bottom: 0, right: 0)
-        tableView.contentInset = UIEdgeInsetsMake(0, 0, TabBarHeight, 0)
+        tableView.contentInset = UIEdgeInsets(0, 0, TabBarHeight, 0)
         tableView.tableFooterView = UIView()
         ContactCell.updateCellHeight()
     }
@@ -77,7 +77,7 @@ class SingleContactViewController: BaseViewController {
         var letterTitles = [] as [String]
         for contact in contacts {
             var array: [UserModel]?
-            var index = IntegerInvalid
+            var index = -1
             for models in letters {
                 index += 1
                 if contact.letter?.uppercased() == models[0].letter?.uppercased() {
@@ -176,7 +176,7 @@ extension SingleContactViewController: UITableViewDelegate, UITableViewDataSourc
                    sectionForSectionIndexTitle title: String,
                    at index: Int) -> Int {
         tableView.scrollToRow(at: IndexPath(row: 0, section: index),
-                              at: UITableViewScrollPosition.top,
+                              at: .top,
                               animated: true)
         return index;
     }

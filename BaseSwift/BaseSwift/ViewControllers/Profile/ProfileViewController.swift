@@ -11,7 +11,7 @@ import SwiftyJSON
 //import MWPhotoBrowser
 import SDWebImage
 
-class ProfileForm: SRIndexPathForm {
+class ProfileForm: SRIndexPath.Form {
     var titleChoices: [TitleChoiceModel]? //可以选择项
     
     //获取已选择项的标题拼接
@@ -50,15 +50,15 @@ class ProfileForm: SRIndexPathForm {
     }
 }
 
-extension SRIndexPathConfigKey {
-    public static let titleChoices: SRIndexPathConfigKey = SRIndexPathConfigKey("titleChoices")
+extension SRIndexPath.AttributedString.Key {
+    public static let titleChoices: SRIndexPath.AttributedString.Key = SRIndexPath.AttributedString.Key("titleChoices")
 }
 
 class ProfileViewController: BaseViewController {
-    lazy var indexPathSet: SRIndexPathSet = SRIndexPathSet()
-    var lastSection = IntegerInvalid
-    var lastSectionWillAdd = IntegerInvalid
-    var lastRow = IntegerInvalid
+    lazy var indexPathSet: SRIndexPath.Set = SRIndexPath.Set()
+    var lastSection = -1
+    var lastSectionWillAdd = -1
+    var lastRow = -1
     weak var currentItem: ProfileForm?
     
     lazy var profile: ParamDictionary = Common.currentProfile()?.toJSON() ?? EmptyParams()
@@ -158,14 +158,14 @@ class ProfileViewController: BaseViewController {
     
     func initSections() {
         indexPathSet.removeAll()
-        lastSection = IntegerInvalid
+        lastSection = -1
         initBaseSection()
         initProfileSection()
     }
     
     func initBaseSection() {
         lastSectionWillAdd = lastSection
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         //在获取了基本的item后可以做一些adapter的工作
         if let item = item(headPortraitCell,
@@ -174,7 +174,7 @@ class ProfileViewController: BaseViewController {
                                     .isIgnoreParamValue : true]) {
             let url = URL(string: item.value as? String ?? EmptyString)
             headPortraitImageView.sd_setImage(with: url,
-                                              placeholderImage: Resource.defaultImage(.normal))
+                                              placeholderImage: Configs.Resource.defaultImage(.normal))
             headPortraitURL = url
             headPortraitTrailingConstraint.constant = 0
             cleanHeadPortraitButton.isHidden = true
@@ -228,7 +228,7 @@ class ProfileViewController: BaseViewController {
     
     func initProfileSection() {
         lastSectionWillAdd = lastSection
-        lastRow = IntegerInvalid
+        lastRow = -1
         
         if let item = item(genderCell,
                            config: [.paramKey : ParamKey.gender,
@@ -279,7 +279,7 @@ class ProfileViewController: BaseViewController {
         lastSection = lastSectionWillAdd
     }
     
-    func item(_ cell: UITableViewCell, config: [SRIndexPathConfigKey : Any] = [:]) -> ProfileForm? {
+    func item(_ cell: UITableViewCell, config: [SRIndexPath.AttributedString.Key : Any] = [:]) -> ProfileForm? {
         var paramValueType: JsonValueType = .string
         if let intValue = config[.paramValueType] as? Int,
             let enumInt = JsonValueType(rawValue: intValue) {
@@ -398,7 +398,7 @@ class ProfileViewController: BaseViewController {
             textField.textAlignment = .right
             NotifyDefault.add(self,
                               selector: #selector(textFieldEditingChanged(_:)),
-                              name: .UITextFieldTextDidChange,
+                              name: UIResponder.keyboardWillChangeFrameNotification,
                               object: textField)
             if config.jsonValue(configKey: .placeholder, type: .string, outValue: &value),
                 NonNull.check(value) {
@@ -408,7 +408,7 @@ class ProfileViewController: BaseViewController {
             textView.delegate = self
             NotifyDefault.add(self,
                               selector: #selector(textFieldEditingChanged(_:)),
-                              name: .UITextFieldTextDidChange,
+                              name: UIResponder.keyboardWillChangeFrameNotification,
                               object: textView)
         }
         
@@ -590,7 +590,7 @@ class ProfileViewController: BaseViewController {
             var isChanged = false
             //adapter
             if item.cell === self.genderCell {
-                if array.count == 0 {
+                if array.isEmpty {
                     isChanged = NonNull.check(self.profile[item.paramKey!])
                     item.value = NSNull()
                 } else {
@@ -661,7 +661,7 @@ class ProfileViewController: BaseViewController {
                 names.append(region)
             }
             let divisions = Division.divisions(names: names)
-            divisionPicker.currentDivisions = divisions.count != 0 ? divisions : Division.default
+            divisionPicker.currentDivisions = !divisions.isEmpty ? divisions : Division.default
             self?.pickerView = divisionPicker
             divisionPicker.show()
         }
@@ -693,7 +693,7 @@ class ProfileViewController: BaseViewController {
             if let text = textField.text,
                 position == nil
                     && textMaxLength > 0
-                    && text.length > textMaxLength {
+                    && text.count > textMaxLength {
                 textField.text = text.substring(from: 0, length: textMaxLength)
             }
         } else { // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
@@ -722,7 +722,7 @@ class ProfileViewController: BaseViewController {
             if let text = textView.text,
                 position == nil
                     && textMaxLength > 0
-                    && text.length > textMaxLength {
+                    && text.count > textMaxLength {
                 textView.text = text.substring(from: 0, length: textMaxLength)
             }
         } else { // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
@@ -773,7 +773,7 @@ class ProfileViewController: BaseViewController {
         let item = indexPathSet[headPortraitCell] as! ProfileForm
         let url = URL(string: item.value as? String ?? EmptyString)
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Resource.defaultImage(.normal))
+                                          placeholderImage: Configs.Resource.defaultImage(.normal))
         headPortraitURL = url
         headPortraitTrailingConstraint.constant = 0
         cleanHeadPortraitButton.isHidden = true
@@ -810,12 +810,12 @@ class ProfileViewController: BaseViewController {
 
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [String : Any]) {
-        let image = info[UIImagePickerControllerEditedImage] as! UIImage //获取裁剪过的图像
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let image = info[.editedImage] as! UIImage //获取裁剪过的图像
         let size = Const.headPortraitSize
         let cropImage = image.cropped(size.width / size.height) //继续按定制比例裁剪
         let resizedImage = cropImage.resized(size) //再按尺寸缩放
-        let data = UIImagePNGRepresentation(resizedImage)
+        let data = resizedImage.pngData()
         let directory = Common.currentProfile()!.directory(.upload)!
         let filePath = directory.appending(pathComponent: Const.editedHeadPortraitFileName)
         let url = URL(fileURLWithPath: filePath) //保存到缓存图片
@@ -827,9 +827,9 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
             })
             return
         }
-        SDImageCache.shared().removeImage(forKey: url.absoluteString) //删除缓存中的图片再刷新图片
+        SDImageCache.shared.removeImage(forKey: url.absoluteString) //删除缓存中的图片再刷新图片
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Resource.defaultImage(.normal))
+                                          placeholderImage: Configs.Resource.defaultImage(.normal))
         headPortraitURL = url
         headPortraitTrailingConstraint.constant = headPortraitTopConstraint.constant
         cleanHeadPortraitButton.isHidden = false
@@ -876,10 +876,10 @@ extension ProfileViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        if string.length > 0 {
-            if let currentItem = currentItem, !Common.isEmptyString(currentItem.inputRegex) {
-                return string.regex(currentItem.inputRegex!)
-            }
+        if !string.isEmpty,
+            let currentItem = currentItem,
+            !Common.isEmptyString(currentItem.inputRegex) {
+            return string.regex(currentItem.inputRegex!)
         }
         return true
     }
@@ -934,10 +934,10 @@ extension ProfileViewController: UITextViewDelegate {
     func textView(_ textView: UITextView,
                   shouldChangeTextIn range: NSRange,
                   replacementText text: String) -> Bool {
-        if text.length > 0 {
-            if let currentItem = currentItem, !Common.isEmptyString(currentItem.inputRegex) {
-                return text.regex(currentItem.inputRegex!)
-            }
+        if !text.isEmpty,
+            let currentItem = currentItem,
+            !Common.isEmptyString(currentItem.inputRegex) {
+            return text.regex(currentItem.inputRegex!)
         }
         return true
     }

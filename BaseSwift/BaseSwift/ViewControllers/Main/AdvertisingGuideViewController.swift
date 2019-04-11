@@ -43,7 +43,7 @@ class AdvertisingGuideViewController: UIViewController {
                                           selector: #selector(countDown),
                                           userInfo: nil,
                                           repeats: true)
-        RunLoop.current.add(timer, forMode: RunLoopMode.commonModes)
+        RunLoop.current.add(timer, forMode: .common)
     }
     
     //MARK: - 事件响应

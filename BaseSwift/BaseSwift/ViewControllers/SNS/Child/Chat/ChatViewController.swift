@@ -35,7 +35,7 @@ class ChatViewController: RCConversationViewController {
     
     public var navBarLeftButtonSettings: [[NavigartionBar.ButtonItemKey : Any]]? {
         didSet {
-            guard let settings = navBarLeftButtonSettings, settings.count > 0 else {
+            guard let settings = navBarLeftButtonSettings, !settings.isEmpty else {
                 return
             }
             
@@ -71,7 +71,7 @@ class ChatViewController: RCConversationViewController {
         let seeAction = UIPreviewAction(title: "See".localized, style: .default)
         { (action, previewViewController) in
             if let viewControllers = Common.rootVC?.navigationController?.viewControllers,
-                let vc = viewControllers.reversed().first(where: { $0 is SNSViewController }) {
+                let vc = viewControllers.last(where: { $0 is SNSViewController }) {
                 vc.show(previewViewController, sender: vc)
             }
         }
@@ -79,7 +79,7 @@ class ChatViewController: RCConversationViewController {
         let deleteAction = UIPreviewAction(title: "Delete".localized, style: .destructive)
         { (action, previewViewController) in
             if let viewControllers = Common.rootVC?.navigationController?.viewControllers,
-                let vc = viewControllers.reversed().first(where: { $0 is SNSViewController }),
+                let vc = viewControllers.last(where: { $0 is SNSViewController }),
                 let chatVC = previewViewController as? ChatViewController {
                 let chatListVC = (vc as! SNSViewController).chatListVC
                 chatListVC.dataArray.remove(at: chatVC.previewedIndex)

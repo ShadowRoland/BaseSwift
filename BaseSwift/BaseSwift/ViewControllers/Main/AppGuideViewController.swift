@@ -91,7 +91,7 @@ class AppGuideViewController: BaseViewController {
             return;
         }
         
-        Entrance = .aggregation
+        Configs.entrance = .aggregation
         
         SlideMenuOptions.leftViewWidth = 240.0
         let mainMenuVC = Common.viewController("MainMenuViewController", storyboard: "Aggregation")
@@ -143,18 +143,15 @@ class AppGuideViewController: BaseViewController {
     
     //MARK: - UIScrollViewDelegate
     
-    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        super.scrollViewDidEndScrollingAnimation(scrollView)
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         changePageControl()
     }
     
-    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        super.scrollViewDidEndDecelerating(scrollView)
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         changePageControl()
     }
     
-    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        super.scrollViewDidEndDragging(scrollView, willDecelerate: decelerate)
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         changePageControl()
     }
 }

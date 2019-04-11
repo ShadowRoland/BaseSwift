@@ -14,7 +14,7 @@ class ViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the vivar typically from a nib.
-        self.title = "Root"
+        defaultNavigationBar("Root")
         navigationBarBackgroundAlpha = NavigartionBar.backgroundBlurAlpha
         navigationBarTintColor = NavigartionBar.tintColor
         initNavigationBar()
@@ -28,14 +28,13 @@ class ViewController: BaseViewController {
         
         if UserStandard[USKey.showAdvertisingGuide] != nil {
             UserStandard[USKey.showAdvertisingGuide] = nil
-            stateMachine.append(Event.showAdvertisingGuard)
+            stateMachine.append(option: .showAdvertisingGuard)
         }
         
         //启动程序检查并执行可以执行的option
-        if let action = Common.currentActionParams()?[ParamKey.action] {
-            if Action.openWebpage == String(describing: action) {
-                stateMachine.append(option: Event.option(Action.openWebpage)!)
-            }
+        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+            .openWebpage == option {
+            stateMachine.append(option: option)
         }
     }
     
@@ -52,11 +51,15 @@ class ViewController: BaseViewController {
     //MARK: - SRStateMachineDelegate
     
     override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
-        switch event {
-        case Event.showAdvertisingGuard:
+        guard let option = Event.Option(rawValue: event) else {
+            return
+        }
+        
+        switch option {
+        case .showAdvertisingGuard:
             publicBusinessComponent.showAdvertisingGuard()
             
-        case Event.showAdvertising:
+        case .showAdvertising:
             publicBusinessComponent.showAdvertising()
             
         default:
@@ -76,8 +79,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         var cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier)
         if cell == nil {
             cell = UITableViewCell(style: .default, reuseIdentifier: ReuseIdentifier)
-            cell?.selectionStyle = UITableViewCellSelectionStyle.default
-            cell?.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
+            cell?.selectionStyle = .default
+            cell?.accessoryType = .disclosureIndicator
         }
         
         switch indexPath.row {
@@ -106,15 +109,15 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            Entrance = .simple
+            Configs.entrance = .simple
             show("SimpleViewController", storyboard: "Simple")
             
         case 1:
-            Entrance = .sns
+            Configs.entrance = .sns
             show("LoginViewController", storyboard: "Profile")
             
         case 2:
-            Entrance = .news
+            Configs.entrance = .news
             show("NewsViewController", storyboard: "News")
             
         case 3:
