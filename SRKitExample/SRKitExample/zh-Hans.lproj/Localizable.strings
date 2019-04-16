@@ -5,3 +5,25 @@
   Created by Gary on 2019/4/15.
   Copyright © 2019 Sharow Roland. All rights reserved.
 */
+
+//MARK: MJRefresh
+"MJRefreshHeaderIdleText"             = "下拉可以刷新";
+"MJRefreshHeaderPullingText"          = "松开立即刷新";
+"MJRefreshHeaderRefreshingText"       = "正在刷新数据中...";
+
+"MJRefreshAutoFooterIdleText"         = "点击或上拉加载更多";
+"MJRefreshAutoFooterRefreshingText"   = "正在加载更多的数据...";
+"MJRefreshAutoFooterNoMoreDataText"   = "已经全部加载完毕";
+
+"MJRefreshBackFooterIdleText"         = "上拉可以加载更多";
+"MJRefreshBackFooterPullingText"      = "松开立即加载更多";
+"MJRefreshBackFooterRefreshingText"   = "正在加载更多的数据...";
+"MJRefreshBackFooterNoMoreDataText"   = "已经全部加载完毕";
+
+"MJRefreshHeaderLastTimeText"         = "最后更新：";
+"MJRefreshHeaderDateTodayText"        = "今天";
+"MJRefreshHeaderNoneLastDateText"     = "无记录";
+
+"[SR]LocalDate" = "yyyy年MM月dd日";
+"[SR]OK" = "确定";
+"[SR]I guess there are something wrong. You should never see me" = "一定是打开的姿势不对，为什么能看到我？";

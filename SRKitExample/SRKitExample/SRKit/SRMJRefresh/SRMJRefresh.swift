@@ -10,45 +10,52 @@ import UIKit
 import MJRefresh
 
 public class SRMJRefreshHeader: MJRefreshStateHeader {
-    lazy var gifView = UIImageView()
-    lazy var stateImages: [Int : [UIImage]] = [:]
-    lazy var stateDurations:  [Int : TimeInterval] = [:]
-    
-    struct Const {
-        static let gifViewImageHeight = 80.0 as CGFloat
-        static var gifViewImageRatio = 248.0 / 304.0 as CGFloat
+    public var gif: UIImage.SRGif? {
+        didSet {
+            guard let gif = gif, let images = gif.images, !images.isEmpty else {
+                stateGifs.removeAll()
+                gifView.removeFromSuperview()
+                lastUpdatedTimeLabel.isHidden = false
+                return
+            }
+            
+            addSubview(gifView)
+            var array = [] as [UIImage]
+            if gif.imageSize == CGSize.zero {
+                array = images
+            } else {
+                images.forEach { array.append($0.imageScaled(to: gif.imageSize)) }
+            }
+            set(gif: gif, for: .idle)
+            set(gif: gif, for: .pulling)
+            set(gif: gif, for: .refreshing)
+            lastUpdatedTimeLabel.isHidden = true
+        }
     }
     
-    public init(refreshingBlock: MJRefresh.MJRefreshComponentRefreshingBlock!) {
+    public static var defaultGif: UIImage.SRGif? = nil
+    
+    lazy var gifView = UIImageView()
+    lazy var stateGifs: [MJRefreshState : UIImage.SRGif] = [:]
+    
+    public init(refreshingBlock: MJRefresh.MJRefreshComponentRefreshingBlock!,
+                gif: UIImage.SRGif? = defaultGif) {
         super.init(frame: CGRect())
         self.refreshingBlock = refreshingBlock
-        setTitle("MJRefreshHeaderIdleText".localized, for: .idle)
-        setTitle("MJRefreshHeaderPullingText".localized, for: .pulling)
-        setTitle("MJRefreshHeaderRefreshingText".localized, for: .refreshing)
-        addSubview(gifView)
-        
-        var images = [] as [UIImage]
-        for i in (0 ..< 36) {
-            var image = UIImage(named: "pokemon_ball_\(i)")!
-            Const.gifViewImageRatio = image.size.width / image.size.height
-            image = image.imageScaled(to: CGSize(width: Const.gifViewImageHeight * Const.gifViewImageRatio,
-                                                 height: Const.gifViewImageHeight))
-            images.append(image)
-        }
-        set(images: [images.first!], for: .idle)
-        set(images: images, for: .pulling)
-        set(images: images, for: .refreshing)
-        lastUpdatedTimeLabel.isHidden = true
+        setTitle("MJRefreshHeaderIdleText".srLocalized, for: .idle)
+        setTitle("MJRefreshHeaderPullingText".srLocalized, for: .pulling)
+        setTitle("MJRefreshHeaderRefreshingText".srLocalized, for: .refreshing)
+        self.gif = gif
     }
     
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func set(images: [UIImage], for state: MJRefreshState) {
-        stateImages[state.rawValue] = images
-        stateDurations[state.rawValue] = Double(images.count) * 0.05
-        mj_h = max(images[0].size.height, mj_h)// 根据图片设置控件的高度
+    func set(gif: UIImage.SRGif, for state: MJRefreshState) {
+        stateGifs[state] = gif
+//        stateDurations[state] = Double(images.count) * 0.05
+        mj_h = max(gif.images!.first!.size.height, mj_h)// 根据图片设置控件的高度
     }
     
     //MARK: - 实现父类的方法
@@ -56,10 +63,8 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
     override public var pullingPercent: CGFloat {
         didSet {
             super.pullingPercent = self.pullingPercent
-            guard state == .idle,
-                let images = stateImages[MJRefreshState.idle.rawValue],
-                !images.isEmpty else {
-                    return
+            guard state == .idle, let images = stateGifs[state]?.images, !images.isEmpty else {
+                return
             }
             gifView.stopAnimating() //停止动画
             var index = Int(CGFloat(images.count) * self.pullingPercent)
@@ -70,17 +75,16 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
     
     override public func placeSubviews() {
         super.placeSubviews()
-        let gifViewImageWidth = mj_h * Const.gifViewImageRatio
-        if stateLabel.isHidden && lastUpdatedTimeLabel.isHidden {
-            gifView.frame = CGRect((mj_w - gifViewImageWidth) / 2.0, 0, gifViewImageWidth, mj_h)
-        } else {
-            gifView.frame = CGRect(mj_w / 2.0 - gifViewImageWidth - 15.0,
-                                    0,
-                                    gifViewImageWidth,
-                                    mj_h)
-            stateLabel.mj_x = mj_w / 2.0 - 15.0
-            stateLabel.mj_w = mj_w / 2.0 + 15.0
-            stateLabel.textAlignment = .left
+        if let image = gif?.images?.first {
+            let width = mj_h * image.size.width / image.size.height
+            if stateLabel.isHidden && lastUpdatedTimeLabel.isHidden {
+                gifView.frame = CGRect((mj_w - width) / 2.0, 0, width, mj_h)
+            } else {
+                gifView.frame = CGRect(mj_w / 2.0 - width - 15.0, 0, width, mj_h)
+                stateLabel.mj_x = mj_w / 2.0 - 15.0
+                stateLabel.mj_w = mj_w / 2.0 + 15.0
+                stateLabel.textAlignment = .left
+            }
         }
     }
     
@@ -92,7 +96,7 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
             super.state = state
             
             if state == .pulling || state == .refreshing {
-                guard let images = stateImages[state.rawValue], !images.isEmpty else {
+                guard let gif = stateGifs[state], let images = gif.images, !images.isEmpty else {
                     return
                 }
                 
@@ -101,7 +105,7 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
                     gifView.image = images.first
                 } else {
                     gifView.animationImages = images
-                    gifView.animationDuration = stateDurations[state.rawValue]!
+                    gifView.animationDuration = gif.duration
                     gifView.startAnimating()
                 }
             }

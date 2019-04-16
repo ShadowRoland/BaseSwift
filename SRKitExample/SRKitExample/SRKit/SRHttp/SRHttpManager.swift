@@ -131,7 +131,7 @@ open class SRHttpManager {
     
     open func addExtraParam(_ params: inout ParamDictionary) {
         params[Param.Key.os] = OSVersion
-        params[Param.Key.deviceModel] = DevieModel
+        params[Param.Key.deviceModel] = SRCommon.devieModel()
         params[Param.Key.version] = AppVersion
         params[Param.Key.deviceId] = SRCommon.uuid()
         params[Param.Key.deviceToken] = SRCommon.currentDeviceToken()

@@ -63,19 +63,19 @@ public class SRLoadDataStateView: UIView {
         
         let titleImage: UIImage!
         if state == .none {
-            titleImage = UIImage(named: "beauty_face_6")
+            titleImage = UIImage.srNamed("beauty_face_6")
             imageSize = CGSize(262 / 2.0, 337.0 / 2.0)
-            text = "I guess there are something wrong. You should never see me".localized
+            text = "[SR]I guess there are something wrong. You should never see me".srLocalized
         } else if state == .loading {
-            titleImage = UIImage(named: "beauty_face_1")
+            titleImage = UIImage.srNamed("beauty_face_1")
             imageSize = CGSize(253.0 / 2.0, 337.0 / 2.0)
-            text = "Loading ...".localized
+            text = "Loading ...".srLocalized
         } else if state == .empty {
-            titleImage = UIImage(named: "beauty_face_4")
+            titleImage = UIImage.srNamed("beauty_face_4")
             imageSize = CGSize(333.0 / 2.0, 337.0 / 2.0)
-            text = "No record".localized
+            text = "No record".srLocalized
         } else {
-            titleImage = UIImage(named: "beauty_face_7")
+            titleImage = UIImage.srNamed("beauty_face_7")
             imageSize = CGSize(369.0 / 2.0, 337.0 / 2.0)
         }
         self.state = state
@@ -94,7 +94,7 @@ public class SRLoadDataStateView: UIView {
             return
         }
         
-        let title = "Click Retry".localized
+        let title = "Click Retry".srLocalized
         button = SRCommon.submitButton(title)
         let width =
             SRCommon.fitSize(title, font: SubmitButton.font, maxHeight: TableCellHeight).width
@@ -112,7 +112,7 @@ public class SRLoadDataStateView: UIView {
         let imageHeight = 337.0 / 2.0 as CGFloat
         
         //文字高度
-        let textWidth = (width != nil ? width! : ScreenWidth()) - 2 * SubviewMargin
+        let textWidth = (width != nil ? width! : ScreenWidth) - 2 * SubviewMargin
         let textSize = SRCommon.fitSize(text!, font: SubmitButton.font, maxWidth: textWidth)
         let textHeight = ceil(textSize.height)
         

@@ -205,7 +205,7 @@ DTAttributedTextContentViewDelegate {
         
         var setting = NavigartionBar.buttonFullSetting
         setting[.style] = NavigartionBar.ButtonItemStyle.image
-        setting[.image] = image == nil ? UIImage("page_back") : image
+        setting[.image] = image == nil ? UIImage.srNamed("sr_page_back") : image
         navBarLeftButtonSettings = [setting]
     }
     
@@ -235,7 +235,7 @@ DTAttributedTextContentViewDelegate {
             }
             
             if settings.first!.isEmpty { //使用默认的返回
-                //navigationController?.navigationBar.backIndicatorImage = UIImage("page_back")
+                //navigationController?.navigationBar.backIndicatorImage = UIImage.srNamed("page_back")
                 //navigationController?.navigationBar.backIndicatorTransitionMaskImage =
                 //    UIImage("page_back")
                 navigationItem.backBarButtonItem =

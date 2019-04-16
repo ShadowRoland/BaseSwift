@@ -11,21 +11,16 @@ import UIKit
 import CocoaLumberjack
 import Alamofire
 
-#if RUN_PRODUCTION
-var Environment: RunEnvironment = .production
-#else
-#if DEBUG
-var Environment: RunEnvironment = .develop
-#else
-var Environment: RunEnvironment = .test
-#endif
-#endif
+//MARK: Environment
 
+public var Environment: RunEnvironment = .develop
 public enum RunEnvironment {
     case develop,  //开发环境，debug
     test,  //测试环境，release
     production  //生产环境，release
 }
+
+public var BaseHttpURL: String = ""
 
 //MARK: - 数据类型定义和声明
 
@@ -38,27 +33,78 @@ public typealias ParamHeaders = HTTPHeaders
 
 //MARK: - 文件系统相关
 
+var homeDirectory: String!
+
 //资源文件目录
-let HomeDirectory = String(NSHomeDirectory())
-let ResourceDirectory = Bundle.main.resourcePath!.appending(pathComponent: "Resource")
+public var HomeDirectory: String {
+    if homeDirectory == nil {
+        homeDirectory = String(NSHomeDirectory())
+    }
+    return homeDirectory
+}
+
+var resourceDirectory: String!
+
+public var ResourceDirectory: String {
+    if resourceDirectory == nil {
+        resourceDirectory = Bundle.main.resourcePath!.appending(pathComponent: "Resource")
+    }
+    return resourceDirectory
+}
+
+var documentsDirectory: String!
+
 //默认文档目录
-let DocumentsDirectory =
-    String(NSSearchPathForDirectoriesInDomains(.documentDirectory,
-                                               .userDomainMask,
-                                               true).first!)
+public var DocumentsDirectory: String {
+    if documentsDirectory == nil {
+        documentsDirectory = String(NSSearchPathForDirectoriesInDomains(.documentDirectory,
+                                                                        .userDomainMask,
+                                                                        true).first!)
+    }
+    return documentsDirectory
+}
+
+var userDirectory: String!
 
 //日志文件目录
 //let LogfilesDirectory      [kDocumentsDirectory stringByAppendingPathComponent:@"Log"]
 //所有用户目录
-let UserDirectory = DocumentsDirectory.appending(pathComponent: "User")
+public var UserDirectory: String {
+    if userDirectory == nil {
+        userDirectory = DocumentsDirectory.appending(pathComponent: "User")
+    }
+    return userDirectory
+}
+
+var databaseFilePath: String!
 
 //数据库文件路径
-let DatabaseFilePath = DocumentsDirectory.appending(pathComponent: "app.db")
+
+public var DatabaseFilePath: String {
+    if databaseFilePath == nil {
+        databaseFilePath = DocumentsDirectory.appending(pathComponent: "app.db")
+    }
+    return databaseFilePath
+}
+
+var osVersion: String!
 
 //MARK: - 系统信息相关
-let OSVersion = UIDevice.current.systemName + UIDevice.current.systemVersion
-let DevieModel = SRCommon.devieModel()
-let AppVersion = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
+public var OSVersion: String {
+    if osVersion == nil {
+        osVersion = UIDevice.current.systemName + UIDevice.current.systemVersion
+    }
+    return osVersion
+}
+
+var appVersion: String!
+
+public var AppVersion: String {
+    if appVersion == nil {
+        appVersion = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as? String
+    }
+    return appVersion
+}
 
 public enum ScreenScale: Int {
     case none
@@ -81,16 +127,20 @@ public var SupportedInterfaceOrientations: UIInterfaceOrientationMask = .portrai
 public var PreferredInterfaceOrientationForPresentation: UIInterfaceOrientation = .portrait
 
 //MARK: 是否只在WLAN下显示图片
-public var isOnlyShowImageInWLAN = UserStandard[USKey.isAllowShowImageInWLAN] == nil
+public var isOnlyShowImageInWLAN: Bool {
+    return UserStandard[USKey.isAllowShowImageInWLAN] == nil
+}
 
 //MARK: 是否允许使用指纹登录，默认允许
-public var canAuthenticateToLogin = UserStandard[USKey.forbidAuthenticateToLogin] == nil
+public var canAuthenticateToLogin: Bool {
+    return UserStandard[USKey.forbidAuthenticateToLogin] == nil
+}
 
 //MARK: - 存储在UserDefault中的数据Key
 
 public struct USKey {
     static let appIsFirstRun                  = "AppIsFirstRun"
-    static let baseServerURL                  = "BaseServerURL"
+    static let baseHttpURL                    = "baseHttpURL"
     static let currentUserInfo                = "CurrentUserInfo"
     static let currentDeviceToken             = "currentDeviceToken"
     static let currentToken                   = "CurrentToken"
@@ -103,8 +153,8 @@ public struct USKey {
 }
 
 //自定义的通知名
-extension Notification.Name {
-    public struct Base {
+public extension Notification.Name {
+    struct Base {
         static let newAction = Notification.Name("Base.newAction")
         static let didEndStateMachineEvent = Notification.Name("Base.didEndStateMachineEvent") //FIXME: FOR DEBUG，跨页面的通知
     }
@@ -163,23 +213,23 @@ public let isZhHans = NSLocale.preferredLanguages.first!.hasPrefix("zh-Hans")
 //MARK: - 格式化
 
 public class DateFormat {
-    static let date = date1
-    static let date1 = "yyyy-MM-dd"
-    static let date2 = "yyyy/MM/dd"
-    static let localDate = "LocalDate".localized
-    static let time = time1
-    static let time1 = "yyyy-MM-dd HH:mm:ss"
-    static let time2 = "yyyy-MM-dd HH:mm:ss.SSS"
-    static let time3 = "yyyy/MM/dd HH:mm:ss"
-    static let time4 = "HH:mm:ss"
-    static let time5 = "HH:mm:ss.SSS"
-    static let full = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ"
+    static var date = date1
+    static var date1 = "yyyy-MM-dd"
+    static var date2 = "yyyy/MM/dd"
+    static var localDate = "[SR]LocalDate".srLocalized
+    static var time = time1
+    static var time1 = "yyyy-MM-dd HH:mm:ss"
+    static var time2 = "yyyy-MM-dd HH:mm:ss.SSS"
+    static var time3 = "yyyy/MM/dd HH:mm:ss"
+    static var time4 = "HH:mm:ss"
+    static var time5 = "HH:mm:ss.SSS"
+    static var full = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ"
 }
 
 //MARK: - 视图相关的常量和工具
 
-public func ScreenWidth() -> CGFloat { return UIScreen.main.bounds.size.width }
-public func ScreenHeight() -> CGFloat { return UIScreen.main.bounds.size.height }
+public var ScreenWidth: CGFloat { return UIScreen.main.bounds.size.width }
+public var ScreenHeight: CGFloat { return UIScreen.main.bounds.size.height }
 
 public extension UIFont {
     static let title = UIFont.systemFont(ofSize: 18.0)
@@ -284,7 +334,7 @@ public class NavigartionBar {
 public class SubmitButton {
     static var frame                        = CGRect(0,
                                                      0,
-                                                     ScreenWidth() - SubviewMargin,
+                                                     ScreenWidth - SubviewMargin,
                                                      TableCellHeight) //默认尺寸
     static var cornerRadius                 = 5.0 as CGFloat //圆角
     static var backgroundColorNormal        = UIColor(0, 191.0, 255.0) //提交按钮正常状态的颜色

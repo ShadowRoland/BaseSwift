@@ -79,7 +79,6 @@
 		4E7576042264513000394408 /* SRProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575C12264513000394408 /* SRProgressHUD.swift */; };
 		4E7576052264513000394408 /* SRPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575C32264513000394408 /* SRPopover.swift */; };
 		4E757608226451A000394408 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4E75760A226451A000394408 /* Localizable.strings */; };
-		4E7576192264528D00394408 /* SRKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E75756E2264512F00394408 /* SRKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4E75761C226452D200394408 /* SRAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575A72264513000394408 /* SRAlert.swift */; };
 		4E75761D226452D200394408 /* SRAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575A32264513000394408 /* SRAlertController.swift */; };
 		4E75761E226452D200394408 /* SRProgressComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575AF2264513000394408 /* SRProgressComponent.swift */; };
@@ -145,6 +144,9 @@
 		4E75765A226452D200394408 /* SRAssetResourceLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575BB2264513000394408 /* SRAssetResourceLoader.swift */; };
 		4E75765B226452D200394408 /* SRVideoRequestTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575BC2264513000394408 /* SRVideoRequestTask.swift */; };
 		4E75765C226452D200394408 /* SRPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575BD2264513000394408 /* SRPlayerView.swift */; };
+		4E75766E22657E2600394408 /* SRKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4E75757F2264512F00394408 /* SRKit.bundle */; };
+		4E75767222659A4A00394408 /* NullSafe.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E75767122659A4900394408 /* NullSafe.m */; };
+		4E75767322659AA500394408 /* NullSafe.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E75767122659A4900394408 /* NullSafe.m */; };
 		A5104DEA3118418F93105A49 /* Pods_SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A386E2D1C6EF5AC234E955BD /* Pods_SRKit.framework */; };
 		F8E51B3501E877A5D9494F8C /* Pods_SRKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA77988C4AE589F48B42D073 /* Pods_SRKitExample.framework */; };
 /* End PBXBuildFile section */
@@ -158,7 +160,6 @@
 		4E7575622264510900394408 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4E7575652264510900394408 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4E7575672264510900394408 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4E75756E2264512F00394408 /* SRKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKit.h; sourceTree = "<group>"; };
 		4E7575702264512F00394408 /* SRMJRefresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRMJRefresh.swift; sourceTree = "<group>"; };
 		4E7575722264512F00394408 /* SRModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRModel.swift; sourceTree = "<group>"; };
 		4E7575732264512F00394408 /* SRBusinessModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBusinessModel.swift; sourceTree = "<group>"; };
@@ -229,6 +230,7 @@
 		4E75760B226451C400394408 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		4E7576112264525700394408 /* SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E7576142264525800394408 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4E75767122659A4900394408 /* NullSafe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NullSafe.m; sourceTree = "<group>"; };
 		585A6469429ADC0C53AE68C7 /* Pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-SRKit/Pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
 		A386E2D1C6EF5AC234E955BD /* Pods_SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA77988C4AE589F48B42D073 /* Pods_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -294,8 +296,8 @@
 		4E75756D2264512F00394408 /* SRKit */ = {
 			isa = PBXGroup;
 			children = (
-				4E75756E2264512F00394408 /* SRKit.h */,
 				4E75757F2264512F00394408 /* SRKit.bundle */,
+				4E75766F22659A4900394408 /* NullSafe */,
 				4E7575A62264513000394408 /* SRAlert */,
 				4E7575A22264513000394408 /* SRAlertController */,
 				4E7575AE2264513000394408 /* SRBase */,
@@ -525,6 +527,14 @@
 			path = SRKit;
 			sourceTree = "<group>";
 		};
+		4E75766F22659A4900394408 /* NullSafe */ = {
+			isa = PBXGroup;
+			children = (
+				4E75767122659A4900394408 /* NullSafe.m */,
+			);
+			path = NullSafe;
+			sourceTree = "<group>";
+		};
 		6D4DD75DD5D3183F65C2A873 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -552,7 +562,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E7576192264528D00394408 /* SRKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,6 +663,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E75766E22657E2600394408 /* SRKit.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -815,6 +825,7 @@
 				4E7576012264513000394408 /* SRVideoRequestTask.swift in Sources */,
 				4E7575C52264513000394408 /* SRModel.swift in Sources */,
 				4E7576052264513000394408 /* SRPopover.swift in Sources */,
+				4E75767222659A4A00394408 /* NullSafe.m in Sources */,
 				4E7575CB2264513000394408 /* SRShareOption.swift in Sources */,
 				4E7575D62264513000394408 /* NotificationCenter+SRExtension.swift in Sources */,
 				4E7575F92264513000394408 /* SRBaseConfigs.swift in Sources */,
@@ -838,6 +849,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E75767322659AA500394408 /* NullSafe.m in Sources */,
 				4E75761C226452D200394408 /* SRAlert.swift in Sources */,
 				4E75761D226452D200394408 /* SRAlertController.swift in Sources */,
 				4E75761E226452D200394408 /* SRProgressComponent.swift in Sources */,

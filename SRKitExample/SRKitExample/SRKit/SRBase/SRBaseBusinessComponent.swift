@@ -13,7 +13,7 @@ extension UIViewController {
         public weak var decorator: UIViewController?
         
         public lazy var navigationBarBackgroundView: UIView = {
-            let view = UIView(frame: CGRect(0, 0, ScreenWidth(), NavigationBarHeight))
+            let view = UIView(frame: CGRect(0, 0, ScreenWidth, NavigationBarHeight))
             decorator?.view.addSubview(view)
             view.backgroundColor = NavigartionBar.backgroundColor
             return view

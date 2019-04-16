@@ -98,7 +98,7 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
         
         let originY =
             isNavigationBarHidden ? StatusBarHeight : NavigationBarHeight + StatusBarHeight
-        debugMenu.show(from: CGRect(0, originY, ScreenWidth(), ScreenHeight()),
+        debugMenu.show(from: CGRect(0, originY, ScreenWidth, ScreenHeight),
                        in: UIApplication.shared.keyWindow)
     }
     

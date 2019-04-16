@@ -47,7 +47,7 @@ class SRBrightnessView: UIView {
                                                   y: 15.0,
                                                   width: 100.0,
                                                   height: 100.0))
-        imageView.image = UIImage(named: "player_brightness")
+        imageView.image = UIImage.srNamed("sr_player_brightness")
         addSubview(imageView)
         
         

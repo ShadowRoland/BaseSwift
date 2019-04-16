@@ -46,8 +46,8 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
         let labelMarginHorizontal = 2.0 * (popViewMargin + textMargin)
         let arrowHeight = 10.0 as CGFloat //default value of Popover.arrowSize.height
         let labelMarginVertical = labelMarginHorizontal + arrowHeight
-        var width = ScreenWidth() - labelMarginHorizontal
-        var height = ScreenHeight() - labelMarginVertical
+        var width = ScreenWidth - labelMarginHorizontal
+        var height = ScreenHeight - labelMarginVertical
         let label = DTAttributedLabel(frame: CGRect(0, 0, width, height))
         label.attributedString = htmlText.attributedString
         let size = label.intrinsicContentSize()
@@ -56,7 +56,7 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
         label.frame = CGRect(0, 0, width, height)
         let contentWidth = width + 2.0 * textMargin
         var contentHeight = min(height + 2.0 * textMargin + arrowHeight,
-                                ScreenHeight() - 2.0 * popViewMargin + arrowHeight) //居中时，不需要展示箭头
+                                ScreenHeight - 2.0 * popViewMargin + arrowHeight) //居中时，不需要展示箭头
         
         //定位
         var startPoint: CGPoint? //获取起点
@@ -66,8 +66,8 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
             let rectInWindow = window.convert(forView.frame, from: superView)
             let displayRect = CGRect(popViewMargin,
                                       0,
-                                      ScreenWidth() - 2.0 * popViewMargin,
-                                      ScreenHeight())
+                                      ScreenWidth - 2.0 * popViewMargin,
+                                      ScreenHeight)
             let intersection = displayRect.intersection(rectInWindow)
             if !intersection.isEmpty { //视图当前窗口显示全部或部分
                 let spaceTop: CGFloat = intersection.origin.y
@@ -93,8 +93,8 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
         var options = [] as [PopoverOption]
         options.append(.type(type))
         if startPoint == nil { //居中
-            startPoint = CGPoint(ScreenWidth() / 2.0,
-                                  (ScreenHeight() - contentHeight + arrowHeight) / 2.0)
+            startPoint = CGPoint(ScreenWidth / 2.0,
+                                  (ScreenHeight - contentHeight + arrowHeight) / 2.0)
             options.append(.arrowSize(CGSize.zero))
         }
         

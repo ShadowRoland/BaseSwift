@@ -207,7 +207,7 @@ SRAssetResourceLoaderTaskDelegate {
             view.right == view.superview!.right
         }
         
-        playButton.image = UIImage(named: "player_play")
+        playButton.image = UIImage.srNamed("sr_player_play")
         playButton.contentEdgeInsets = UIEdgeInsets(8.0)
         playButton.clicked(self, action: #selector(clickPlayButton(_:)))
         bottomView.addSubview(playButton)
@@ -218,7 +218,7 @@ SRAssetResourceLoaderTaskDelegate {
             view.height == 44.0
         }
         
-        screenButton.image = UIImage(named: "player_full_screen")
+        screenButton.image = UIImage.srNamed("sr_player_full_screen")
         screenButton.contentEdgeInsets = UIEdgeInsets(8.0)
         screenButton.clicked(self, action: #selector(clickScreenButton(_:)))
         bottomView.addSubview(screenButton)
@@ -254,7 +254,7 @@ SRAssetResourceLoaderTaskDelegate {
         }
         
         //progressSlider
-        progressSlider.setThumbImage(UIImage(named: "player_progress"), for: .normal)
+        progressSlider.setThumbImage(UIImage.srNamed("sr_player_progress"), for: .normal)
         progressSlider.minimumTrackTintColor = UIColor.white
         progressSlider.maximumTrackTintColor = UIColor.clear
         progressSlider.addTarget(self,
@@ -367,7 +367,7 @@ SRAssetResourceLoaderTaskDelegate {
             view1.right == view1.superview!.right - 5.0
         }
         
-        repeatButton.image = UIImage(named: "player_repeat")
+        repeatButton.image = UIImage.srNamed("sr_player_repeat")
         repeatButton.contentEdgeInsets = UIEdgeInsets(10.0)
         repeatButton.clicked(self, action: #selector(clickRepeatButton(_:)))
         repeatButton.isHidden = true
@@ -407,7 +407,7 @@ SRAssetResourceLoaderTaskDelegate {
         titleLabel.textColor = UIColor.black
         titleLabel.font = UIFont.boldSystemFont(ofSize: 16.0)
         titleLabel.textAlignment = .center
-        titleLabel.text = "Alert".localized
+        titleLabel.text = "Alert".srLocalized
         alertContentView.addSubview(titleLabel)
         constrain(titleLabel) { (view) in
             view.top == view.superview!.top
@@ -436,7 +436,7 @@ SRAssetResourceLoaderTaskDelegate {
             view.right == view.superview!.right
         }
         
-        alertCancelButton.title = "Cancel".localized
+        alertCancelButton.title = "Cancel".srLocalized
         alertCancelButton.titleColor = UIColor.black
         alertCancelButton.titleFont = UIFont.systemFont(ofSize: 16.0)
         alertCancelButton.clicked(self, action: #selector(clickAlertCancelButton(_:)))
@@ -602,7 +602,7 @@ SRAssetResourceLoaderTaskDelegate {
     
     func updateFastSeekView(_ playTime: Float) {
         fastSeekImageVIew.image =
-            UIImage(named: playTime < touchBeginDuration ? "player_rewind" : "player_fast_forward")
+            UIImage.srNamed(playTime < touchBeginDuration ? "player_rewind" : "player_fast_forward")
         fastSeekLabel.text = String(format: "%@/%@",
                                     text(playTime: playTime),
                                     text(playTime: totalDuration))
@@ -764,14 +764,14 @@ SRAssetResourceLoaderTaskDelegate {
     
     func play() {
         isPlaying = true
-        playButton.image = UIImage(named: "player_pause")
+        playButton.image = UIImage.srNamed("sr_player_pause")
         isIndicatorHidden = true
         player.play()
     }
     
     func pause() {
         isPlaying = false
-        playButton.image = UIImage(named: "player_play")
+        playButton.image = UIImage.srNamed("sr_player_play")
         isIndicatorHidden = true
         player.pause()
     }
@@ -783,7 +783,7 @@ SRAssetResourceLoaderTaskDelegate {
         
         let seconds = Int64(min(totalDuration, max(0, playTime)))
         player.pause()
-        playButton.image = UIImage(named: "player_pause")
+        playButton.image = UIImage.srNamed("sr_player_pause")
         isIndicatorHidden = false
         player.seek(to: CMTimeMake(value: seconds, timescale: Int32(NSEC_PER_SEC))) { [weak self] (finished) in
             guard let strongSelf = self else {
@@ -793,7 +793,7 @@ SRAssetResourceLoaderTaskDelegate {
             strongSelf.isIndicatorHidden = true
             
             if !finished {
-                strongSelf.playButton.image = UIImage(named: "player_play")
+                strongSelf.playButton.image = UIImage.srNamed("sr_player_play")
                 strongSelf.isPlaying = false
                 return
             }
@@ -801,7 +801,7 @@ SRAssetResourceLoaderTaskDelegate {
             strongSelf.isPauseByUser = false
             if !strongSelf.isPlaying {
                 strongSelf.isPlaying = true
-                strongSelf.playButton.image = UIImage(named: "player_pause")
+                strongSelf.playButton.image = UIImage.srNamed("sr_player_pause")
             }
             strongSelf.repeatButton.isHidden = true
             strongSelf.player.play()
@@ -848,7 +848,7 @@ SRAssetResourceLoaderTaskDelegate {
     
     //MARK: Alert
     
-    func showAlert(_ message: String? = "Load fail".localized) {
+    func showAlert(_ message: String? = "Load fail".srLocalized) {
         let height = alertMessageHeight(message!)
         alertMessageLabel.text = message!
         constrainAlertMessage(height)
@@ -860,7 +860,7 @@ SRAssetResourceLoaderTaskDelegate {
                 view.right == view.superview!.right
                 view.height == 44.0
         }
-        alertConfirmButton.title = "OK".localized
+        alertConfirmButton.title = "OK".srLocalized
         alertCancelButton.isHidden = true
         alertSeperatorLineView.isHidden = true
         alertView.isHidden = false
@@ -868,7 +868,7 @@ SRAssetResourceLoaderTaskDelegate {
     }
     
     func showWwanAlert() {
-        let message = "Connecting to the Internet via a Cellular Data Network".localized
+        let message = "Connecting to the Internet via a Cellular Data Network".srLocalized
         let height = alertMessageHeight(message)
         alertMessageLabel.text = message
         constrainAlertMessage(height)
@@ -880,7 +880,7 @@ SRAssetResourceLoaderTaskDelegate {
                 view.width == Const.alertWidth / 2.0
                 view.height == 44.0
         }
-        alertConfirmButton.title = "Continue play".localized
+        alertConfirmButton.title = "Continue play".srLocalized
         alertCancelButton.isHidden = false
         alertCancelConstraintGroup =
             constrain(alertCancelButton) { (view) in
@@ -1021,10 +1021,10 @@ SRAssetResourceLoaderTaskDelegate {
     
     @objc func clickScreenButton(_ sender: Any) {
         if !isFullScreen {
-            screenButton.image = UIImage(named: "player_full_screen")
+            screenButton.image = UIImage.srNamed("sr_player_full_screen")
             show()
         } else {
-            screenButton.image = UIImage(named: "player_resize")
+            screenButton.image = UIImage.srNamed("sr_player_resize")
             var orientation: UIInterfaceOrientation = .landscapeRight
             let statusBarOrientation = UIApplication.shared.statusBarOrientation
             if orientation.isLandscape { //若当前视图的方向为横向
@@ -1040,7 +1040,7 @@ SRAssetResourceLoaderTaskDelegate {
     }
     
     @objc func clickAlertConfirmButton(_ sender: Any) {
-        if "OK".localized == alertConfirmButton.title(for: .normal) {
+        if "OK".srLocalized == alertConfirmButton.title(for: .normal) {
             hideAlert()
         } else {
             hideAlert()
@@ -1190,7 +1190,7 @@ SRAssetResourceLoaderTaskDelegate {
         showControlViews()
         repeatButton.isHidden = false
         isPlaying = false
-        playButton.image = UIImage(named: "player_play")
+        playButton.image = UIImage.srNamed("sr_player_play")
     }
     
     //网络差的状态会调用，不做处理，会在playbackBufferEmpty里面缓存之后重新播放

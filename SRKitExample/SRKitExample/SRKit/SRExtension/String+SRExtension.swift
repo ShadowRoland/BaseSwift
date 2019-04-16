@@ -380,6 +380,16 @@ public extension String {
     }
 }
 
+public extension String {
+    var httpRequest: String {
+        return httpRequest(BaseHttpURL)
+    }
+    
+    func httpRequest(_ baseHttpURL: String) -> String {
+        return baseHttpURL.appending(urlComponent: self)
+    }
+}
+
 public extension NSStringDrawingOptions {
     static var calculateTextSize: NSStringDrawingOptions {
         return [.usesLineFragmentOrigin, .usesFontLeading, .truncatesLastVisibleLine]

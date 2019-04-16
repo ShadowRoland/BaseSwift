@@ -98,6 +98,27 @@ public final class SRProgressHUD {
         }
     }
     var imageProgressSize: ImageProgressSize = .none
+    
+    public var gif: UIImage.SRGif? = SRProgressHUD.defaultGif {
+        didSet {
+            if .infinite == progressType, let gif = gif, let images = gif.images {
+                self.animationImageView.removeFromSuperview()
+                let animationImageView = UIImageView(frame: CGRect(0, 0, gif.imageSize))
+                var array = [] as [UIImage]
+                if gif.imageSize == CGSize.zero {
+                    array = images
+                } else {
+                    images.forEach { array.append($0.imageScaled(to: gif.imageSize)) }
+                }
+                animationImageView.animationImages = array
+                animationImageView.animationDuration = gif.duration
+                animationImageView.animationRepeatCount = 0
+                self.animationImageView = animationImageView
+            }
+        }
+    }
+    
+    public static var defaultGif: UIImage.SRGif? = nil
  
     private(set) weak var hudView: UIView!
     private var mbProgressHUD: MBProgressHUD!
@@ -204,16 +225,9 @@ public final class SRProgressHUD {
     }
     
     class func infiniteHUD() -> SRProgressHUD {
-        let animationImageView = UIImageView(frame: CGRect(0, 0, 60.0, 60.0))
-        var array = [] as [UIImage]
-        (0 ..< 30).forEach { array.append(UIImage(named: "huaji_\($0)")!) }
-        animationImageView.animationImages = array
-        animationImageView.animationDuration = 1.0
-        animationImageView.animationRepeatCount = 0
-        
         let hud = SRProgressHUD()
         hud.progressType = .infinite
-        hud.animationImageView = animationImageView
+        hud.gif = defaultGif
         hud.mbProgressHUD = MBProgressHUD(view: hud.animationImageView)
         hud.mbProgressHUD.customView = hud.animationImageView
         hud.mbProgressHUD.margin = 0

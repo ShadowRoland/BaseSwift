@@ -211,7 +211,18 @@ public extension UIImage {
 }
 
 extension UIImage {
-    convenience init?(srName: String) {
-        self.init(named: srName, in: Bundle.sr, compatibleWith: nil)
+    public struct SRGif {
+        public var images: [UIImage]? = nil
+        public var imageSize: CGSize = CGSize.zero
+        public var duration: TimeInterval = 0
+    }
+}
+
+extension UIImage {
+    class func srNamed(_ name: String) -> UIImage? {
+        if let image = UIImage(named: name, in: Bundle.main, compatibleWith: nil) {
+            return image
+        }
+        return UIImage(named: name, in: Bundle.sr, compatibleWith: nil)
     }
 }

@@ -359,7 +359,7 @@ open class SRCommon: NSObject {
         
         let alert = SRAlert()
         Keyboard.hide {
-            alert.show(type, title: str1, message: str2, closeButtonTitle: "OK".localized)
+            alert.show(type, title: str1, message: str2, closeButtonTitle: "[SR]OK".srLocalized)
         }
         return alert
     }
@@ -373,15 +373,15 @@ open class SRCommon: NSObject {
         var positionInWindow: CGPoint!
         if Keyboard.isVisible {
             let keyboardHeight = Keyboard.keyboardHeight + 5.0
-            if keyboardHeight <= ScreenHeight() / 2.0 {
-                positionInWindow = CGPoint(x: ScreenWidth() / 2.0, y: ScreenHeight() / 2.0)
+            if keyboardHeight <= ScreenHeight / 2.0 {
+                positionInWindow = CGPoint(x: ScreenWidth / 2.0, y: ScreenHeight / 2.0)
             } else {
-                positionInWindow = CGPoint(x: ScreenWidth() / 2.0,
-                                           y: ScreenHeight() - ToastHeightAboveBottom)
+                positionInWindow = CGPoint(x: ScreenWidth / 2.0,
+                                           y: ScreenHeight - ToastHeightAboveBottom)
             }
         } else {
-            positionInWindow = CGPoint(x: ScreenWidth() / 2.0,
-                                       y: ScreenHeight() - ToastHeightAboveBottom)
+            positionInWindow = CGPoint(x: ScreenWidth / 2.0,
+                                       y: ScreenHeight - ToastHeightAboveBottom)
         }
         inView.makeToast(message!,
                          duration: duration,

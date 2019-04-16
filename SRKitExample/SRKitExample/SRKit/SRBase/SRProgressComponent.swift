@@ -22,8 +22,21 @@ extension UIView {
             opaque //完全不透明的背景，默认白色
         }
         
-        public class AttributedString: NSAttributedString {
-            
+        public class AttributedString {
+            public struct Key: Equatable, Hashable, RawRepresentable {
+                public typealias RawValue = String
+                public var rawValue: String
+                
+                public init(_ rawValue: String) {
+                    self.rawValue = rawValue
+                }
+                
+                public init(rawValue: String) {
+                    self.rawValue = rawValue
+                }
+                
+                public var hashValue: Int { return self.rawValue.hashValue }
+            }
         }
         
         public weak var decorator: UIView?
@@ -84,9 +97,11 @@ extension UIView {
                 if let opaqueMaskColor = options[.opaqueMaskColor] as? UIColor {
                     self.opaqueMaskColor = opaqueMaskColor
                 }
-                if let imageProgressSize = options[.imageProgressSize]
-                    as? SRProgressHUD.ImageProgressSize {
+                if let imageProgressSize = options[.imageProgressSize] as? SRProgressHUD.ImageProgressSize {
                     progressHUD.imageProgressSize = imageProgressSize
+                }
+                if let gif = options[.gif] as? UIImage.SRGif {
+                    progressHUD.gif = gif
                 }
             }
             
@@ -207,4 +222,5 @@ extension UIView.SRProgressComponent.AttributedString.Key {
     static let shouldAutorotate: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("shouldAutorotate")
     static let opaqueMaskColor: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("opaqueMaskColor")
     static let imageProgressSize: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("imageProgressSize")
+    static let gif: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("gif")
 }

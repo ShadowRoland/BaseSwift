@@ -13,7 +13,7 @@ extension SRIndexPath {
     open class Table: SRIndexPath.Item {
         open var cell: UITableViewCell?
         open var height = TableCellHeight
-        open var width = ScreenWidth()
+        open var width = ScreenWidth
         
         open var value: Any? //存储的value，也可以为文字、数字、数组以及其他类型等，以记录对应的文字内容、数字类型和索引等
         open var isValueChanged = false
