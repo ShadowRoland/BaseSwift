@@ -69,11 +69,11 @@ public class SRLoadDataStateView: UIView {
         } else if state == .loading {
             titleImage = UIImage.srNamed("beauty_face_1")
             imageSize = CGSize(253.0 / 2.0, 337.0 / 2.0)
-            text = "Loading ...".srLocalized
+            text = "[SR]Loading ...".srLocalized
         } else if state == .empty {
             titleImage = UIImage.srNamed("beauty_face_4")
             imageSize = CGSize(333.0 / 2.0, 337.0 / 2.0)
-            text = "No record".srLocalized
+            text = "[SR]No record".srLocalized
         } else {
             titleImage = UIImage.srNamed("beauty_face_7")
             imageSize = CGSize(369.0 / 2.0, 337.0 / 2.0)
@@ -94,7 +94,7 @@ public class SRLoadDataStateView: UIView {
             return
         }
         
-        let title = "Click Retry".srLocalized
+        let title = "[SR]Click Retry".srLocalized
         button = SRCommon.submitButton(title)
         let width =
             SRCommon.fitSize(title, font: SubmitButton.font, maxHeight: TableCellHeight).width

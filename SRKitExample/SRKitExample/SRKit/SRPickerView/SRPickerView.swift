@@ -97,7 +97,7 @@ public class SRPickerView: UIView {
         }
         
         cancelButton = UIButton(type: .custom)
-        cancelButton.title = "Cancel".srLocalized
+        cancelButton.title = "[SR]Cancel".srLocalized
         cancelButton.titleColor = UIColor.darkText
         cancelButton.contentEdgeInsets = UIEdgeInsets(0, SubviewMargin, 0, 0)
         cancelButton.clicked(self, action: #selector(clickCancelButton(_:)))
@@ -110,7 +110,7 @@ public class SRPickerView: UIView {
         }
         
         confirmButton = UIButton(type: .custom)
-        confirmButton.title = "OK".srLocalized
+        confirmButton.title = "[SR]OK".srLocalized
         confirmButton.titleColor = UIColor.darkText
         confirmButton.contentEdgeInsets = UIEdgeInsets(0, 0, 0, SubviewMargin)
         confirmButton.clicked(self, action: #selector(clickConfirmButton(_:)))

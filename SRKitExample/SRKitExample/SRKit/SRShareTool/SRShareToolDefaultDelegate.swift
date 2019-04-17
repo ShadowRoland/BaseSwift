@@ -26,7 +26,7 @@ class SRShareToolDefaultDelegate: NSObject {
     
     func sms(_ shareTool: SRShareTool) {
         guard MFMessageComposeViewController.canSendText() else {
-            SRCommon.showToast("The device does not support SMS function".srLocalized)
+            SRCommon.showToast("[SR]The device does not support SMS function".srLocalized)
             return
         }
         
@@ -37,7 +37,7 @@ class SRShareToolDefaultDelegate: NSObject {
                          shareTool.option.url ?? "")
         vc.messageComposeDelegate = self
         if let topViewController = UIViewController.topViewController {
-            vc.title = "Send message".srLocalized
+            vc.title = "[SR]Send message".srLocalized
             topViewController.present(vc, animated: true, completion: nil)
         }
     }
@@ -215,27 +215,27 @@ extension SRShareToolDefaultDelegate: SRShareToolDelegate {
     func shareTool(title shareTool: SRShareTool, type: SRShareTool.CellType) -> String? {
         switch type {
         case .tool(.copyLink):
-            return "Copy link".srLocalized
+            return "[SR]Copy link".srLocalized
         case .tool(.openLinkInSafari):
-            return "Open link in Safari".srLocalized
+            return "[SR]Open link in Safari".srLocalized
         case .tool(.sms):
-            return "Send message".srLocalized
+            return "[SR]Send message".srLocalized
         case .tool(.refresh):
-            return "Refresh".srLocalized
+            return "[SR]Refresh".srLocalized
         case .share(.wechatMoments):
-            return "Wechat moments".srLocalized
+            return "[SR]Wechat moments".srLocalized
         case .share(.wechat):
-            return "Wechat".srLocalized
+            return "[SR]Wechat".srLocalized
         case .share(.qqZone):
-            return "QQ Zone".srLocalized
+            return "[SR]QQ Zone".srLocalized
         case .share(.qq):
-            return "QQ".srLocalized
+            return "[SR]QQ".srLocalized
         case .share(.weibo):
-            return "Weibo".srLocalized
+            return "[SR]Weibo".srLocalized
         case .share(.facebook):
-            return "Facebook".srLocalized
+            return "[SR]Facebook".srLocalized
         case .share(.twitter):
-            return "Twitter".srLocalized
+            return "[SR]Twitter".srLocalized
         }
     }
     
@@ -243,7 +243,7 @@ extension SRShareToolDefaultDelegate: SRShareToolDelegate {
         switch type {
         case .tool(.copyLink):
             UIPasteboard.general.string = shareTool.option.url
-            SRCommon.showToast("Link has been copied to clipboard".srLocalized)
+            SRCommon.showToast("[SR]Link has been copied to clipboard".srLocalized)
             
         case .tool(.openLinkInSafari):
             if let url = shareTool.option.url, let openURL = URL(string: url) {

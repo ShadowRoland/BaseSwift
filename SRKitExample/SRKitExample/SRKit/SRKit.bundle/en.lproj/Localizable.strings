@@ -6,6 +6,77 @@
   Copyright © 2019 Sharow Roland. All rights reserved.
 */
 
+//MARK: - Common
+
+"[SR]LocalDate" = "yyyy/MM/dd";
+
+//MARK: - Alert & Button & Tip
+
+"[SR]Alert" = "Alert";
+"[SR]OK" = "OK";
+"[SR]Done" = "Done";
+"[SR]Cancel" = "Cancel";
+"[SR]Success" = "Success";
+"[SR]Fail" = "Fail";
+"[SR]Click Retry" = "Click Retry";
+"[SR]Refresh" = "Refresh";
+
+//MARK: - Application
+
+"[SR]Take photo" = "Take photo";
+"[SR]Photo album" = "Photo album";
+"[SR]Preview" = "Preview";
+"[SR]Scan QR Code" = "Scan QR Code";
+"[SR]Setting" = "Setting";
+"[SR]Option" = "Option";
+"[SR]Help" = "Help";
+"[SR]About" = "About";
+"[SR]Unable to connect to the network, please click to refresh" = "Unable to connect to the network, please click to refresh" = "Unable to connect to the network! Please click to refresh";
+"[SR]Unable to connect to the network, please check your network connection" = "Unable to connect to the network, please check your network connection";
+"[SR]Authenticate not setup" = "Authenticate not setup";
+"[SR]Authenticate localized reason for login" = "Authenticate localized reason for login";
+"[SR]Please allow %@ to access your camera in the \"Settings - Privacy - Camera\" option on your phone" = "Please allow %@ to access your camera in the \"Settings - Privacy - Camera\" option on your phone";
+"[SR]Network request exception" = "Network request exception";
+"[SR]I guess there are something wrong, you should never see me" = "I guess there are something wrong, you should never see me";
+"[SR]Send message" = "Send message";
+"[SR]The device does not support SMS function" = "The device does not support SMS function";
+
+//MARK: - Load Data
+
+"[SR]Loading ..." = "Loading ...";
+"[SR]Load success" = "Load success";
+"[SR]Load fail" = "Load fail";
+"[SR]Reload" = "Reload";
+"[SR]No record" = "No record";
+"[SR]No more data" = "No more data";
+
+//MARK: - Framework
+
+"[SR]Business module (moduleId: %d)  does not exist" = "Business module (moduleId: %d)  does not exist";
+"[SR]Business capability (funId: %d)  does not exist" = "Business capability (funId: %d)  does not exist";
+"[SR]Response serialization failed" = "Response serialization failed";
+"[SR]Invalid response JSON format" = "Invalid response JSON format";
+
+//MARK: - Share
+
+"[SR]Share to" = "Share to";
+"[SR]Share Success" = "Share Success";
+"[SR]Copy link" = "Copy link";
+"[SR]Open link in Safari" = "Open link in Safari";
+"[SR]Wechat moments" = "Wechat moments";
+"[SR]Wechat" = "Wechat";
+"[SR]QQ Zone" = "QQ Zone";
+"[SR]QQ" = "QQ";
+"[SR]Weibo" = "Weibo";
+"[SR]Facebook" = "Facebook";
+"[SR]Twitter" = "Twitter";
+"[SR]Link has been copied to clipboard" = "Link has been copied to clipboard";
+
+//MARK: - Player
+
+"[SR]Connecting to the internet via a cellular data network" = "Connecting to the internet via a cellular data network";
+"[SR]Continue play" = "Continue play";
+
 //MARK: MJRefresh
 "MJRefreshHeaderIdleText" = "Pull down to refresh";
 "MJRefreshHeaderPullingText" = "Release to refresh";

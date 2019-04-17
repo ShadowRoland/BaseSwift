@@ -136,10 +136,10 @@ extension BFError.CallModuleFailureReason {
     public var localizedDescription: String {
         switch self {
         case .moduleNotExist(let moduleId):
-            return String(format: "Business module (moduleId: %d)  does not exist".srLocalized,
+            return String(format: "[SR]Business module (moduleId: %d)  does not exist".srLocalized,
                           moduleId)
         case .capabilityNotExist(let funId):
-            return String(format: "Business capability (funId: %d)  does not exist".srLocalized,
+            return String(format: "[SR]Business capability (funId: %d)  does not exist".srLocalized,
                           funId)
         }
     }
@@ -152,8 +152,8 @@ extension BFError.LoadDataFailureReason {
             return error.localizedDescription
         case .responseSerializationFailed(let error):
             return error == nil
-                ? "Response serialization failed! ".srLocalized
-                : "Response serialization failed! ".srLocalized + error!.localizedDescription
+                ? "[SR]Response serialization failed".srLocalized
+                : "[SR]Response serialization failed".srLocalized + error!.localizedDescription
         }
     }
 }

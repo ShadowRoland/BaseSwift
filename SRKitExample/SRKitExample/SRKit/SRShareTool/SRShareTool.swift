@@ -285,7 +285,7 @@ public class SRShareTool: UIViewController {
         
         cancelButton.titleFont = UIFont.system(14.0)
         cancelButton.titleColor = UIColor.darkGray
-        cancelButton.title = "Cancel".srLocalized
+        cancelButton.title = "[SR]Cancel".srLocalized
         cancelButton.clicked(self, action: #selector(clickCancelButton(_:)))
         contentView.addSubview(cancelButton)
         constrain(cancelButton) { (view) in
@@ -308,7 +308,7 @@ public class SRShareTool: UIViewController {
             UIEdgeInsets(top: 0, left: Const.subviewMargin, bottom: 0, right: Const.subviewMargin)
         
         shareSectionLabel.font = UIFont.system(13.0)
-        shareSectionLabel.text = "Share to".srLocalized
+        shareSectionLabel.text = "[SR]Share to".srLocalized
     }
     
     //MARK: - Reload

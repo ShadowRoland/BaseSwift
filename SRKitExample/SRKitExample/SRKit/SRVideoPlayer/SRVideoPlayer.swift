@@ -407,7 +407,7 @@ SRAssetResourceLoaderTaskDelegate {
         titleLabel.textColor = UIColor.black
         titleLabel.font = UIFont.boldSystemFont(ofSize: 16.0)
         titleLabel.textAlignment = .center
-        titleLabel.text = "Alert".srLocalized
+        titleLabel.text = "[SR]Alert".srLocalized
         alertContentView.addSubview(titleLabel)
         constrain(titleLabel) { (view) in
             view.top == view.superview!.top
@@ -436,7 +436,7 @@ SRAssetResourceLoaderTaskDelegate {
             view.right == view.superview!.right
         }
         
-        alertCancelButton.title = "Cancel".srLocalized
+        alertCancelButton.title = "[SR]Cancel".srLocalized
         alertCancelButton.titleColor = UIColor.black
         alertCancelButton.titleFont = UIFont.systemFont(ofSize: 16.0)
         alertCancelButton.clicked(self, action: #selector(clickAlertCancelButton(_:)))
@@ -848,7 +848,7 @@ SRAssetResourceLoaderTaskDelegate {
     
     //MARK: Alert
     
-    func showAlert(_ message: String? = "Load fail".srLocalized) {
+    func showAlert(_ message: String? = "[SR]Load fail".srLocalized) {
         let height = alertMessageHeight(message!)
         alertMessageLabel.text = message!
         constrainAlertMessage(height)
@@ -860,7 +860,7 @@ SRAssetResourceLoaderTaskDelegate {
                 view.right == view.superview!.right
                 view.height == 44.0
         }
-        alertConfirmButton.title = "OK".srLocalized
+        alertConfirmButton.title = "[SR]OK".srLocalized
         alertCancelButton.isHidden = true
         alertSeperatorLineView.isHidden = true
         alertView.isHidden = false
@@ -868,7 +868,7 @@ SRAssetResourceLoaderTaskDelegate {
     }
     
     func showWwanAlert() {
-        let message = "Connecting to the Internet via a Cellular Data Network".srLocalized
+        let message = "[SR]Connecting to the internet via a cellular data network".srLocalized
         let height = alertMessageHeight(message)
         alertMessageLabel.text = message
         constrainAlertMessage(height)
@@ -880,7 +880,7 @@ SRAssetResourceLoaderTaskDelegate {
                 view.width == Const.alertWidth / 2.0
                 view.height == 44.0
         }
-        alertConfirmButton.title = "Continue play".srLocalized
+        alertConfirmButton.title = "[SR]Continue play".srLocalized
         alertCancelButton.isHidden = false
         alertCancelConstraintGroup =
             constrain(alertCancelButton) { (view) in
@@ -1040,7 +1040,7 @@ SRAssetResourceLoaderTaskDelegate {
     }
     
     @objc func clickAlertConfirmButton(_ sender: Any) {
-        if "OK".srLocalized == alertConfirmButton.title(for: .normal) {
+        if "[SR]OK".srLocalized == alertConfirmButton.title(for: .normal) {
             hideAlert()
         } else {
             hideAlert()
