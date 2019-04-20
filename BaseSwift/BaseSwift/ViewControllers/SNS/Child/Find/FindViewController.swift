@@ -6,10 +6,9 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
-import SDWebImage
-import MJRefresh
+import SRKit
 import SwiftyJSON
+import MJRefresh
 //import MWPhotoBrowser
 
 class FindViewController: BaseViewController, FindCellDelegate {
@@ -36,7 +35,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     //var photos: [MWPhoto] = []
     
     struct Const {
-        static let tableHeaderHeight = Common.screenSize().width * 10.0 / 16.0 as CGFloat
+        static let tableHeaderHeight = screenSize().width * 10.0 / 16.0 as CGFloat
         static let nameFont = UIFont.system(16)
         static let nameTextColor =  UIColor(233.0, 233.0, 216.0)
         static let nameShadowColor = UIColor.black
@@ -57,11 +56,11 @@ class FindViewController: BaseViewController, FindCellDelegate {
                                                  refreshNewHeight)
     }
     
-    var loadDataState: LoadDataState?
+    var loadDataState: SRLoadDataState?
     var loadDataViewHeight = 0 as CGFloat
-    var loadingDataView = LoadDataStateView(.loading)
-    var noDataView = LoadDataStateView(.empty)
-    var loadDataFailView = LoadDataStateView(.fail)
+    var loadingDataView = SRLoadDataStateView(.loading)
+    var noDataView = SRLoadDataStateView(.empty)
+    var loadDataFailView = SRLoadDataStateView(.fail)
     
     var dataArray: [MessageModel] = []
     
@@ -134,7 +133,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         deviceOrientationDidChange()
         
         //头像
-        headPortraitBackgroundView.backgroundColor = NavigartionBar.backgroundColor
+        headPortraitBackgroundView.backgroundColor = NavigationBar.backgroundColor
         
         //Name
         nameLabel.font = Const.nameFont
@@ -149,14 +148,14 @@ class FindViewController: BaseViewController, FindCellDelegate {
     override func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
         super.deviceOrientationDidChange(sender)
         
-        headerImageHeight = ScreenWidth() * headerImageSize.height / headerImageSize.width
+        headerImageHeight = ScreenWidth * headerImageSize.height / headerImageSize.width
         headerImageHeightOffset = headerImageHeight - Const.tableHeaderHeight
         headerImageView.frame =
-            CGRect(0, -headerImageHeightOffset, ScreenWidth(), headerImageHeight)
+            CGRect(0, -headerImageHeightOffset, ScreenWidth, headerImageHeight)
         
-        loadDataViewHeight = ScreenHeight() - Const.tableHeaderHeight - TabBarHeight
+        loadDataViewHeight = ScreenHeight - Const.tableHeaderHeight - TabBarHeight
         if let loadDataState = loadDataState {
-            var resultView: LoadDataStateView?
+            var resultView: SRLoadDataStateView?
             switch loadDataState {
             case .loading:
                 resultView = loadingDataView
@@ -168,7 +167,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
                 break
             }
             resultView?.frame =
-                CGRect(0, 0, ScreenWidth(), max(loadDataViewHeight, noDataView.minHeight()))
+                CGRect(0, 0, ScreenWidth, max(loadDataViewHeight, noDataView.minHeight()))
             resultView?.layout()
             tableView.tableFooterView = resultView
         }
@@ -223,10 +222,10 @@ class FindViewController: BaseViewController, FindCellDelegate {
             break
         }
         
-        var params = EmptyParams()
-        params[ParamKey.limit] = TableLoadData.limit
+        var params = [:] as ParamDictionary
+        params[Param.Key.limit] = TableLoadData.limit
         let offset = loadType == .more ? currentOffset + 1 : 0
-        params[ParamKey.offset] = offset
+        params[Param.Key.offset] = offset
         httpRequest(.get(.messages), success: { [weak self] response in
             guard let strongSelf = self else { return }
             let currentOffset = strongSelf.currentOffset
@@ -237,7 +236,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
             } else {
                 strongSelf.updateNew(response as? JSON)
             }
-            }, bfail: { [weak self] response in
+            }, bfail: { [weak self] (url, response) in
                 guard let strongSelf = self else { return }
                 if .more == loadType {
                     if offset == strongSelf.currentOffset + 1 {
@@ -259,7 +258,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
                                                                               show: false))
                     }
                 }
-            }, fail: { [weak self] error in
+            }, fail: { [weak self] (url, error) in
                 guard let strongSelf = self else { return }
                 if .more == loadType {
                     if offset == strongSelf.currentOffset + 1 {
@@ -282,7 +281,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     public func updateNew(_ json: JSON?, errMsg: String? = nil) {
         view.dismissProgress(true)
         endRefreshNew()
-        guard let json = json?[HttpKey.Response.data] else {
+        guard let json = json?[HTTP.Key.Response.data] else {
             if dataArray.count == 0 {
                 showLoadDataFailView(errMsg) //加载失败
                 tableView.reloadData()
@@ -290,7 +289,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
             return
         }
         
-        dataArray = messageModels(json[ParamKey.list])
+        dataArray = messageModels(json[Param.Key.list])
         
         guard !dataArray.isEmpty else { //没有数据
             showNoDataView()
@@ -318,7 +317,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     
     public func updateMore(_ json: JSON?, errMsg: String? = nil) {
         view.dismissProgress(true)
-        guard let json = json?[HttpKey.Response.data] else {
+        guard let json = json?[HTTP.Key.Response.data] else {
             if dataArray.count == 0 {
                 showLoadDataFailView(errMsg) //加载失败
                 tableView.reloadData()
@@ -328,7 +327,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
             return
         }
         
-        let list = messageModels(json[ParamKey.list])
+        let list = messageModels(json[Param.Key.list])
         if list.count == 0 {
             tableView.mj_footer.endRefreshingWithNoMoreData()
         } else {
@@ -372,7 +371,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     func showLoadingDataView() {
         loadDataState = .loading
         loadingDataView.frame =
-            CGRect(0, 0, ScreenWidth(), max(loadDataViewHeight, noDataView.minHeight()))
+            CGRect(0, 0, ScreenWidth, max(loadDataViewHeight, noDataView.minHeight()))
         loadingDataView.layout()
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -382,7 +381,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     func showNoDataView() {
         loadDataState = .empty
         noDataView.frame =
-            CGRect(0, 0, ScreenWidth(), max(loadDataViewHeight, noDataView.minHeight()))
+            CGRect(0, 0, ScreenWidth, max(loadDataViewHeight, noDataView.minHeight()))
         noDataView.layout()
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -393,7 +392,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         loadDataState = .fail
         loadDataFailView.text = text
         loadDataFailView.frame =
-            CGRect(0, 0, ScreenWidth(), max(loadDataViewHeight, loadDataFailView.minHeight()))
+            CGRect(0, 0, ScreenWidth, max(loadDataViewHeight, loadDataFailView.minHeight()))
         loadDataFailView.layout()
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -403,7 +402,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     //MARK: - 事件响应
     
     func clickPhotoBrowser() {
-        //guard Common.mutexTouch() else { return }
+        //guard MutexTouch else { return }
         //photoBrowser?.dismiss(animated: true) { [weak self] in
         //    self?.photoBrowser = nil
         //}
@@ -526,7 +525,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         }
     }
     
-    //MARK: - LoadDataStateDelegate
+    //MARK: - SRLoadDataStateDelegate
     
     override func retryLoadData() {
         //loadData(.new, progressType: .opaqueMask)

@@ -64,3 +64,69 @@ public extension UIButton {
         addTarget(target, action: action, for: .touchUpInside)
     }
 }
+
+//MARK: Submit button
+
+public extension UIButton {
+    //获取一个默认格式的提交按钮，类似于登录的大按钮
+    convenience init(submit title: String,
+                     normalColor: UIColor? = nil,
+                     highlightedColor: UIColor? = nil) {
+        self.init(type: .custom)
+        frame = SubmitButton.frame
+        layer.cornerRadius = SubmitButton.cornerRadius
+        clipsToBounds = true
+        titleColor = SubmitButton.titleColor
+        titleFont = SubmitButton.font
+        self.title = title
+        if let normalColor = normalColor {
+            setBackgroundImage(UIImage.rect(normalColor, size: bounds.size),
+                               for: .normal)
+            if let highlightedColor = highlightedColor {
+                setBackgroundImage(UIImage.rect(highlightedColor, size: bounds.size),
+                                   for: .highlighted)
+            } else {
+                setBackgroundImage(UIImage.rect(SubmitButton.backgroundColorHighlighted,
+                                                size: bounds.size),
+                                   for: .highlighted)
+            }
+        } else {
+            setSubmitDefaultBackgroundColor()
+        }
+    }
+    
+    //改变提交按钮的样式，如果按钮没有设置BackgroundImage，将提供默认的样式
+    //原因是若只设置了按钮的BackgroundColor的话，将没有点击效果的样式
+    func set(submit enabled: Bool,
+             normalColor: UIColor? = nil,
+             highlightedColor: UIColor? = nil) {
+        if currentBackgroundImage == nil {
+            if let normalColor = normalColor {
+                setBackgroundImage(UIImage.rect(normalColor, size: bounds.size),
+                                   for: .normal)
+                if let highlightedColor = highlightedColor {
+                    setBackgroundImage(UIImage.rect(highlightedColor,
+                                                    size: bounds.size),
+                                       for: .highlighted)
+                } else {
+                    setBackgroundImage(UIImage.rect(SubmitButton.backgroundColorHighlighted,
+                                                    size: bounds.size),
+                                       for: .highlighted)
+                }
+            } else {
+                setSubmitDefaultBackgroundColor()
+            }
+        }
+        isEnabled = enabled
+    }
+    
+    func setSubmitDefaultBackgroundColor() {
+        setBackgroundImage(UIImage.rect(SubmitButton.backgroundColorNormal,
+                                        size: bounds.size),
+                           for: .normal)
+        setBackgroundImage(UIImage.rect(SubmitButton.backgroundColorHighlighted,
+                                        size: bounds.size),
+                           for: .highlighted)
+        backgroundColor = UIColor.clear
+    }
+}

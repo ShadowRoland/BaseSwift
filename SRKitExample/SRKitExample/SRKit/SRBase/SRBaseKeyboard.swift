@@ -10,10 +10,10 @@ import Foundation
 import UIKit
 import IQKeyboardManagerSwift
 
-let Keyboard = SRBaseKeyboard.shared
+public let Keyboard = SRBaseKeyboard.shared
 
-final class SRBaseKeyboard: NSObject {
-    enum Manager: Int {//键盘管理使用类型
+public class SRBaseKeyboard: NSObject {
+    public enum Manager: Int {//键盘管理使用类型
         case iq     = 0,//使用IQKeyboardManager
         sr,//使用SRKeyboardManager
         unable//不使用键盘管理捕捉，多用于网页或者自定义控制键盘事件
@@ -88,7 +88,7 @@ final class SRBaseKeyboard: NSObject {
     }
     
     //隐藏虚拟键盘
-    func hide(_ didHideBlock: (() -> Void)? = nil) {
+    public func hide(_ didHideBlock: (() -> Void)? = nil) {
         if !isVisible {
             didHideBlock?()
         } else {

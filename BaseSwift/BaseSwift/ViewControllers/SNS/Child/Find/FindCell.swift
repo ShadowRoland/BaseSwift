@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 protocol FindCellDelegate: class {
     func showImage(_ model: MessageModel?, index: Int)
@@ -137,7 +137,7 @@ class FindCell: UITableViewCell {
     }
     
     class func updateCellHeight() {
-        let width = Common.screenSize().width
+        let width = screenSize().width
         Const.signalImageSide = width * 2.0 / 3.0 //单个图片的最长边长
         Const.groupImageSide = (width
             - (2.0 * Const.headPortraitMargin + Const.headPortraitSide)
@@ -154,15 +154,14 @@ class FindCell: UITableViewCell {
     //根据数据模型以计算所需要的单元高度
     class func cellHeight(_ model: MessageModel,
                           interfaceOrientation: UIInterfaceOrientationMask = .portrait) -> CGFloat {
-        let width = Common.screenSize(interfaceOrientation).width - Const.headPortraitSide - 2.0 * Const.headPortraitMargin
+        let width = screenSize(interfaceOrientation).width - Const.headPortraitSide - 2.0 * Const.headPortraitMargin
             - Const.nameMarginRight
         var cellHeight = Const.messageTopOringY //初始高度从文字上方开始算
         
-        if let text = model.text, text != EmptyString {
+        if let text = model.text, text != "" {
             //计算文字高度
             let height =
-                max(Const.nameHeight,
-                    ceil(Common.fitSize(text, font: Const.nameFont, maxWidth: width).height))
+                max(Const.nameHeight, ceil(text.textSize(Const.nameFont, maxWidth: width).height))
             cellHeight += height + Const.messageMarginBottom
         }
         
@@ -194,9 +193,8 @@ class FindCell: UITableViewCell {
             let shareTextwidth = width - Const.shareThumbnailSide - 3.0 * Const.shareThumbnailMargin
             //计算高度
             let height = max(Const.shareThumbnailSide,
-                             ceil(Common.fitSize(model.shareText,
-                                                 font: Const.shareLabelFont,
-                                                 maxWidth: shareTextwidth).height))
+                             ceil((model.shareText ?? "").textSize(Const.shareLabelFont,
+                                                                   maxWidth: shareTextwidth).height))
             cellHeight += height + 2.0 * Const.shareThumbnailMargin
             
         default:
@@ -222,7 +220,7 @@ class FindCell: UITableViewCell {
         var x = headPortraitImageView.right + Const.headPortraitMargin
         nameLabel = UILabel(frame: CGRect(x,
                                           Const.nameMarginTop,
-                                          ScreenWidth() - x - Const.nameMarginRight,
+                                          ScreenWidth - x - Const.nameMarginRight,
                                           Const.nameHeight))
         nameLabel.font = Const.nameFont
         nameLabel.textColor = Const.nameTextColor
@@ -279,10 +277,10 @@ class FindCell: UITableViewCell {
                                           Const.bottomHeight))
         timeLabel.font = Const.timeFont
         timeLabel.textColor = Const.timeTextColor
-        timeLabel.text = EmptyString
+        timeLabel.text = ""
         contentView.addSubview(timeLabel)
         
-        bottomView = UIView(frame: CGRect(ScreenWidth() - Const.bottomWidth,
+        bottomView = UIView(frame: CGRect(ScreenWidth - Const.bottomWidth,
                                           bottomOriginY,
                                           Const.bottomWidth,
                                           Const.bottomHeight))
@@ -342,19 +340,17 @@ class FindCell: UITableViewCell {
     func layout() {
         guard let model = model else { return }
         
-        let width = ScreenWidth() - nameLabel.frame.origin.x - Const.nameMarginRight
+        let width = ScreenWidth - nameLabel.frame.origin.x - Const.nameMarginRight
         var frame = nameLabel.frame
         frame.size.width = width
         nameLabel.frame = frame
         
-        if let text = messageLabel.text, text != EmptyString {
+        if let text = messageLabel.text, !text.isEmpty {
             contentView.insertSubview(messageLabel, aboveSubview: nameLabel)
             frame = messageLabel.frame
             frame.size.width = width
             frame.size.height = max(Const.nameHeight,
-                                    ceil(Common.fitSize(messageLabel.text,
-                                                        font: messageLabel.font,
-                                                        maxWidth: width).height))
+                                    ceil(text.textSize(messageLabel.font, maxWidth: width).height))
             messageLabel.frame = frame
             messageBottomOriginY = messageLabel.bottom + Const.messageMarginBottom
         } else {
@@ -383,7 +379,7 @@ class FindCell: UITableViewCell {
         timeLabel.frame = frame
         
         frame = bottomView.frame
-        frame.origin.x = ScreenWidth() - Const.bottomWidth
+        frame.origin.x = ScreenWidth - Const.bottomWidth
         frame.origin.y = bottomOriginY
         bottomView.frame = frame
     }
@@ -422,9 +418,9 @@ class FindCell: UITableViewCell {
             let imageButton = images[i]
             imageButton.imageView?.contentMode = .scaleToFill
             imageButton.showProgress(.clear,
-                                     progressType: .srvRing,
+                                     progressType: .infinite,
                                      progress: nil,
-                                     options: [ProgressOptionKey.imageProgressSize : ProgressOptionImageSize.normal])
+                                     options: [.imageProgressSize : SRProgressHUD.ImageProgressSize.normal])
             weak var weakSelf = self
             imageButton.sd_setImage(with: url,
                                     for: .normal,
@@ -512,9 +508,8 @@ class FindCell: UITableViewCell {
         let shareTextwidth = width - Const.shareThumbnailSide - 3.0 * Const.shareThumbnailMargin
         //计算高度
         let height = max(Const.shareThumbnailSide,
-                         ceil(Common.fitSize(shareLabel.text,
-                                             font: Const.shareLabelFont,
-                                             maxWidth: shareTextwidth).height))
+                         ceil((shareLabel.text ?? "").textSize(Const.shareLabelFont,
+                                                               maxWidth: shareTextwidth).height))
         
         var frame = shareView.frame
         frame.origin.y = messageBottomOriginY
@@ -537,7 +532,7 @@ class FindCell: UITableViewCell {
     //MARK: - 事件响应
     
     @objc func clickImageButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         let imageButton = sender as! UIButton
         if let delegate = delegate {
             delegate.showImage(model, index: imageButton.tag)
@@ -545,21 +540,21 @@ class FindCell: UITableViewCell {
     }
     
     @objc func clickShareButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         if let delegate = delegate {
             delegate.showShareWebpage(model)
         }
     }
     
     @objc func clickLikeButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
     }
     
     @objc func clickCommentButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
     }
     
     @objc func clickBottomShareButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
     }
 }

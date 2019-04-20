@@ -16,14 +16,14 @@ open class SRBusinessModel: SRModel {
     open var cellHeight: CGFloat = 0 //屏幕为纵向方向时的UITableCell高度，Portrait
     open var cellHeightLandscape: CGFloat = 0 //屏幕为横向方向时的UITableCell高度
 
-    override open func mapping(map: Map) {
+    override public func mapping(map: Map) {
         super.mapping(map: map)
 
         id <- map[Param.Key.id]
         timestamp <- map[Param.Key.timestamp]
     }
     
-    static public func == (lhs: SRBusinessModel, rhs: SRBusinessModel) -> Bool {
+    public static func == (lhs: SRBusinessModel, rhs: SRBusinessModel) -> Bool {
         if let id = lhs.id, id == rhs.id {
             return true
         }

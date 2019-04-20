@@ -217,7 +217,7 @@ extension UIView: SRProgressProtocol {
     }
 }
 
-extension UIView.SRProgressComponent.AttributedString.Key {
+public extension UIView.SRProgressComponent.AttributedString.Key {
     static let showPercentage: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("showPercentage")
     static let shouldAutorotate: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("shouldAutorotate")
     static let opaqueMaskColor: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("opaqueMaskColor")

@@ -101,7 +101,7 @@ target 'BaseSwift' do
     pod 'REMenu', '~> 1.10' # Optional
     
     ## 定制弹出框
-    # pod 'SCLAlertView', '~> 0.8' # Required, added in project->"ThirdParty" 因SCLAlertView.appearance没有设置为public，已添加到项目工程中的ThirdParty
+    pod 'SCLAlertView', '~> 0.8' # Required, added in project->"ThirdParty" 因SCLAlertView.appearance没有设置为public，已添加到项目工程中的ThirdParty
     pod 'Popover', '~> 1.2.2' # Optional
     
     ## 顶部消息栏

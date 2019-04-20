@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import LocalAuthentication
 
 class LoginViewController: BaseViewController {
@@ -92,7 +92,7 @@ class LoginViewController: BaseViewController {
             authenticate()
         }
         if !isLogining {
-            passwordTextField.text = EmptyString
+            passwordTextField.text = ""
             textFieldEditingChanged(nil)
         }
     }
@@ -183,7 +183,7 @@ class LoginViewController: BaseViewController {
         self.rightArmLeadConstraint.constant = Const.rightArmLeadConstraintDown
         self.rightArmBottomConstraint.constant = Const.rightArmBottomConstraintDown
         
-        Common.change(submitButton: submitButton, enabled: false)
+        submitButton.set(submit: false)
         submitButton.layer.cornerRadius = SubmitButton.cornerRadius
         submitButton.clipsToBounds = true
     }
@@ -192,8 +192,8 @@ class LoginViewController: BaseViewController {
     
     override func performViewDidLoad() {
         //FIXME: FOR DEBUG，广播“触发状态机的完成事件”的通知
-        if let sender = params[ParamKey.sender] as? String,
-            let event = params[ParamKey.event] as? Int {
+        if let sender = params[Param.Key.sender] as? String,
+            let event = params[Param.Key.event] as? Int {
             LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), sender: \(sender), event: \(event)")
             NotifyDefault.post(name: Notification.Name.Base.didEndStateMachineEvent,
                                object: params)
@@ -257,8 +257,8 @@ class LoginViewController: BaseViewController {
     }
     
     func checkSubmitButtonEnabled() -> Bool {
-        return !Common.isEmptyString(accountTextField.text)
-            && !Common.isEmptyString(passwordTextField.text)
+        return !isEmptyString(accountTextField.text)
+            && !isEmptyString(passwordTextField.text)
     }
     
     //MARK: LocalAuthentication
@@ -282,12 +282,12 @@ class LoginViewController: BaseViewController {
         }
         
         guard let userName = UserStandard[USKey.lastLoginUserName],
-            !Common.isEmptyString(userName) else {
+            !isEmptyString(userName) else {
                 return false
         }
         
         guard let password = UserStandard[USKey.lastLoginPassword],
-            !Common.isEmptyString(password) else {
+            !isEmptyString(password) else {
                 return false
         }
         
@@ -300,7 +300,7 @@ class LoginViewController: BaseViewController {
         let isSupport = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                                   error: &error)
         if !isSupport {
-            Common.showAlert(message: "Authenticate not setup".localized, type: .warning)
+            SRAlert.show(message: "Authenticate not setup".localized, type: .warning)
             return false
         }
         return true
@@ -308,7 +308,7 @@ class LoginViewController: BaseViewController {
     
     func authenticate() {
         let context = LAContext()
-        context.localizedFallbackTitle = EmptyString
+        context.localizedFallbackTitle = ""
         navigationController?.view.isUserInteractionEnabled = false //在弹出指纹验证的弹窗时禁止屏幕移动和按钮
         context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                localizedReason: "Authenticate localized reason for login".localized)
@@ -333,13 +333,13 @@ class LoginViewController: BaseViewController {
     func login() {
         isLogining = true
         //httpReq(.post(.login),
-        //        [ParamKey.userName : accountTextField.text!,
-        //         ParamKey.password : passwordTextField.text!.md5(),
-        //         ParamKey.type : 0])
+        //        [Param.Key.userName : accountTextField.text!,
+        //         Param.Key.password : passwordTextField.text!.md5(),
+        //         Param.Key.type : 0])
         httpRequest(.post(.login),
-                    [ParamKey.userName : accountTextField.text!,
-                     ParamKey.password : passwordTextField.text!.md5(),
-                     ParamKey.type : 0],
+                    [Param.Key.userName : accountTextField.text!,
+                     Param.Key.password : passwordTextField.text!.md5(),
+                     Param.Key.type : 0],
                     success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
@@ -372,26 +372,26 @@ class LoginViewController: BaseViewController {
     //MARK: - 事件响应
     
     @IBAction func clickCloseButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         popBack()
     }
     
     @objc func textFieldEditingChanged(_ notification: Notification?) {
-        Common.change(submitButton: submitButton, enabled: checkSubmitButtonEnabled())
+        submitButton.set(submit: checkSubmitButtonEnabled())
     }
     
     @IBAction func clickForgetPasswordButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         performSegue(withIdentifier: "loginShowForgetPasswordSegue", sender: self)
     }
     
     @IBAction func clickRegisterButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         performSegue(withIdentifier: "loginShowRegisterSegue", sender: self)
     }
     
     @IBAction func clickSubmitButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         Keyboard.hide { [weak self] in
             self?.showProgress()
             self?.login()
@@ -399,7 +399,7 @@ class LoginViewController: BaseViewController {
     }
     
     @IBAction func clickAuthenticateButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         guard checkAuthenticateSetting() else { return }
         authenticate()
     }

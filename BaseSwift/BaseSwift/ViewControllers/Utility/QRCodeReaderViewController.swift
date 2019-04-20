@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import AVFoundation
 import Cartography
 
@@ -74,8 +74,8 @@ class QRCodeReaderViewController: BaseViewController {
     }
     
     struct Const {
-        static let scanSize = CGSize(Common.screenSize().width * 2.0 / 3.0,
-                                     Common.screenSize().width * 2.0 / 3.0)
+        static let scanSize = CGSize(screenSize().width * 2.0 / 3.0,
+                                     screenSize().width * 2.0 / 3.0)
         static let maskBackgroundColor = UIColor(white: 0, alpha: 0.7)
         static let edgeLineLength = scanSize.width / 8.0
         static let edgeLineThickness = 5.0 as CGFloat
@@ -262,7 +262,7 @@ class QRCodeReaderViewController: BaseViewController {
             output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             
             session = AVCaptureSession()
-            if Common.screenSize().width < 500.0 {
+            if screenSize().width < 500.0 {
                 session?.sessionPreset = .vga640x480
             } else {
                 session?.sessionPreset = .high
@@ -277,8 +277,8 @@ class QRCodeReaderViewController: BaseViewController {
             previewLayer.videoGravity = .resizeAspectFill
             previewLayer.frame = CGRect(0,
                                         topLayoutGuide.length,
-                                        ScreenWidth(),
-                                        ScreenHeight() - topLayoutGuide.length)
+                                        ScreenWidth,
+                                        ScreenHeight - topLayoutGuide.length)
             view.layer.addSublayer(previewLayer)
             
             initView()
@@ -315,8 +315,8 @@ class QRCodeReaderViewController: BaseViewController {
         }
         previewLayer.frame = CGRect(0,
                                     topLayoutGuide.length,
-                                    ScreenWidth(),
-                                    ScreenHeight() - topLayoutGuide.length)
+                                    ScreenWidth,
+                                    ScreenHeight - topLayoutGuide.length)
         switch UIDevice.current.orientation {
         case .portrait:
             previewLayer.connection?.videoOrientation = .portrait
@@ -338,7 +338,7 @@ class QRCodeReaderViewController: BaseViewController {
     //MARKL: Application become active
     
     @objc func didBecomeActive(_ notification: Notification) {
-        guard isFront else {
+        guard isTop else {
             return
         }
         

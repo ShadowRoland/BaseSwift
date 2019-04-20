@@ -6,10 +6,10 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-open class ProfileDetailModel: ProfileModel {
+class ProfileDetailModel: ProfileModel {
     enum Taste: EnumInt {
         case sweet = 0
         case salty = 1
@@ -35,25 +35,25 @@ open class ProfileDetailModel: ProfileModel {
     var stayWebs: [Int]? //常驻网站
     var preferredTopics: [Int]? //偏爱话题
     
-    override public func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
-        nativePlace <- map[ParamKey.nativePlace]
-        faceValue <- map[ParamKey.faceValue]
-        height <- map[ParamKey.height]
-        weight <- map[ParamKey.weight]
-        dickLength <- map[ParamKey.dickLength]
-        fuckDuration <- map[ParamKey.fuckDuration]
-        houseArea <- map[ParamKey.houseArea]
-        bust <- map[ParamKey.bust]
-        waistline <- map[ParamKey.waistline]
-        hipline <- map[ParamKey.hipline]
-        annualIncome <- map[ParamKey.annualIncome]
-        sexualOrientation <- map[ParamKey.sexualOrientation]
-        transvestism <- map[ParamKey.transvestism]
-        tofuCurdTaste <- map[ParamKey.transvestism]
-        loveGames <- map[ParamKey.loveGames]
-        stayWebs <- map[ParamKey.stayWebs]
-        preferredTopics <- map[ParamKey.preferredTopics]
+        nativePlace <- map[Param.Key.nativePlace]
+        faceValue <- map[Param.Key.faceValue]
+        height <- map[Param.Key.height]
+        weight <- map[Param.Key.weight]
+        dickLength <- map[Param.Key.dickLength]
+        fuckDuration <- map[Param.Key.fuckDuration]
+        houseArea <- map[Param.Key.houseArea]
+        bust <- map[Param.Key.bust]
+        waistline <- map[Param.Key.waistline]
+        hipline <- map[Param.Key.hipline]
+        annualIncome <- map[Param.Key.annualIncome]
+        sexualOrientation <- map[Param.Key.sexualOrientation]
+        transvestism <- map[Param.Key.transvestism]
+        tofuCurdTaste <- map[Param.Key.transvestism]
+        loveGames <- map[Param.Key.loveGames]
+        stayWebs <- map[Param.Key.stayWebs]
+        preferredTopics <- map[Param.Key.preferredTopics]
     }
 }

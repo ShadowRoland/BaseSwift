@@ -10,15 +10,31 @@ import Foundation
 import SwiftyJSON
 import Alamofire
 
-open class SRHttpManager {
-    public static var manager: SRHttpTool!
-    public static var queue = DispatchQueue.init(label: "com.srhttp.manager",
-                                          qos: .utility,
-                                          attributes: .concurrent)
-    public static var requests: [DataRequest] = []
-    public static var httpHeaders: [String: String] = [:]
+public class SRHttpManager {
+    private static let defaultInstance = SRHttpManager()
+    public static var `default`: SRHttpManager {
+        return defaultInstance
+    }
+    public init() {
+        startNetworkMonitor()
+    }
     
-    open class func cancel(sender: String?) {
+    var managers: [String : SRHttpTool] = [:]
+    public static var queue = DispatchQueue(label: "com.srhttp.manager",
+                                            qos: .utility,
+                                            attributes: .concurrent)
+    public var requests: [DataRequest] = []
+    public var defaultRequestHeaders: ParamHeaders = [:]
+    public var defaultRequestParams: ParamDictionary  {
+        var params = [:] as ParamDictionary
+        params[Param.Key.os] = OSVersion
+        params[Param.Key.deviceModel] = DevieModel
+        params[Param.Key.version] = AppVersion
+        params[Param.Key.deviceId] = DeviceId
+        return params
+    }
+    
+    public func cancel(sender: String?) {
         guard let sender = sender else { return }
         objc_sync_enter(requests)
         requests = requests.filter {
@@ -31,7 +47,7 @@ open class SRHttpManager {
         objc_sync_exit(requests)
     }
     
-    open class func cancel(_ requst: URLRequest?) {
+    public func cancel(_ requst: URLRequest?) {
         guard let requst = requst else { return }
         objc_sync_enter(requests)
         requests = requests.filter {
@@ -44,7 +60,7 @@ open class SRHttpManager {
         objc_sync_exit(requests)
     }
     
-    open class func remove(_ requst: URLRequest?) {
+    public func remove(_ requst: URLRequest?) {
         guard let requst = requst else { return }
         objc_sync_enter(requests)
         requests = requests.filter { requst != $0.request }
@@ -55,106 +71,120 @@ open class SRHttpManager {
     
     public static var lastRequstUrl = ""
     
-    open class func request(_ method: HTTP.Method<Any>,
-                       sender: String?,
-                       params: ParamDictionary?,
-                       encoding: ParamEncoding?,
-                       headers: ParamHeaders?,
-                       success: ((String?, Any) -> Void)?,
-                       bfail: ((String?, Any) -> Void)?,
-                       fail: ((String?, BFError) -> Void)?) {
-        guard let url = method.url, let requestUrl = URL(string: url) else {
+    public func request(_ method: HTTP.Method<Any>,
+                            sender: String?,
+                            params: ParamDictionary?,
+                            encoding: ParamEncoding?,
+                            headers: ParamHeaders?,
+                            options: [HTTP.Key.Option : Any]?,
+                            success: ((Any) -> Void)?,
+                            bfail: ((String, Any) -> Void)?,
+                            fail: ((String, BFError) -> Void)?) {
+        var url = method.url
+        if !url.hasPrefix("http:") && !url.hasPrefix("https:") {
+            url = BaseHttpURL.appending(urlComponent: url)
+        }
+        guard let requestUrl = URL(string: url) else {
             let error =
                 NSError(domain: NSCocoaErrorDomain,
                         code: -9999,
-                        userInfo: [NSLocalizedDescriptionKey : "Invalid http request url."])
+                        userInfo: [NSLocalizedDescriptionKey : "Invalid http request url"])
             respond(.failure(BFError.httpFailed(.afResponseFailed(error))),
                     url: method.url,
                     fail: fail)
             return
         }
         
-        let requestParams = params ?? [:]
+        var requestParams = params ?? [:]
+        requestParams += defaultRequestParams
         let successHandler: (URLRequest?, Any?) -> Void = { request, data in
-            remove(request)
-            respond(analysis(data), url: url, success: success, bfail: bfail)
+            self.remove(request)
+            if Environment != .production {
+                LogInfo(String(format: "http response %@ url: %@", method.name, url))
+            }
+            self.respond(self.analysis(method, data: data), url: url, success: success, bfail: bfail)
         }
         let failureHandler: (URLRequest?, Error) -> Void = { request, error in
-            remove(request)
-            respond(.failure(BFError.httpFailed(.afResponseFailed(error))), url: url, fail: fail)
+            self.remove(request)
+            if Environment != .production {
+                LogInfo(String(format: "http response %@ url: %@", method.name, url))
+            }
+            self.respond(.failure(BFError.httpFailed(.afResponseFailed(error))), url: url, fail: fail)
         }
         
+        let manager = self.manager(option: options)
         switch method {
         case .post:
-            queue.async {
-                logRequest(url, method: .post, params: requestParams)
+            SRHttpManager.queue.async {
+                self.logRequest(url, method: .post, params: requestParams)
                 let request = manager.post(requestUrl,
                                            params: requestParams,
                                            encoding: encoding ?? JSONEncoding.default,
-                                           headers: headers ?? SRHttpManager.httpHeaders,
+                                           headers: headers ?? self.defaultRequestHeaders,
                                            success: successHandler,
                                            failure: failureHandler)
                 if let sender = sender {
                     request.sender = sender
                 }
-                requests.append(request)
+                self.requests.append(request)
             }
             
         case .get:
-            queue.async {
-                logRequest(url, method: .get, params: requestParams)
+            SRHttpManager.queue.async {
+                self.logRequest(url, method: .get, params: requestParams)
                 let request = manager.get(requestUrl,
                                           params: requestParams,
                                           encoding: encoding ?? URLEncoding.default,
-                                          headers: headers ?? SRHttpManager.httpHeaders,
+                                          headers: headers ?? self.defaultRequestHeaders,
                                           success: successHandler,
                                           failure: failureHandler)
                 if let sender = sender {
                     request.sender = sender
                 }
-                requests.append(request)
+                self.requests.append(request)
             }
             
         case .upload:
-            queue.async {
-                logRequest(url, method: .post, params: requestParams)
+            SRHttpManager.queue.async {
+                self.logRequest(url, method: .post, params: requestParams)
                 manager.upload(requestUrl,
                                files: method.files,
                                params: requestParams,
                                encoding: encoding ?? URLEncoding.httpBody,
-                               headers: headers ?? SRHttpManager.httpHeaders,
+                               headers: headers ?? self.defaultRequestHeaders,
                                success: successHandler,
                                failure: failureHandler)
             }
         }
     }
     
-    open func addExtraParam(_ params: inout ParamDictionary) {
-        params[Param.Key.os] = OSVersion
-        params[Param.Key.deviceModel] = SRCommon.devieModel()
-        params[Param.Key.version] = AppVersion
-        params[Param.Key.deviceId] = SRCommon.uuid()
-        params[Param.Key.deviceToken] = SRCommon.currentDeviceToken()
-        if SRCommon.isLogin {
-            params[Param.Key.userId] = SRCommon.userId
+    public func manager(option: [HTTP.Key.Option : Any]?) -> SRHttpTool {
+        let timeout = option?[.timeout] as? TimeInterval ?? HTTP.defaultTimeout
+        let retryCount = option?[.retryCount] as? Int ?? HTTP.defaultRetryCount
+        let key = "\(timeout)/,\(retryCount)/"
+        var manager = managers[key]
+        if manager == nil {
+            manager = SRHttpTool(timeout, retryCount: retryCount)
+            managers[key] = manager
         }
+        return manager!
     }
     
-    open class func logRequest(_ url: String, method: HTTPMethod, params: ParamDictionary) {
+    public func logRequest(_ url: String, method: HTTPMethod, params: ParamDictionary) {
         LogInfo(String(format: "http request %@ url: %@\nparameters:\n%@",
                        method.rawValue,
                        url,
-                       SRCommon.jsonString(params) ?? ""))
+                       String(jsonObject: params)))
         if Environment == .production { return }
         
         let urlQuery = params.urlQuery
-        lastRequstUrl = urlQuery.isEmpty ? url : url + "?" + urlQuery
-        LogInfo("url:\n\(lastRequstUrl)")
+        SRHttpManager.lastRequstUrl = urlQuery.isEmpty ? url : url + "?" + urlQuery
+        LogInfo("url:\n\(SRHttpManager.lastRequstUrl)")
     }
     
     //MARK: Analysis response data
     
-    open class func analysis(_ data: Any?) -> BFResult<Any> {
+    public func analysis(_ method: HTTP.Method<Any>, data: Any?) -> BFResult<Any> {
         guard let data = data as? Data else {
             return .failure(BFError.httpFailed(.responseSerializationFailed(nil)))
         }
@@ -174,7 +204,7 @@ open class SRHttpManager {
             let nsError =
                 NSError(domain: NSCocoaErrorDomain,
                         code: -9999,
-                        userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format."])
+                        userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format"])
             return .failure(BFError.httpFailed(.responseSerializationFailed(nsError)))
         }
         
@@ -183,17 +213,64 @@ open class SRHttpManager {
     
     //MARK: Respond
     
-    open class func respond(_ result: BFResult<Any>,
-                       url: String?,
-                       success: ((String?, Any) -> Void)? = nil,
-                       bfail: ((String?, Any) -> Void)? = nil,
-                       fail: ((String?, BFError) -> Void)? = nil) {
+    public func respond(_ result: BFResult<Any>,
+                            url: String,
+                            success: ((Any) -> Void)? = nil,
+                            bfail: ((String, Any) -> Void)? = nil,
+                            fail: ((String, BFError) -> Void)? = nil) {
         if result.isSuccess, let success = success {
-            success(url, result.value!)
+            success(result.value!)
         } else if result.isBFailure, let bfail = bfail {
             bfail(url, result.value!)
         } else if result.isFailure, let fail = fail {
             fail(url, result.error as! BFError)
         }
+    }
+    
+    //MARK: Listener
+    
+    private class SRHttpListenerObject {
+        init() { }
+        weak var target: NSObject?
+        var action: Selector?
+    }
+    
+    private var listeners: [SRHttpListenerObject] = []
+    
+    public func addListener(forNetworkStatus target: NSObject?, action: Selector?) {
+        guard let target = target, let action = action else {
+            return
+        }
+        
+        objc_sync_enter(listeners)
+        listeners = listeners.filter { $0.target == nil }
+        let object = SRHttpListenerObject()
+        object.target = target
+        object.action = action
+        listeners.append(object)
+        objc_sync_exit(listeners)
+    }
+    
+    private var _networkStatus: NetworkReachabilityManager.NetworkReachabilityStatus = .notReachable
+    public var networkStatus: NetworkReachabilityManager.NetworkReachabilityStatus { return _networkStatus }
+    
+    private var _networkMonitor: NetworkReachabilityManager? = nil
+    private var networkMonitor: NetworkReachabilityManager? {
+        if _networkMonitor == nil {
+            _networkMonitor = NetworkReachabilityManager()
+            _networkMonitor?.listener = { status in
+                self._networkStatus = status
+                self.listeners.forEach { $0.target?.perform($0.action, with: status) }
+            }
+        }
+        return _networkMonitor
+    }
+    
+    public func startNetworkMonitor() {
+        networkMonitor?.startListening()
+    }
+    
+    public func stoptNetworkMonitor() {
+        networkMonitor?.stopListening()
     }
 }

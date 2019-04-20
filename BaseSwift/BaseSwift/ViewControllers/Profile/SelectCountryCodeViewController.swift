@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class SelectCountryCodeViewController: BaseViewController {
     var didSelectBlock: ((CountryCodeModel) -> Void)?
@@ -39,14 +39,14 @@ class SelectCountryCodeViewController: BaseViewController {
     func loadData() {
         let filePath = ResourceDirectory.appending(pathComponent: "json/country_codes.json")
         var countryCodes =
-            (Common.readJsonFile(filePath) as! [ParamDictionary]).compactMap { CountryCodeModel(JSON: $0) }
+            (filePath.fileJsonObject as! [ParamDictionary]).compactMap { CountryCodeModel(JSON: $0) }
         //先排序
         countryCodes.sort { (model1, model2) -> Bool in
-            if Common.isEmptyString(model1.letter) {
+            if isEmptyString(model1.letter) {
                 return true
             }
             
-            if Common.isEmptyString(model2.letter) {
+            if isEmptyString(model2.letter) {
                 return false
             }
             
@@ -142,7 +142,7 @@ extension SelectCountryCodeViewController: UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         if let didSelectBlock = didSelectBlock {
             didSelectBlock(letters[indexPath.section][indexPath.row])

@@ -121,7 +121,7 @@ SRAssetResourceLoaderTaskDelegate {
     var touchBeginBrightness: CGFloat = 0 //触摸开始的屏幕亮度
     var touchBeginVolume: CGFloat = 0 //触摸开始的音量
     
-    override init() {
+    override public init() {
         super.init()
     }
     
@@ -900,8 +900,8 @@ SRAssetResourceLoaderTaskDelegate {
     
     func alertMessageHeight(_ message: String) -> CGFloat {
         let maxWidth = Const.alertWidth - 2.0 * Const.alertMessageMargin
-        let size = SRCommon.fitSize(message, font: alertMessageLabel.font, maxWidth: maxWidth)
-        return min(Const.alertMessageMaxHeight, ceil(size.height))
+        return min(Const.alertMessageMaxHeight,
+                   ceil(message.textSize(alertMessageLabel.font, maxWidth: maxWidth).height))
     }
     
     func constrainAlertMessage(_ height: CGFloat) {

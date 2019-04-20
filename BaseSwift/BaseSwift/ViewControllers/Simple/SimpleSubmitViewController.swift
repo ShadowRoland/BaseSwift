@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import SwiftyJSON
 
 class SimpleSubmitViewController: BaseViewController {
@@ -26,7 +26,7 @@ class SimpleSubmitViewController: BaseViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         defaultNavigationBar("Submit".localized)
         initView()
-        setLoadDataFail(.get(.simpleData)) { [weak self] in
+        setLoadDataFail(.get("data/getSimpleData")) { [weak self] in
             self?.showProgress()
             self?.getSimpleData()
         }
@@ -49,7 +49,7 @@ class SimpleSubmitViewController: BaseViewController {
                           selector: #selector(textFieldEditingChanged(_:)),
                           name: UIResponder.keyboardWillChangeFrameNotification,
                           object: textField)
-        Common.change(submitButton: submitButton, enabled: false)
+        submitButton.set(submit: false)
     }
     
     //MARK: - 业务处理
@@ -58,21 +58,22 @@ class SimpleSubmitViewController: BaseViewController {
     
     func getSimpleData() {
         showProgress()
-        httpRequest(.get(.simpleData), success: { [weak self] response in
-            guard self != nil else { return }
-            self?.dismissProgress()
-            self?.placeholderTextField.text =
-                (response as! JSON)[HttpKey.Response.data][ParamKey.title].string
-            self?.textField.text = EmptyString
-            Common.change(submitButton: (self?.submitButton)!, enabled: false)
+        httpRequest(.get("data/getSimpleData"), success: { [weak self] response in
+            guard let strongSelf = self else { return }
+            strongSelf.dismissProgress()
+            strongSelf.placeholderTextField.text =
+                (response as! JSON)[HTTP.Key.Response.data][Param.Key.title].string
+            strongSelf.textField.text = ""
+            strongSelf.submitButton.set(submit: false)
         })
     }
     
     func simpleSubmit() {
         self.showProgress()
-        httpRequest(.post(.simpleSubmit), success: { [weak self] response in
-            self?.dismissProgress()
-            Common.showAlert(message: "Winner Winner, Chicken Dinner!".localized)
+        httpRequest(.post("data/simpleSubmit"), success: { [weak self] response in
+            guard let strongSelf = self else { return }
+            strongSelf.dismissProgress()
+            SRAlert.show(message: "Winner Winner, Chicken Dinner!".localized)
         })
     }
     
@@ -80,8 +81,7 @@ class SimpleSubmitViewController: BaseViewController {
     
     @objc func textFieldEditingChanged(_ notification: Notification?) {
         let textField = notification?.object as! UITextField
-        Common.change(submitButton: submitButton,
-                      enabled: placeholderTextField.text! == textField.text)
+        submitButton.set(submit: placeholderTextField.text! == textField.text)
     }
     
     @IBAction func clickSubmitButton(_ sender: Any) {

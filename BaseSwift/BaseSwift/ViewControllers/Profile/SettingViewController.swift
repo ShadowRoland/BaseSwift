@@ -6,9 +6,9 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
-import LocalAuthentication
+import SRKit
 import SDWebImage
+import LocalAuthentication
 
 class SettingViewController: BaseViewController {
     lazy var indexPathSet: SRIndexPath.Set = SRIndexPath.Set()
@@ -117,7 +117,7 @@ class SettingViewController: BaseViewController {
         initSwitches()
         updateCacheSize()
         submitButton.backgroundColor = UIColor.clear
-        submitButton.backgroundImage = UIImage.rect(NavigartionBar.backgroundColor,
+        submitButton.backgroundImage = UIImage.rect(NavigationBar.backgroundColor,
                                                     size: submitButton.bounds.size)
     }
     
@@ -180,8 +180,8 @@ class SettingViewController: BaseViewController {
     
     override func performViewDidLoad() {
         //FIXME: FOR DEBUG，广播“触发状态机的完成事件”的通知
-        if let sender = params[ParamKey.sender] as? String,
-            let event = params[ParamKey.event] as? Int {
+        if let sender = params[Param.Key.sender] as? String,
+            let event = params[Param.Key.event] as? Int {
             LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), sender: \(sender), event: \(event)")
             NotifyDefault.post(name: Notification.Name.Base.didEndStateMachineEvent,
                                object: params)
@@ -224,7 +224,7 @@ class SettingViewController: BaseViewController {
         let isSupport = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                                   error: &error)
         if !isSupport {
-            Common.showAlert(message: "Authenticate not setup".localized, type: .warning)
+            SRAlert.show(message: "Authenticate not setup".localized, type: .warning)
             return false
         }
         return true
@@ -232,7 +232,7 @@ class SettingViewController: BaseViewController {
     
     func authenticate() {
         let context = LAContext()
-        context.localizedFallbackTitle = EmptyString
+        context.localizedFallbackTitle = ""
         navigationController?.view.isUserInteractionEnabled = false //在弹出指纹验证的弹窗时禁止屏幕移动和按钮
         context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                localizedReason: "Authenticate localized reason for login".localized)
@@ -256,8 +256,8 @@ class SettingViewController: BaseViewController {
     
     func updateCacheSize() {
         var size = UInt64(SDImageCache.shared.totalDiskSize())
-        size += Common.fileSize(Configs.VideosDirectory)
-        size += Common.fileSize(Configs.VideosCacheDirectory)
+        size += Configs.VideosDirectory.fileSize
+        size += Configs.VideosCacheDirectory.fileSize
         if size == 0 {
             cacheLabel.text = "0M"
         } else if size >= 1000 * 1000 * 1000 {
@@ -302,7 +302,7 @@ class SettingViewController: BaseViewController {
             SDWebImageManager.shared.imageCache.clear(with: .disk, completion: {
                 DispatchQueue.main.async { [weak self] in
                     self?.updateCacheSize()
-                    Common.showToast("Clear the cache successfully!".localized)
+                    SRAlert.showToast("Clear the cache successfully!".localized)
                 }
             })
             
@@ -350,7 +350,7 @@ class SettingViewController: BaseViewController {
         Keyboard.hide {
             let alert = SRAlert()
             alert.addButton("Logout".localized,
-                            backgroundColor: NavigartionBar.backgroundColor,
+                            backgroundColor: NavigationBar.backgroundColor,
                             action:
                 {
                     BF.callBusiness(BF.businessId(.profile, Manager.Profile.funcId(.logout)))
@@ -365,7 +365,7 @@ class SettingViewController: BaseViewController {
             })
             alert.show(.notice,
                        title: "Are you sure?".localized,
-                       message: EmptyString,
+                       message: "",
                        closeButtonTitle: "Cancel".localized)
         }
     }
@@ -416,7 +416,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         if clearCacheCell == tableView.cellForRow(at: indexPath) {
             clearCache()

@@ -6,19 +6,17 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import Foundation
-import UIKit
-import Cartography
+import SRKit
 
 class ContactsViewController: BaseViewController {
     public weak var parentVC: SNSViewController?
     public weak var currentChildVC: UIViewController!
     @IBOutlet weak var scrollView: UIScrollView!
     lazy var singleVC: SingleContactViewController =
-        Common.viewController("SingleContactViewController", storyboard: "SNS")
+        UIViewController.viewController("SingleContactViewController", storyboard: "SNS")
             as! SingleContactViewController
     lazy var officialAccountVC: OfficialAccountsViewController =
-        Common.viewController("OfficialAccountsViewController", storyboard: "SNS")
+        UIViewController.viewController("OfficialAccountsViewController", storyboard: "SNS")
             as! OfficialAccountsViewController
     
     override func viewDidLoad() {
@@ -30,10 +28,10 @@ class ContactsViewController: BaseViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        scrollView.contentSize = CGSize(2.0 * ScreenWidth(), scrollView.height)
-        singleVC.view.frame = CGRect(0, 0, ScreenWidth(), scrollView.height)
+        scrollView.contentSize = CGSize(2.0 * ScreenWidth, scrollView.height)
+        singleVC.view.frame = CGRect(0, 0, ScreenWidth, scrollView.height)
         officialAccountVC.view.frame =
-            CGRect(ScreenWidth(), 0, ScreenWidth(), scrollView.height)
+            CGRect(ScreenWidth, 0, ScreenWidth, scrollView.height)
     }
     
     deinit {
@@ -49,7 +47,7 @@ class ContactsViewController: BaseViewController {
     //MARK: - 视图初始化
     
     func initView() {
-        //let height = ScreenHeight() - NavigationHeaderHeight - TabBarHeight
+        //let height = ScreenHeight - NavigationHeaderHeight - TabBarHeight
         scrollView.isPagingEnabled = true
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
@@ -71,7 +69,7 @@ class ContactsViewController: BaseViewController {
         if currentChildVC === officialAccountVC {
             index = 1
         }
-        scrollView.setContentOffset(CGPoint(x: CGFloat(index) * ScreenWidth(), y: 0),
+        scrollView.setContentOffset(CGPoint(x: CGFloat(index) * ScreenWidth, y: 0),
                                     animated: false)
     }
     
@@ -86,7 +84,7 @@ class ContactsViewController: BaseViewController {
             return
         }
         
-        scrollView.setContentOffset(CGPoint(x: CGFloat(index) * ScreenWidth(), y: 0),
+        scrollView.setContentOffset(CGPoint(x: CGFloat(index) * ScreenWidth, y: 0),
                                     animated: false)
         currentChildVC = childVC
     }
@@ -94,7 +92,7 @@ class ContactsViewController: BaseViewController {
     //MARK: - UIScrollViewDelegate
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let index = floor(scrollView.contentOffset.x  / ScreenWidth())
+        let index = floor(scrollView.contentOffset.x  / ScreenWidth)
         if index == 0 {
             currentChildVC = singleVC
         } else if index == 1 {
@@ -104,7 +102,7 @@ class ContactsViewController: BaseViewController {
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        let index = floor(scrollView.contentOffset.x  / ScreenWidth())
+        let index = floor(scrollView.contentOffset.x  / ScreenWidth)
         if index == 0 {
             currentChildVC = singleVC
         } else if index == 1 {

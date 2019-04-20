@@ -10,7 +10,7 @@ import Foundation
 
 public extension URL {
     var queryDictionary: ParamDictionary {
-        var params = EmptyParams()
+        var params = [:] as ParamDictionary
         query?.components(separatedBy: "&").forEach {
             let components = $0.components(separatedBy: "=")
             if let key = components.first?.removingPercentEncoding,

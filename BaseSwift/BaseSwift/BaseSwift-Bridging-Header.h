@@ -12,14 +12,8 @@
 #endif /* BaseSwift_Bridging_Header_h */
 
 //MARK: - Required
-//#import <SVProgressHUD/SVProgressHUD.h>
-#import "SRVProgressHUD.h"
-#import "NullSafe.h"
 
 //MARK: - Optional
-
-#import "NBPhoneNumberUtil.h"
-#import "NBPhoneNumber.h"
 
 #import <RongIMKit/RongIMKit.h>
 #import <RongIMLib/RongIMLib.h>

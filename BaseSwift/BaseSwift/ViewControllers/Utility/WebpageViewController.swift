@@ -6,10 +6,10 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
-import Cartography
+import SRKit
 import WebKit
 import M13ProgressSuite
+import Cartography
 
 let WebpageBackGestureStyle = "WebpageBackGestureStyle"
 
@@ -73,14 +73,14 @@ SRShareToolDelegate {
     }
     
     func setNavigationBarLeftButtonItems() {
-        var backSetting = NavigartionBar.buttonFullSetting //获取带全属性的按钮字典
-        backSetting[.style] = NavigartionBar.ButtonItemStyle.image //设置按钮的风格为纯图片
+        var backSetting = NavigationBar.buttonFullSetting //获取带全属性的按钮字典
+        backSetting[.style] = NavigationBar.ButtonItemStyle.image //设置按钮的风格为纯图片
         backSetting[.image] =
             canGoBack ? UIImage(named: "page_back") : UIImage(named: "close_left")
         
         if webView.canGoForward {
-            var forwardSetting = NavigartionBar.buttonFullSetting
-            forwardSetting[.style] = NavigartionBar.ButtonItemStyle.image //设置按钮的风格为纯图片
+            var forwardSetting = NavigationBar.buttonFullSetting
+            forwardSetting[.style] = NavigationBar.ButtonItemStyle.image //设置按钮的风格为纯图片
             forwardSetting[.image] = UIImage(named: "page_forward_left")
             navBarLeftButtonSettings = [backSetting, forwardSetting]
         } else {
@@ -89,18 +89,18 @@ SRShareToolDelegate {
     }
     
     func setNavigationBarRightButtonItems() {
-        var setting = NavigartionBar.buttonFullSetting
-        setting[.style] = NavigartionBar.ButtonItemStyle.image
+        var setting = NavigationBar.buttonFullSetting
+        setting[.style] = NavigationBar.ButtonItemStyle.image
         setting[.image] = UIImage(named: "more")
         navBarRightButtonSettings = [setting]
     }
 
     func reload() {
         webView.stopLoading()
-        if let title = params[ParamKey.title] as? String {
+        if let title = params[Param.Key.title] as? String {
             self.title = title
         }
-        if let url = params[ParamKey.url] as? URL {
+        if let url = params[Param.Key.url] as? URL {
             self.url = url
             currentUrl = url
             webView.load(URLRequest(url: url))
@@ -123,8 +123,8 @@ SRShareToolDelegate {
     
     override func performViewDidLoad() {
         //FIXME: FOR DEBUG，广播“触发状态机的完成事件”的通知
-        if let sender = params[ParamKey.sender] as? String,
-            let event = params[ParamKey.event] as? Int {
+        if let sender = params[Param.Key.sender] as? String,
+            let event = params[Param.Key.event] as? Int {
             LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), sender: \(sender), event: \(event)")
             NotifyDefault.post(name: Notification.Name.Base.didEndStateMachineEvent,
                                object: params)
@@ -142,7 +142,7 @@ SRShareToolDelegate {
     }
     
     override func clickNavigationBarLeftButton(_ button: UIButton) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         if button.tag == 0 {
             pageBack()
@@ -153,9 +153,9 @@ SRShareToolDelegate {
     }
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
-        if let url = params[ParamKey.url] as? URL {
+        if let url = params[Param.Key.url] as? URL {
             SRShareTool.shared.option = SRShareOption(title: title,
                                                       description: title,
                                                       url: url.absoluteString,
@@ -199,7 +199,7 @@ SRShareToolDelegate {
                 setNavigationBarLeftButtonItems()
             }
         } else if keyPath == "title" {
-            if !NonNull.check(params[ParamKey.title])  {
+            if !NonNull.check(params[Param.Key.title])  {
                 title = webView.title
             }
         }
@@ -222,7 +222,7 @@ SRShareToolDelegate {
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        if !NonNull.check(params[ParamKey.title]) {
+        if !NonNull.check(params[Param.Key.title]) {
             updateProgressView(1.0, animated: true)
             title = webView.title
         }

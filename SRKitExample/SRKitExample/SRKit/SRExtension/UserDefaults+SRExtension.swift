@@ -8,7 +8,7 @@
 
 import Foundation
 
-let UserStandard = UserDefaults.standard
+public let UserStandard = UserDefaults.standard
 
 public extension UserDefaults {
     subscript(key: String) -> Any? {

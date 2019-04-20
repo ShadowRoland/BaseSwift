@@ -29,7 +29,9 @@ public class SRDivisionPicker: SRPickerView, UIPickerViewDelegate, UIPickerViewD
         }
     }
     
-    var currentDivisions: [SRDivision] = SRDivision.default //当前被编辑的行政区域划分，前一个成员是后一个成员的parent
+    public var currentDivisions: [SRDivision] { return _currentDivisions }
+    
+    private(set) var _currentDivisions: [SRDivision] = SRDivision.default //当前被编辑的行政区域划分，前一个成员是后一个成员的parent
 
     public func show() {
         let window = UIApplication.shared.windows.last ?? UIApplication.shared.keyWindow!
@@ -37,13 +39,13 @@ public class SRDivisionPicker: SRPickerView, UIPickerViewDelegate, UIPickerViewD
         frame = window.bounds
         
         var text = ""
-        currentDivisions.forEach { text.append($0.name) }
+        _currentDivisions.forEach { text.append($0.name) }
         title = text
         pickerView.reloadAllComponents()
         DispatchQueue.main.async { [weak self] in
             guard let strongSelf = self else { return }
-            for i in 0 ..< strongSelf.currentDivisions.count {
-                strongSelf.pickerView.selectRow(strongSelf.currentDivisions[i].index,
+            for i in 0 ..< strongSelf._currentDivisions.count {
+                strongSelf.pickerView.selectRow(strongSelf._currentDivisions[i].index,
                                                 inComponent: i,
                                                 animated: false)
             }
@@ -52,15 +54,15 @@ public class SRDivisionPicker: SRPickerView, UIPickerViewDelegate, UIPickerViewD
     //MARK: - UIPickerViewDelegate
     
     public func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return currentDivisions.count
+        return _currentDivisions.count
     }
     
     public func pickerView(_ pickerView: UIPickerView,
                            numberOfRowsInComponent component: Int) -> Int {
         if 0 == component {
             return SRDivision.provinces.count
-        } else if currentDivisions.count >= component {
-            return currentDivisions[component - 1].children.count
+        } else if _currentDivisions.count >= component {
+            return _currentDivisions[component - 1].children.count
         }
         return 0
     }
@@ -70,9 +72,9 @@ public class SRDivisionPicker: SRPickerView, UIPickerViewDelegate, UIPickerViewD
                     forComponent component: Int) -> String? {
         if 0 == component {
             return SRDivision.provinces[row].name
-        } else if currentDivisions.count >= component
-            && currentDivisions[component - 1].children.count > row {
-            return currentDivisions[component - 1].children[row].name
+        } else if _currentDivisions.count >= component
+            && _currentDivisions[component - 1].children.count > row {
+            return _currentDivisions[component - 1].children[row].name
         }
         return ""
     }
@@ -80,26 +82,26 @@ public class SRDivisionPicker: SRPickerView, UIPickerViewDelegate, UIPickerViewD
     public func pickerView(_ pickerView: UIPickerView,
                     didSelectRow row: Int,
                     inComponent component: Int) {
-        guard component < currentDivisions.count && currentDivisions[component].index != row else {
+        guard component < _currentDivisions.count && _currentDivisions[component].index != row else {
             return
         }
         
         //更新选择的区域
         //将左边不变的保留下来
-        let division = currentDivisions[component] //原先的division
+        let division = _currentDivisions[component] //原先的division
         var array: [SRDivision]! //将要被更新的self.divisions
         let list: [SRDivision]! //备选的division列表
         if division.parent == nil { //选择了最左边
             array = [] as [SRDivision]
             list = SRDivision.provinces
         } else {
-            array = Array(currentDivisions[0 ..< component])
+            array = Array(_currentDivisions[0 ..< component])
             list = division.parent!.children
         }
         let selectedDivision = list[row] //更新后的division
         array.append(selectedDivision)
         array.append(contentsOf: selectedDivision.defaultSub) //更新默认选择的下级区域
-        if array.count != currentDivisions.count {
+        if array.count != _currentDivisions.count {
             DispatchQueue.main.async { [weak self] in
                 self?.pickerView.reloadAllComponents()
             }
@@ -107,46 +109,46 @@ public class SRDivisionPicker: SRPickerView, UIPickerViewDelegate, UIPickerViewD
             DispatchQueue.main.async { [weak self] in
                 guard let strongSelf = self else { return }
                 strongSelf.pickerView.reloadAllComponents()
-                for i in component + 1 ..< strongSelf.currentDivisions.count {
+                for i in component + 1 ..< strongSelf._currentDivisions.count {
                     strongSelf.pickerView.selectRow(0, inComponent: i, animated: true) //添加动画
                 }
             }
         }
-        currentDivisions = array
+        _currentDivisions = array
         
         var text = ""
-        currentDivisions.forEach { text.append($0.name) }
+        _currentDivisions.forEach { text.append($0.name) }
         title = text
     }
 }
 
 //MARK: - 行政地区划分(中国)
 
-class SRDivision {
-    enum Level {
+public class SRDivision {
+    public enum Level {
         case province
         case city
         case region
     }
     
-    var index = 0
-    var code = ""
-    var name = ""
-    var parent: SRDivision?
-    var children: [SRDivision] = []
-    var level: SRDivision.Level = .province
+    public var index = 0
+    public var code = ""
+    public var name = ""
+    public var parent: SRDivision?
+    public var children: [SRDivision] = []
+    public var level: SRDivision.Level = .province
     
     static var `default`: [SRDivision]! { return _default }
-    static var provinces: [SRDivision]! { return _provinces }
-    static var cities: [SRDivision]! { return _cities }
-    static var regions: [SRDivision]! { return _regions }
+    public static var provinces: [SRDivision]! { return _provinces }
+    public static var cities: [SRDivision]! { return _cities }
+    public static var regions: [SRDivision]! { return _regions }
     
     private static var _default: [SRDivision] = []
     private static var _provinces: [SRDivision] = []
     private static var _cities: [SRDivision] = []
     private static var _regions: [SRDivision] = []
     
-    var defaultSub: [SRDivision] {
+    public var defaultSub: [SRDivision] {
         var divisions = [] as [SRDivision]
         var division = children.first
         while division != nil {
@@ -156,12 +158,12 @@ class SRDivision {
         return divisions
     }
     
-    class func update() {
+    public class func update() {
         var locations: [String : String]!
-        if let array = SRCommon.readJsonFile(DocumentsDirectory.appending(pathComponent: "china_locations.json")) as? [String : String] {
+        if let array = DocumentsDirectory.appending(pathComponent: "china_locations.json").fileJsonObject as? [String : String] {
             locations = array
         } else {
-            locations = SRCommon.readJsonFile(ResourceDirectory.appending(pathComponent: "json/debug/china_locations.json")) as? [String : String]
+            locations = ResourceDirectory.appending(pathComponent: "json/debug/china_locations.json").fileJsonObject as? [String : String]
         }
         _default.removeAll()
         _provinces.removeAll()
@@ -227,7 +229,7 @@ class SRDivision {
         }
     }
     
-    class func divisions(codes: [String]) -> [SRDivision] {
+    public class func divisions(codes: [String]) -> [SRDivision] {
         var array = [] as [SRDivision]
         let count = codes.count
         var list: [SRDivision]!
@@ -249,7 +251,7 @@ class SRDivision {
         return list.first { code == $0.code }
     }
     
-    class func divisions(names: [String]) -> [SRDivision] {
+    public class func divisions(names: [String]) -> [SRDivision] {
         var array = [] as [SRDivision]
         let count = names.count
         var list: [SRDivision]!
@@ -271,7 +273,7 @@ class SRDivision {
         return list.first { name == $0.name }
     }
     
-    class func divisions(indexes: [Int]) -> [SRDivision] {
+    public class func divisions(indexes: [Int]) -> [SRDivision] {
         var array = [] as [SRDivision]
         let count = indexes.count
         var list: [SRDivision]!

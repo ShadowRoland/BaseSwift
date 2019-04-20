@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import QuartzCore
 
 protocol CustomCalloutDelegate: class {
@@ -230,12 +230,12 @@ class CustomCalloutView: UIView {
         var text = poi.name
         var nameHeight = 0 as CGFloat
         if let text = text, !text.isEmpty {
-            nameHeight = ceil(Common.fitSize(text, font: nameLabel.font, maxWidth: width).height)
+            nameHeight = ceil(text.textSize(nameLabel.font, maxWidth: width).height)
         }
         nameLabel.text = text
         nameHeightConstraint.constant = nameHeight
         
-        text = EmptyString
+        text = ""
         if let distance = self.delegate?.distance(of: self), !distance.isEmpty {
             text = "From you".localized + distance + " "
         } else {
@@ -249,7 +249,7 @@ class CustomCalloutView: UIView {
         var addressHeight = 0 as CGFloat
         if let text = text, !text.isEmpty {
             addressHeight =
-                ceil(Common.fitSize(text, font: addressLabel.font, maxWidth: width).height)
+                ceil(text.textSize(addressLabel.font, maxWidth: width).height)
         }
         addressLabel.text = text
         addressHeightConstraint.constant = addressHeight
@@ -258,7 +258,7 @@ class CustomCalloutView: UIView {
         var phoneWidth = 0 as CGFloat
         var phoneHeight = 0 as CGFloat
         if let text = text, !text.isEmpty {
-            let size = Common.fitSize(text, font: phoneLabel.font, maxWidth: width)
+            let size = text.textSize(phoneLabel.font, maxWidth: width)
             phoneWidth = min(width, ceil(size.width))
             phoneHeight = ceil(size.height)
         }

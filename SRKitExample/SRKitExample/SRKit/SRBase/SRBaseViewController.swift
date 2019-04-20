@@ -22,7 +22,7 @@ DTAttributedTextContentViewDelegate {
     open lazy var eventTarget = EventTarget(self)
     //内部的事件响应类
     open class EventTarget: NSObject {
-        var delegate: SRBaseViewControllerEventDelegate?
+        weak var delegate: SRBaseViewControllerEventDelegate?
         
         init(_ delegate: SRBaseViewControllerEventDelegate) {
             self.delegate = delegate
@@ -155,7 +155,7 @@ DTAttributedTextContentViewDelegate {
     deinit {
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
         NotifyDefault.remove(self)
-        SRHttpManager.cancel(sender: String(pointer: self))
+        SRHttpManager.default.cancel(sender: String(pointer: self))
     }
     
     override open func didReceiveMemoryWarning() {
@@ -203,8 +203,8 @@ DTAttributedTextContentViewDelegate {
         
         initNavigationBar()
         
-        var setting = NavigartionBar.buttonFullSetting
-        setting[.style] = NavigartionBar.ButtonItemStyle.image
+        var setting = NavigationBar.buttonFullSetting
+        setting[.style] = NavigationBar.ButtonItemStyle.image
         setting[.image] = image == nil ? UIImage.srNamed("sr_page_back") : image
         navBarLeftButtonSettings = [setting]
     }
@@ -212,8 +212,8 @@ DTAttributedTextContentViewDelegate {
     open func initNavigationBar() {
         guard let navigationController = navigationController else { return }
         
-        navigationBarBackgroundAlpha = NavigartionBar.backgroundBlurAlpha
-        navigationBarTintColor = NavigartionBar.tintColor
+        navigationBarBackgroundAlpha = NavigationBar.backgroundBlurAlpha
+        navigationBarTintColor = NavigationBar.tintColor
         
         let navigationBar = navigationController.navigationBar
         navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white,
@@ -222,7 +222,7 @@ DTAttributedTextContentViewDelegate {
         navigationBar.backgroundColor = UIColor.clear
     }
     
-    open var navBarLeftButtonSettings: [[NavigartionBar.ButtonItemKey : Any]]? {
+    open var navBarLeftButtonSettings: [[NavigationBar.ButtonItemKey : Any]]? {
         didSet {
             guard let settings = navBarLeftButtonSettings, !settings.isEmpty else { //左边完全无按钮
                 navigationController?.navigationBar.backIndicatorImage = nil
@@ -242,10 +242,10 @@ DTAttributedTextContentViewDelegate {
                     UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
                 
                 let items = (1 ..< settings.count).compactMap {
-                    SRCommon.navigationBarButtonItem(settings[$0],
-                                                       target: eventTarget,
-                                                       action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
-                                                       tag: $0)
+                    NavigationBar.buttonItem(settings[$0],
+                                             target: eventTarget,
+                                             action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
+                                             tag: $0)
                 }
                 
                 //再添加新的按钮
@@ -260,10 +260,10 @@ DTAttributedTextContentViewDelegate {
             } else {
                 //返回按钮亦自定义
                 let items = (0 ..< settings.count).compactMap {
-                    SRCommon.navigationBarButtonItem(settings[$0],
-                                                       target: eventTarget,
-                                                       action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
-                                                       tag: $0)
+                    NavigationBar.buttonItem(settings[$0],
+                                             target: eventTarget,
+                                             action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
+                                             tag: $0)
                 }
                 
                 navigationItem.backBarButtonItem = nil
@@ -279,7 +279,7 @@ DTAttributedTextContentViewDelegate {
         }
     }
     
-    open var navBarRightButtonSettings: [[NavigartionBar.ButtonItemKey : Any]]? {
+    open var navBarRightButtonSettings: [[NavigationBar.ButtonItemKey : Any]]? {
         didSet {
             guard let settings = navBarRightButtonSettings, !settings.isEmpty else {
                 navigationItem.rightBarButtonItem = nil
@@ -288,10 +288,10 @@ DTAttributedTextContentViewDelegate {
             }
             
             let items = (0 ..< settings.count).compactMap {
-                SRCommon.navigationBarButtonItem(settings[$0],
-                                                   target: eventTarget,
-                                                   action: #selector(EventTarget.clickNavigationBarRightButton(_:)),
-                                                   tag: $0)
+                NavigationBar.buttonItem(settings[$0],
+                                         target: eventTarget,
+                                         action: #selector(EventTarget.clickNavigationBarRightButton(_:)),
+                                         tag: $0)
             }
             
             
@@ -451,13 +451,13 @@ DTAttributedTextContentViewDelegate {
         return baseBusinessComponent.isShowingLoadDataFailView
     }
     
-    open func setLoadDataFail(_ url: String, retry: (() -> Void)?) {
-        baseBusinessComponent.loadDataFailRetryCapability = url
+    open func setLoadDataFail(_ method: HTTP.Method<Any>, retry: (() -> Void)?) {
+        baseBusinessComponent.loadDataFailRetryMethod = method
         baseBusinessComponent.loadDataFailRetryHandler = retry
     }
     
-    open var loadDataFailCapability: String? {
-        return baseBusinessComponent.loadDataFailRetryCapability
+    open var loadDataFailMethod: HTTP.Method<Any>? {
+        return baseBusinessComponent.loadDataFailRetryMethod
     }
     
     open func clickDTLink(_ text: String?, url: URL? = nil) {
@@ -471,69 +471,62 @@ DTAttributedTextContentViewDelegate {
                             anonymous: Bool = false,
                             encoding: ParamEncoding? = nil,
                             headers: ParamHeaders? = nil,
+                            options: [HTTP.Key.Option : Any]? = nil,
                             success: ((Any) -> Void)? = nil,
-                            bfail: ((Any) -> Void)? = nil,
-                            fail: ((BFError) -> Void)? = nil) {
-        var successHandler: ((String?, Any) -> Void)!
+                            bfail: ((String, Any) -> Void)? = nil,
+                            fail: ((String, BFError) -> Void)? = nil) {
+        var successHandler: ((Any) -> Void)!
         if let success = success {
-            successHandler = { [weak self] _, response in
-                guard self != nil else { return }
-                success(response)
-            }
+            successHandler = success
         } else {
-            successHandler = { [weak self] (url, response) in
+            successHandler = { [weak self] response in
                 guard let strongSelf = self else { return }
-                strongSelf.httpRespondSuccess(url ?? "", response: response)
+                strongSelf.httpRespondSuccess(response)
             }
         }
         
-        var bfailHandler: ((String?, Any) -> Void)!
+        var bfailHandler: ((String, Any) -> Void)!
         if let bfail = bfail {
-            bfailHandler = { [weak self] _, response in
-                guard self != nil else { return }
-                bfail(response)
-            }
+            bfailHandler = bfail
         } else {
             bfailHandler = { [weak self] (url, response) in
                 guard let strongSelf = self else { return }
-                strongSelf.httpRespondBfail(url ?? "", response: response)
+                strongSelf.httpRespondBfail(url, response: response)
             }
         }
         
-        var failHandler: ((String?, BFError) -> Void)!
+        var failHandler: ((String, BFError) -> Void)!
         if let fail = fail {
-            failHandler = { [weak self] _, error in
-                guard self != nil else { return }
-                fail(error)
-            }
+            failHandler = fail
         } else {
             failHandler = { [weak self] (url, error) in
                 guard let strongSelf = self else { return }
-                strongSelf.httpRespondFail(url ?? "", error: error)
+                strongSelf.httpRespondFail(url, error: error)
             }
         }
         
-        SRHttpManager.request(method,
-                              sender: anonymous ? nil : String(pointer: self),
-                              params: params,
-                              encoding: encoding,
-                              headers: headers,
-                              success: successHandler,
-                              bfail: bfailHandler,
-                              fail: failHandler)
+        SRHttpManager.default.request(method,
+                                      sender: anonymous ? nil : String(pointer: self),
+                                      params: params,
+                                      encoding: encoding,
+                                      headers: headers,
+                                      options: options,
+                                      success: successHandler,
+                                      bfail: bfailHandler,
+                                      fail: failHandler)
     }
     
-    open func httpRespondSuccess(_ url: String, response: Any) {
+    open func httpRespondSuccess(_ response: Any) {
         dismissProgress()
-        if isFront {
-            SRCommon.showAlert(title: (response as? JSON)?[HTTP.Key.Response.errorMessage].string,
-                               type: .success)
+        if isTop {
+            SRAlert.show((response as? JSON)?[HTTP.Key.Response.errorMessage].string,
+                         type: .success)
         }
     }
     
     open func httpRespondBfail(_ url: String, response: Any) {
         dismissProgress()
-        if url == loadDataFailCapability {
+        if url == loadDataFailMethod?.url {
             showLoadDataFailView(logBFail(url,
                                           response: response,
                                           show: false))
@@ -544,7 +537,7 @@ DTAttributedTextContentViewDelegate {
     
     open func httpRespondFail(_ url: String, error: BFError) {
         dismissProgress()
-        if url == loadDataFailCapability {
+        if url == loadDataFailMethod?.url {
             showLoadDataFailView(error.errorDescription)
         } else {
             showToast(error.errorDescription)
@@ -564,7 +557,7 @@ DTAttributedTextContentViewDelegate {
                         (response as? JSON)?.rawValue as? CVarArg ?? "",
                         message))
         if show {
-            SRCommon.showAlert(message: message, type: .error)
+            SRAlert.show(message: message, type: .error)
         }
         return message
     }
@@ -621,11 +614,11 @@ DTAttributedTextContentViewDelegate {
     }
     
     open func clickNavigationBarLeftButton(_ button: UIButton) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
     }
     
     open func clickNavigationBarRightButton(_ button: UIButton) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
     }
     
     open func didEndStateMachineEvent(_ notification: Notification) {
@@ -655,7 +648,7 @@ DTAttributedTextContentViewDelegate {
     }
 }
 
-public protocol SRBaseViewControllerEventDelegate {
+public protocol SRBaseViewControllerEventDelegate: class {
     func contentSizeCategoryDidChange()
     func deviceOrientationDidChange(_ sender: AnyObject?)
     func clickNavigationBarLeftButton(_ button: UIButton)

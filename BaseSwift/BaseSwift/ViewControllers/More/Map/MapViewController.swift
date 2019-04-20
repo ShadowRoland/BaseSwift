@@ -6,8 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import Foundation
-import UIKit
+import SRKit
 import Cartography
 import JZLocationConverter
 
@@ -110,7 +109,7 @@ class MapViewController: BaseViewController {
         initConstraint()
         if !CLLocationManager.locationServicesEnabled()
             || CLLocationManager.authorizationStatus() == .denied {
-            Common.showToast("Please turn location on for your device".localized)
+            SRAlert.showToast("Please turn location on for your device".localized)
         }
     }
     
@@ -412,14 +411,14 @@ extension MapViewController: AMapSearchDelegate {
                                      animated: true)
                 mapView.addAnnotations(annotations)
                 
-                var distanceString = EmptyString
+                var distanceString = ""
                 if distance < 1000 {
                     distanceString = String(int: distance) + Configs.Unit.metre
                 } else {
                     distanceString =
                         String(format: "%.2f", Float(distance) / 1000.0) + Configs.Unit.kilometre2
                 }
-                distanceString = distanceString.isEmpty ? EmptyString : distanceString + " "
+                distanceString = distanceString.isEmpty ? "" : distanceString + " "
                 
                 let hours = duration / (60 * 60)
                 var minutes = duration % (60 * 60) / 60
@@ -428,8 +427,8 @@ extension MapViewController: AMapSearchDelegate {
                     minutes += 1
                 }
                 var durationString =
-                    (hours != 0 ? String(format: "%d%@", hours, Configs.Unit.hour2) : EmptyString)
-                        + (minutes != 0 ? String(format: "%d%@", minutes, Configs.Unit.minute2) : EmptyString)
+                    (hours != 0 ? String(format: "%d%@", hours, Configs.Unit.hour2) : "")
+                        + (minutes != 0 ? String(format: "%d%@", minutes, Configs.Unit.minute2) : "")
                 durationString = durationString.isEmpty ? "Arrived".localized : durationString
                 
                 currentCalloutView?.durationLabel.text = distanceString + durationString
@@ -460,7 +459,7 @@ extension MapViewController: CustomCalloutDelegate {
     
     func calloutView(_ calloutView: CustomCalloutView!,
                      didSelected routePlanningType: RoutePlanningType) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         currentRoutePlanningType = routePlanningType
         if routePlanningType == .none { //恢复显示所有的医院
@@ -473,10 +472,10 @@ extension MapViewController: CustomCalloutDelegate {
     
     func startNavigate(_ calloutView: CustomCalloutView!,
                        type routePlanningType: RoutePlanningType) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         var applicationName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
-        applicationName = Common.isEmptyString(applicationName)
+        applicationName = isEmptyString(applicationName)
             ? Bundle.main.infoDictionary?["CFBundleName"] as? String
             : applicationName
         //iOS9以后需要在“Info.plist”中将要使用的URL Schemes列为白名单，才可正常检查其他应用是否安装
@@ -484,8 +483,8 @@ extension MapViewController: CustomCalloutDelegate {
         if let url = URL(string: Configs.Scheme.amap + "://"),
             UIApplication.shared.canOpenURL(url) { //首选高德地图，uri文档参考 http://lbs.amap.com/api/amap-mobile/guide/ios/ios-uri-information
             if routePlanningType == .none { //地图标注
-                let query = ["sourceApplication" : applicationName ?? EmptyString,
-                             "poiname" : calloutView.poi.name ?? EmptyString,
+                let query = ["sourceApplication" : applicationName ?? "",
+                             "poiname" : calloutView.poi.name ?? "",
                              "lat" : calloutView.poi.location.latitude,
                              "lon" : calloutView.poi.location.longitude,
                              "dev" : 0] as ParamDictionary
@@ -504,10 +503,10 @@ extension MapViewController: CustomCalloutDelegate {
                 default:
                     break
                 }
-                var query = ["sourceApplication" : applicationName ?? EmptyString,
+                var query = ["sourceApplication" : applicationName ?? "",
                              "backScheme" : Configs.Scheme.base,
-                             "poiname" : calloutView.poi.name ?? EmptyString,
-                             "poiid" : calloutView.poi.uid ?? EmptyString,
+                             "poiname" : calloutView.poi.name ?? "",
+                             "poiid" : calloutView.poi.uid ?? "",
                              "lat" : calloutView.poi.location.latitude,
                              "lon" : calloutView.poi.location.longitude,
                              "dev" : 0,
@@ -530,13 +529,13 @@ extension MapViewController: CustomCalloutDelegate {
                 default:
                     break
                 }
-                var query = ["sourceApplication" : applicationName ?? EmptyString,
+                var query = ["sourceApplication" : applicationName ?? "",
                              "slat" : currentCoordinate!.latitude,
                              "slon" : currentCoordinate!.longitude,
                              "sname" : "My position".localized,
                              "dlat" : calloutView.poi.location.latitude,
                              "dlon" : calloutView.poi.location.longitude,
-                             "dname" : calloutView.poi.name ?? EmptyString,
+                             "dname" : calloutView.poi.name ?? "",
                              "dev" : 0] as ParamDictionary
                 if t != nil {
                     query["t"] = t!
@@ -548,16 +547,16 @@ extension MapViewController: CustomCalloutDelegate {
         } else if let url = URL(string: Configs.Scheme.baiduMap + "://"),
             UIApplication.shared.canOpenURL(url) { //备选百度地图，uri文档参考 http://lbsyun.baidu.com/index.php?title=uri/api/ios
             if routePlanningType == .none {
-                let query = ["src" : applicationName ?? EmptyString,
+                let query = ["src" : applicationName ?? "",
                              "location" : "\(calloutView.poi.location.latitude),\(calloutView.poi.location.longitude)",
-                    "title" : calloutView.poi.name ?? EmptyString,
-                    "content" : calloutView.poi.address ?? EmptyString,
+                    "title" : calloutView.poi.name ?? "",
+                    "content" : calloutView.poi.address ?? "",
                     "coord_type" : "gcj02"] as ParamDictionary
                 let string = String(format: "%@://map/marker?%@", Configs.Scheme.baiduMap, query.urlQuery)
                 print(string)
                 UIApplication.shared.openURL(URL(string: string)!)
             } else {
-                var mode = EmptyString
+                var mode = ""
                 switch routePlanningType {
                 case .car:
                     mode = "driving"
@@ -574,7 +573,7 @@ extension MapViewController: CustomCalloutDelegate {
                 default:
                     break
                 }
-                let query = ["src" : applicationName ?? EmptyString,
+                let query = ["src" : applicationName ?? "",
                              "origin" : "\(currentCoordinate!.latitude),\(currentCoordinate!.longitude)",
                     "destination" : "\(calloutView.poi.location.latitude),\(calloutView.poi.location.longitude)",
                     "mode" : mode,
@@ -593,7 +592,7 @@ extension MapViewController: CustomCalloutDelegate {
                 MKMapItem(placemark: MKPlacemark(coordinate: JZLocationConverter.gcj02(toWgs84: coordinate),
                                                  addressDictionary: nil))
             //destination.name = calloutView.poi.name
-            var mode = EmptyString
+            var mode = ""
             switch routePlanningType {
             case .car:
                 mode = MKLaunchOptionsDirectionsModeDriving

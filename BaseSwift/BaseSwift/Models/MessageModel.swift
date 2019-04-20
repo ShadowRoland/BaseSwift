@@ -6,10 +6,10 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-open class MessageModel: BusinessModel { 
+public class MessageModel: SRBusinessModel {
     enum BlogType: Int {
         case text = 0,
         image,
@@ -38,22 +38,22 @@ open class MessageModel: BusinessModel {
     var singleImageWidth: CGFloat = 0
     var singleImageHeight: CGFloat = 0
     
-    override public func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
-        userId <- map[ParamKey.userId]
-        userName <- map[ParamKey.userName]
-        headPortrait <- map[ParamKey.headPortrait]
-        text <- map[ParamKey.text]
-        badge <- map[ParamKey.badge]
-        blogType <- map[ParamKey.blogType]
-        images <- map[ParamKey.images]
-        videos <- map[ParamKey.videos]
-        thumbnail <- map[ParamKey.thumbnail]
-        shareText <- map[ParamKey.share + "." + ParamKey.text]
-        shareUrl <- map[ParamKey.share + "." + ParamKey.url]
-        like <- map[ParamKey.like]
-        liked <- map[ParamKey.liked]
-        comment <- map[ParamKey.comment]
+        userId <- map[Param.Key.userId]
+        userName <- map[Param.Key.userName]
+        headPortrait <- map[Param.Key.headPortrait]
+        text <- map[Param.Key.text]
+        badge <- map[Param.Key.badge]
+        blogType <- map[Param.Key.blogType]
+        images <- map[Param.Key.images]
+        videos <- map[Param.Key.videos]
+        thumbnail <- map[Param.Key.thumbnail]
+        shareText <- map[Param.Key.share + "." + Param.Key.text]
+        shareUrl <- map[Param.Key.share + "." + Param.Key.url]
+        like <- map[Param.Key.like]
+        liked <- map[Param.Key.liked]
+        comment <- map[Param.Key.comment]
     }
 }

@@ -10,10 +10,9 @@ import Foundation
 import ObjectMapper
 
 open class SRModel: NSObject, Mappable {
-    override init() { }
+    override public init() { }
     
     required public init?(map: Map) { }
     
     public func mapping(map: Map) { }
-    
 }

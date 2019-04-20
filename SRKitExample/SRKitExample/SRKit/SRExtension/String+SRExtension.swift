@@ -7,7 +7,13 @@
 //
 
 import Foundation
+import SwiftyJSON
 import libPhoneNumber_iOS
+
+public func isEmptyString(_ string: Any?) -> Bool {
+    guard let string = string as? String else { return true }
+    return string.trim.isEmpty
+}
 
 //MARK: - String from others
 
@@ -76,7 +82,7 @@ public extension String {
     }
 }
 
-//MARK: - Other from  String
+//MARK: - String to other, or other to string
 
 public extension String {
     var fullRange: Range<String.Index> {
@@ -138,6 +144,78 @@ public extension String {
         let formatter = DateFormatter()
         formatter.dateFormat = format ?? "yyyy-MM-dd HH:mm:ss"
         return  formatter.date(from: self)
+    }
+    
+    init(jsonObject: Any?) {
+        self.init()
+        if let jsonObject = jsonObject {
+            append(JSON(jsonObject).rawString() ?? "")
+        }
+    }
+    
+    var jsonObject: Any? {
+        if let data = data(using: String.Encoding.utf8, allowLossyConversion: false) {
+            return JSON(data).rawValue
+        } else {
+            return nil
+        }
+    }
+    
+    var fileJsonObject: Any? {
+        var data: Data? = nil
+        do {
+            data = try Data(contentsOf: URL(fileURLWithPath: self))
+        } catch {
+            LogWarn(String(format: "Read JSON file failed!\nerror: %@\nfile path: %@",
+                           error.localizedDescription,
+                           self))
+            return nil
+        }
+        
+        var object: AnyObject? = nil
+        do {
+            object = try JSON(data: data!).rawValue as AnyObject?
+        } catch {
+            LogWarn(String(format: "Convert data to JSON failed!\nerror: %@\nfile path: %@",
+                           error.localizedDescription,
+                           self))
+        }
+        return object
+    }
+    
+    var fileSize: UInt64 {
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: self, isDirectory: &isDirectory) else {
+            return 0
+        }
+        
+        if !isDirectory.boolValue {
+            let attributes = try? FileManager.default.attributesOfItem(atPath: self)
+            return attributes?[.size] as? UInt64 ?? 0
+        }
+        
+        let totalSize = FileManager.default.subpaths(atPath: self)?.reduce(0, {
+            $0 + self.appending(pathComponent: $1).fileSize
+        })
+        return totalSize ?? 0
+    }
+    
+    func textSize(_ font: UIFont, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> CGSize {
+        return textSize(attibutes: [.font : font],
+                        options: nil,
+                        maxWidth: maxWidth,
+                        maxHeight: maxHeight)
+    }
+    
+    func textSize(attibutes: [NSAttributedString.Key : Any],
+                  options: NSStringDrawingOptions? = nil,
+                  maxWidth: CGFloat? = nil,
+                  maxHeight: CGFloat? = nil) -> CGSize {
+        return (self as NSString).boundingRect(with: CGSize(width: maxWidth ?? CGFloat.greatestFiniteMagnitude,
+                                                            height: maxHeight ?? CGFloat.greatestFiniteMagnitude),
+                                               options: options ?? .calculateTextSize,
+                                               attributes: attibutes,
+                                               context: nil).size
     }
 }
 
@@ -290,7 +368,7 @@ public extension String {
         let phoneUtil = NBPhoneNumberUtil()
         guard let regionCode =
             phoneUtil.getRegionCode(forCountryCode: NSNumber(value: countryCode)),
-            !SRCommon.isEmptyString(regionCode) else {
+            !isEmptyString(regionCode) else {
                 print("countryCode is invalid: \(countryCode)")
                 return false
         }
@@ -377,16 +455,6 @@ public extension String {
     var localized: String {
         //return NSLocalizedString(self, comment:"")
         return Bundle.main.localizedString(forKey: self, value: nil, table: "Localizable")
-    }
-}
-
-public extension String {
-    var httpRequest: String {
-        return httpRequest(BaseHttpURL)
-    }
-    
-    func httpRequest(_ baseHttpURL: String) -> String {
-        return baseHttpURL.appending(urlComponent: self)
     }
 }
 

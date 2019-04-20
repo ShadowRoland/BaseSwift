@@ -56,7 +56,7 @@ public class SRShareTool: UIViewController {
             twitter //404-2
         }
         
-        static public func == (lhs: CellType, rhs: CellType?) -> Bool {
+        public static func == (lhs: CellType, rhs: CellType?) -> Bool {
             return rhs != nil && lhs.rawValue == rhs!.rawValue
         }
         
@@ -422,7 +422,7 @@ public class SRShareTool: UIViewController {
     }
     
     @objc func clickCellButton(_ sender: Any) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         DispatchQueue.main.async {
             self.dismiss()
@@ -439,7 +439,7 @@ public class SRShareTool: UIViewController {
     }
     
     @objc func clickCancelButton(_ sender: Any) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         DispatchQueue.main.async {
             self.dismiss()

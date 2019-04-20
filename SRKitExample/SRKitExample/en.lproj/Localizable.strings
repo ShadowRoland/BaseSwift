@@ -1,10 +1,10 @@
-/* 
-  Localizable.strings
-  SRKitExample
-
-  Created by Gary on 2019/4/15.
-  Copyright © 2019 Sharow Roland. All rights reserved.
-*/
+/*
+ Localizable.strings
+ SRKitExample
+ 
+ Created by Gary on 2019/4/15.
+ Copyright © 2019 Sharow Roland. All rights reserved.
+ */
 
 //MARK: - Common
 
@@ -31,7 +31,7 @@
 "[SR]Option" = "Option";
 "[SR]Help" = "Help";
 "[SR]About" = "About";
-"[SR]Unable to connect to the network, please click to refresh" = "Unable to connect to the network, please click to refresh" = "Unable to connect to the network! Please click to refresh";
+"[SR]Unable to connect to the network, please click to refresh" = "Unable to connect to the network! Please click to refresh";
 "[SR]Unable to connect to the network, please check your network connection" = "Unable to connect to the network, please check your network connection";
 "[SR]Authenticate not setup" = "Authenticate not setup";
 "[SR]Authenticate localized reason for login" = "Authenticate localized reason for login";

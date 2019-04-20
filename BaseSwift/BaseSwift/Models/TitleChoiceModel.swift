@@ -6,10 +6,10 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-open class TitleChoiceModel: BaseModel {
+open class TitleChoiceModel: SRModel {
     var id: String?
     var title: String?
     var isSelected = false
@@ -33,10 +33,10 @@ open class TitleChoiceModel: BaseModel {
     func toJSON() -> [String : Any] {
         var dictionary = [:] as ParamDictionary
         if let id = id {
-            dictionary[ParamKey.id] = id
+            dictionary[Param.Key.id] = id
         }
         if let title = title {
-            dictionary[ParamKey.title] = title
+            dictionary[Param.Key.title] = title
         }
         return dictionary
     }
@@ -47,7 +47,7 @@ extension TitleChoiceModel {
     
     class func updatesChoicesDic() {
         titleChoiceDic =
-            Common.readJsonFile(ResourceDirectory.appending(pathComponent: "json/debug/title_choices.json")) as? ParamDictionary
+            (ResourceDirectory.appending(pathComponent: "json/debug/title_choices.json").fileJsonObject) as? ParamDictionary
     }
     
     class func choices(_ key: String) -> [TitleChoiceModel]? {

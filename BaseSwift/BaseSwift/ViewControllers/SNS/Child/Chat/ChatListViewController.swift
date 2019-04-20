@@ -6,9 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
-import MJRefresh
-import SDWebImage
+import SRKit
 import Cartography
 import SwiftyJSON
 
@@ -31,13 +29,13 @@ class ChatListViewController: BaseViewController {
         return tableView
     }()
     
-    lazy var noDataView: LoadDataStateView = {
-        let noDataView = LoadDataStateView(.empty)
+    lazy var noDataView: SRLoadDataStateView = {
+        let noDataView = SRLoadDataStateView(.empty)
         noDataView.backgroundColor = tableView.backgroundColor
         return noDataView
     }()
-    lazy var loadDataFailView: LoadDataStateView = {
-        let loadDataFailView = LoadDataStateView(.fail)
+    lazy var loadDataFailView: SRLoadDataStateView = {
+        let loadDataFailView = SRLoadDataStateView(.fail)
         loadDataFailView.backgroundColor = tableView.backgroundColor
         loadDataFailView.delegate = self
         return loadDataFailView
@@ -74,14 +72,14 @@ class ChatListViewController: BaseViewController {
             break
         }
         
-        var params = EmptyParams()
-        params[ParamKey.limit] = TableLoadData.row
-        params[ParamKey.offset] = 1000
+        var params = [:] as ParamDictionary
+        params[Param.Key.limit] = TableLoadData.row
+        params[Param.Key.offset] = 1000
         httpRequest(.get(.messages), success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
                 strongSelf.update(response as? JSON)
-            }, bfail: { [weak self] response in
+            }, bfail: { [weak self] (url, response) in
                 guard let strongSelf = self else { return }
                 if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
                     strongSelf.update(nil)
@@ -93,7 +91,7 @@ class ChatListViewController: BaseViewController {
                                                                        response: response,
                                                                        show: false))
                 }
-            }, fail: { [weak self] error in
+            }, fail: { [weak self] (url, error) in
                 guard let strongSelf = self else { return }
                 if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
                     strongSelf.update(nil)
@@ -106,14 +104,14 @@ class ChatListViewController: BaseViewController {
     
     public func update(_ json: JSON?, errMsg: String? = nil) {
         view.dismissProgress(true)
-        guard let json = json?[HttpKey.Response.data] else {
+        guard let json = json?[HTTP.Key.Response.data] else {
             if dataArray.count == 0 {
                 showLoadDataFailView(errMsg) //加载失败
             }
             return
         }
         
-        dataArray = messageModels(json[ParamKey.list])
+        dataArray = messageModels(json[Param.Key.list])
         guard !dataArray.isEmpty else { //没有数据
             showNoDataView()
             return
@@ -167,9 +165,9 @@ class ChatListViewController: BaseViewController {
      ChatListViewController.index += 1
      //调试，注册新用户
      let userparams =
-     [ParamKey.userId : NonNull.string(model.userId),
-     ParamKey.name : NonNull.string(model.userName),
-     ParamKey.portraitUri : NonNull.string(model.headPortrait)]
+     [Param.Key.userId : NonNull.string(model.userId),
+     Param.Key.name : NonNull.string(model.userName),
+     Param.Key.portraitUri : NonNull.string(model.headPortrait)]
      BF.callBusiness(BF.businessId(.im, Manager.IM.funcId(.login)), userParam)
      }
      */
@@ -194,7 +192,7 @@ class ChatListViewController: BaseViewController {
         tableView.reloadData()
     }
     
-    //MARK: - LoadDataStateDelegate
+    //MARK: - SRLoadDataStateDelegate
     
     override func retryLoadData() {
         loadData(.opaqueMask)
@@ -246,7 +244,7 @@ extension ChatListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         let vc = ChatViewController()
         vc.targetId = dataArray[indexPath.row].userId

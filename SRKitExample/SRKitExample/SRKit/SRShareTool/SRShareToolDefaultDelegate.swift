@@ -26,19 +26,19 @@ class SRShareToolDefaultDelegate: NSObject {
     
     func sms(_ shareTool: SRShareTool) {
         guard MFMessageComposeViewController.canSendText() else {
-            SRCommon.showToast("[SR]The device does not support SMS function".srLocalized)
+            SRAlert.showToast("[SR]The device does not support SMS function".srLocalized)
             return
         }
         
         let vc = MFMessageComposeViewController()
-        vc.navigationBar.tintColor = NavigartionBar.backgroundColor
+        vc.navigationBar.tintColor = NavigationBar.backgroundColor
         vc.body = String(format: "%@ %@ %@", shareTool.option.title ?? "",
                          shareTool.option.description ?? "",
                          shareTool.option.url ?? "")
         vc.messageComposeDelegate = self
-        if let topViewController = UIViewController.topViewController {
+        if let top = UIViewController.top {
             vc.title = "[SR]Send message".srLocalized
-            topViewController.present(vc, animated: true, completion: nil)
+            top.present(vc, animated: true, completion: nil)
         }
     }
     
@@ -243,7 +243,7 @@ extension SRShareToolDefaultDelegate: SRShareToolDelegate {
         switch type {
         case .tool(.copyLink):
             UIPasteboard.general.string = shareTool.option.url
-            SRCommon.showToast("[SR]Link has been copied to clipboard".srLocalized)
+            SRAlert.showToast("[SR]Link has been copied to clipboard".srLocalized)
             
         case .tool(.openLinkInSafari):
             if let url = shareTool.option.url, let openURL = URL(string: url) {
@@ -321,11 +321,11 @@ extension SRShareToolDefaultDelegate: WeiboSDKDelegate {
         if response.isKind(of: WBSendMessageToWeiboResponse.self) {
             let sendMessageToWeiboResponse = response as! WBSendMessageToWeiboResponse
             if let accessToken = sendMessageToWeiboResponse.authResponse.accessToken,
-                !SRCommon.isEmptyString(accessToken) {
+                isEmptyString(accessToken) {
                 wbtoken = accessToken
             }
             if let userID = sendMessageToWeiboResponse.authResponse.userID,
-                !SRCommon.isEmptyString(userID) {
+                isEmptyString(userID) {
                 wbCurrentUserID = userID
             }
         } else if response.isKind(of: WBAuthorizeResponse.self) {

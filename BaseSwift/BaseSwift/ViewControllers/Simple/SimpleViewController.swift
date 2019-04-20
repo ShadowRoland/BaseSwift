@@ -6,8 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
-import SwiftyJSON
+import SRKit
 
 class SimpleViewController: BaseViewController {
     @IBOutlet weak var label: UILabel!
@@ -37,8 +36,8 @@ class SimpleViewController: BaseViewController {
     //MARK: - 视图初始化
 
     func setNavigationBarRightButtonItems() {
-        var setting = NavigartionBar.buttonFullSetting
-        setting[.style] = NavigartionBar.ButtonItemStyle.text
+        var setting = NavigationBar.buttonFullSetting
+        setting[.style] = NavigationBar.ButtonItemStyle.text
         setting[.title] = "List".localized
         navBarRightButtonSettings = [setting]
     }
@@ -52,14 +51,14 @@ class SimpleViewController: BaseViewController {
         httpRequest(.get(.simpleData), success: { [weak self] response in
             self?.dismissProgress()
             self?.label.text =
-                (response as! JSON)[HttpKey.Response.data][ParamKey.title].string
+                (response as! JSON)[HTTP.Key.Response.data][Param.Key.title].string
         })
     }
 
     //MARK: - 事件响应
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         show("SimpleTableViewController", storyboard: "Simple")
     }
 }

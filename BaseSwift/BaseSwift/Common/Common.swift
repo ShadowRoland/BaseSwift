@@ -6,18 +6,18 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
-public class Common: BaseCommon {
+public class Common {
     
     //MARK: - Runing Environment
 
     public class func httpsCer(_ isServer: Bool) -> Data? {
         let cerPrefix = isServer ? "server_" : "client_"
         var cerFileName = cerPrefix + "develop.cer"
-        if RunInEnvironment == RunEnvironment.test {
+        if Environment == RunEnvironment.test {
             cerFileName = cerPrefix + "test.cer"
-        } else if RunInEnvironment == RunEnvironment.production {
+        } else if Environment == RunEnvironment.production {
             cerFileName = cerPrefix + "production.cer"
         }
         let filePath = "cer" + cerFileName
@@ -65,7 +65,7 @@ public class Common: BaseCommon {
     //清空指令
     public class func clearActionParams(option: Event.Option?) {
         if let option = option,
-            let string = actionParams?[ParamKey.action] as? String,
+            let string = actionParams?[Param.Key.action] as? String,
             let action = Event.Action(rawValue: string),
             Event.actions(option).contains(action) {
             Common.updateActionParams(nil)
@@ -131,13 +131,13 @@ public class Common: BaseCommon {
             rootvC.popBack(toClasses: [LoginViewController.self])
         } else if Configs.entrance == .news { //在当前页面弹出登录页
             if let rootVC = Common.rootVC, rootVC.presentedViewController == nil {
-                let vc = Common.viewController("LoginViewController", storyboard: "Profile")
+                let vc = UIViewController.viewController("LoginViewController", storyboard: "Profile")
                 let navVC = SRModalViewController.standard(vc)
                 rootVC.present(navVC, animated: true, completion: nil)
             }
         }
         if let message = message {
-            Common.showToast(message)
+            SRAlert.showToast(message)
         }
     }
 }

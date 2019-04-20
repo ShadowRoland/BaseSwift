@@ -13,9 +13,7 @@ public protocol SRTabHeaderDelegate: class {
 }
 
 extension SRTabHeaderDelegate {
-    func tabHeader(_ tabHeader: SRTabHeader, didSelect index: Int) {
-        
-    }
+    func tabHeader(_ tabHeader: SRTabHeader, didSelect index: Int) { }
 }
 
 open class SRTabHeader: UIView {
@@ -56,9 +54,7 @@ open class SRTabHeader: UIView {
         }
     }
     fileprivate var _selectedIndex = 0
-    var selectedIndex: Int {
-        return _selectedIndex
-    }
+    public var selectedIndex: Int { return _selectedIndex }
     public var titleFont = UIFont.boldSystemFont(ofSize: 17) {
         didSet {
             tabItems.forEach { $0.titleLabel.font = titleFont }

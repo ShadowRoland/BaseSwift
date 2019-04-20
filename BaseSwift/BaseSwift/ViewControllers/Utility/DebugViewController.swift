@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class DebugViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -32,11 +32,11 @@ class DebugViewController: BaseViewController {
         safariCell.detailTextLabel?.text = url.absoluteString
         
         localDuration = 10.0
-        localParams = [ParamKey.action : Event.Action.openWebpage.rawValue,
-                       ParamKey.url : "http://baike.baidu.com/link?url=wg0mbCH5oS8BfaogPk70zgXJx-RAHYyyeZwhU2QPmx_FAxg9x4nwyf6KLxygH5EXJ_UvMkn6bOgCC84-JjGFqU7JeCzKwiBAsp4CeEGzThW",
-                       ParamKey.message: "打开特定的网页"]
+        localParams = [Param.Key.action : Event.Action.openWebpage.rawValue,
+                       Param.Key.url : "http://baike.baidu.com/link?url=wg0mbCH5oS8BfaogPk70zgXJx-RAHYyyeZwhU2QPmx_FAxg9x4nwyf6KLxygH5EXJ_UvMkn6bOgCC84-JjGFqU7JeCzKwiBAsp4CeEGzThW",
+                       Param.Key.message: "打开特定的网页"]
         localNotificationCell.detailTextLabel?.text =
-            String(int: Int(localDuration)) + "秒后，参数：" + Common.jsonString(localParams)!.condense
+            String(int: Int(localDuration)) + "秒后，参数：" + String(jsonObject: localParams).condense
    }
 
     override func didReceiveMemoryWarning() {
@@ -58,7 +58,7 @@ extension DebugViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
 
         let cell = tableView.cellForRow(at: indexPath)!
         if safariCell === cell {
@@ -68,7 +68,7 @@ extension DebugViewController: UITableViewDelegate, UITableViewDataSource {
             let notification = UILocalNotification()
             notification.fireDate = Date(timeIntervalSinceNow: localDuration)
             notification.userInfo = localParams
-            notification.alertBody = localParams[ParamKey.message] as? String
+            notification.alertBody = localParams[Param.Key.message] as? String
             notification.repeatInterval = NSCalendar.Unit(rawValue: 0)
             notification.soundName = UILocalNotificationDefaultSoundName
             notification.applicationIconBadgeNumber = 1

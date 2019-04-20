@@ -153,13 +153,13 @@ public class SRPickerView: UIView {
     //MARK: - 事件响应
 
     @objc func clickCancelButton(_ sender: Any) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
         _delegate?.pickerView(didCancel: self)
         removeFromSuperview()
     }
     
     @objc func clickConfirmButton(_ sender: Any) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
         _delegate?.pickerView(didConfirm: self)
         removeFromSuperview()
     }

@@ -6,8 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
-import SDWebImage
+import SRKit
 
 class NewsSecondaryViewController: BaseViewController {
     public weak var parentVC: NewsViewController? {
@@ -68,7 +67,7 @@ class NewsSecondaryViewController: BaseViewController {
     
     func initTabHeader() {
         tabHeader.delegate = self
-        tabHeader.frame = CGRect(0, 0, ScreenWidth(), Const.tabHeaderHeight)
+        tabHeader.frame = CGRect(0, 0, ScreenWidth, Const.tabHeaderHeight)
         tabHeader.titles = "Freedom,Democracy,Equality".localized.components(separatedBy: ",")
         tabHeader.layout()
     }
@@ -106,9 +105,9 @@ class NewsSecondaryViewController: BaseViewController {
         let count = newsListVCs.count
         for i in 0 ..< count {
             let vc = newsListVCs[i]
-            vc.view.frame = CGRect(CGFloat(i) * ScreenWidth(),
+            vc.view.frame = CGRect(CGFloat(i) * ScreenWidth,
                                    0,
-                                   ScreenWidth(),
+                                   ScreenWidth,
                                    scrollView.height)
             vc.tableView.contentInset =
                 UIEdgeInsets(Const.tabHeaderHeight, 0, TabBarHeight, 0)
@@ -117,9 +116,9 @@ class NewsSecondaryViewController: BaseViewController {
                 selectedIndex = i
             }
         }
-        scrollView.contentSize = CGSize(ScreenWidth() * CGFloat(count),
+        scrollView.contentSize = CGSize(ScreenWidth * CGFloat(count),
                                         scrollView.height)
-        scrollView.setContentOffset(CGPoint(ScreenWidth() * CGFloat(selectedIndex), 0),
+        scrollView.setContentOffset(CGPoint(ScreenWidth * CGFloat(selectedIndex), 0),
                                     animated: false)
         currentNewsListVC = newsListVCs[selectedIndex]
     }
@@ -134,10 +133,10 @@ class NewsSecondaryViewController: BaseViewController {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !isSilent {
-            var page = Int(scrollView.contentOffset.x / ScreenWidth())
+            var page = Int(scrollView.contentOffset.x / ScreenWidth)
             page = max(0, page)
             var offsetRate =
-                (scrollView.contentOffset.x - CGFloat(page) * ScreenWidth()) / ScreenWidth() //向右偏移的比率
+                (scrollView.contentOffset.x - CGFloat(page) * ScreenWidth) / ScreenWidth //向右偏移的比率
             offsetRate = max(0, offsetRate)
             offsetRate = min(1.0, offsetRate)
             tabHeader.update(page, offsetRate: offsetRate)
@@ -160,7 +159,7 @@ class NewsSecondaryViewController: BaseViewController {
     }
     
     func resetAfterScrollViewDidEndScroll(_ scrollView: UIScrollView) {
-        let index = Int(scrollView.contentOffset.x / ScreenWidth())
+        let index = Int(scrollView.contentOffset.x / ScreenWidth)
         tabHeader.activeTab(index, animated: true)
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
@@ -174,7 +173,7 @@ class NewsSecondaryViewController: BaseViewController {
 
 extension NewsSecondaryViewController: SRTabHeaderDelegate {
     func tabHeader(_ tabHeader: SRTabHeader, didSelect index: Int) {
-        let page = Int(scrollView.contentOffset.x / ScreenWidth())
+        let page = Int(scrollView.contentOffset.x / ScreenWidth)
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
@@ -182,7 +181,7 @@ extension NewsSecondaryViewController: SRTabHeaderDelegate {
             }
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
-            scrollView.setContentOffset(CGPoint(CGFloat(index) * ScreenWidth(), 0),
+            scrollView.setContentOffset(CGPoint(CGFloat(index) * ScreenWidth, 0),
                                         animated: animated)
             isSilent = animated
             if !animated {

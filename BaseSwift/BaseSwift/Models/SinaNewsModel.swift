@@ -6,10 +6,10 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-class SinaNewsModel: BusinessModel {
+class SinaNewsModel: SRBusinessModel {
     enum MediaType: Int {
         case normal
         case video
@@ -23,16 +23,16 @@ class SinaNewsModel: BusinessModel {
     var source: String?
     var comment: Int?
     
-    override func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
-        id <- map[ParamKey.docID]
-        title <- map[ParamKey.title]
-        link <- map[ParamKey.link]
-        mediaType <- map[ParamKey.mediaTypes]
-        image <- map[ParamKey.img]
-        date <- map[ParamKey.date]
-        source <- map[ParamKey.source]
-        comment <- map[ParamKey.comment]
+        id <- map[Param.Key.docID]
+        title <- map[Param.Key.title]
+        link <- map[Param.Key.link]
+        mediaType <- map[Param.Key.mediaTypes]
+        image <- map[Param.Key.img]
+        date <- map[Param.Key.date]
+        source <- map[Param.Key.source]
+        comment <- map[Param.Key.comment]
     }
 }

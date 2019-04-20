@@ -6,10 +6,10 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-open class ProfileModel: UserModel {
+public class ProfileModel: UserModel {
     var countryCode: Int? //手机号码的国家码
     var phone: String? //手机号
     var name: NameModel?
@@ -24,18 +24,18 @@ open class ProfileModel: UserModel {
     var imToken: String?
     var isIMLogin: Bool = false
     
-    override public func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
-        countryCode <- map[ParamKey.countryCode]
-        phone <- map[ParamKey.phone]
-        name <- map[ParamKey.name]
-        signature <- map[ParamKey.signature]
-        birthDate <- map[ParamKey.birthDate]
-        location <- map[ParamKey.location]
-        deviceToken <- map[ParamKey.deviceToken]
-        token <- map[ParamKey.token]
-        balance <- map[ParamKey.balance]
+        countryCode <- map[Param.Key.countryCode]
+        phone <- map[Param.Key.phone]
+        name <- map[Param.Key.name]
+        signature <- map[Param.Key.signature]
+        birthDate <- map[Param.Key.birthDate]
+        location <- map[Param.Key.location]
+        deviceToken <- map[Param.Key.deviceToken]
+        token <- map[Param.Key.token]
+        balance <- map[Param.Key.balance]
     }
     
     //MARK: Directory
@@ -103,7 +103,7 @@ open class ProfileModel: UserModel {
 
 //MARK: -
 
-open class NameModel: BaseModel {
+class NameModel: SRModel {
     var first: String?
     var middle: String?
     var last: String?
@@ -111,12 +111,12 @@ open class NameModel: BaseModel {
         return NonNull.string(first) + NonNull.string(middle) + NonNull.string(last)
     }
     
-    override public func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
-        first <- map[ParamKey.first]
-        middle <- map[ParamKey.middle]
-        last <- map[ParamKey.last]
+        first <- map[Param.Key.first]
+        middle <- map[Param.Key.middle]
+        last <- map[Param.Key.last]
     }
 }
 

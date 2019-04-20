@@ -14,28 +14,27 @@ public protocol SRStateMachineDelegate: class {
     func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int)
 }
 
+extension SRStateMachineDelegate {
+    public func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) { }
+    public func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) { }
+}
+
 /*
  * 控制事务流程的状态机类
  * 防止同一
- public func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
- <#code#>
- }
- 
- public func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) {
- <#code#>
- }
  级别的事务并发产生，使之按顺序处理
  * 业务场景举例：已弹出教程页并且没点击消失的时候来了推送通知，需要弹出新的提示框
  * 并发的做法是教程页不消失马上弹出提示框，顺序处理的方式是等待用户点击后使教程页消失后再弹出提示框
  * SRStateMachine作为简单的状态机，定义弹出教程页时为“忙碌”状态，此时不接受新的事务处理
  * 定义教程页消失时为“空闲”状态，此时会去检查是否有新的任务，然后去处理
  */
-public class SRStateMachine: NSObject {
+public class SRStateMachine {
     public weak var delegate: SRStateMachineDelegate?
+    public var currentEvent: Int? { return _currentEvent }
     
     private(set) var stateMachine = TKStateMachine() //状态机
     private(set) var events: [Int] = [] //所有的状态机互斥事件
-    private(set) var currentEvent: Int? //当前事件
+    private(set) var _currentEvent: Int? //当前事件
     
     private var idleState: TKState! //空闲状态
     private var busyState: TKState! //忙碌状态
@@ -43,9 +42,7 @@ public class SRStateMachine: NSObject {
     private var watingEvent: TKEvent! //等待事件
     private var currentEndEvent: TKEvent! //当前事件已经结束事件
     
-    override init() {
-        super.init()
-        
+    public init() {
         idleState = TKState(name: "idle")
         busyState = TKState(name: "busy")
         resetEvent = TKEvent(name: "reset", transitioningFromStates: nil, to: idleState)
@@ -61,13 +58,13 @@ public class SRStateMachine: NSObject {
         busyState.setDidEnter { [weak self] (state, transition) in
             guard let strongSelf = self else { return }
             
-            strongSelf.currentEvent = nil
+            strongSelf._currentEvent = nil
             if let event = strongSelf.events.first {
-                strongSelf.currentEvent = event
+                strongSelf._currentEvent = event
                 strongSelf.events.remove(at: 0)
             }
             
-            if let currentEvent = strongSelf.currentEvent {
+            if let currentEvent = strongSelf._currentEvent {
                 strongSelf.delegate?.stateMachine(strongSelf, didFire: currentEvent)
             } else {
                 try! strongSelf.stateMachine.fireEvent(strongSelf.currentEndEvent, userInfo: nil)
@@ -75,7 +72,7 @@ public class SRStateMachine: NSObject {
         }
         
         currentEndEvent.setDidFire { [weak self] (event, transition) in
-            guard let strongSelf = self, let currentEvent = strongSelf.currentEvent else { return }
+            guard let strongSelf = self, let currentEvent = strongSelf._currentEvent else { return }
             strongSelf.delegate?.stateMachine(strongSelf, didEnd: currentEvent)
         }
         
@@ -86,8 +83,12 @@ public class SRStateMachine: NSObject {
         stateMachine.initialState = idleState
         try! stateMachine.fireEvent(resetEvent, userInfo: nil)
     }
+    
+    public func contains(_ event: Int) -> Bool {
+        return events.contains(event)
+    }
 
-    func append(_ event: Int) {
+    public func append(_ event: Int) {
         objc_sync_enter(events)
         if !events.contains(event) { //相同事件不用添加
             events.append(event)
@@ -98,7 +99,7 @@ public class SRStateMachine: NSObject {
         }
     }
     
-    func remove(_ event: Int) {
+    public func remove(_ event: Int) {
         objc_sync_enter(events)
         if let index = events.firstIndex(of: event) {
             events.remove(at: index)
@@ -106,19 +107,19 @@ public class SRStateMachine: NSObject {
         objc_sync_exit(events)
     }
     
-    func endCurrentEvent() {
+    public func endCurrentEvent() {
         try! stateMachine.fireEvent(currentEndEvent, userInfo: nil)
     }
     
-    func end(_ event: Int) {
-        if event == currentEvent {
+    public func end(_ event: Int) {
+        if event == _currentEvent {
             endCurrentEvent()
         } else {
             remove(event)
         }
     }
     
-    func clearEvents() {
+    public func clearEvents() {
         events.removeAll()
         endCurrentEvent()
     }

@@ -6,8 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
-import SDWebImage
+import SRKit
 
 class ChatListCell: UITableViewCell {
     var message: MessageModel? {
@@ -95,14 +94,14 @@ class ChatListCell: UITableViewCell {
         badgeLabel.textAlignment = NSTextAlignment.center
         badgeLabel.textColor = UIColor.white
         contentView.addSubview(titleLabel)
-        titleLabel.text = EmptyString
+        titleLabel.text = ""
         contentView.addSubview(descriptionLabel)
         descriptionLabel.textColor = Const.descriptionTextColor
-        descriptionLabel.text = EmptyString
+        descriptionLabel.text = ""
         contentView.addSubview(timeLabel)
         timeLabel.textColor = Const.timeTextColor
         timeLabel.textAlignment = NSTextAlignment.right
-        timeLabel.text = EmptyString
+        timeLabel.text = ""
         initFont()
     }
     
@@ -142,9 +141,9 @@ class ChatListCell: UITableViewCell {
         headerImageView.frame =
             CGRect(Const.headerMargin, Const.headerMargin, Const.headerHeight, Const.headerHeight)
         var width =
-            Common.fitSize(timeLabel.text!, font: timeLabel.font, maxHeight: Const.timeHeight).width
-        width = min(ScreenWidth() - headerImageView.right - 3 * Const.headerMargin, ceil(width))
-        timeLabel.frame = CGRect(ScreenWidth() - Const.headerMargin - width,
+            (timeLabel.text ?? "").textSize(timeLabel.font, maxHeight: Const.timeHeight).width
+        width = min(ScreenWidth - headerImageView.right - 3 * Const.headerMargin, ceil(width))
+        timeLabel.frame = CGRect(ScreenWidth - Const.headerMargin - width,
                                  Const.titleTopMargin,
                                  width,
                                  Const.timeHeight)
@@ -153,7 +152,7 @@ class ChatListCell: UITableViewCell {
                                   Const.titleTopMargin,
                                   width,
                                   Const.titleHeight)
-        width = ScreenWidth() - headerImageView.right - 2 * Const.headerMargin
+        width = ScreenWidth - headerImageView.right - 2 * Const.headerMargin
         descriptionLabel.frame = CGRect(titleLabel.frame.origin.x,
                                         titleLabel.bottom + Const.titleBottomMargin,
                                         width,

@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class OfficialAccountsViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -51,11 +51,11 @@ class OfficialAccountsViewController: BaseViewController {
             BF.callBusiness(BF.businessId(.profile, Manager.Profile.funcId(.getOfficialAccountsContacts))).value as! [UserModel]
         //先排序
         contacts.sort { (model1, model2) -> Bool in
-            if Common.isEmptyString(model1.letter) {
+            if isEmptyString(model1.letter) {
                 return true
             }
             
-            if Common.isEmptyString(model2.letter) {
+            if isEmptyString(model2.letter) {
                 return false
             }
             
@@ -138,9 +138,9 @@ class OfficialAccountsViewController: BaseViewController {
      
      //调试，注册新用户
      let userparams =
-     [ParamKey.userId : NonNull.string(model.userId),
-     ParamKey.name : NonNull.string(model.nickname),
-     ParamKey.portraitUri : NonNull.string(model.headPortrait)]
+     [Param.Key.userId : NonNull.string(model.userId),
+     Param.Key.name : NonNull.string(model.nickname),
+     Param.Key.portraitUri : NonNull.string(model.headPortrait)]
      BF.callBusiness(BF.businessId(.im, Manager.IM.funcId(.login)), userParam)
      }
      */
@@ -197,7 +197,7 @@ extension OfficialAccountsViewController: UITableViewDelegate, UITableViewDataSo
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         let vc = ChatViewController()
         vc.targetId = letters[indexPath.section][indexPath.row].userId

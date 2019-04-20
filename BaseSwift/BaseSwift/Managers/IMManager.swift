@@ -6,12 +6,10 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import SwiftyJSON
-import CryptoSwift
-import Alamofire
 
-public class IMManager: BusinessManager {
+public class IMManager {
     
     struct Const {
         static let headerKeyAppKey = "App-Key"
@@ -19,12 +17,6 @@ public class IMManager: BusinessManager {
         static let headerKeyTimestamp = "Timestamp"
         static let headerKeySignature = "Signature"
         static let nonceLength = 10
-    }
-    
-    override public init(_ module: ManagerModule) {
-        super.init(module)
-        
-        RCIM.shared().initWithAppKey("sfci50a7sod0i")
     }
     
     //参见http://www.rongcloud.cn/docs/server.html#signature
@@ -43,43 +35,49 @@ public class IMManager: BusinessManager {
         return headers
     }
     
-    public func logBFail(_ capability: HttpCapability,
+    class func logBFail(_ url: String,
                          _ response: Any? = nil) {
         var responseArg = "response can not be printed" as CVarArg
-        var code = EmptyString
+        var code = ""
         if let json = response as? JSON {
             if let arg = response as? CVarArg {
                 responseArg = arg
             }
-            code = json[HttpKey.Response.errorCode].stringValue
+            code = json[HTTP.Key.Response.errorCode].stringValue
         } else if let arg = response as? CVarArg {
             responseArg = arg
         }
         LogError(String(format: "request failed, api: %@\nreponse: %@",
-                        HttpDefine.api(capability)!,
+                        url,
                         responseArg))
-        Common.showToast("IM requet: \(HttpDefine.api(capability)!) fail, code=\(code)")
+        SRAlert.showToast("IM requet: \(url) fail, code=\(code)")
     }
     
-    func getToken(_ params: ParamDictionary) {
-        HttpManager.shared.request(.post(.getIMToken),
-                                   sender: String(pointer: self),
-                                   params: params,
-                                   url: "http://api.cn.ronghub.com",
-                                   encoding: nil,
-                                   headers: nil,
-                                   success: { _, response in
-                                    if let json = response as? JSON {
-                                        self.login(json[ParamKey.token].stringValue)
-                                    }
-        }, bfail: { _, response in
-            self.logBFail(.post(.getIMToken), response)
-        }, fail: { (capability, error) in
-            Common.showToast("Chat service: \(error.errorDescription ?? EmptyString)")
-        })
+    class func login() {
+        RCIM.shared().initWithAppKey("sfci50a7sod0i")
+        let current =
+            [Param.Key.userId : NonNull.string(Common.currentProfile()?.userId),
+             Param.Key.name : NonNull.string(Common.currentProfile()?.name?.fullName),
+             Param.Key.portraitUri : NonNull.string(Common.currentProfile()?.headPortrait)]
+        HttpManager.default.request(.post("http://api.cn.ronghub.com/user/getToken.json"),
+                                    sender: String(pointer: self),
+                                    params: current,
+                                    encoding: nil,
+                                    headers: nil,
+                                    options: nil,
+                                    success:
+            { response in
+                if let json = response as? JSON {
+                    login(json[Param.Key.token].stringValue)
+                }
+        }, bfail: { url, response in
+            logBFail(url, response)
+        }) { _, error in
+            SRAlert.showToast("Chat service: \(error.errorDescription ?? "")")
+        }
     }
     
-    func login(_ token: String) {
+    class func login(_ token: String) {
         guard Common.isLogin() else {
             return
         }
@@ -91,32 +89,13 @@ public class IMManager: BusinessManager {
             profile?.isIMLogin = true
         }, error: { (code) in
             DispatchQueue.main.async {
-                Common.showToast("IM login fail, code=\(code)")
+                SRAlert.showToast("IM login fail, code=\(code)")
             }
         }) {
             DispatchQueue.main.async {
-                Common.showToast("IM token incorrect")
+                SRAlert.showToast("IM token incorrect")
             }
         }
-    }
-
-    override public func callBusiness(_ funcId: UInt, params: Any?) -> BFResult<Any> {
-        let capability = Manager.IM.Capability(rawValue: funcId) as Manager.IM.Capability?
-        if capability == nil {
-            return .failure(BFError.callModuleFailed(.capabilityNotExist(funcId)))
-        }
-        
-        switch capability! {
-        case .login:
-            let current =
-                [ParamKey.userId : NonNull.string(Common.currentProfile()?.userId),
-                ParamKey.name : NonNull.string(Common.currentProfile()?.name?.fullName),
-                ParamKey.portraitUri : NonNull.string(Common.currentProfile()?.headPortrait)]
-            getToken(params as? ParamDictionary ?? current)
-        default:
-            break
-        }
-        return .success(nil)
     }
 }
 

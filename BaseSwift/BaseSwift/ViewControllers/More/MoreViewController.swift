@@ -6,8 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
-import MJRefresh
+import SRKit
 //import MWPhotoBrowser
 import BarrageRenderer
 
@@ -38,9 +37,9 @@ class MoreViewController: BaseViewController {
     }
     
     //MARK: Stock
-    var stockExchange = EmptyString
-    var stockCode = EmptyString
-    var stockName = EmptyString
+    var stockExchange = ""
+    var stockCode = ""
+    var stockName = ""
     //weak var photoBrowser: MWPhotoBrowser?
     //var photos: [MWPhoto] = []
     var photoIndexes: [UInt] = [] //已经被置成白色背景的图片序号
@@ -163,15 +162,12 @@ class MoreViewController: BaseViewController {
     //MARK: - 业务处理
     
     @objc func getProfile() {
-        httpRequest(.get(.profile), success: { response in
-            self.tableView.mj_header.endRefreshing()
-            self.reloadProfile()
-        }, bfail: { response in
-            let message = self.logBFail(.get(.profile), response: response, show: false)
-            if !Common.isEmptyString(message) {
-                Common.showToast(message)
-            }
-        }, fail: { _ in
+        httpRequest(.get("user/profile"), success: { [weak self]  response in
+            self?.tableView.mj_header.endRefreshing()
+            self?.reloadProfile()
+        }, bfail: { [weak self] (url, response) in
+            SRAlert.showToast(self?.logBFail(url, response: response, show: false))
+        }, fail: { _, _ in
             
         })
     }
@@ -198,7 +194,7 @@ class MoreViewController: BaseViewController {
     
     func presentLoginVC(_ params: ParamDictionary? = nil) {
         let vc =
-            Common.viewController("LoginViewController", storyboard: "Profile") as! LoginViewController
+            UIViewController.viewController("LoginViewController", storyboard: "Profile") as! LoginViewController
         if let params = params {
             vc.params = params
         }
@@ -210,14 +206,14 @@ class MoreViewController: BaseViewController {
     func showStockExchangeAlert() {
         let alert = SRAlert()
         alert.addButton("Shanghai Composite Index".localized,
-                        backgroundColor: NavigartionBar.backgroundColor,
+                        backgroundColor: NavigationBar.backgroundColor,
                         action:
             { [weak self] in
                 self?.stockExchange = "sh"
                 self?.showStockCodeAlert()
         })
         alert.addButton("Shenzhen Composite Index".localized,
-                        backgroundColor: NavigartionBar.backgroundColor,
+                        backgroundColor: NavigationBar.backgroundColor,
                         action:
             { [weak self] in
                 self?.stockExchange = "sz"
@@ -225,7 +221,7 @@ class MoreViewController: BaseViewController {
         })
         alert.show(.info,
                    title: "Select stock exchange".localized,
-                   message: EmptyString,
+                   message: "",
                    closeButtonTitle: "Cancel".localized)
     }
     
@@ -237,33 +233,33 @@ class MoreViewController: BaseViewController {
         textField.text = stockCode
         
         alert.addButton("OK".localized,
-                        backgroundColor: NavigartionBar.backgroundColor,
+                        backgroundColor: NavigationBar.backgroundColor,
                         action:
             { [weak self] in
-                guard self != nil, let text = textField.text?.condense,
-                    !Common.isEmptyString(textField.text) else {
+                guard let strongSelf = self,
+                    let text = textField.text?.condense,
+                    !isEmptyString(textField.text) else {
                         return
                 }
                 
-                self?.stockCode = text
-                self?.httpRequest(.get(.sinaStockList),
-                                  url: String(format: "http://hq.sinajs.cn/list=%@", (self?.stockExchange)! + text), //获取股票信息的api
-                                  success:
-                    { response in
+                strongSelf.stockCode = text
+                strongSelf.httpRequest(.get(String(format: "http://hq.sinajs.cn/list=%@", (self?.stockExchange)! + text)), success:
+                    { [weak self] response in
+                        guard let strongSelf = self else { return }
                         if let data = response as? Data {
                             let encoding = CFStringConvertEncodingToNSStringEncoding(UInt32(CFStringEncodings.GB_18030_2000.rawValue))
                             let text = String(data: data, encoding: String.Encoding(rawValue: encoding))
-                            print("stockListResponse:\n\(text ?? EmptyString)")
+                            print("stockListResponse:\n\(text ?? "")")
                             if let components = text?.components(separatedBy: "\""),
                                 !components.isEmpty,
                                 let stockName = components[1].components(separatedBy: ",").first,
                                 !stockName.isEmpty {
-                                self?.stockName = stockName
-                                self?.showStockImages((self?.stockExchange)! + (self?.stockCode)!)
+                                strongSelf.stockName = stockName
+                                strongSelf.showStockImages(strongSelf.stockExchange + strongSelf.stockCode)
                                 return
                             }
                         }
-                        Common.showAlert(message: "Wrong stock code".localized, type: .error)
+                        SRAlert.show(message: "Wrong stock code".localized, type: .error)
                 })
         })
         alert.addButton("Reselect stock exchange".localized,
@@ -318,7 +314,7 @@ class MoreViewController: BaseViewController {
             barrageView.addSubview(barrageRenderer.view)
             
             let filePath = ResourceDirectory.appending(pathComponent: "json/debug/barrages.json")
-            barrages = Common.readJsonFile(filePath) as! [Any]?
+            barrages = filePath.fileJsonObject as! [Any]?
         }
         view.addSubview(barrageView)
         tableView.isScrollEnabled = false
@@ -361,7 +357,7 @@ class MoreViewController: BaseViewController {
     //MARK: - 事件响应
     
     @IBAction func clickTableHeaderButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         if Common.isLogin() {
             show("ProfileViewController", storyboard: "Profile")
         } else {
@@ -446,7 +442,7 @@ class MoreViewController: BaseViewController {
  case 3:
  return stockName + "(" + "Monthly candlestick chart") + ".localized"
  default:
- return EmptyString
+ return ""
  }
  }
  
@@ -532,7 +528,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         let cell = tableView.cellForRow(at: indexPath)
         if cell === settingCell {
@@ -552,7 +548,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         } else if cell === ceShiCell {
             showWebpage(URL(string: "http://gtest.sina.com.cn/astro/11707")!)
         } else if cell === guPiaoCell {
-            if !Common.isEmptyString(stockExchange) && !Common.isEmptyString(stockCode) {
+            if !isEmptyString(stockExchange) && !isEmptyString(stockCode) {
                 showStockCodeAlert()
             } else {
                 showStockExchangeAlert()
@@ -563,7 +559,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             showBarrages()
         } else if cell === youXiCell {
             if !UIApplication.shared.statusBarOrientation.isPortrait {
-                Common.showToast("Please rotate screen to portrait!")
+                SRAlert.showToast("Please rotate screen to portrait!")
             } else {
                 show("M2ViewController", storyboard: "More")
             }

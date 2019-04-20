@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import SlideMenuControllerSwift
 
 class AppGuideViewController: BaseViewController {
@@ -36,11 +36,11 @@ class AppGuideViewController: BaseViewController {
     
     func initView() {
         scrollView.delegate = self
-        scrollViewWidthConstraint.constant = ScreenWidth()
+        scrollViewWidthConstraint.constant = ScreenWidth
         
         //引导图片文件存储目录
         var dir = ResourceDirectory.appending(pathComponent: "image/guide")
-        if Common.screenScale() == .iPhone4 {
+        if ScreenScale == .iPhone4 {
             dir = dir.appending(pathComponent: "640x960")
         } else {
             dir = dir.appending(pathComponent: "640x1136")
@@ -50,12 +50,12 @@ class AppGuideViewController: BaseViewController {
             let filePath = dir.appending(pathComponent: String(format: "page%d.png", i))
             let imageView = UIImageView(image: UIImage(contentsOfFile: filePath))
             imageView.frame =
-                CGRect(ScreenWidth() * CGFloat(i - 1), 0, ScreenWidth(), ScreenHeight())
+                CGRect(ScreenWidth * CGFloat(i - 1), 0, ScreenWidth, ScreenHeight)
             scrollView.addSubview(imageView)
             
             if i == 4 {
                 let button = UIButton(frame: CGRect(imageView.right - 80.0 - 20.0,
-                                                    ScreenWidth() - TableCellHeight - 20.0,
+                                                    ScreenWidth - TableCellHeight - 20.0,
                                                     80.0,
                                                     TableCellHeight))
                 let image = UIImage.rect(MaskBackgroundColor, size: CGSize(80.0, TableCellHeight))
@@ -70,7 +70,7 @@ class AppGuideViewController: BaseViewController {
             imageView.addGestureRecognizer(gr)
             imageView.isUserInteractionEnabled = true
         }
-        scrollView.contentSize = CGSize(width: 4 * ScreenWidth(), height: ScreenHeight())
+        scrollView.contentSize = CGSize(width: 4 * ScreenWidth, height: ScreenHeight)
         
         pageControl.backgroundColor = MaskBackgroundColor
     }
@@ -78,7 +78,7 @@ class AppGuideViewController: BaseViewController {
     //MARK: - 业务处理
     
     func changePageControl() {
-        let quo = scrollView.contentOffset.x / ScreenWidth()
+        let quo = scrollView.contentOffset.x / ScreenWidth
         let page = lround(Double(quo)) as Int
         if pageControl.currentPage != page {
             pageControl.currentPage = page
@@ -94,9 +94,9 @@ class AppGuideViewController: BaseViewController {
         Configs.entrance = .aggregation
         
         SlideMenuOptions.leftViewWidth = 240.0
-        let mainMenuVC = Common.viewController("MainMenuViewController", storyboard: "Aggregation")
+        let mainMenuVC = UIViewController.viewController("MainMenuViewController", storyboard: "Aggregation")
             as! MainMenuViewController
-        let leftMenuVC = Common.viewController("LeftMenuViewController", storyboard: "Aggregation")
+        let leftMenuVC = UIViewController.viewController("LeftMenuViewController", storyboard: "Aggregation")
             as! LeftMenuViewController
         let navigationVC = SRNavigationController(rootViewController: mainMenuVC)
         let aggregationVC = AggregationViewController(mainViewController: navigationVC,
@@ -115,17 +115,17 @@ class AppGuideViewController: BaseViewController {
     //MARK: - 事件响应
     
     @objc func clickEnterButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         next()
     }
     
     @objc func handleTap(_ gr: UITapGestureRecognizer) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         next()
     }
     
     @IBAction func pageControlValueChanged(_ sender: Any) {
-        scrollView.setContentOffset(CGPoint(ScreenWidth() * CGFloat(pageControl.currentPage), 0),
+        scrollView.setContentOffset(CGPoint(ScreenWidth * CGFloat(pageControl.currentPage), 0),
                                     animated: true)
     }
     

@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class ViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -15,8 +15,8 @@ class ViewController: BaseViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the vivar typically from a nib.
         defaultNavigationBar("Root")
-        navigationBarBackgroundAlpha = NavigartionBar.backgroundBlurAlpha
-        navigationBarTintColor = NavigartionBar.tintColor
+        navigationBarBackgroundAlpha = NavigationBar.backgroundBlurAlpha
+        navigationBarTintColor = NavigationBar.tintColor
         initNavigationBar()
         navBarLeftButtonSettings = nil
         tableView.backgroundColor = UIColor.groupTableViewBackground
@@ -32,7 +32,7 @@ class ViewController: BaseViewController {
         }
         
         //启动程序检查并执行可以执行的option
-        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
             .openWebpage == option {
             stateMachine.append(option: option)
         }
@@ -105,7 +105,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         switch indexPath.row {
         case 0:
@@ -123,8 +123,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         case 3:
             /*
              Entrance = .aggregation
-             let mainMenuVC = Common.viewController("MainMenuViewController", "Aggregation")
-             let leftMenuVC = Common.viewController("LeftMenuViewController", "Aggregation")
+             let mainMenuVC = UIViewController.viewController("MainMenuViewController", "Aggregation")
+             let leftMenuVC = UIViewController.viewController("LeftMenuViewController", "Aggregation")
              let navigationVC = SRNavigationController(rootViewController: mainMenuVC)
              let aggregationVC = AggregationViewController(mainViewController: navigationVC,
              leftMenuViewController: leftMenuVC)
@@ -135,7 +135,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             
             let alert = SRAlert()
             alert.addButton("OK".localized,
-                            backgroundColor: NavigartionBar.backgroundColor,
+                            backgroundColor: NavigationBar.backgroundColor,
                             action:
                 {
                     UserStandard[USKey.enterAggregationEntrance] = true
@@ -143,7 +143,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                     exit(0)
             })
             alert.show(.notice,
-                       title: EmptyString,
+                       title: "",
                        message: "Reopen the program to enter Aggregation mode".localized,
                        closeButtonTitle: "Cancel".localized)
             

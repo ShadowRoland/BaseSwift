@@ -6,8 +6,19 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import SwiftyJSON
+import libPhoneNumber_iOS
+
+enum VerificationCodeType: Int {
+    case login = 0
+    case forgetPassword = 1
+}
+
+enum ResetPasswordType: Int {
+    case smsCode = 0
+    case password = 1
+}
 
 class ForgetPasswordViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -49,9 +60,8 @@ class ForgetPasswordViewController: BaseViewController {
         let getTitle = "Get verification code".localized
         let againTitle = String(format: "Get again (%d)".localized, Const.verifyInterval)
         let title = getTitle.count > againTitle.count ? getTitle : againTitle
-        let width = Common.fitSize(title,
-                                   font: verifyButton.titleLabel!.font,
-                                   maxWidth: ScreenWidth() - SubviewMargin).width
+        let width = title.textSize(verifyButton.titleLabel!.font,
+                                   maxWidth: ScreenWidth - SubviewMargin).width
         verifyWidthConstraint.constant = ceil(width) + 2.0 * Const.verifyButtonMargin
         return cell
     }()
@@ -72,7 +82,7 @@ class ForgetPasswordViewController: BaseViewController {
         defaultNavigationBar("Forget Password".localized)
         isGettingVerifyCode = false
         changeVerifyButton(false)
-        Common.change(submitButton: submitButton, enabled: false)
+        submitButton.set(submit: false)
     }
     
     //MARK: - 视图初始化
@@ -102,7 +112,7 @@ class ForgetPasswordViewController: BaseViewController {
     
     func checkPhoneNO() -> Bool {
         guard let phone = phoneTextField.text,
-            !Common.isEmptyString(phone) else {
+            !isEmptyString(phone) else {
                 return false
         }
         
@@ -124,7 +134,7 @@ class ForgetPasswordViewController: BaseViewController {
     
     func changeVerifyButton(_ enabled: Bool) {
         if enabled {
-            verifyButton.backgroundColor = NavigartionBar.backgroundColor
+            verifyButton.backgroundColor = NavigationBar.backgroundColor
             verifyButton.isEnabled = true
         } else {
             verifyButton.backgroundColor = UIColor.lightGray
@@ -143,7 +153,7 @@ class ForgetPasswordViewController: BaseViewController {
     
     func checkSubmitButtonEnabled() -> Bool {
         guard checkPhoneNO(),
-            !Common.isEmptyString(verifyTextField.text) else {
+            !isEmptyString(verifyTextField.text) else {
                 return false
         }
         
@@ -170,7 +180,7 @@ class ForgetPasswordViewController: BaseViewController {
         }
         
         if submitButton.isEnabled != checkSubmitButtonEnabled() {
-            Common.change(submitButton: submitButton, enabled: checkSubmitButtonEnabled())
+            submitButton.set(submit: checkSubmitButtonEnabled())
         }
     }
     
@@ -187,43 +197,45 @@ class ForgetPasswordViewController: BaseViewController {
     }
     
     @objc func clickVerifyButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         isGettingVerifyCode = true
         changeVerifyButton(checkVerifyButtonEnabled())
-        httpRequest(.get(.getVerificationCode),
-                    [ParamKey.countryCode : Int(countryCodeLabel.text!)!,
-                     ParamKey.phone : phoneTextField.text!,
-                     ParamKey.type : VerificationCodeType.login.rawValue],
+        httpRequest(.get("getVerificationCode"),
+                    params: [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
+                             Param.Key.phone : phoneTextField.text!,
+                             Param.Key.type : VerificationCodeType.login.rawValue],
                     success:
-            { response in
-                self.isGettingVerifyCode = false
-                self.startTimer()
-                self.changeVerifyButton(self.checkVerifyButtonEnabled())
-                if let code = (response as? JSON)?[HttpKey.Response.data][ParamKey.code] {
-                    self.verifyTextField.text = String(object: code.rawValue as AnyObject)
-                    Common.change(submitButton: self.submitButton,
-                                  enabled: self.checkSubmitButtonEnabled())
+            { [weak self] response in
+                guard let strongSelf = self else { return }
+                strongSelf.isGettingVerifyCode = false
+                strongSelf.startTimer()
+                strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
+                if let code = (response as? JSON)?[HTTP.Key.Response.data][Param.Key.code] {
+                    strongSelf.verifyTextField.text = String(object: code.rawValue as AnyObject)
+                    strongSelf.submitButton.set(submit: strongSelf.checkSubmitButtonEnabled())
                 }
-        }, bfail: { response in
-            self.isGettingVerifyCode = false
-            self.changeVerifyButton(self.checkVerifyButtonEnabled())
-            Common.showToast(self.logBFail(.get(.getVerificationCode),
-                                           response: response,
-                                           show: false))
-        }, fail: { error in
-            self.isGettingVerifyCode = false
-            self.changeVerifyButton(self.checkVerifyButtonEnabled())
+            }, bfail: { [weak self] (url, response) in
+                guard let strongSelf = self else { return }
+                strongSelf.isGettingVerifyCode = false
+                strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
+                SRAlert.showToast(strongSelf.logBFail(url,
+                                                     response: response,
+                                                     show: false))
+            }, fail: { [weak self] (_, error) in
+                guard let strongSelf = self else { return }
+                strongSelf.isGettingVerifyCode = false
+                strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
         })
     }
     
     func clickSubmitButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         Keyboard.hide {
             self.show("ResetPasswordViewController",
                       storyboard: "Profile",
-                      params: [ParamKey.countryCode : Int(self.countryCodeLabel.text!)!,
-                               ParamKey.phone : self.phoneTextField.text!,
-                               ParamKey.code : self.verifyTextField.text!])
+                      params: [Param.Key.countryCode : Int(self.countryCodeLabel.text!)!,
+                               Param.Key.phone : self.phoneTextField.text!,
+                               Param.Key.code : self.verifyTextField.text!])
         }
     }
 }
@@ -267,7 +279,7 @@ extension ForgetPasswordViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         if indexPath.row == 0 {
             performSegue(withIdentifier: "forgetPasswordShowCountrySegue", sender: self)

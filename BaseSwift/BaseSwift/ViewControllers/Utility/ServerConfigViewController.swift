@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 //仅用于调试
 class ServerConfigViewController: BaseViewController {
@@ -109,7 +109,7 @@ class ServerConfigViewController: BaseViewController {
             } else { //根据不同的数据格式来判空
                 switch paramValueType {
                 case .string:
-                    isJsonValueValid = !Common.isEmptyString(value)
+                    isJsonValueValid = !isEmptyString(value)
                     
                 case .number:
                     isJsonValueValid = (value as! NSNumber).doubleValue != 0
@@ -269,7 +269,7 @@ class ServerConfigViewController: BaseViewController {
             }
             
             if isEmpty {
-                Common.showToast(String(format: "%@ can not be empty!".localized, item.title))
+                SRAlert.showToast(String(format: "%@ can not be empty!".localized, item.title))
                 return true
             }
         }
@@ -352,14 +352,14 @@ extension ServerConfigViewController: UITextFieldDelegate {
             if !trim.isEmpty && !trim.hasSuffix("http://") && !trim.hasSuffix("https://") {
                 textField.text = "http://" + trim
             } else {
-                textField.text = EmptyString
+                textField.text = ""
             }
         }
         
         //更新value
         switch currentItem.paramValueType {
         case .string:
-            currentItem.value = textField.text ?? EmptyString
+            currentItem.value = textField.text ?? ""
             
         case .number:
             if let text = textField.text, !text.isEmpty {

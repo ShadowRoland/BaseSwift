@@ -21,9 +21,7 @@ public protocol SRLoadDataStateDelegate: class {
 }
 
 extension SRLoadDataStateDelegate {
-    func retryLoadData() {
-        
-    }
+    func retryLoadData() { }
 }
 
 public class SRLoadDataStateView: UIView {
@@ -95,9 +93,8 @@ public class SRLoadDataStateView: UIView {
         }
         
         let title = "[SR]Click Retry".srLocalized
-        button = SRCommon.submitButton(title)
-        let width =
-            SRCommon.fitSize(title, font: SubmitButton.font, maxHeight: TableCellHeight).width
+        button = UIButton(submit: title)
+        let width = title.textSize(SubmitButton.font, maxHeight: TableCellHeight).width
         button?.frame = CGRect(0, 0, ceil(width) + 16.0, TableCellHeight)
         button?.clicked(self, action: #selector(clickButton(_:)))
         mainView.addSubview(button!)
@@ -113,8 +110,7 @@ public class SRLoadDataStateView: UIView {
         
         //文字高度
         let textWidth = (width != nil ? width! : ScreenWidth) - 2 * SubviewMargin
-        let textSize = SRCommon.fitSize(text!, font: SubmitButton.font, maxWidth: textWidth)
-        let textHeight = ceil(textSize.height)
+        let textHeight = ceil(text!.textSize(SubmitButton.font, maxWidth: textWidth).height)
         
         if state == .empty {
             return imageHeight + 10.0 + textHeight
@@ -127,7 +123,7 @@ public class SRLoadDataStateView: UIView {
     public func layout() {
         //计算中间文字的宽度和高度
         var textWidth = self.width - 2 * SubviewMargin
-        let textSize = SRCommon.fitSize(text!, font: SubmitButton.font, maxWidth: textWidth)
+        let textSize = text!.textSize(SubmitButton.font, maxWidth: textWidth)
         let textHeight = ceil(textSize.height)
         if textHeight >= 1.5 * textLabel.font.lineHeight
             && ceil(textSize.width) < textWidth { //多行的话尝试缩小文字宽度并更改文字排版
@@ -177,7 +173,7 @@ public class SRLoadDataStateView: UIView {
     }
     
     @objc func clickButton(_ sender: Any) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
         if let delegate = delegate {
             delegate.retryLoadData()
         }

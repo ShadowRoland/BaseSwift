@@ -8,30 +8,46 @@
 
 import UIKit
 import GCDWebServer
-import CocoaLumberjack
 import SwiftyJSON
 
-public class SRHttpServer: NSObject {
+public class SRHttpServer {
     var isRunning: Bool { return webServer.isRunning }
     var webServer: GCDWebServer!
     
     //为nil时按正常流程返回，否则强制设置网络返回的结果
     var responseResult: BFResult<Any>?
     
-    public class var shared: SRHttpServer {
-        return sharedInstance
-    }
+    public class var shared: SRHttpServer { return sharedInstance }
     
     private static let sharedInstance = SRHttpServer()
     
-    private override init() {
-        super.init()
+    private init() {
         webServer = GCDWebServer()
-        handleRequest()
+        
+        webServer.addDefaultHandler(forMethod: "GET",
+                                    request: GCDWebServerURLEncodedFormRequest.self)
+        { (request) -> GCDWebServerResponse? in
+            if let query = request.query {
+                print("get query: \n\(String(jsonObject: query))")
+            }
+            
+            return self.handleRequest("GET", request: request)
+        }
+        
+        webServer.addDefaultHandler(forMethod: "POST",
+                                    request: GCDWebServerURLEncodedFormRequest.self)
+        { (request) -> GCDWebServerResponse? in
+            if let jsonRequest = request as? GCDWebServerURLEncodedFormRequest,
+                let json = try? JSON(data: jsonRequest.data) {
+                print("post data: \n\(json.rawString() ?? "")")
+            }
+            
+            return self.handleRequest("POST", request: request)
+        }
     }
     
-    struct Const {
-        static let htmlBaseFormat = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body>%@</body></html>"
+    public struct Const {
+        public static let htmlBaseFormat = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body>%@</body></html>"
         static let logfileTailLength = 10000
     }
     
@@ -54,7 +70,7 @@ public class SRHttpServer: NSObject {
         LogInfo("已停止服务")
     }
     
-    func response(_ result: BFResult<Any>?) -> GCDWebServerResponse? {
+    public func response(_ result: BFResult<Any>?) -> GCDWebServerResponse? {
         var serverResponse: GCDWebServerResponse?
         if responseResult == nil {
             if result == nil {
@@ -89,60 +105,34 @@ public class SRHttpServer: NSObject {
     
     //MARK: - Request Handler
     
-    public func handleRequest() {
-        webServer.addDefaultHandler(forMethod: "GET",
-                                    request: GCDWebServerURLEncodedFormRequest.self)
-        { (request) -> GCDWebServerResponse? in
-            if let query = request.query {
-                print("get query: \n\(SRCommon.jsonString(query) ?? "")")
-            }
-            
-            //var result: BFResult<Any>? = nil
-            let path = self.format(request.url.path)
-            if SRCommon.isEmptyString(path) {
+    public func handleRequest(_ method: String,
+                              request: GCDWebServerRequest) -> GCDWebServerResponse? {
+        if method == "GET" {
+            let path = format(request.url.path)
+            if isEmptyString(path) {
                 var body = ""
                 if 0 == request.query?.count {//默认是访问手机的日志文件列表
                     body = self.logFiles()
                 } else {
                     if let index = request.query!["index"] {
                         if let length = request.query!["length"] {
-                            body = self.logFileContents((index as AnyObject).intValue,
-                                                        length: (length as AnyObject).intValue)
+                            body = logFileContents((index as AnyObject).intValue,
+                                                   length: (length as AnyObject).intValue)
                         } else {
-                            body = self.logFileContents((index as AnyObject).intValue)
+                            body = logFileContents((index as AnyObject).intValue)
                         }
                         return GCDWebServerDataResponse(text: body)
                     }
                 }
                 return GCDWebServerDataResponse(html: String(format: Const.htmlBaseFormat, body))
             } else if path.hasSuffix(".html") {
-                return self.getLocalHtml(request, path: path)
+                return getLocalHtml(request, path: path)
             }
-            //return  self.response(result)
-            return  self.response(nil)
         }
-        
-        webServer.addDefaultHandler(forMethod: "POST",
-                                    request: GCDWebServerURLEncodedFormRequest.self)
-        { (request) -> GCDWebServerResponse? in
-            if let jsonRequest = request as? GCDWebServerURLEncodedFormRequest,
-                let json = try? JSON(data: jsonRequest.data) {
-                print("post data: \n\(json.rawString() ?? "")")
-            }
-            
-            //var result: BFResult<Any>? = nil
-            //let path = self.format(request.url.path)
-            //if path == self.format(HttpDefine.api(.post(.login))) {
-            //    result = self.login(request)
-            //}
-            //return  self.response(result)
-            
-            return  self.response(nil)
-        }
-        
+        return  response(nil)
     }
     
-    func format(_ path: String?) -> String {
+    public func format(_ path: String?) -> String {
         var pathStr = NSString(string: path ?? "")
         pathStr = pathStr.replacingOccurrences(of: "/",
                                                with: "",
@@ -159,7 +149,7 @@ public class SRHttpServer: NSObject {
         var body = ""
         var contents: [Any]?
         do {
-            try contents = FileManager.default.contentsOfDirectory(atPath: logsDirectory())
+            try contents = FileManager.default.contentsOfDirectory(atPath: logsDirectory)
         } catch {
             return body.appendingFormat("<h2>获取日志文件列表失败</h2><p>%@</p>", error.localizedDescription)
         }
@@ -171,11 +161,11 @@ public class SRHttpServer: NSObject {
         body.append("<h2>日志文件列表</h2>")
         body.append("<ul>")
         var sortedContents: [Any]? = contents?.sorted(by: { (obj1, obj2) -> Bool in
-            let path1 = logsDirectory().appending(pathComponent: obj1 as? String)
+            let path1 = logsDirectory.appending(pathComponent: obj1 as? String)
             var properties1 = try! FileManager.default.attributesOfItem(atPath: path1)
             let date1 = properties1[FileAttributeKey.modificationDate] as! Date
             
-            let path2 = logsDirectory().appending(pathComponent: obj2 as? String)
+            let path2 = logsDirectory.appending(pathComponent: obj2 as? String)
             var properties2 = try! FileManager.default.attributesOfItem(atPath: path2)
             let date2 = properties2[FileAttributeKey.modificationDate] as! Date
             
@@ -202,7 +192,7 @@ public class SRHttpServer: NSObject {
         var body = ""
         var contents: [Any]?
         do {
-            try contents = FileManager.default.contentsOfDirectory(atPath: logsDirectory())
+            try contents = FileManager.default.contentsOfDirectory(atPath: logsDirectory)
         } catch {
             return body.appendingFormat("<h2>获取日志文件列表失败</h2><p>%@</p>", error.localizedDescription)
         }
@@ -212,11 +202,11 @@ public class SRHttpServer: NSObject {
         }
         
         var sortedContents: [Any]? = contents?.sorted(by: { (obj1, obj2) -> Bool in
-            let path1 = logsDirectory().appending(pathComponent: obj1 as? String)
+            let path1 = logsDirectory.appending(pathComponent: obj1 as? String)
             var properties1 = try! FileManager.default.attributesOfItem(atPath: path1)
             let date1 = properties1[FileAttributeKey.modificationDate] as! Date
             
-            let path2 = logsDirectory().appending(pathComponent: obj2 as? String)
+            let path2 = logsDirectory.appending(pathComponent: obj2 as? String)
             var properties2 = try! FileManager.default.attributesOfItem(atPath: path2)
             let date2 = properties2[FileAttributeKey.modificationDate] as! Date
             
@@ -224,7 +214,7 @@ public class SRHttpServer: NSObject {
         })
         
         let fileName = sortedContents?[index] as? String
-        let filePath = logsDirectory().appending(pathComponent: fileName!)
+        let filePath = logsDirectory.appending(pathComponent: fileName!)
         body = body.appendingFormat("<h2>%@</h2>", fileName!)
         var fileContents: String?
         do {
@@ -241,14 +231,7 @@ public class SRHttpServer: NSObject {
         return fileContents!
     }
     
-    var _logsDirectory: String?
-    
-    func logsDirectory() -> String {
-        if _logsDirectory == nil {
-            _logsDirectory = DDLogFileManagerDefault().logsDirectory
-        }
-        return _logsDirectory!
-    }
+    var logsDirectory: String { return SRLog.shared.directory }
     
     func getLocalHtml(_ request: GCDWebServerRequest, path: String) -> GCDWebServerDataResponse? {
         let dir = ResourceDirectory.appending(pathComponent: "html")
@@ -269,8 +252,8 @@ public class SRHttpServer: NSObject {
 extension BFResult {
     var gcdWebServerResponse: [AnyHashable : Any] {
         var dictionary: ParamDictionary = [HTTP.Key.Response.errorCode : 0,
-                   HTTP.Key.Response.errorMessage : "操作成功",
-                   Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
+                                           HTTP.Key.Response.errorMessage : "操作成功",
+                                           Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
         switch self {
         case .success(let value):
             dictionary[HTTP.Key.Response.data] = NonNull.dictionary(value)
@@ -283,13 +266,12 @@ extension BFResult {
             }
             dictionary[HTTP.Key.Response.errorCode] = 1
             dictionary[HTTP.Key.Response.errorMessage] =
-                SRCommon.isEmptyString(value) ? "操作失败，请求姿势不对" : value
+                isEmptyString(value) ? "操作失败，请求姿势不对" : value
         case .failure:
             dictionary = [:]
         }
         return dictionary
     }
-    
 }
 
 extension GCDWebServerErrorResponse {

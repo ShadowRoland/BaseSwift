@@ -6,9 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import Foundation
-import UIKit
-import ObjectiveC
+import SRKit
 
 extension UIViewController {
     public class PublicBusinessComponent {
@@ -31,7 +29,7 @@ extension UIViewController {
                 return
             }
             
-            let vc = Common.viewController("AdvertisingGuideViewController", storyboard: "Main")
+            let vc = UIViewController.viewController("AdvertisingGuideViewController", storyboard: "Main")
                 as! AdvertisingGuideViewController
             vc.advertisingButton.clicked(self, action: #selector(clickAdvertisingButton(_:)))
             vc.skipButton.clicked(self, action: #selector(clickSkipButton(_:)))
@@ -52,12 +50,12 @@ extension UIViewController {
         }
         
         @objc func clickAdvertisingButton(_ sender: Any) {
-            guard Common.mutexTouch() else { return }
+            guard MutexTouch else { return }
             advertisingVC?.dimiss()
         }
         
         @objc func clickSkipButton(_ sender: Any) {
-            guard Common.mutexTouch() else { return }
+            guard MutexTouch else { return }
             advertisingVC?.dimiss()
             //decorator?.stateMachine.clearEvents()
             //decorator?.stateMachine.append(Event.showAdvertising)

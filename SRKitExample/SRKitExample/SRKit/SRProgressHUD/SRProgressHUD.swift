@@ -246,7 +246,7 @@ public final class SRProgressHUD {
         let progressView = M13ProgressViewRing()
         progressView.showPercentage = false
         progressView.backgroundRingWidth = 4.0
-        progressView.secondaryColor = NavigartionBar.backgroundColor
+        progressView.secondaryColor = NavigationBar.backgroundColor
         
         let hud = SRProgressHUD()
         hud.progressType = .m13Ring

@@ -15,7 +15,7 @@ extension UIViewController {
         public lazy var navigationBarBackgroundView: UIView = {
             let view = UIView(frame: CGRect(0, 0, ScreenWidth, NavigationBarHeight))
             decorator?.view.addSubview(view)
-            view.backgroundColor = NavigartionBar.backgroundColor
+            view.backgroundColor = NavigationBar.backgroundColor
             return view
         }()
         public var navigationBackgroundAlpha = 0.5 as CGFloat
@@ -37,7 +37,7 @@ extension UIViewController {
         
         //MARK: Load Data Fail
         
-        public var loadDataFailRetryCapability: String?//请求数据失败时显示点击重试的请求，一般是 页面刚进入发出的第一个http请求
+        public var loadDataFailRetryMethod: HTTP.Method<Any>?//请求数据失败时显示点击重试的请求，一般是 页面刚进入发出的第一个http请求
         public var loadDataFailRetryHandler: (() -> Void)?  //请求数据失败时点击重试的操作
         public lazy var loadDataFailContainerView: UIView = UIView()
         public var loadDataFailView: SRLoadDataStateView?
@@ -64,7 +64,7 @@ extension UIViewController {
         
         //MARK: Navigation Bar Appear
         
-        public var navigartionBarAppear: NavigartionBar.Appear = .visible {
+        public var navigartionBarAppear: NavigationBar.Appear = .visible {
             didSet {
                 if let navigationController = decorator?.navigationController,
                     isViewDidAppear,
@@ -141,7 +141,7 @@ extension UIViewController {
         
         //MARK: Params
         
-        fileprivate var params = EmptyParams()
+        fileprivate var params = [:] as ParamDictionary
         
         //MARK: State machine
         
@@ -192,7 +192,7 @@ extension UIViewController {
         }
     }
     
-    public var navigartionBarAppear: NavigartionBar.Appear {
+    public var navigartionBarAppear: NavigationBar.Appear {
         get {
             return baseBusinessComponent.navigartionBarAppear
         }

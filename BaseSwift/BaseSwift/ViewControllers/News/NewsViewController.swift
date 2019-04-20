@@ -6,9 +6,8 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import Cartography
-import Alamofire
 
 class NewsViewController: BaseViewController {
     @IBOutlet weak var childBackgroundView: UIView!
@@ -38,7 +37,7 @@ class NewsViewController: BaseViewController {
         initView()
         
         //查询当前指令而执行的操作
-        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
             .showMore == option {
             tabBar.selectedItem = tabBar.items?[3]
             addChild(moreVC)
@@ -57,7 +56,7 @@ class NewsViewController: BaseViewController {
         }
         
         //查询当前指令而执行的操作，加入状态机
-        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
             .showProfile == option || .showSetting == option {
             DispatchQueue.main.async { [weak self] in
                 self?.stateMachine.append(option: option)
@@ -100,38 +99,38 @@ class NewsViewController: BaseViewController {
     func initView() {
         initTabBar()
         
-        mainVC = Common.viewController("NewsMainViewController",
+        mainVC = UIViewController.viewController("NewsMainViewController",
                                        storyboard: "News") as? NewsMainViewController
         mainVC.parentVC = self
         
-        secondaryVC = Common.viewController("NewsSecondaryViewController",
+        secondaryVC = UIViewController.viewController("NewsSecondaryViewController",
                                             storyboard: "News") as? NewsSecondaryViewController
         secondaryVC.parentVC = self
         
-        yellowVC = Common.viewController("NewsYellowViewController",
+        yellowVC = UIViewController.viewController("NewsYellowViewController",
                                          storyboard: "News") as? NewsYellowViewController
         
-        moreVC = Common.viewController("MoreViewController",
+        moreVC = UIViewController.viewController("MoreViewController",
                                        storyboard: "More") as? MoreViewController
     }
     
     //添加约束，可以比较方便地进行横竖屏的屏幕适配
     func updateChildViewFrame() {
         if currentChildVC === mainVC || currentChildVC === secondaryVC {
-            currentChildVC.view.frame = CGRect(0, 0, ScreenWidth(), ScreenHeight())
+            currentChildVC.view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight)
         } else if currentChildVC === yellowVC { //不带导航栏的子视图frame
             currentChildVC.view.frame =
                 CGRect(0,
                        topLayoutGuide.length,
-                       ScreenWidth(),
-                       ScreenHeight() - topLayoutGuide.length)
+                       ScreenWidth,
+                       ScreenHeight - topLayoutGuide.length)
         } else if currentChildVC === moreVC {
             //为了实现更多列表的tableHeaderView的背景色和导航栏完全一致，需要往上移一点点
             //因为在group模式下的UITableView中tableHeaderView边缘会自带一条分隔线
             currentChildVC.view.frame = CGRect(0,
                                                topLayoutGuide.length - SectionHeaderGroupNoHeight,
-                                               ScreenWidth(),
-                                               ScreenHeight() - topLayoutGuide.length
+                                               ScreenWidth,
+                                               ScreenHeight - topLayoutGuide.length
                                                 + SectionHeaderGroupNoHeight)
         }
     }
@@ -150,7 +149,7 @@ class NewsViewController: BaseViewController {
                 return
         }
         
-        item.setTitleTextAttributes([.foregroundColor : NavigartionBar.backgroundColor],
+        item.setTitleTextAttributes([.foregroundColor : NavigationBar.backgroundColor],
                                     for: .selected)
         
         guard let normalImage = UIImage(named: normal),
@@ -244,7 +243,7 @@ class NewsViewController: BaseViewController {
     
     //在程序运行中收到指令，基本都可以通过走状态机实现
     @objc func newAction(_ notification: Notification) {
-        guard let option = Event.option(Common.currentActionParams?[ParamKey.action]) else {
+        guard let option = Event.option(Common.currentActionParams?[Param.Key.action]) else {
             return
         }
         
@@ -265,7 +264,7 @@ class NewsViewController: BaseViewController {
         
         switch option {
         case .showMore:
-            if !(isFront && moreVC === currentChildVC) {
+            if !(isTop && moreVC === currentChildVC) {
                 Common.clearPops()
                 Common.clearModals(viewController: self)
                 popBack(to: self)
@@ -295,8 +294,8 @@ class NewsViewController: BaseViewController {
                                   selector: .didEndStateMachineEvent,
                                   name: Notification.Name.Base.didEndStateMachineEvent)
                 DispatchQueue.main.async {
-                    let params = [ParamKey.sender : String(pointer: self),
-                                  ParamKey.event : event] as ParamDictionary
+                    let params = [Param.Key.sender : String(pointer: self),
+                                  Param.Key.event : event] as ParamDictionary
                     //若是非登录状态，弹出登录页面，因为查看个人信息需要先登录
                     if !Common.isLogin() {
                         self.moreVC.presentLoginVC(params)
@@ -330,8 +329,8 @@ class NewsViewController: BaseViewController {
                 DispatchQueue.main.async {
                     self.show("SettingViewController",
                               storyboard: "Profile",
-                              params: [ParamKey.sender : String(pointer: self),
-                                       ParamKey.event : event])
+                              params: [Param.Key.sender : String(pointer: self),
+                                       Param.Key.event : event])
                 }
             }
             
@@ -369,10 +368,7 @@ extension NewsViewController: NewsListDelegate {
         }
         let sendNewsListVC = String(pointer: sendVC)
         //httpReq(.get(.sinaNewsList), params, userInfo, url: "http://interface.sina.cn")
-        httpRequest(.get(.sinaNewsList),
-                    params,
-                    url: "http://interface.sina.cn",
-                    success:
+        httpRequest(.get("http://interface.sina.cn/ent/feed.d.json"), params: params, success:
             { response in
                 guard let vc = self.sendNewsListVC(sendChildVC,
                                                    sendNewsListVC: sendNewsListVC) else {
@@ -380,7 +376,7 @@ extension NewsViewController: NewsListDelegate {
                 }
                 
                 if loadType == .more {
-                    let offset = params[ParamKey.offset] as! Int
+                    let offset = params[Param.Key.offset] as! Int
                     if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                         vc.updateMore(NonNull.dictionary(response))
                     }
@@ -394,7 +390,7 @@ extension NewsViewController: NewsListDelegate {
             }
             
             if loadType == .more {
-                let offset = params[ParamKey.offset] as! Int
+                let offset = params[Param.Key.offset] as! Int
                 if offset == vc.currentOffset + 1 {
                     return
                 }
@@ -414,7 +410,7 @@ extension NewsViewController: NewsListDelegate {
             }
             
             if loadType == .more {
-                let offset = params[ParamKey.offset] as! Int
+                let offset = params[Param.Key.offset] as! Int
                 if offset == vc.currentOffset + 1 {
                     if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                         vc.updateMore(nil)
@@ -453,10 +449,10 @@ extension NewsViewController: UIViewControllerPreviewingDelegate {
         if let newsListVC = newsListVC {
             let index = previewingContext.sourceView.tag
             if index < newsListVC.dataArray.count {
-                var dictionary = EmptyParams()
-                dictionary[ParamKey.url] = URL(string: NonNull.string(newsListVC.dataArray[index].link))
-                dictionary[ParamKey.title] = "News".localized
-                let webpageVC = Common.viewController("WebpageViewController",
+                var dictionary = [:] as ParamDictionary
+                dictionary[Param.Key.url] = URL(string: NonNull.string(newsListVC.dataArray[index].link))
+                dictionary[Param.Key.title] = "News".localized
+                let webpageVC = UIViewController.viewController("WebpageViewController",
                                                       storyboard: "Utility") as! WebpageViewController
                 webpageVC.params = dictionary
                 webpageVC.isPreviewed = true

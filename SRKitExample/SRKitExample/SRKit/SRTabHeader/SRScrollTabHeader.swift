@@ -57,9 +57,7 @@ public class SRScrollTabHeader: SRTabHeader, UIScrollViewDelegate {
     public var labelMarginHorizontal = 10.0 as CGFloat //标题文字两边的间距
     
     fileprivate var _selectedIndex = 0
-    override var selectedIndex: Int {
-        return _selectedIndex
-    }
+    override public var selectedIndex: Int { return _selectedIndex }
     fileprivate weak var oldSelectedTabItem: SRScrollTabItem?
     fileprivate weak var selectedTabItem: SRScrollTabItem?
     

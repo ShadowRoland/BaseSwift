@@ -6,12 +6,12 @@
 //  Copyright © 2018年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-public class Config: BaseModel {
+public class Config: SRModel {
     var isProduction: Bool = true
-    var apiBaseUrl: String = Configs.BaseServerURLProduction //服务器api的基础地质
+    var apiBaseUrl: String = Configs.BaseServerURLProduction
     var httpsCer: String = "" //https证书
     
     public class var shared: Config {
@@ -27,9 +27,9 @@ public class Config: BaseModel {
         super.init()
     }
     
-    required public init?(map: Map) { super.init() }
+    required public init?(map: ObjectMapper.Map) { super.init() }
     
-    override public func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
         apiBaseUrl <- map["apiBaseUrl"]
@@ -38,7 +38,7 @@ public class Config: BaseModel {
     
     public class func reload() {
         sharedInstance = Config()
-        guard RunInEnvironment != .production,
+        guard Environment != .production,
             let local = Config.local,
             let current = local["current"] as? Int,
             current >= 0,
@@ -55,9 +55,9 @@ public class Config: BaseModel {
     public static var local: ParamDictionary? {
         get {
             if let config = UserStandard[USKey.config] as? ParamDictionary {
-                if let version = config[ParamKey.version] as? String,
-                    let newestConfig = Common.readJsonFile(Configs.configFilePath) as? ParamDictionary,
-                    let newestVersion = newestConfig[ParamKey.version] as? String,
+                if let version = config[Param.Key.version] as? String,
+                    let newestConfig = (Configs.configFilePath.fileJsonObject) as? ParamDictionary,
+                    let newestVersion = newestConfig[Param.Key.version] as? String,
                     version != newestVersion {
                     UserStandard[USKey.config] = newestConfig
                     return newestConfig

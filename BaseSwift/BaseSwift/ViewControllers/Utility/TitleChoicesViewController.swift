@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class TitleChoicesViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -40,8 +40,8 @@ class TitleChoicesViewController: BaseViewController {
     
     func setNavigationBarRightButtonItems() {
         if isEditable && isMultiple {
-            var setting = NavigartionBar.buttonFullSetting
-            setting[.style] = NavigartionBar.ButtonItemStyle.text
+            var setting = NavigationBar.buttonFullSetting
+            setting[.style] = NavigationBar.ButtonItemStyle.text
             setting[.title] = "OK".localized
             navBarRightButtonSettings = [setting]
         } else {
@@ -89,7 +89,7 @@ class TitleChoicesViewController: BaseViewController {
     //MARK: - 事件响应
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         confirmSelectedChoices()
     }
 }

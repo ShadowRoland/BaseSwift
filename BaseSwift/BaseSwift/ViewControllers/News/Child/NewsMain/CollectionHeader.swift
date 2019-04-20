@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class CollectionHeader: UICollectionReusableView {
     @IBOutlet weak var titleLabel: UILabel!
@@ -14,7 +14,7 @@ class CollectionHeader: UICollectionReusableView {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        editButton.layer.borderColor = NavigartionBar.backgroundColor.cgColor
+        editButton.layer.borderColor = NavigationBar.backgroundColor.cgColor
         editButton.layer.borderWidth = 1.0
         editButton.layer.cornerRadius = 5.0
         editButton.clipsToBounds = true

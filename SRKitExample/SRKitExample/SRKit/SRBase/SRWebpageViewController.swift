@@ -12,7 +12,7 @@ import Cartography
 import WebKit
 import M13ProgressSuite
 
-let WebpageBackGestureStyle = "WebpageBackGestureStyle"
+public let WebpageBackGestureStyle = "WebpageBackGestureStyle"
 
 public class SRWebpageViewController: SRBaseViewController,
 WKNavigationDelegate,
@@ -74,14 +74,14 @@ SRShareToolDelegate {
     }
     
     public func setNavigationBarLeftButtonItems() {
-        var backSetting = NavigartionBar.buttonFullSetting //获取带全属性的按钮字典
-        backSetting[.style] = NavigartionBar.ButtonItemStyle.image //设置按钮的风格为纯图片
+        var backSetting = NavigationBar.buttonFullSetting //获取带全属性的按钮字典
+        backSetting[.style] = NavigationBar.ButtonItemStyle.image //设置按钮的风格为纯图片
         backSetting[.image] =
             canGoBack ? UIImage.srNamed("sr_page_back") : UIImage.srNamed("sr_close_left")
         
         if webView.canGoForward {
-            var forwardSetting = NavigartionBar.buttonFullSetting
-            forwardSetting[.style] = NavigartionBar.ButtonItemStyle.image //设置按钮的风格为纯图片
+            var forwardSetting = NavigationBar.buttonFullSetting
+            forwardSetting[.style] = NavigationBar.ButtonItemStyle.image //设置按钮的风格为纯图片
             forwardSetting[.image] = UIImage.srNamed("sr_page_forward_left")
             navBarLeftButtonSettings = [backSetting, forwardSetting]
         } else {
@@ -90,8 +90,8 @@ SRShareToolDelegate {
     }
     
     public func setNavigationBarRightButtonItems() {
-        var setting = NavigartionBar.buttonFullSetting
-        setting[.style] = NavigartionBar.ButtonItemStyle.image
+        var setting = NavigationBar.buttonFullSetting
+        setting[.style] = NavigationBar.ButtonItemStyle.image
         setting[.image] = UIImage.srNamed("sr_more")
         navBarRightButtonSettings = [setting]
     }
@@ -152,7 +152,7 @@ SRShareToolDelegate {
     }
     
     override public func clickNavigationBarLeftButton(_ button: UIButton) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         if button.tag == 0 {
             pageBack()
@@ -163,7 +163,7 @@ SRShareToolDelegate {
     }
     
     override public func clickNavigationBarRightButton(_ button: UIButton) {
-        guard SRCommon.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         if let url = params[Param.Key.url] as? URL {
             SRShareTool.shared.option = SRShareOption(title: title,

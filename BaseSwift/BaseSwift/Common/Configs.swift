@@ -6,10 +6,8 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import Foundation
-import UIKit
+import SRKit
 
-public typealias ParamKey = Configs.ParamKey
 public typealias Event = Configs.Event
 public typealias IntForBool = Configs.IntForBool
 public typealias TableLoadData = Configs.TableLoadData
@@ -242,137 +240,6 @@ public class Configs {
         static let yuan = "yuan".localized
         static let person = "person".localized
     }
-    
-    //MARK: 参数名
-    
-    public struct ParamKey {
-        //Common
-        static let status = "status"
-        static let type = "type"
-        static let image = "image"
-        static let img = "img"
-        static let width = "width"
-        static let height = "height"
-        static let video = "video"
-        static let title = "title"
-        static let text = "text"
-        static let alert = "alert"
-        static let url = "url"
-        static let link = "link"
-        static let message = "message"
-        static let description = "description"
-        static let timestamp = "timestamp"
-        static let date = "date"
-        static let version = "version"
-        
-        //MARK: Device
-        static let os = "os"
-        static let deviceModel = "deviceModel"
-        static let deviceId = "deviceId"
-        static let deviceToken = "deviceToken"
-        
-        //MARK: Action
-        static let action = "action"
-        static let sender = "sender"
-        static let recipient = "recipient"
-        static let event = "event"
-        
-        //MARK: Table
-        static let id = "id"
-        static let limit = "limit"
-        static let offset = "offset"
-        static let total = "total"
-        static let page = "page"
-        static let list = "list"
-        static let selected = "selected"
-        
-        //MARK: Profile
-        static let user = "user"
-        static let token = "token"
-        static let session = "session"
-        static let userId = "userId"
-        static let userName = "userName"
-        static let name = "name"
-        static let first = "first"
-        static let middle = "middle"
-        static let last = "last"
-        static let password = "password"
-        static let newPassword = "newPassword"
-        static let nickname = "nickname"
-        static let remarkName = "remarkName"
-        static let letter = "letter"
-        static let headPortrait = "headPortrait"
-        static let headPortraitImage = "headPortraitImage"
-        static let portraitUri = "portraitUri"
-        static let balance = "balance"
-        static let badge = "badge"
-        static let phone = "phone"
-        static let countryCode = "countryCode"
-        
-        static let signature = "signature"
-        static let gender = "gender"
-        static let bool = "bool"
-        static let birthDate = "birthDate"
-        static let nativePlace = "nativePlace"
-        static let location = "location"
-        static let faceValue = "faceValue"
-        static let weight = "weight"
-        static let dickLength = "dickLength"
-        static let fuckDuration = "fuckDuration"
-        static let houseArea = "houseArea"
-        static let bust = "bust"
-        static let waistline = "waistline"
-        static let hipline = "hipline"
-        static let annualIncome = "annualIncome"
-        static let sexualOrientation = "sexualOrientation"
-        static let transvestism = "transvestism"
-        static let tofuCurdTaste = "tofuCurdTaste"
-        static let loveGames = "loveGames"
-        static let stayWebs = "stayWebs"
-        static let preferredTopics = "preferredTopics"
-        
-        static let pId = "pId"
-        
-        //MARK: Address
-        static let address = "address"
-        static let country = "country"
-        static let province = "province"
-        static let city = "city"
-        static let region = "region"
-        static let street = "street"
-        static let roomNo = "roomNo"
-        static let postcode = "postcode"
-        static let areaCode = "areaCode"
-        
-        //MARK: Message
-        static let detail = "detail"
-        static let blogType = "blogType"
-        static let thumbnail = "thumbnail"
-        static let images = "images"
-        static let videos = "videos"
-        static let share = "share"
-        static let like = "like"
-        static let liked = "liked"
-        static let comment = "comment"
-        
-        //MARK: News
-        static let base = "base"
-        static let docID = "docID"
-        static let source = "source"
-        static let count = "count"
-        static let mediaTypes = "mediaTypes"
-        static let jsonCallback = "jsoncallback"
-        static let callback = "callback"
-        static let code = "code"
-        static let data = "data"
-        static let cb = "_cb"
-        static let t = "_t"
-        static let key = "key"
-        
-        //MARK: MAP
-        static let distance = "distance"
-        static let interval = "interval"
-    }
 }
 
 //MARK: 在UserDefault使用的KEY
@@ -389,4 +256,135 @@ extension USKey {
     static let newsChannels = "newsChannels"
     static let searchSuggestionHistory = "searchSuggestionHistory"
     static let enterAggregationEntrance = "enterAggregationEntrance"
+}
+
+//MARK: 参数名
+
+extension Param.Key {
+    //Common
+    static let status = "status"
+    static let type = "type"
+    static let image = "image"
+    static let img = "img"
+    static let width = "width"
+    static let height = "height"
+    static let video = "video"
+    static let title = "title"
+    static let text = "text"
+    static let alert = "alert"
+    static let url = "url"
+    static let link = "link"
+    static let message = "message"
+    static let description = "description"
+    static let timestamp = "timestamp"
+    static let date = "date"
+    static let version = "version"
+    
+    //MARK: Device
+    static let os = "os"
+    static let deviceModel = "deviceModel"
+    static let deviceId = "deviceId"
+    static let deviceToken = "deviceToken"
+    
+    //MARK: Action
+    static let action = "action"
+    static let sender = "sender"
+    static let recipient = "recipient"
+    static let event = "event"
+    
+    //MARK: Table
+    static let id = "id"
+    static let limit = "limit"
+    static let offset = "offset"
+    static let total = "total"
+    static let page = "page"
+    static let list = "list"
+    static let selected = "selected"
+    
+    //MARK: Profile
+    static let user = "user"
+    static let token = "token"
+    static let session = "session"
+    static let userId = "userId"
+    static let userName = "userName"
+    static let name = "name"
+    static let first = "first"
+    static let middle = "middle"
+    static let last = "last"
+    static let password = "password"
+    static let newPassword = "newPassword"
+    static let nickname = "nickname"
+    static let remarkName = "remarkName"
+    static let letter = "letter"
+    static let headPortrait = "headPortrait"
+    static let headPortraitImage = "headPortraitImage"
+    static let portraitUri = "portraitUri"
+    static let balance = "balance"
+    static let badge = "badge"
+    static let phone = "phone"
+    static let countryCode = "countryCode"
+    
+    static let signature = "signature"
+    static let gender = "gender"
+    static let bool = "bool"
+    static let birthDate = "birthDate"
+    static let nativePlace = "nativePlace"
+    static let location = "location"
+    static let faceValue = "faceValue"
+    static let weight = "weight"
+    static let dickLength = "dickLength"
+    static let fuckDuration = "fuckDuration"
+    static let houseArea = "houseArea"
+    static let bust = "bust"
+    static let waistline = "waistline"
+    static let hipline = "hipline"
+    static let annualIncome = "annualIncome"
+    static let sexualOrientation = "sexualOrientation"
+    static let transvestism = "transvestism"
+    static let tofuCurdTaste = "tofuCurdTaste"
+    static let loveGames = "loveGames"
+    static let stayWebs = "stayWebs"
+    static let preferredTopics = "preferredTopics"
+    
+    static let pId = "pId"
+    
+    //MARK: Address
+    static let address = "address"
+    static let country = "country"
+    static let province = "province"
+    static let city = "city"
+    static let region = "region"
+    static let street = "street"
+    static let roomNo = "roomNo"
+    static let postcode = "postcode"
+    static let areaCode = "areaCode"
+    
+    //MARK: Message
+    static let detail = "detail"
+    static let blogType = "blogType"
+    static let thumbnail = "thumbnail"
+    static let images = "images"
+    static let videos = "videos"
+    static let share = "share"
+    static let like = "like"
+    static let liked = "liked"
+    static let comment = "comment"
+    
+    //MARK: News
+    static let base = "base"
+    static let docID = "docID"
+    static let source = "source"
+    static let count = "count"
+    static let mediaTypes = "mediaTypes"
+    static let jsonCallback = "jsoncallback"
+    static let callback = "callback"
+    static let code = "code"
+    static let data = "data"
+    static let cb = "_cb"
+    static let t = "_t"
+    static let key = "key"
+    
+    //MARK: MAP
+    static let distance = "distance"
+    static let interval = "interval"
 }

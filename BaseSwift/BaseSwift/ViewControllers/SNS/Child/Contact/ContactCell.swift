@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class ContactCell: UITableViewCell {
     var contactType: UserModel.SNSType = .single
@@ -83,7 +83,7 @@ class ContactCell: UITableViewCell {
         nameLabel.frame =
             CGRect(x,
                       (ContactCell.height(contactType) - ContactCell.nameHeight) / 2.0,
-                      ScreenWidth() - x - ContactCell.headPortraitMargin,
+                      ScreenWidth - x - ContactCell.headPortraitMargin,
                       ContactCell.nameHeight)
     }
     
@@ -110,14 +110,14 @@ class ContactCell: UITableViewCell {
                 headPortraitImageView?.contentMode = .scaleAspectFit
         })
         
-        if !Common.isEmptyString(model.remarkName) {
+        if !isEmptyString(model.remarkName) {
             nameLabel.text = model.remarkName
-        } else if !Common.isEmptyString(model.nickname) {
+        } else if !isEmptyString(model.nickname) {
             nameLabel.text = model.nickname
-        } else if !Common.isEmptyString(model.userName) {
+        } else if !isEmptyString(model.userName) {
             nameLabel.text = model.userName
         } else {
-            nameLabel.text = EmptyString
+            nameLabel.text = ""
         }
         layoutView()
     }

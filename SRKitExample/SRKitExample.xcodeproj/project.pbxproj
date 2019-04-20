@@ -65,8 +65,7 @@
 		4E7575F62264513000394408 /* SRBaseBusinessComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B02264513000394408 /* SRBaseBusinessComponent.swift */; };
 		4E7575F72264513000394408 /* UIViewController+SRBaseBusiness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B12264513000394408 /* UIViewController+SRBaseBusiness.swift */; };
 		4E7575F82264513000394408 /* SRBaseKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B22264513000394408 /* SRBaseKeyboard.swift */; };
-		4E7575F92264513000394408 /* SRBaseConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B32264513000394408 /* SRBaseConfigs.swift */; };
-		4E7575FA2264513000394408 /* SRCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B42264513000394408 /* SRCommon.swift */; };
+		4E7575F92264513000394408 /* SRBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B32264513000394408 /* SRBase.swift */; };
 		4E7575FB2264513000394408 /* SRLoadDataStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B52264513000394408 /* SRLoadDataStateView.swift */; };
 		4E7575FC2264513000394408 /* SRWebpageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B62264513000394408 /* SRWebpageViewController.swift */; };
 		4E7575FD2264513000394408 /* SRBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B72264513000394408 /* SRBaseViewController.swift */; };
@@ -85,8 +84,7 @@
 		4E75761F226452D200394408 /* SRBaseBusinessComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B02264513000394408 /* SRBaseBusinessComponent.swift */; };
 		4E757620226452D200394408 /* UIViewController+SRBaseBusiness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B12264513000394408 /* UIViewController+SRBaseBusiness.swift */; };
 		4E757621226452D200394408 /* SRBaseKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B22264513000394408 /* SRBaseKeyboard.swift */; };
-		4E757622226452D200394408 /* SRBaseConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B32264513000394408 /* SRBaseConfigs.swift */; };
-		4E757623226452D200394408 /* SRCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B42264513000394408 /* SRCommon.swift */; };
+		4E757622226452D200394408 /* SRBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B32264513000394408 /* SRBase.swift */; };
 		4E757624226452D200394408 /* SRLoadDataStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B52264513000394408 /* SRLoadDataStateView.swift */; };
 		4E757625226452D200394408 /* SRWebpageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B62264513000394408 /* SRWebpageViewController.swift */; };
 		4E757626226452D200394408 /* SRBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B72264513000394408 /* SRBaseViewController.swift */; };
@@ -147,12 +145,18 @@
 		4E75766E22657E2600394408 /* SRKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4E75757F2264512F00394408 /* SRKit.bundle */; };
 		4E75767222659A4A00394408 /* NullSafe.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E75767122659A4900394408 /* NullSafe.m */; };
 		4E75767322659AA500394408 /* NullSafe.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E75767122659A4900394408 /* NullSafe.m */; };
-		A5104DEA3118418F93105A49 /* Pods_SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A386E2D1C6EF5AC234E955BD /* Pods_SRKit.framework */; };
-		F8E51B3501E877A5D9494F8C /* Pods_SRKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA77988C4AE589F48B42D073 /* Pods_SRKitExample.framework */; };
+		4E770B5B22680F1600D06831 /* SRLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E770B5A22680F1600D06831 /* SRLog.swift */; };
+		4E770B5C22684CB300D06831 /* SRLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E770B5A22680F1600D06831 /* SRLog.swift */; };
+		A8BAEDC97DA95DBF9A1FF5D4 /* Pods_SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */; };
+		E92A0E02B846C914E90C70A4 /* Pods_SRKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DA932185FB8547E0BCF3D00 /* Pods_SRKitExample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		18E447EB153270950130C9EA /* Pods-SRKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKitExample.release.xcconfig"; path = "Target Support Files/Pods-SRKitExample/Pods-SRKitExample.release.xcconfig"; sourceTree = "<group>"; };
+		1A32AF1ACC95A4915FE66BBE /* Pods-abstract_pods-SRKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKitExample.release.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKitExample/Pods-abstract_pods-SRKitExample.release.xcconfig"; sourceTree = "<group>"; };
+		33357D879170AD5317BB11D2 /* Pods-abstract_pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKit/Pods-abstract_pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
+		3DA932185FB8547E0BCF3D00 /* Pods_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E7575582264510800394408 /* SRKitExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SRKitExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E75755B2264510800394408 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4E75755D2264510800394408 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -213,8 +217,7 @@
 		4E7575B02264513000394408 /* SRBaseBusinessComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBaseBusinessComponent.swift; sourceTree = "<group>"; };
 		4E7575B12264513000394408 /* UIViewController+SRBaseBusiness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+SRBaseBusiness.swift"; sourceTree = "<group>"; };
 		4E7575B22264513000394408 /* SRBaseKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBaseKeyboard.swift; sourceTree = "<group>"; };
-		4E7575B32264513000394408 /* SRBaseConfigs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBaseConfigs.swift; sourceTree = "<group>"; };
-		4E7575B42264513000394408 /* SRCommon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRCommon.swift; sourceTree = "<group>"; };
+		4E7575B32264513000394408 /* SRBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBase.swift; sourceTree = "<group>"; };
 		4E7575B52264513000394408 /* SRLoadDataStateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRLoadDataStateView.swift; sourceTree = "<group>"; };
 		4E7575B62264513000394408 /* SRWebpageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRWebpageViewController.swift; sourceTree = "<group>"; };
 		4E7575B72264513000394408 /* SRBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBaseViewController.swift; sourceTree = "<group>"; };
@@ -231,11 +234,12 @@
 		4E7576112264525700394408 /* SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E7576142264525800394408 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E75767122659A4900394408 /* NullSafe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NullSafe.m; sourceTree = "<group>"; };
+		4E770B5A22680F1600D06831 /* SRLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRLog.swift; sourceTree = "<group>"; };
 		585A6469429ADC0C53AE68C7 /* Pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-SRKit/Pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
-		A386E2D1C6EF5AC234E955BD /* Pods_SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA77988C4AE589F48B42D073 /* Pods_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBC7E620349953CE06D68FB4 /* Pods-abstract_pods-SRKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKitExample.debug.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKitExample/Pods-abstract_pods-SRKitExample.debug.xcconfig"; sourceTree = "<group>"; };
 		BF3538143421F07B2D2AE675 /* Pods-SRKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKitExample.debug.xcconfig"; path = "Target Support Files/Pods-SRKitExample/Pods-SRKitExample.debug.xcconfig"; sourceTree = "<group>"; };
 		C29A230CD8EE950F7B5E752D /* Pods-SRKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit.release.xcconfig"; path = "Target Support Files/Pods-SRKit/Pods-SRKit.release.xcconfig"; sourceTree = "<group>"; };
+		FDB5F1E21D37DD84CF4CD7A3 /* Pods-abstract_pods-SRKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKit.release.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKit/Pods-abstract_pods-SRKit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,7 +247,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8E51B3501E877A5D9494F8C /* Pods_SRKitExample.framework in Frameworks */,
+				E92A0E02B846C914E90C70A4 /* Pods_SRKitExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,7 +255,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5104DEA3118418F93105A49 /* Pods_SRKit.framework in Frameworks */,
+				A8BAEDC97DA95DBF9A1FF5D4 /* Pods_SRKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,6 +310,7 @@
 				4E75759E2264512F00394408 /* SRHttp */,
 				4E7575982264512F00394408 /* SRIndexPath */,
 				4E7575BE2264513000394408 /* SRKeyboardManager */,
+				4E770B5922680EED00D06831 /* SRLog */,
 				4E75756F2264512F00394408 /* SRMJRefresh */,
 				4E75759C2264512F00394408 /* SRModalViewController */,
 				4E7575712264512F00394408 /* SRModel */,
@@ -470,11 +475,10 @@
 		4E7575AE2264513000394408 /* SRBase */ = {
 			isa = PBXGroup;
 			children = (
+				4E7575B32264513000394408 /* SRBase.swift */,
 				4E7575B02264513000394408 /* SRBaseBusinessComponent.swift */,
-				4E7575B32264513000394408 /* SRBaseConfigs.swift */,
 				4E7575B22264513000394408 /* SRBaseKeyboard.swift */,
 				4E7575B72264513000394408 /* SRBaseViewController.swift */,
-				4E7575B42264513000394408 /* SRCommon.swift */,
 				4E7575B52264513000394408 /* SRLoadDataStateView.swift */,
 				4E7575AF2264513000394408 /* SRProgressComponent.swift */,
 				4E7575B62264513000394408 /* SRWebpageViewController.swift */,
@@ -535,6 +539,14 @@
 			path = NullSafe;
 			sourceTree = "<group>";
 		};
+		4E770B5922680EED00D06831 /* SRLog */ = {
+			isa = PBXGroup;
+			children = (
+				4E770B5A22680F1600D06831 /* SRLog.swift */,
+			);
+			path = SRLog;
+			sourceTree = "<group>";
+		};
 		6D4DD75DD5D3183F65C2A873 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -542,6 +554,10 @@
 				C29A230CD8EE950F7B5E752D /* Pods-SRKit.release.xcconfig */,
 				BF3538143421F07B2D2AE675 /* Pods-SRKitExample.debug.xcconfig */,
 				18E447EB153270950130C9EA /* Pods-SRKitExample.release.xcconfig */,
+				33357D879170AD5317BB11D2 /* Pods-abstract_pods-SRKit.debug.xcconfig */,
+				FDB5F1E21D37DD84CF4CD7A3 /* Pods-abstract_pods-SRKit.release.xcconfig */,
+				BBC7E620349953CE06D68FB4 /* Pods-abstract_pods-SRKitExample.debug.xcconfig */,
+				1A32AF1ACC95A4915FE66BBE /* Pods-abstract_pods-SRKitExample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -549,8 +565,8 @@
 		E28088720C99F65CE996C670 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A386E2D1C6EF5AC234E955BD /* Pods_SRKit.framework */,
-				AA77988C4AE589F48B42D073 /* Pods_SRKitExample.framework */,
+				4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */,
+				3DA932185FB8547E0BCF3D00 /* Pods_SRKitExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -598,6 +614,7 @@
 				4E75760D2264525700394408 /* Sources */,
 				4E75760E2264525700394408 /* Frameworks */,
 				4E75760F2264525700394408 /* Resources */,
+				4E770B482267054E00D06831 /* Lipo Create */,
 			);
 			buildRules = (
 			);
@@ -745,6 +762,24 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nbundle_path=${SRCROOT}/SRKitExample/SRKit/SRKit.bundle\nif [[ ! -d \"${bundle_path}\" ]]; then\necho \"SRKit.bundle directory not found\"\nexit 1\nfi\n\nrm -rf \"${bundle_path}/*\"\n\ncp -rf ${SRCROOT}/SRKitExample/*.lproj \"${bundle_path}/\"\nrm -rf \"${bundle_path}/Base.lproj\"\n\ncp -rf ${SRCROOT}/SRKitExample/Assets.xcassets \"${bundle_path}/\"\nrm -rf \"${bundle_path}/Assets.xcassets/*.appiconset\"\nrm -rf \"${bundle_path}/Assets.xcassets/*.launchimage\"\n";
 		};
+		4E770B482267054E00D06831 /* Lipo Create */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Lipo Create";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n";
+		};
 		740D71A51AF3D5289AE13EC1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -785,6 +820,7 @@
 				4E7576032264513000394408 /* SRKeyboardManager.swift in Sources */,
 				4E7575CE2264513000394408 /* SRShareCellView.swift in Sources */,
 				4E7575C92264513000394408 /* SRDivisionPicker.swift in Sources */,
+				4E770B5B22680F1600D06831 /* SRLog.swift in Sources */,
 				4E7575CD2264513000394408 /* SRShareTool.swift in Sources */,
 				4E7575D42264513000394408 /* UIImage+SRExtension.swift in Sources */,
 				4E7575E72264513000394408 /* SRIndexPathTable.swift in Sources */,
@@ -821,14 +857,13 @@
 				4E7575ED2264513000394408 /* SRAlertController.swift in Sources */,
 				4E7575D82264513000394408 /* URL+SRExtension.swift in Sources */,
 				4E7575E62264513000394408 /* SRIndexPath.swift in Sources */,
-				4E7575FA2264513000394408 /* SRCommon.swift in Sources */,
 				4E7576012264513000394408 /* SRVideoRequestTask.swift in Sources */,
 				4E7575C52264513000394408 /* SRModel.swift in Sources */,
 				4E7576052264513000394408 /* SRPopover.swift in Sources */,
 				4E75767222659A4A00394408 /* NullSafe.m in Sources */,
 				4E7575CB2264513000394408 /* SRShareOption.swift in Sources */,
 				4E7575D62264513000394408 /* NotificationCenter+SRExtension.swift in Sources */,
-				4E7575F92264513000394408 /* SRBaseConfigs.swift in Sources */,
+				4E7575F92264513000394408 /* SRBase.swift in Sources */,
 				4E7575F52264513000394408 /* SRProgressComponent.swift in Sources */,
 				4E7575F42264513000394408 /* SRBusinessManager.swift in Sources */,
 				4E7575E92264513000394408 /* SRModalViewController.swift in Sources */,
@@ -849,6 +884,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E770B5C22684CB300D06831 /* SRLog.swift in Sources */,
 				4E75767322659AA500394408 /* NullSafe.m in Sources */,
 				4E75761C226452D200394408 /* SRAlert.swift in Sources */,
 				4E75761D226452D200394408 /* SRAlertController.swift in Sources */,
@@ -856,8 +892,7 @@
 				4E75761F226452D200394408 /* SRBaseBusinessComponent.swift in Sources */,
 				4E757620226452D200394408 /* UIViewController+SRBaseBusiness.swift in Sources */,
 				4E757621226452D200394408 /* SRBaseKeyboard.swift in Sources */,
-				4E757622226452D200394408 /* SRBaseConfigs.swift in Sources */,
-				4E757623226452D200394408 /* SRCommon.swift in Sources */,
+				4E757622226452D200394408 /* SRBase.swift in Sources */,
 				4E757624226452D200394408 /* SRLoadDataStateView.swift in Sources */,
 				4E757625226452D200394408 /* SRWebpageViewController.swift in Sources */,
 				4E757626226452D200394408 /* SRBaseViewController.swift in Sources */,
@@ -1001,7 +1036,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1057,7 +1092,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1117,13 +1152,16 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = SRKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadow.development.SRKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1146,8 +1184,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = SRKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -1,10 +1,10 @@
-/* 
-  Localizable.strings
-  SRKitExample
-
-  Created by Gary on 2019/4/15.
-  Copyright © 2019 Sharow Roland. All rights reserved.
-*/
+/*
+ Localizable.strings
+ SRKitExample
+ 
+ Created by Gary on 2019/4/15.
+ Copyright © 2019 Sharow Roland. All rights reserved.
+ */
 
 //MARK: - Common
 
@@ -35,8 +35,8 @@
 "[SR]Unable to connect to the network, please check your network connection" = "无法连接到网络，请检查网络环境";
 "[SR]Authenticate not setup" = "您尚未设置手机解锁密码或Touch ID，请在手机系统[设置-Touch ID与密码]中设置";
 "[SR]Authenticate localized reason for login" = "请验证您的指纹以完成登录";
-"[SR]Please allow %@ to access your camera in the \"Settings - Privacy - Camera\" option on your phone." = "请在手机的“设置-隐私-相机”选项中，允许%@访问您的相机";
-"[SR]Network request exception" = "网络请求异常！";
+"[SR]Please allow %@ to access your camera in the \"Settings - Privacy - Camera\" option on your phone" = "请在手机的“设置-隐私-相机”选项中，允许%@访问您的相机";
+"[SR]Network request exception" = "网络请求异常";
 "[SR]I guess there are something wrong, you should never see me" = "一定是打开的姿势不对，为什么能看到我？";
 "[SR]Send message" = "发送短信";
 "[SR]The device does not support SMS function" = "该设备不支持短信功能";

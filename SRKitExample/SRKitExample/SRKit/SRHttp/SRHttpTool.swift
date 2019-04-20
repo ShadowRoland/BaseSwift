@@ -10,14 +10,25 @@ import Foundation
 import Alamofire
 
 public class HTTP {
-    static var timeout = 15.0 as TimeInterval //http请求超时时间
-    
+    public static var defaultTimeout = 15.0 as TimeInterval
+    public static var defaultRetryCount = 3
+
     public enum Method<Value> {
         case get(Value?)
         case post(Value?)
         case upload(Value?)
         
-        public var url: String? {
+        public var name: String {
+            switch self {
+            case .get:
+                return "GET"
+                
+            case .post, .upload:
+                return "POST"
+            }
+        }
+        
+        public var url: String {
             switch self {
             case .get(let value):
                 if let url = value as? String {
@@ -44,7 +55,7 @@ public class HTTP {
                 }
             }
             
-            return nil
+            return ""
         }
         
         public var files: Array<ParamDictionary>? {
@@ -78,6 +89,21 @@ public class HTTP {
             public var hashValue: Int { return self.rawValue.hashValue }
         }
         
+        public struct Option: Equatable, Hashable, RawRepresentable {
+            public typealias RawValue = String
+            public var rawValue: String
+            
+            public init(_ rawValue: String) {
+                self.rawValue = rawValue
+            }
+            
+            public init(rawValue: String) {
+                self.rawValue = rawValue
+            }
+            
+            public var hashValue: Int { return self.rawValue.hashValue }
+        }
+        
         public struct Response { //需要和服务器端的返回字段保持一致，可定制
             public static var data = "data" //http请求返回的数据
             public static var errorCode = "code"  //http请求返回的错误码，非stateCode
@@ -95,6 +121,11 @@ extension HTTP.Key.Request {
     public static let files = HTTP.Key.Request("request.files")
     public static let sender = HTTP.Key.Request("request.sender")
     public static let retryLeft = HTTP.Key.Request("request.retryLeft")
+}
+
+extension HTTP.Key.Option {
+    public static let timeout = HTTP.Key.Option("option.timeout")
+    public static let retryCount = HTTP.Key.Option("option.retryCount")
 }
 
 public extension DataRequest {
@@ -116,7 +147,6 @@ public extension DataRequest {
 }
 
 public class SRHttpTool {
-    public var tag = 0
     public var queue: DispatchQueue!
     public var retryCount = 0
     public var manager: Alamofire.SessionManager!

@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class ChatViewController: RCConversationViewController {
     var nickname: String?
@@ -15,8 +15,8 @@ class ChatViewController: RCConversationViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        var setting = NavigartionBar.buttonFullSetting //获取带全属性的按钮字典
-        setting[.style] = NavigartionBar.ButtonItemStyle.image //设置按钮的风格为纯图片
+        var setting = NavigationBar.buttonFullSetting //获取带全属性的按钮字典
+        setting[.style] = NavigationBar.ButtonItemStyle.image //设置按钮的风格为纯图片
         setting[.image] = UIImage("page_back")
         navBarLeftButtonSettings = [setting]
     }
@@ -33,17 +33,17 @@ class ChatViewController: RCConversationViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    public var navBarLeftButtonSettings: [[NavigartionBar.ButtonItemKey : Any]]? {
+    public var navBarLeftButtonSettings: [[NavigationBar.ButtonItemKey : Any]]? {
         didSet {
             guard let settings = navBarLeftButtonSettings, !settings.isEmpty else {
                 return
             }
             
             let items = (0 ..< settings.count).compactMap {
-                BaseCommon.navigationBarButtonItem(settings[$0],
-                                                   target: self,
-                                                   action: #selector(pageBack),
-                                                   tag: $0)
+                NavigationBar.buttonItem(settings[$0],
+                                         target: self,
+                                         action: #selector(pageBack),
+                                         tag: $0)
             }
             
             navigationItem.backBarButtonItem = nil

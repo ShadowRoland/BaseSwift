@@ -6,9 +6,8 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import Cartography
-import SDWebImage
 import TBIconTransitionKit
 //import Spring
 
@@ -87,7 +86,7 @@ SRTabHeaderDelegate {
             channelEditBackgroundView.frame =
                 CGRect(0,
                        tabScrollHeaderView.frame.origin.y,
-                       ScreenWidth(),
+                       ScreenWidth,
                        view.height - tabScrollHeaderView.frame.origin.y)
             channelEditBackgroundBlurView.frame = channelEditBackgroundView.bounds
             channelEditView.frame = channelEditBackgroundView.frame
@@ -147,7 +146,7 @@ SRTabHeaderDelegate {
     
     func initTabScrollHeader() {
         tabScrollHeaderBlurView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-        //tabScrollHeaderBlurView.frame = CGRect(0, 0, ScreenWidth(), Const.tabScrollHeaderHeight)
+        //tabScrollHeaderBlurView.frame = CGRect(0, 0, ScreenWidth, Const.tabScrollHeaderHeight)
         tabScrollHeaderView.backgroundColor = UIColor(white: 1.0, alpha: 0.6)
         tabScrollHeaderView.insertSubview(tabScrollHeaderBlurView, belowSubview: tabAddGradientView)
         constrain(tabScrollHeaderBlurView) { $0.edges == inset($0.superview!.edges, 0) }
@@ -191,7 +190,7 @@ SRTabHeaderDelegate {
             dictionary = newsChannels as? [AnyHashable : Any]
         } else {
             let filePath = ResourceDirectory.appending(pathComponent: "json/debug/channels.json")
-            dictionary = Common.readJsonFile(filePath) as! [AnyHashable : Any]?
+            dictionary = filePath.fileJsonObject as! [AnyHashable : Any]?
         }
         
         unselectedChannels = channelModels(NonNull.array(dictionary?["unselected"]))
@@ -205,11 +204,10 @@ SRTabHeaderDelegate {
                     return nil
             }
             channel.cellHeight = Const.channelLabelFont.lineHeight + 2.0 * Const.channelLabelMarginVertical
-            var width = Common.fitSize(channel.name,
-                                       font: Const.channelLabelFont,
-                                       maxHeight: Const.channelLabelFont.lineHeight).width
+            var width = (channel.name ?? "").textSize(Const.channelLabelFont,
+                                                      maxHeight: Const.channelLabelFont.lineHeight).width
             width = max(Const.channelLabelFont.lineHeight, ceil(width))
-            width = min(Common.screenSize().width - Const.channelLabelTotalMarginHorizontal, width)
+            width = min(screenSize().width - Const.channelLabelTotalMarginHorizontal, width)
             channel.cellWidth = width + 2.0 * Const.channelLabelMarginHorizontal
             return channel
         }
@@ -264,14 +262,14 @@ SRTabHeaderDelegate {
     
     public class func createNewsListVC(_ channel: ChannelModel) -> NewsListViewController {
         let vc =
-            Common.viewController("NewsListViewController",
+            UIViewController.viewController("NewsListViewController",
                                   storyboard: "News") as! NewsListViewController
         vc.channelId = channel.id
         
         //设置不同参数以尽量让每个分页显示不同的新闻
-        var params = EmptyParams()
-        params[ParamKey.jsonCallback] = "callback"
-        params[ParamKey.callback] = "callback"
+        var params = [:]
+        params[Param.Key.jsonCallback] = "callback"
+        params[Param.Key.callback] = "callback"
         var newsType = "news"
         var id = 0
         if let channelId = vc.channelId, let intValue = Int(channelId) {
@@ -292,31 +290,31 @@ SRTabHeaderDelegate {
         case 5:
             //http://interface.sina.cn/ent/feed.d.json?ch=edu&col=edu&show_num=20&page=2&act=more&jsoncallback=callbackFunction&_=1483427071299&callback=jsonp1
             newsType = "edu" //新浪教育
-            params[ParamKey.jsonCallback] = "callbackFunction"
-            params[ParamKey.callback] = "jsonp1"
+            params[Param.Key.jsonCallback] = "callbackFunction"
+            params[Param.Key.callback] = "jsonp1"
         case 6:
             //http://interface.sina.cn/ent/feed.d.json?ch=blog&col=blog&act=more&jsoncallback=jsonpCallback_0&t=1483427113039&show_num=10&page=2&_=1483427113040&callback=jsonp2
             newsType = "blog" //新浪博客
-            params[ParamKey.jsonCallback] = "jsonpCallback_0"
-            params[ParamKey.callback] = "jsonp2"
+            params[Param.Key.jsonCallback] = "jsonpCallback_0"
+            params[Param.Key.callback] = "jsonp2"
         case 76:
             //https://interface.sina.cn/ent/feed.d.json?ch=tech&col=tech&act=more&t=1483427997896&show_num=10&page=2&jsoncallback=callback&_=1483427997899&callback=callback
             newsType = "tech" //新浪科技
         case 8:
             //http://interface.sina.cn/ent/feed.d.json?ch=fashion&col=fashion&show_num=20&page=2&act=more&jsoncallback=callbackFunction&_=1483428211812&callback=jsonp1
             newsType = "fashion" //新浪时尚
-            params[ParamKey.jsonCallback] = "callbackFunction"
-            params[ParamKey.callback] = "jsonp1"
+            params[Param.Key.jsonCallback] = "callbackFunction"
+            params[Param.Key.callback] = "jsonp1"
         case 9:
             //http://interface.sina.cn/ent/feed.d.json?ch=ast&col=ast&show_num=20&page=2&act=more&jsoncallback=callbackFunction&_=1483428277357&callback=jsonp1
             newsType = "ast" //新浪星座
-            params[ParamKey.jsonCallback] = "callbackFunction"
-            params[ParamKey.callback] = "jsonp1"
+            params[Param.Key.jsonCallback] = "callbackFunction"
+            params[Param.Key.callback] = "jsonp1"
         case 10:
             //http://interface.sina.cn/ent/feed.d.json?ch=eladies&col=eladies&show_num=20&page=2&act=more&jsoncallback=callbackFunction&_=1483428333950&callback=jsonp1
             newsType = "eladies" //新浪女性
-            params[ParamKey.jsonCallback] = "callbackFunction"
-            params[ParamKey.callback] = "jsonp1"
+            params[Param.Key.jsonCallback] = "callbackFunction"
+            params[Param.Key.callback] = "jsonp1"
         default:
             break
         }
@@ -331,9 +329,9 @@ SRTabHeaderDelegate {
         let count = newsListVCs.count
         for i in 0 ..< count {
             let vc = newsListVCs[i]
-            vc.view.frame = CGRect(CGFloat(i) * ScreenWidth(),
+            vc.view.frame = CGRect(CGFloat(i) * ScreenWidth,
                                    0,
-                                   ScreenWidth(),
+                                   ScreenWidth,
                                    scrollView.height)
             vc.tableView.contentInset =
                 UIEdgeInsets(top: Const.tabScrollHeaderHeight, left: 0, bottom: TabBarHeight, right: 0)
@@ -342,9 +340,9 @@ SRTabHeaderDelegate {
                 selectedIndex = i
             }
         }
-        scrollView.contentSize = CGSize(ScreenWidth() * CGFloat(count),
+        scrollView.contentSize = CGSize(ScreenWidth * CGFloat(count),
                                         scrollView.height)
-        scrollView.setContentOffset(CGPoint(ScreenWidth() * CGFloat(selectedIndex), 0),
+        scrollView.setContentOffset(CGPoint(ScreenWidth * CGFloat(selectedIndex), 0),
                                     animated: false)
         currentNewsListVC = newsListVCs[selectedIndex]
     }
@@ -378,7 +376,7 @@ SRTabHeaderDelegate {
         channelEditBackgroundView.frame =
             CGRect(0,
                    tabScrollHeaderView.frame.origin.y,
-                   ScreenWidth(),
+                   ScreenWidth,
                    view.height - tabScrollHeaderView.frame.origin.y)
         channelEditBackgroundBlurView.frame = channelEditBackgroundView.bounds
         
@@ -483,12 +481,12 @@ SRTabHeaderDelegate {
     }
     
     @IBAction func clickSearchButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         show("NewsSearchViewController", storyboard: "News")
     }
     
     @IBAction func clickTabAddButton(_ sender: Any) {
-        guard Common.mutexTouch() && !isEditViewAnimating else { return }
+        guard MutexTouch && !isEditViewAnimating else { return }
         
         if !isEditViewShowing {
             showChannelEditView()
@@ -528,7 +526,7 @@ SRTabHeaderDelegate {
     }
     
     @objc func clickChannelEditButton(_ sender: Any) {
-        guard Common.mutexTouch() && !isEditViewAnimating else { return }
+        guard MutexTouch && !isEditViewAnimating else { return }
         if isChannelsEditing {
             isChannelsEdited = true
         }
@@ -537,7 +535,7 @@ SRTabHeaderDelegate {
     }
     
     @objc func clickChannelCloseButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         let indexPath = IndexPath(row: (sender as! UIButton).tag, section: 0)
         let channel = editingSelectedChannels[indexPath.row]
         editingSelectedChannels.remove(at: indexPath.row)
@@ -552,7 +550,7 @@ SRTabHeaderDelegate {
     //MARK: - SRTabHeaderDelegate
     
     func tabHeader(_ tabHeader: SRTabHeader, didSelect index: Int) {
-        let page = Int(scrollView.contentOffset.x / ScreenWidth())
+        let page = Int(scrollView.contentOffset.x / ScreenWidth)
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
@@ -561,7 +559,7 @@ SRTabHeaderDelegate {
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
             isSilent = animated
-            scrollView.setContentOffset(CGPoint(CGFloat(index) * ScreenWidth(), 0),
+            scrollView.setContentOffset(CGPoint(CGFloat(index) * ScreenWidth, 0),
                                         animated: animated)
             if !animated {
                 currentNewsListVC = newsListVCs[index]
@@ -579,10 +577,10 @@ SRTabHeaderDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !isSilent {
-            var page = Int(scrollView.contentOffset.x / ScreenWidth())
+            var page = Int(scrollView.contentOffset.x / ScreenWidth)
             page = max(0, page)
             var offsetRate =
-                (scrollView.contentOffset.x - CGFloat(page) * ScreenWidth()) / ScreenWidth() //向右偏移的比率
+                (scrollView.contentOffset.x - CGFloat(page) * ScreenWidth) / ScreenWidth //向右偏移的比率
             offsetRate = max(0, offsetRate)
             offsetRate = min(1.0, offsetRate)
             tabScrollHeader.update(page, offsetRate: offsetRate)
@@ -606,7 +604,7 @@ SRTabHeaderDelegate {
     }
     
     func resetAfterScrollViewDidEndScroll(_ scrollView: UIScrollView) {
-        let index = Int(scrollView.contentOffset.x / ScreenWidth())
+        let index = Int(scrollView.contentOffset.x / ScreenWidth)
         tabScrollHeader.activeTab(index, animated: true)
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
@@ -758,7 +756,7 @@ SRTabHeaderDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        guard Common.mutexTouch() && !isEditViewAnimating else { return }
+        guard MutexTouch && !isEditViewAnimating else { return }
         
         if !isChannelsEditing && indexPath.section == 0 {
             let channel = editingSelectedChannels[indexPath.row]

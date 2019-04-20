@@ -6,9 +6,8 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import MJRefresh
-import SDWebImage
 
 protocol NewsListDelegate: class {
     func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController)
@@ -29,8 +28,8 @@ class NewsListViewController: BaseViewController {
     var contentInset = UIEdgeInsets()
     private(set) var currentOffset = 0
     
-    var noDataView = LoadDataStateView(.empty)
-    var loadDataFailView = LoadDataStateView(.fail)
+    var noDataView = SRLoadDataStateView(.empty)
+    var loadDataFailView = SRLoadDataStateView(.fail)
     
     var channelId: String?
     var dataArray: [SinaNewsModel] = []
@@ -109,7 +108,7 @@ class NewsListViewController: BaseViewController {
             return
         }
         
-        dataArray = NonNull.array(dictionary[HttpKey.Response.data]) as! [SinaNewsModel]
+        dataArray = NonNull.array(dictionary[HTTP.Key.Response.data]) as! [SinaNewsModel]
         guard !dataArray.isEmpty else { //没有数据
             showNoDataView()
             return
@@ -143,7 +142,7 @@ class NewsListViewController: BaseViewController {
             return
         }
         
-        let list = NonNull.array(dictionary[HttpKey.Response.data]) as! [SinaNewsModel]
+        let list = NonNull.array(dictionary[HTTP.Key.Response.data]) as! [SinaNewsModel]
         if list.isEmpty {
             tableView.mj_footer.endRefreshingWithNoMoreData()
         } else {
@@ -200,7 +199,7 @@ class NewsListViewController: BaseViewController {
         tableView.setContentOffset(CGPoint(0, -tableView.contentInset.top), animated: true)
     }
     
-    //MARK: - LoadDataStateDelegate
+    //MARK: - SRLoadDataStateDelegate
     
     override func retryLoadData() {
         loadData(.new, progressType: .opaqueMask)
@@ -249,7 +248,7 @@ extension NewsListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         delegate?.newsListVC(self, didSelect: dataArray[indexPath.row])
     }
     

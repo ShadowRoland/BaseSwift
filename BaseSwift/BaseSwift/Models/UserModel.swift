@@ -6,10 +6,10 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-open class UserModel: BusinessModel {
+open class UserModel: SRBusinessModel {
     enum UserStatus: EnumInt {
         case normal = 0
         case vip = 1
@@ -36,17 +36,17 @@ open class UserModel: BusinessModel {
     var status: UserStatus = .normal
     var gender: Gender? //性别，0为男性，非0为女性，nil为未知
     
-    override public func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
-        userId <- map[ParamKey.userId]
-        userName <- map[ParamKey.userName]
-        headPortrait <- map[ParamKey.headPortrait]
-        nickname <- map[ParamKey.nickname]
-        letter <- map[ParamKey.letter]
-        userName <- map[ParamKey.userName]
-        type <- map[ParamKey.type]
-        status <- map[ParamKey.status]
-        gender <- map[ParamKey.gender]
+        userId <- map[Param.Key.userId]
+        userName <- map[Param.Key.userName]
+        headPortrait <- map[Param.Key.headPortrait]
+        nickname <- map[Param.Key.nickname]
+        letter <- map[Param.Key.letter]
+        userName <- map[Param.Key.userName]
+        type <- map[Param.Key.type]
+        status <- map[Param.Key.status]
+        gender <- map[Param.Key.gender]
     }
 }

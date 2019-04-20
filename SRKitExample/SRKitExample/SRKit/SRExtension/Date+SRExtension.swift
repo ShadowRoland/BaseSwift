@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 public extension Date {
     func components(_ identifier: Calendar.Identifier = .gregorian) -> DateComponents {
@@ -37,5 +38,25 @@ public extension Date {
         default:
             return 31;
         }
+    }
+}
+
+public extension Date {
+    static func dataFromJsonObject(_ jsonObject: Any?) -> Data? {
+        guard let jsonObject = jsonObject else { return nil }
+        
+        var data: Data?
+        do {
+            //try data = JSONSerialization.data(withJSONObject: jsonObject,
+            //                                  options: .prettyPrinted)
+            try data = JSON(jsonObject).rawData()
+        } catch {
+            LogError(String(format: "JSON object to data by SwiftyJSON failed! \nError: %@\nJSON object: %@",
+                            error.localizedDescription,
+                            jsonObject as? CVarArg ?? ""))
+            return nil
+        }
+        
+        return data
     }
 }

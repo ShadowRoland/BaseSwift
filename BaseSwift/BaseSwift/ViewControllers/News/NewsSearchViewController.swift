@@ -6,10 +6,8 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import Cartography
-import SDWebImage
-import SwiftyJSON
 
 class NewsSearchViewController: BaseViewController {
     enum PageStatus {
@@ -63,7 +61,7 @@ class NewsSearchViewController: BaseViewController {
         updateTableHeaderView()
         tableView.tableFooterView = UIView()
         
-        let channel = ChannelModel(JSON: [ParamKey.id : String(int: Int.random(in: 1 ..< 10000))])!
+        let channel = ChannelModel(JSON: [Param.Key.id : String(int: Int.random(in: 1 ..< 10000))])!
         newsListVC = NewsMainViewController.createNewsListVC(channel)
         newsListVC.delegate = self
         addChild(newsListVC)
@@ -117,14 +115,14 @@ class NewsSearchViewController: BaseViewController {
     
     func getSearchSuggestions(_ key: String) {
         var params = ["ver" : "1", "Refer" : "sina_sug"]
-        params[ParamKey.cb] =
+        params[Param.Key.cb] =
             "func_" + String(longLong: CLongLong(Date().timeIntervalSince1970 * 1000))
-        params[ParamKey.t] = String(float: Float(Int.random(in: 1 ..< 10000)) / 10000.0)
-        params[ParamKey.key] = key
+        params[Param.Key.t] = String(float: Float(Int.random(in: 1 ..< 10000)) / 10000.0)
+        params[Param.Key.key] = key
         //httpReq(.get(.newsSuggestions), params, userInfo, url : "http://s.weibo.com")
-        httpRequest(.get(.newsSuggestions), success: { response in
+        httpRequest(.get("http://interface.sina.cn/ajax/jsonp/suggestion"), success: { response in
             guard let json = response as? JSON,
-                let array = json[ParamKey.data].rawValue as? [String],
+                let array = json[Param.Key.data].rawValue as? [String],
                 self.pageStatus == .inputing else {
                     return
             }
@@ -169,7 +167,7 @@ class NewsSearchViewController: BaseViewController {
     //MARK: - 事件响应
     
     @objc func clickHistoryDeleteButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         if let button = sender as? UIButton, button.tag >= 0, button.tag < history.count {
             history.remove(at: button.tag)
             UserStandard[USKey.searchSuggestionHistory] = history
@@ -179,11 +177,11 @@ class NewsSearchViewController: BaseViewController {
     }
     
     @IBAction func clickClearHistoryButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         Keyboard.hide()
         let alert = SRAlert()
         alert.addButton("OK".localized,
-                        backgroundColor: NavigartionBar.backgroundColor,
+                        backgroundColor: NavigationBar.backgroundColor,
                         action:
             { [weak self] in
                 self?.history.removeAll()
@@ -193,7 +191,7 @@ class NewsSearchViewController: BaseViewController {
         })
         alert.show(.notice,
                    title: "Confirm clear all search history?".localized,
-                   message: EmptyString,
+                   message: "",
                    closeButtonTitle: "Cancel".localized)
     }
 }
@@ -222,7 +220,7 @@ extension NewsSearchViewController: UISearchBarDelegate {
     }
     
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) { // called when text changes (including clear)
-        guard !Common.isEmptyString(searchText) else {
+        guard !isEmptyString(searchText) else {
             pageStatus = .history
             updateTableHeaderView()
             tableView.reloadData()
@@ -240,8 +238,8 @@ extension NewsSearchViewController: UISearchBarDelegate {
     }
     
     public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) { // called when keyboard search button pressed
-        guard !Common.isEmptyString(searchBar.text) else {
-            Common.showToast("Please enter the text you want to search for".localized)
+        guard !isEmptyString(searchBar.text) else {
+            SRAlert.showToast("Please enter the text you want to search for".localized)
             return
         }
         enableSearchBarCancelButton()
@@ -284,10 +282,10 @@ extension NewsSearchViewController: NewsListDelegate {
         let offset = loadType == .more ? sendVC.currentOffset + 1 : 0
         params["page"] = String(int: offset + 1)
         //httpReq(.get(.sinaNewsList), params, userInfo, url: "http://interface.sina.cn")
-        httpRequest(.get(.sinaNewsList), success: { response in
+        httpRequest(.get("http://interface.sina.cn/ent/feed.d.json"), success: { response in
             let responseData = NonNull.dictionary(response)
             if .more == loadType {
-                let offset = Int(params[ParamKey.offset] as! String)
+                let offset = Int(params[Param.Key.offset] as! String)
                 if offset == self.newsListVC.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                     self.newsListVC.updateMore(responseData)
                 }
@@ -296,7 +294,7 @@ extension NewsSearchViewController: NewsListDelegate {
             }
         }, bfail: { response in
             if .more == loadType {
-                let offset = Int(params[ParamKey.offset] as! String)
+                let offset = Int(params[Param.Key.offset] as! String)
                 if offset == self.newsListVC.currentOffset + 1 {
                     return
                 }
@@ -311,7 +309,7 @@ extension NewsSearchViewController: NewsListDelegate {
             }
         }, fail: { error in
             if .more == loadType {
-                let offset = Int(params[ParamKey.offset] as! String)
+                let offset = Int(params[Param.Key.offset] as! String)
                 if offset == self.newsListVC.currentOffset + 1 {
                     if !self.newsListVC.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                         self.newsListVC.updateMore(nil)
@@ -363,10 +361,10 @@ extension NewsSearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         if let cell = tableView.cellForRow(at: indexPath),
             let label = cell.contentView.viewWithTag(Const.cellTextLabelTag) as? UILabel,
-            !Common.isEmptyString(label.text) {
+            !isEmptyString(label.text) {
             updateHistory(label.text!)
             searchBar.text = label.text
             Keyboard.hide { [weak self] in

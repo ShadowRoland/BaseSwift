@@ -6,8 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
-import SwiftyJSON
+import SRKit
 
 class ResetPasswordViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -58,7 +57,7 @@ class ResetPasswordViewController: BaseViewController {
         
         defaultNavigationBar("Reset Password".localized)
         resetPasswordType = params.isEmpty ? .password : .smsCode
-        Common.change(submitButton: submitButton, enabled: false)
+        submitButton.set(submit: false)
     }
     
     override func didReceiveMemoryWarning() {
@@ -71,12 +70,12 @@ class ResetPasswordViewController: BaseViewController {
     //MARK: - 业务处理
     
     func checkSubmitButtonEnabled() -> Bool {
-        if resetPasswordType == .password && Common.isEmptyString(passwordTextField.text) {
+        if resetPasswordType == .password && isEmptyString(passwordTextField.text) {
             return false
         }
         
-        guard !Common.isEmptyString(newPasswordTextField.text),
-            !Common.isEmptyString(confirmPasswordTextField.text) else {
+        guard !isEmptyString(newPasswordTextField.text),
+            !isEmptyString(confirmPasswordTextField.text) else {
                 return false
         }
         
@@ -87,24 +86,24 @@ class ResetPasswordViewController: BaseViewController {
     
     @objc func textFieldEditingChanged(_ notification: Notification?) {
         if submitButton.isEnabled != checkSubmitButtonEnabled() {
-            Common.change(submitButton: submitButton, enabled: checkSubmitButtonEnabled())
+            submitButton.set(submit: checkSubmitButtonEnabled())
         }
     }
     
     @IBAction func clickSubmitButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         if resetPasswordType == .password && !passwordTextField.text!.isPassword {
-            Common.showToast("Please enter the correct password!".localized)
+            SRAlert.showToast("Please enter the correct password!".localized)
             return
         }
         
         if !newPasswordTextField.text!.isPassword {
-            Common.showToast("Please enter the correct new password!".localized)
+            SRAlert.showToast("Please enter the correct new password!".localized)
             return
         }
         
         if newPasswordTextField.text! != confirmPasswordTextField.text {
-            Common.showToast("The password you enter twice must be the same!".localized)
+            SRAlert.showToast("The password you enter twice must be the same!".localized)
             return
         }
         
@@ -113,39 +112,36 @@ class ResetPasswordViewController: BaseViewController {
             var params: ParamDictionary?
             if self.resetPasswordType == .smsCode {
                 params = self.params
-                params?[ParamKey.type] = ResetPasswordType.smsCode.rawValue
-                params?[ParamKey.newPassword] = self.newPasswordTextField.text!
+                params?[Param.Key.type] = ResetPasswordType.smsCode.rawValue
+                params?[Param.Key.newPassword] = self.newPasswordTextField.text!
             } else {
-                params = [ParamKey.type : ResetPasswordType.password.rawValue,
-                          ParamKey.password : self.passwordTextField.text!,
-                          ParamKey.newPassword : self.newPasswordTextField.text!]
+                params = [Param.Key.type : ResetPasswordType.password.rawValue,
+                          Param.Key.password : self.passwordTextField.text!,
+                          Param.Key.newPassword : self.newPasswordTextField.text!]
             }
             //            self?.httpReq(.post(.resetPassword), params)
-            self.httpRequest(.post(.resetPassword),
-                             params,
-                             success:
-                { response in
-                    let alert = SRAlert()
-                    alert.appearance.showCloseButton = false
-                    alert.addButton("OK".localized,
-                                    backgroundColor: NavigartionBar.backgroundColor,
-                                    action:
-                        { [weak self] in
-                            if self?.resetPasswordType == .smsCode {
+            self.httpRequest(.post("user/resetPassword"), params: params, success: { response in
+                let alert = SRAlert()
+                alert.appearance.showCloseButton = false
+                alert.addButton("OK".localized,
+                                backgroundColor: NavigationBar.backgroundColor,
+                                action:
+                    { [weak self] in
+                        if self?.resetPasswordType == .smsCode {
+                            self?.popBack(toClasses: [LoginViewController.self])
+                        } else {
+                            if Configs.entrance == .sns {
                                 self?.popBack(toClasses: [LoginViewController.self])
-                            } else {
-                                if Configs.entrance == .sns {
-                                    self?.popBack(toClasses: [LoginViewController.self])
-                                } else if Configs.entrance == .news || Configs.entrance == .aggregation {
-                                    Common.currentProfile()?.isLogin = false
-                                    NotifyDefault.post(Configs.reloadProfileNotification)
-                                    self?.popBack(toClasses: [MoreViewController.self])
-                                }
+                            } else if Configs.entrance == .news || Configs.entrance == .aggregation {
+                                Common.currentProfile()?.isLogin = false
+                                NotifyDefault.post(Configs.reloadProfileNotification)
+                                self?.popBack(toClasses: [MoreViewController.self])
                             }
-                    })
-                    alert.show(.notice,
-                               title: "Reset successfully".localized,
-                               message: "Please login again".localized)
+                        }
+                })
+                alert.show(.notice,
+                           title: "Reset successfully".localized,
+                           message: "Please login again".localized)
             })
         }
     }

@@ -6,9 +6,8 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import UserNotifications
-import CocoaLumberjack
 import SlideMenuControllerSwift
 
 @UIApplicationMain
@@ -22,15 +21,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         print(try! String(contentsOfFile: ResourceDirectory.appending(pathComponent: "welcome.txt"),
                           encoding: String.Encoding.utf8))
-        Common.screenScale()
         DispatchQueue.global(qos: .default).async {
             TitleChoiceModel.updatesChoicesDic()
-            Division.update()
+            SRDivision.update()
         }
         
-        initLogger()
         if let options = launchOptions {
-            if let string = Common.jsonString(options) {
+            let string = String(jsonObject: options)
+            if !string.isEmpty {
                 LogInfo("\(#function), launchOptions: \(string)")
             } else {
                 LogInfo("\(#function), launchOptions: \(String(describing: options))")
@@ -39,7 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             LogInfo("\(#function)")
         }
 
-        initBFModules()
         initHttpServer()
         
         initShare()
@@ -60,8 +57,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserStandard[USKey.showAdvertisingGuide] = nil //本次不显示广告页
             UserStandard[USKey.showGuide] = nil //下次不显示广告页
             
-            let vc = Common.viewController("AppGuideViewController", storyboard: "Main")
-            self.window?.rootViewController = SRNavigationController(rootViewController: vc)
+            let vc = UIViewController.viewController("AppGuideViewController", storyboard: "Main")
+            self.window?.rootViewController = SRNavigationController(rootViewController: vc!)
             self.window?.makeKeyAndVisible()
         } else {
             UserStandard[USKey.showAdvertisingGuide] = true //本次显示广告页
@@ -131,17 +128,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        var string = Common.jsonString(userInfo)
-        string = !Common.isEmptyString(string) ? string : String(describing: userInfo)
-        LogInfo("\(#function), userInfo:\n\(string!)")
+        var string = String(jsonObject: userInfo)
+        string = !isEmptyString(string) ? string : String(describing: userInfo)
+        LogInfo("\(#function), userInfo:\n\(string)")
         self.application(application, handleOptions: userInfo)
     }
     
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
         let userInfo = notification.userInfo
-        var string = Common.jsonString(userInfo)
-        string = !Common.isEmptyString(string) ? string : String(describing: userInfo)
-        LogInfo("\(#function), userInfo:\n\(string!)")
+        var string = String(jsonObject: userInfo)
+        string = !isEmptyString(string) ? string : String(describing: userInfo)
+        LogInfo("\(#function), userInfo:\n\(string)")
         if let userInfo = notification.userInfo {
             self.application(application, handleOptions: userInfo)
         }
@@ -197,7 +194,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if Scheme.baseSwift4QQ == url.scheme {
             if QQApiInterface.handleOpen(url,
                                          delegate: SRShareToolDefaultDelegate.shared.qqDelegate) {
-                Common.showAlert(message: "Share Success")
+                SRAlert.show(message: "Share Success")
             }
             return true
         }
@@ -207,7 +204,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //微信分享、支付回调
         if Scheme.baseSwift4Wechat == url.scheme {
             if WXApi.handleOpen(url, delegate: SRShareToolDefaultDelegate.shared) {
-                Common.showAlert(message: "Share Success")
+                SRAlert.show(message: "Share Success")
             }
             return true
         }
@@ -217,7 +214,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //微博分享回调
         if Scheme.baseSwift4Weibo == url.scheme {
             if WeiboSDK.handleOpen(url, delegate: SRShareToolDefaultDelegate.shared) {
-                Common.showAlert(message: "Share Success")
+                SRAlert.show(message: "Share Success")
             }
             return true
         }
@@ -240,7 +237,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      *  alert为苹果推送自带的推送文字参数
      */
     func application(_ application: UIApplication, handleOptions options: [AnyHashable : Any]) {
-        guard Event.option(options[ParamKey.action] as? String) != nil else {
+        guard Event.option(options[Param.Key.action] as? String) != nil else {
             return
         }
         
@@ -250,17 +247,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Keyboard.hide {
                     let alert = SRAlert()
                     alert.addButton("See".localized,
-                                    backgroundColor: NavigartionBar.backgroundColor,
+                                    backgroundColor: NavigationBar.backgroundColor,
                                     action:
                         {
                             self.handleOptions()
                     })
                     var message = "You have a new message".localized
-                    if let string = self.options?[ParamKey.message] as? String {
+                    if let string = self.options?[Param.Key.message] as? String {
                         message = string
                     }
                     alert.show(.notice,
-                               title: EmptyString,
+                               title: "",
                                message: message,
                                closeButtonTitle: "Cancel".localized)
                 }
@@ -272,7 +269,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func handleOptions() {
         Common.updateActionParams(self.options as? ParamDictionary)
-        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
             .openWebpage == option {
             let vc = Common.rootVC?.navigationController?.topViewController as? BaseViewController
             vc?.stateMachine.append(option: option)
@@ -309,27 +306,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     //MARK: - 应用初始化
     
-    //日志系统初始化
-    func initLogger() {
-        if RunInEnvironment == .production {
-            CocoaLumberjack.dynamicLogLevel = .info
-        }
-        DDLog.add(DDASLLogger.sharedInstance)
-        
-        let fileLogger = DDFileLogger() as DDFileLogger
-        fileLogger.rollingFrequency = TimeInterval(60 * 60 * 24)   // 24 hour rolling
-        fileLogger.logFileManager.maximumNumberOfLogFiles = 20
-        DDLog.add(fileLogger)
-    }
-    
-    func initBFModules() {
-        let _ = ProfileManager(.profile)
-        let _ = HttpManager.shared
-        let _ = IMManager(.im)
-    }
-    
     func initHttpServer() {
-        guard RunInEnvironment != .production else { return }
+        guard Environment != .production else { return }
         SRHttpServer.shared.start()
     }
     
@@ -353,26 +331,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                       localizedTitle: "More".localized,
                                       localizedSubtitle: nil,
                                       icon: nil,
-                                      userInfo: [ParamKey.action : Event.Action.more.rawValue as NSSecureCoding])
+                                      userInfo: [Param.Key.action : Event.Action.more.rawValue as NSSecureCoding])
         let profileItem =
             UIApplicationShortcutItem(type: "Profile".localized,
                                       localizedTitle: "Profile".localized,
                                       localizedSubtitle: "Please Login".localized,
                                       icon: UIApplicationShortcutIcon(type: .contact),
-                                      userInfo: [ParamKey.action : Event.Action.profile.rawValue as NSSecureCoding])
+                                      userInfo: [Param.Key.action : Event.Action.profile.rawValue as NSSecureCoding])
         let settingItem =
             UIApplicationShortcutItem(type: "Setting".localized,
                                       localizedTitle: "Setting".localized,
                                       localizedSubtitle: nil,
                                       icon: UIApplicationShortcutIcon(templateImageName: "settings"),
-                                      userInfo: [ParamKey.action : Event.Action.setting.rawValue as NSSecureCoding])
+                                      userInfo: [Param.Key.action : Event.Action.setting.rawValue as NSSecureCoding])
         let openWebpageItem =
             UIApplicationShortcutItem(type: "Open webpage".localized,
                                       localizedTitle: "Open webpage".localized,
                                       localizedSubtitle: "Death is a surprise party".localized,
                                       icon: UIApplicationShortcutIcon(type: .bookmark),
-                                      userInfo: [ParamKey.action : Event.Action.openWebpage.rawValue as NSSecureCoding,
-                                                 ParamKey.url : "http://www.gzbz.com.cn/dead_men/" as NSSecureCoding])
+                                      userInfo: [Param.Key.action : Event.Action.openWebpage.rawValue as NSSecureCoding,
+                                                 Param.Key.url : "http://www.gzbz.com.cn/dead_men/" as NSSecureCoding])
         UIApplication.shared.shortcutItems = [moreItem,
                                               profileItem,
                                               settingItem,
@@ -383,9 +361,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Configs.entrance = .aggregation
         
         SlideMenuOptions.leftViewWidth = 240.0
-        let mainMenuVC = Common.viewController("MainMenuViewController", storyboard: "Aggregation")
+        let mainMenuVC = UIViewController.viewController("MainMenuViewController", storyboard: "Aggregation")
             as! MainMenuViewController
-        let leftMenuVC = Common.viewController("LeftMenuViewController", storyboard: "Aggregation")
+        let leftMenuVC = UIViewController.viewController("LeftMenuViewController", storyboard: "Aggregation")
             as! LeftMenuViewController
         let navigationVC = SRNavigationController(rootViewController: mainMenuVC)
         let aggregationVC = AggregationViewController(mainViewController: navigationVC,
@@ -411,9 +389,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
-        var string = Common.jsonString(userInfo)
-        string = !Common.isEmptyString(string) ? string : String(describing: userInfo)
-        LogInfo("\(#function), userInfo:\n\(string!)")
+        var string = String(jsonObject: userInfo)
+        string = !isEmptyString(string) ? string : String(describing: userInfo)
+        LogInfo("\(#function), userInfo:\n\(string)")
         self.application(UIApplication.shared,
                          handleOptions: response.notification.request.content.userInfo)
     }

@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class NewsCell: UITableViewCell {
     @IBOutlet weak var headerImageView: UIImageView!
@@ -44,8 +44,9 @@ class NewsCell: UITableViewCell {
     public func update(_ model: SinaNewsModel) {
         let image = NonNull.string(model.image)
         //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
-        if Common.isEmptyString(image)
-            || (isOnlyShowImageInWLAN && CommonShare.networkStatus != .reachable(.ethernetOrWiFi)) {
+        if isEmptyString(image)
+            || (isOnlyShowImageInWLAN
+                && HttpManager.default.networkStatus != .reachable(.ethernetOrWiFi)) {
             headerImageWidthConstraint.constant = 0
             playImageView.isHidden = true
         } else {
@@ -56,10 +57,10 @@ class NewsCell: UITableViewCell {
         }
         titleLabel.attributedText = NSAttributedString(string: NonNull.string(model.title))
         var source: String?
-        if !Common.isEmptyString(model.date) {
+        if !isEmptyString(model.date) {
             source = model.date
         }
-        if !Common.isEmptyString(model.source) {
+        if !isEmptyString(model.source) {
             source = source != nil ? source! + " " + model.source! : model.source
         }
         sourceLabel.text = source

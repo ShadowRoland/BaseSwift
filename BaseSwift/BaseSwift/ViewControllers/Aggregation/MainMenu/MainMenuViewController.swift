@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import Cartography
 import SlideMenuControllerSwift
 
@@ -54,7 +54,7 @@ class MainMenuViewController: BaseViewController {
         }
         
         //查询当前指令而执行的操作，加入状态机
-        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
             .showProfile == option || .showSetting == option {
             DispatchQueue.main.async { [weak self] in
                 self?.stateMachine.append(option: option)
@@ -88,7 +88,7 @@ class MainMenuViewController: BaseViewController {
         latestVC.delegate = self
         
         hottestVC =
-            Common.viewController("HottestViewController",
+            UIViewController.viewController("HottestViewController",
                                   storyboard: "Aggregation") as? HottestViewController
         hottestVC.parentVC = self
         
@@ -114,12 +114,12 @@ class MainMenuViewController: BaseViewController {
     }
     
     func setNavigationBarButtonItems() {
-        var setting = NavigartionBar.buttonFullSetting
-        setting[.style] = NavigartionBar.ButtonItemStyle.image
+        var setting = NavigationBar.buttonFullSetting
+        setting[.style] = NavigationBar.ButtonItemStyle.image
         setting[.image] = UIImage(named: "list")
         navBarLeftButtonSettings = [setting]
         
-        setting[.style] = NavigartionBar.ButtonItemStyle.image
+        setting[.style] = NavigationBar.ButtonItemStyle.image
         setting[.image] = UIImage(named: "search_white")
         navBarRightButtonSettings = [setting]
     }
@@ -127,13 +127,13 @@ class MainMenuViewController: BaseViewController {
     //添加约束，可以比较方便地进行横竖屏的屏幕适配
     func updateChildViewFrame() {
         if currentChildVC === hottestVC {
-            currentChildVC.view.frame = CGRect(0, 0, ScreenWidth(), ScreenHeight())
+            currentChildVC.view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight)
         } else {
             currentChildVC.view.frame =
                 CGRect(0,
                        topLayoutGuide.length,
-                       ScreenWidth(),
-                       ScreenHeight() - topLayoutGuide.length)
+                       ScreenWidth,
+                       ScreenHeight - topLayoutGuide.length)
         }
     }
     
@@ -219,7 +219,7 @@ class MainMenuViewController: BaseViewController {
     }
     
     func presentLoginVC(_ params: ParamDictionary? = nil) {
-        let vc = Common.viewController("LoginViewController", storyboard: "Profile") as! LoginViewController
+        let vc = UIViewController.viewController("LoginViewController", storyboard: "Profile") as! LoginViewController
         if let params = params {
             vc.params = params
         }
@@ -254,18 +254,18 @@ class MainMenuViewController: BaseViewController {
     //MARK: - 事件响应
     
     override func clickNavigationBarLeftButton(_ button: UIButton) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         aggregationVC.openLeft()
     }
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         show("NewsSearchViewController", storyboard: "News")
     }
     
     //在程序运行中收到指令，基本都可以通过走状态机实现
     @objc func newAction(_ notification: Notification) {
-        guard let option = Event.option(Common.currentActionParams?[ParamKey.action]) else {
+        guard let option = Event.option(Common.currentActionParams?[Param.Key.action]) else {
             return
         }
         
@@ -321,8 +321,8 @@ class MainMenuViewController: BaseViewController {
                                   selector: .didEndStateMachineEvent,
                                   name: Notification.Name.Base.didEndStateMachineEvent)
                 DispatchQueue.main.async {
-                    let params = [ParamKey.sender : String(pointer: self),
-                                  ParamKey.event : event] as ParamDictionary
+                    let params = [Param.Key.sender : String(pointer: self),
+                                  Param.Key.event : event] as ParamDictionary
                     //若是非登录状态，弹出登录页面，因为查看个人信息需要先登录
                     if !Common.isLogin() {
                         self.presentLoginVC(params)
@@ -358,8 +358,8 @@ class MainMenuViewController: BaseViewController {
                                   name: Notification.Name.Base.didEndStateMachineEvent)
                 DispatchQueue.main.async {
                     self.show("SettingViewController", storyboard: "Profile",
-                              params: [ParamKey.sender : String(pointer: self),
-                                       ParamKey.event : event])
+                              params: [Param.Key.sender : String(pointer: self),
+                                       Param.Key.event : event])
                 }
             }
             
@@ -407,7 +407,7 @@ extension MainMenuViewController: NewsListDelegate {
                 }
                 
                 if loadType == .more {
-                    let offset = params[ParamKey.offset] as! Int
+                    let offset = params[Param.Key.offset] as! Int
                     if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                         vc.updateMore(NonNull.dictionary(response))
                     }
@@ -421,7 +421,7 @@ extension MainMenuViewController: NewsListDelegate {
             }
             
             if loadType == .more {
-                let offset = params[ParamKey.offset] as! Int
+                let offset = params[Param.Key.offset] as! Int
                 if offset == vc.currentOffset + 1 {
                     return
                 }
@@ -441,7 +441,7 @@ extension MainMenuViewController: NewsListDelegate {
             }
             
             if loadType == .more {
-                let offset = params[ParamKey.offset] as! Int
+                let offset = params[Param.Key.offset] as! Int
                 if offset == vc.currentOffset + 1 {
                     if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                         vc.updateMore(nil)

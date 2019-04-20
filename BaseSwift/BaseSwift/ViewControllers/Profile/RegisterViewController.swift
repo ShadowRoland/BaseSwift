@@ -6,9 +6,9 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import DTCoreText
-import SwiftyJSON
+import libPhoneNumber_iOS
 
 class RegisterViewController: BaseViewController {
     lazy var indexPathSet: SRIndexPath.Set = SRIndexPath.Set()
@@ -45,9 +45,8 @@ class RegisterViewController: BaseViewController {
         let getTitle = "Get verification code".localized
         let againTitle = String(format: "Get again (%d)".localized, Const.verifyInterval)
         let title = getTitle.count > againTitle.count ? getTitle : againTitle
-        let width = Common.fitSize(title,
-                                   font: verifyButton.titleLabel!.font,
-                                   maxWidth: ScreenWidth() - SubviewMargin).width
+        let width = title.textSize(verifyButton.titleLabel!.font,
+                                   maxWidth: ScreenWidth - SubviewMargin).width
         verifyWidthConstraint.constant = ceil(width) + 2.0 * Const.verifyButtonMargin
         return cell
     }()
@@ -116,7 +115,7 @@ class RegisterViewController: BaseViewController {
         agreementLabel.attributedString = "Register Agreement Text".localized.attributedString
         
         changeVerifyButton(false)
-        Common.change(submitButton: submitButton, enabled: false)
+        submitButton.set(submit: false)
     }
     
     override func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
@@ -124,7 +123,7 @@ class RegisterViewController: BaseViewController {
         var height = agreementLabel.intrinsicContentSize().height
         height = max(LabelHeight, height)
         agreementHeightConstraint.constant = height
-        tableFooterView.frame = CGRect(0, 0, ScreenWidth(), height + Const.agreementMargin)
+        tableFooterView.frame = CGRect(0, 0, ScreenWidth, height + Const.agreementMargin)
         tableView.tableFooterView = tableFooterView
     }
     
@@ -148,7 +147,7 @@ class RegisterViewController: BaseViewController {
     
     func checkPhoneNO() -> Bool {
         guard let phone = phoneTextField.text,
-            !Common.isEmptyString(phone) else {
+            !isEmptyString(phone) else {
                 return false
         }
         
@@ -170,7 +169,7 @@ class RegisterViewController: BaseViewController {
     
     func changeVerifyButton(_ enabled: Bool) {
         if enabled {
-            verifyButton.backgroundColor = NavigartionBar.backgroundColor
+            verifyButton.backgroundColor = NavigationBar.backgroundColor
             verifyButton.isEnabled = true
         } else {
             verifyButton.backgroundColor = UIColor.lightGray
@@ -189,8 +188,8 @@ class RegisterViewController: BaseViewController {
     
     func checkSubmitButtonEnabled() -> Bool {
         guard checkPhoneNO(),
-            !Common.isEmptyString(verifyTextField.text),
-            !Common.isEmptyString(passwordTextField.text) else {
+            !isEmptyString(verifyTextField.text),
+            !isEmptyString(passwordTextField.text) else {
                 return false
         }
         
@@ -217,7 +216,7 @@ class RegisterViewController: BaseViewController {
         }
         
         if submitButton.isEnabled != checkSubmitButtonEnabled() {
-            Common.change(submitButton: submitButton, enabled: checkSubmitButtonEnabled())
+            submitButton.set(submit: checkSubmitButtonEnabled())
         }
     }
     
@@ -234,23 +233,23 @@ class RegisterViewController: BaseViewController {
     }
     
     @objc func clickVerifyButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         isGettingVerifyCode = true
         changeVerifyButton(checkVerifyButtonEnabled())
         //        httpReq(.get(.getVerificationCode),
-        //                [ParamKey.countryCode : Int(countryCodeLabel.text!)!,
-        //                 ParamKey.phone : phoneTextField.text!,
-        //                 ParamKey.type : VerificationCodeType.login.rawValue])
+        //                [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
+        //                 Param.Key.phone : phoneTextField.text!,
+        //                 Param.Key.type : VerificationCodeType.login.rawValue])
         httpRequest(.get(.getVerificationCode),
-                    [ParamKey.countryCode : Int(countryCodeLabel.text!)!,
-                     ParamKey.phone : phoneTextField.text!,
-                     ParamKey.type : VerificationCodeType.login.rawValue],
+                    [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
+                     Param.Key.phone : phoneTextField.text!,
+                     Param.Key.type : VerificationCodeType.login.rawValue],
                     success:
             { response in
                 self.isGettingVerifyCode = false
                 self.startTimer()
                 self.changeVerifyButton(self.checkVerifyButtonEnabled())
-                if let code = (response as? JSON)?[HttpKey.Response.data][ParamKey.code] {
+                if let code = (response as? JSON)?[HTTP.Key.Response.data][Param.Key.code] {
                     self.verifyTextField.text = String(object: code.rawValue as AnyObject)
                     Common.change(submitButton: self.submitButton,
                                   enabled: self.checkSubmitButtonEnabled())
@@ -258,7 +257,7 @@ class RegisterViewController: BaseViewController {
         }, bfail: { response in
             self.isGettingVerifyCode = false
             self.changeVerifyButton(self.checkVerifyButtonEnabled())
-            Common.showToast(self.logBFail(.get(.getVerificationCode),
+            SRAlert.showToast(self.logBFail(.get(.getVerificationCode),
                                            response: response,
                                            show: false))
         }, fail: { error in
@@ -268,29 +267,29 @@ class RegisterViewController: BaseViewController {
     }
     
     @IBAction func clickSubmitButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         guard passwordTextField.text!.isPassword else {
-            Common.showToast("Please enter the correct password!".localized)
+            SRAlert.showToast("Please enter the correct password!".localized)
             return
         }
         Keyboard.hide {
             self.showProgress()
             //            self?.httpReq(.post(.register),
-            //                          [ParamKey.countryCode : Int((self?.countryCodeLabel.text!)!)!,
-            //                           ParamKey.phone : (self?.phoneTextField.text)!,
-            //                           ParamKey.code : (self?.verifyTextField.text)!,
-            //                           ParamKey.password : (self?.passwordTextField.text)!])
+            //                          [Param.Key.countryCode : Int((self?.countryCodeLabel.text!)!)!,
+            //                           Param.Key.phone : (self?.phoneTextField.text)!,
+            //                           Param.Key.code : (self?.verifyTextField.text)!,
+            //                           Param.Key.password : (self?.passwordTextField.text)!])
             self.httpRequest(.post(.register),
-                             [ParamKey.countryCode : Int(self.countryCodeLabel.text!)!,
-                              ParamKey.phone : (self.phoneTextField.text)!,
-                              ParamKey.code : (self.verifyTextField.text)!,
-                              ParamKey.password : (self.passwordTextField.text)!],
+                             [Param.Key.countryCode : Int(self.countryCodeLabel.text!)!,
+                              Param.Key.phone : (self.phoneTextField.text)!,
+                              Param.Key.code : (self.verifyTextField.text)!,
+                              Param.Key.password : (self.passwordTextField.text)!],
                              success:
                 { response in
                     let alert = SRAlert()
                     alert.appearance.showCloseButton = false
                     alert.addButton("OK".localized,
-                                    backgroundColor: NavigartionBar.backgroundColor,
+                                    backgroundColor: NavigationBar.backgroundColor,
                                     action:
                         {
                             self.popBack(toClasses: [LoginViewController.self])
@@ -359,7 +358,7 @@ extension RegisterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         if indexPath.section == 0 && indexPath.row == 0 {
             performSegue(withIdentifier: "registerShowCountrySegue", sender: self)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-let NotifyDefault = NotificationCenter.default
+public let NotifyDefault = NotificationCenter.default
 
 public extension NotificationCenter {
     func add(_ observer: Any,

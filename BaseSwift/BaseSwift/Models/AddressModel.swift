@@ -6,10 +6,10 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-open class AddressModel: BaseModel {
+class AddressModel: SRModel {
     var country: String? //国家
     var province: String? //省/直辖市
     var city: String? //市
@@ -21,18 +21,18 @@ open class AddressModel: BaseModel {
     var countryCode: Int? //手机的国家码
     var phone: String? //电话号码
     
-    override public func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
-        country <- map[ParamKey.country]
-        province <- map[ParamKey.province]
-        city <- map[ParamKey.city]
-        region <- map[ParamKey.region]
-        street <- map[ParamKey.street]
-        roomNo <- map[ParamKey.roomNo]
-        postcode <- map[ParamKey.postcode]
-        areaCode <- map[ParamKey.areaCode]
-        countryCode <- map[ParamKey.countryCode]
-        phone <- map[ParamKey.phone]
+        country <- map[Param.Key.country]
+        province <- map[Param.Key.province]
+        city <- map[Param.Key.city]
+        region <- map[Param.Key.region]
+        street <- map[Param.Key.street]
+        roomNo <- map[Param.Key.roomNo]
+        postcode <- map[Param.Key.postcode]
+        areaCode <- map[Param.Key.areaCode]
+        countryCode <- map[Param.Key.countryCode]
+        phone <- map[Param.Key.phone]
     }
 }

@@ -6,10 +6,9 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
-import MJRefresh
-import SDWebImage
+import SRKit
 import SwiftyJSON
+import MJRefresh
 
 class SimpleTableViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -17,8 +16,8 @@ class SimpleTableViewController: BaseViewController {
     @IBOutlet weak var tableHeaderScrollView: UIScrollView!
     
     var currentOffset = 0
-    var noDataView = LoadDataStateView(.empty)
-    var loadDataFailView = LoadDataStateView(.fail)
+    var noDataView = SRLoadDataStateView(.empty)
+    var loadDataFailView = SRLoadDataStateView(.fail)
     
     var images: [String] = []
     var dataArray: [ParamDictionary] = []
@@ -44,7 +43,7 @@ class SimpleTableViewController: BaseViewController {
     //MARK: - 视图初始化
     
     struct Const {
-        static let headerImageHeight = Common.screenSize().width * 548.0 / 1080.0 as CGFloat
+        static let headerImageHeight = screenSize().width * 548.0 / 1080.0 as CGFloat
     }
     
     func initView() {
@@ -52,7 +51,7 @@ class SimpleTableViewController: BaseViewController {
         
         tableView.backgroundColor = UIColor.groupTableViewBackground
         tableView.tableHeaderView = nil
-        tableHeaderView.frame = CGRect(0, 0, Common.screenSize().width, Const.headerImageHeight)
+        tableHeaderView.frame = CGRect(0, 0, screenSize().width, Const.headerImageHeight)
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .singleLine
         tableView.separatorInset = UIEdgeInsets()
@@ -74,8 +73,8 @@ class SimpleTableViewController: BaseViewController {
     }
     
     func setNavigationBarRightButtonItems() {
-        var setting = NavigartionBar.buttonFullSetting
-        setting[.style] = NavigartionBar.ButtonItemStyle.text
+        var setting = NavigationBar.buttonFullSetting
+        setting[.style] = NavigationBar.ButtonItemStyle.text
         setting[.title] = "Submit".localized
         navBarRightButtonSettings = [setting]
     }
@@ -110,16 +109,16 @@ class SimpleTableViewController: BaseViewController {
         let count = self.images.count
         for i in 0 ..< count {
             let url = self.images[i]
-            let imageView = UIImageView(frame: CGRect(Common.screenSize().width * CGFloat(i),
+            let imageView = UIImageView(frame: CGRect(screenSize().width * CGFloat(i),
                                                       0,
-                                                      Common.screenSize().width,
+                                                      screenSize().width,
                                                       Const.headerImageHeight))
            //imageView.sd_setImage(with: URL(string: url),
             //                      placeholderImage: Configs.Resource.defaultImage(.normal))
             imageView.showProgress(.clear,
-                                   progressType: .srvRing,
+                                   progressType: .infinite,
                                    progress: nil,
-                                   options: [ProgressOptionKey.imageProgressSize : ProgressOptionImageSize.normal])
+                                   options: [.imageProgressSize : SRProgressHUD.ImageProgressSize.normal])
             imageView.sd_setImage(with: URL(string: url),
                                   placeholderImage: Configs.Resource.defaultImage(.normal),
                                   options: [],
@@ -137,7 +136,7 @@ class SimpleTableViewController: BaseViewController {
         }
         tableHeaderScrollView.setContentOffset(CGPoint(), animated: false)
         tableHeaderScrollView.contentSize =
-            CGSize(Common.screenSize().width * CGFloat(count), Const.headerImageHeight)
+            CGSize(screenSize().width * CGFloat(count), Const.headerImageHeight)
     }
     
     func updateNew(_ dictionary: [AnyHashable : Any]?, errMsg: String? = nil) {
@@ -151,8 +150,8 @@ class SimpleTableViewController: BaseViewController {
             return
         }
         
-        updateHeaderImages(NonNull.array(dictionary[ParamKey.images]) as? [String])
-        dataArray = NonNull.array(dictionary[ParamKey.list]) as! [ParamDictionary]
+        updateHeaderImages(NonNull.array(dictionary[Param.Key.images]) as? [String])
+        dataArray = NonNull.array(dictionary[Param.Key.list]) as! [ParamDictionary]
         guard !dataArray.isEmpty else { //没有数据
             showNoDataView()
             tableView.reloadData()
@@ -182,7 +181,7 @@ class SimpleTableViewController: BaseViewController {
             return
         }
         
-        let list = NonNull.array(dictionary[ParamKey.list]) as! [ParamDictionary]
+        let list = NonNull.array(dictionary[Param.Key.list]) as! [ParamDictionary]
         if list.isEmpty { //已无数据
             tableView.mj_footer.endRefreshingWithNoMoreData()
         } else {
@@ -197,8 +196,8 @@ class SimpleTableViewController: BaseViewController {
         var array = [] as [ParamDictionary]
         list.forEach { dictionary in
             if let index = (0 ..< dataArray.count).first(where: {
-                if let id = dictionary[ParamKey.id] as? String,
-                    id == dataArray[$0][ParamKey.id] as? String {
+                if let id = dictionary[Param.Key.id] as? String,
+                    id == dataArray[$0][Param.Key.id] as? String {
                     return true
                 } else {
                     return false
@@ -218,7 +217,7 @@ class SimpleTableViewController: BaseViewController {
         let height =
             tableView.height - (tableView.tableHeaderView == nil ? 0 : Const.headerImageHeight)
         noDataView.frame =
-            CGRect(0, 0, ScreenWidth(), max(height, noDataView.minHeight()))
+            CGRect(0, 0, ScreenWidth, max(height, noDataView.minHeight()))
         noDataView.layout()
         tableView.tableFooterView = noDataView
         tableView.mj_footer.endRefreshingWithNoMoreData()
@@ -230,7 +229,7 @@ class SimpleTableViewController: BaseViewController {
         let height =
             tableView.height - (tableView.tableHeaderView == nil ? 0 : Const.headerImageHeight)
         loadDataFailView.frame =
-            CGRect(0, 0, ScreenWidth(), max(height, loadDataFailView.minHeight()))
+            CGRect(0, 0, ScreenWidth, max(height, loadDataFailView.minHeight()))
         loadDataFailView.layout()
         tableView.tableFooterView = loadDataFailView
         tableView.mj_footer.endRefreshingWithNoMoreData()
@@ -240,74 +239,71 @@ class SimpleTableViewController: BaseViewController {
     //MARK: Http request
     
     func getSimpleList(_ loadType: TableLoadData.Page? = .new) {
-        var params = EmptyParams()
-        params[ParamKey.limit] = TableLoadData.row
-        params[ParamKey.offset] = loadType == .more ? currentOffset + 1 : 0
-        httpRequest(.get(.simpleList),
-                    params,
-                    success:
-            { [weak self] response in
+        var params = [:] as ParamDictionary
+        params[Param.Key.limit] = TableLoadData.row
+        params[Param.Key.offset] = loadType == .more ? currentOffset + 1 : 0
+        httpRequest(.get("data/getSimpleList"), params: params, success: { [weak self] response in
+            guard let strongSelf = self else { return }
+            let responseData = NonNull.dictionary((response as! JSON)[HTTP.Key.Response.data].rawValue)
+            if loadType == .more {
+                let offset = params[Param.Key.offset] as! Int
+                if offset == strongSelf.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
+                    strongSelf.updateMore(responseData)
+                }
+            } else {
+                strongSelf.updateNew(responseData)
+            }
+            }, bfail: { [weak self] (url, response) in
                 guard let strongSelf = self else { return }
-                let responseData = NonNull.dictionary((response as! JSON)[HttpKey.Response.data].rawValue)
                 if loadType == .more {
-                    let offset = params[ParamKey.offset] as! Int
-                    if offset == strongSelf.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
-                        strongSelf.updateMore(responseData)
+                    let offset = params[Param.Key.offset] as! Int
+                    if offset == strongSelf.currentOffset + 1 {
+                        if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
+                            strongSelf.updateMore(nil)
+                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
+                            strongSelf.updateMore(nil, errMsg: strongSelf.logBFail("data/getSimpleList",
+                                                                                   response:response,
+                                                                                   show: false))
+                        }
                     }
                 } else {
-                    strongSelf.updateNew(responseData)
-                }
-        }, bfail: { [weak self] response in
-            guard let strongSelf = self else { return }
-            if loadType == .more {
-                let offset = params[ParamKey.offset] as! Int
-                if offset == strongSelf.currentOffset + 1 {
-                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
-                        strongSelf.updateMore(nil)
-                    } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                        strongSelf.updateMore(nil, errMsg: strongSelf.logBFail(.get(.simpleList),
-                                                                   response:response,
-                                                                   show: false))
+                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
+                        strongSelf.updateNew(nil)
+                    } else { //当前为空的话则交给列表展示错误信息
+                        strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(.get(.simpleList),
+                                                                              response: response,
+                                                                              show: false))
                     }
                 }
-            } else {
-                if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
-                    strongSelf.updateNew(nil)
-                } else { //当前为空的话则交给列表展示错误信息
-                    strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(.get(.simpleList),
-                                                              response: response,
-                                                              show: false))
-                }
-            }
-        }, fail: { [weak self] error in
-            guard let strongSelf = self else { return }
-            if loadType == .more {
-                let offset = params[ParamKey.offset] as! Int
-                if offset == strongSelf.currentOffset + 1 {
-                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
-                        strongSelf.updateMore(nil)
-                    } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                        strongSelf.updateMore(nil, errMsg: error.errorDescription)
+            }, fail: { [weak self] error in
+                guard let strongSelf = self else { return }
+                if loadType == .more {
+                    let offset = params[Param.Key.offset] as! Int
+                    if offset == strongSelf.currentOffset + 1 {
+                        if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
+                            strongSelf.updateMore(nil)
+                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
+                            strongSelf.updateMore(nil, errMsg: error.errorDescription)
+                        }
+                    }
+                } else {
+                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
+                        strongSelf.updateNew(nil)
+                    } else { //当前为空的话则交给列表展示错误信息
+                        strongSelf.updateNew(nil, errMsg: error.errorDescription)
                     }
                 }
-            } else {
-                if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
-                    strongSelf.updateNew(nil)
-                } else { //当前为空的话则交给列表展示错误信息
-                    strongSelf.updateNew(nil, errMsg: error.errorDescription)
-                }
-            }
         })
     }
     
     //MARK: - 事件响应
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         show("SimpleSubmitViewController", storyboard: "Simple")
     }
     
-    //MARK: - LoadDataStateDelegate
+    //MARK: - SRLoadDataStateDelegate
     
     override func retryLoadData() {
         showProgress(.opaque)
@@ -335,9 +331,9 @@ extension SimpleTableViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
-        if let url = dataArray[indexPath.row][ParamKey.url] as? String {
+        if let url = dataArray[indexPath.row][Param.Key.url] as? String {
             showWebpage(URL(string: url)!)
         }
     }

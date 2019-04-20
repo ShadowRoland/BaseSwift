@@ -178,3 +178,98 @@ extension UIView: CAAnimationDelegate {
         })
     }
 }
+
+//MARK: Mutex Touch
+
+//针对按钮点击、多点触摸等做的互斥锁，该方法应该在按钮点击、触摸手势等的响应事件开始调用
+//若返回false，表示当前已有按钮点击、触摸手势等事件生效，应提前结束按钮点击、触摸手势等响应
+//若返回true，则表示已handle了当前时间段的按钮点击、触摸手势等事件响应
+public var MutexTouch: Bool {
+    return UIView.MutexTouchClass.shared.startTouchHandling()
+}
+
+extension UIView {
+    class MutexTouchClass: NSObject {
+        class var shared: MutexTouchClass { return sharedInstance }
+        
+        private static let sharedInstance = MutexTouchClass()
+        
+        private override init() {
+            super.init()
+        }
+        
+        //MARK: Lock & unlock on views
+        
+        @objc func resetViewEnabled(_ timer: Timer) {
+            if let view = timer.userInfo as? UIView {
+                view.isUserInteractionEnabled = true
+            }
+        }
+        
+        let maskButton = UIButton(type: .custom)
+        
+        @objc func resetButtonEnabled(_ timer: Timer) {
+            if let maskButton = timer.userInfo as? UIButton {
+                maskButton.removeFromSuperview()
+            }
+        }
+        
+        private var touchHandling = false
+        private var touchHandleTimer: Timer?
+        
+        func startTouchHandling() -> Bool {
+            guard !touchHandling else { return false }
+            
+            touchHandling = true
+            touchHandleTimer?.invalidate()
+            touchHandleTimer =
+                Timer.scheduledTimer(timeInterval: 0.2,
+                                     target: self,
+                                     selector: #selector(resetTouchHandling),
+                                     userInfo: nil,
+                                     repeats: false)
+            return true
+        }
+        
+        @objc func resetTouchHandling() {
+            touchHandling = false
+        }
+    }
+    
+    /**
+     *  将UIView的userInteractionEnabled置为NO一段时间，
+     *  后面会调用SRCommon.shared的方法将userInteractionEnabled恢复
+     *  用于[UIViewController showToast]方法中
+     *
+     *  @param view   view
+     *  @param second second
+     */
+    func unableTimed(_ duration: TimeInterval = 20) {
+        isUserInteractionEnabled = false
+        weak var weakView = self
+        Timer.scheduledTimer(timeInterval: duration,
+                             target: MutexTouchClass.shared,
+                             selector: #selector(MutexTouchClass.resetViewEnabled(_:)),
+                             userInfo: weakView,
+                             repeats: false)
+    }
+    
+    /**
+     *  使用增加子视图的方式覆盖现有的button
+     *
+     *  @param button
+     */
+    func unableTimed(button: UIButton?) {
+        guard let button = button else { return }
+        
+        let maskButton = MutexTouchClass.shared.maskButton
+        maskButton.frame = button.frame
+        button.superview?.addSubview(maskButton)
+        weak var weakButton = maskButton
+        Timer.scheduledTimer(timeInterval: 1.0,
+                             target: MutexTouchClass.shared,
+                             selector: #selector(MutexTouchClass.resetButtonEnabled(_:)),
+                             userInfo: weakButton,
+                             repeats: false)
+    }
+}

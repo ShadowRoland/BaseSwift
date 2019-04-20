@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class SimpleCell: UITableViewCell {
     @IBOutlet weak var headerImageView: UIImageView!
@@ -38,25 +38,25 @@ class SimpleCell: UITableViewCell {
     //MARK: - 业务处理
     
     public func update(_ dictionary: ParamDictionary) {
-        let image = NonNull.string(dictionary[ParamKey.image])
-        if Common.isEmptyString(image)
-            || (isOnlyShowImageInWLAN && CommonShare.networkStatus != .reachable(.ethernetOrWiFi)) { //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
+        let image = NonNull.string(dictionary[Param.Key.image])
+        if isEmptyString(image)
+            || (isOnlyShowImageInWLAN && HttpManager.default.networkStatus != .reachable(.ethernetOrWiFi)) { //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
             headerImageWidthConstraint.constant = 0
         } else {
             headerImageWidthConstraint.constant = Const.headerImageWidthShowing
             headerImageView.sd_setImage(with: URL(string: image),
                                         placeholderImage: Configs.Resource.defaultImage(.min))
         }
-        titleLabel.attributedText = NSAttributedString(string: NonNull.string(dictionary[ParamKey.title]))
+        titleLabel.attributedText = NSAttributedString(string: NonNull.string(dictionary[Param.Key.title]))
         var string: String?
-        if let date = dictionary[ParamKey.date] as? String, !date.isEmpty {
+        if let date = dictionary[Param.Key.date] as? String, !date.isEmpty {
             string = date
         }
-        if let source = dictionary[ParamKey.source] as? String, !source.isEmpty {
+        if let source = dictionary[Param.Key.source] as? String, !source.isEmpty {
             string = string! + " " + source
         }
         sourceLabel.text = string
-        let comment = NonNull.number(dictionary[ParamKey.comment]).intValue
+        let comment = NonNull.number(dictionary[Param.Key.comment]).intValue
         commentLabel.text = isZhHans ? comment.tenThousands(2) : comment.thousands(2)
     }
 }

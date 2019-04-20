@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
     var url: URL!
@@ -17,24 +17,32 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
 
         // Do any additional setup after loading the view.
         pageBackGestureStyle = .none
-        CommonShare.addObserver(self,
+        Common.shared.addObserver(self,
                                 forKeyPath: "networkStatus",
                                 options: .new,
                                 context: nil)
-        defaultNavigationBar(EmptyString)
+        defaultNavigationBar("")
         player = SRVideoPlayer()
         player.delegate = self
         view.backgroundColor = UIColor.black
-        UIApplication.shared.statusBarStyle = .lightContent
+        if #available(iOS 9.0, *) {
+            
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        UIApplication.shared.statusBarStyle = .lightContent
+        if #available(iOS 9.0, *) {
+            
+        } else {
+            UIApplication.shared.statusBarStyle = .lightContent
+        }
     }
     
     deinit {
-        CommonShare.removeObserver(self, forKeyPath: "networkStatus")
+        Common.shared.removeObserver(self, forKeyPath: "networkStatus")
     }
 
     override func didReceiveMemoryWarning() {
@@ -62,7 +70,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
                                change: [NSKeyValueChangeKey : Any]?,
                                context: UnsafeMutableRawPointer?) {
         if keyPath == "networkStatus" {
-            if CommonShare.networkStatus == .reachable(.wwan) {
+            if HttpManager.default.networkStatus == .reachable(.wwan) {
                 player.connectWwan()
             }
         }
@@ -75,7 +83,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
     }
         
     func player(isConnectingWwan player: SRVideoPlayer!) -> Bool {
-        return CommonShare.networkStatus == .reachable(.wwan)
+        return HttpManager.default.networkStatus == .reachable(.wwan)
     }
     
     func player(controlViewsDidShow player: SRVideoPlayer!) {
@@ -83,7 +91,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
         navigationController?.navigationBar.alpha = 1.0
     }
     
-    func player(controlViewsWillHide player: SRVideoPlayer!, animated: Bool) {
+    func player(controlViewsWillHide player: SRKit.SRVideoPlayer!, animated: Bool) {
         if !animated {
             navigationController?.navigationBar.layer.removeAllAnimations()
             navigationController?.navigationBar.alpha = 0
@@ -97,15 +105,4 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
             })
         }
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import SlideMenuControllerSwift
 
 class LeftMenuViewController: BaseViewController {
@@ -153,8 +153,8 @@ class LeftMenuViewController: BaseViewController {
             self.reloadProfile()
         }, bfail: { response in
             let message = self.logBFail(.get(.profile), response: response, show: false)
-            if !Common.isEmptyString(message) {
-                Common.showToast(message)
+            if !isEmptyString(message) {
+                SRAlert.showToast(message)
             }
         }, fail: { _ in
             
@@ -177,7 +177,7 @@ class LeftMenuViewController: BaseViewController {
     //MARK: - 事件响应
     
     @IBAction func clickProfileButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         aggregationVC.closeLeft()
         if !Common.isLogin() {
             mainMenuVC.presentLoginVC()
@@ -187,21 +187,21 @@ class LeftMenuViewController: BaseViewController {
     }
     
     @IBAction func clickMessageButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
     }
     
     @IBAction func clickSettingButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         aggregationVC.closeLeft()
         mainMenuVC.show("SettingViewController", storyboard: "Profile")
     }
     
     @IBAction func clickExitButton(_ sender: Any) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         let alert = SRAlert()
         alert.addButton("OK".localized,
-                        backgroundColor: NavigartionBar.backgroundColor,
+                        backgroundColor: NavigationBar.backgroundColor,
                         action:
             {
                 UserStandard[USKey.enterAggregationEntrance] = nil
@@ -209,7 +209,7 @@ class LeftMenuViewController: BaseViewController {
                 exit(0)
         })
         alert.show(.notice,
-                   title: EmptyString,
+                   title: "",
                    message: "Reopen the program to enter Homepage".localized,
                    closeButtonTitle: "Cancel".localized)
     }

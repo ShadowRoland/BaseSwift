@@ -6,7 +6,7 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 import SlideMenuControllerSwift
 
 class AggregationViewController: SlideMenuController {

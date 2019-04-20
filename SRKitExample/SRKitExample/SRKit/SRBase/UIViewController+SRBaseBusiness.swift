@@ -13,8 +13,14 @@ import SwiftyJSON
 import SDWebImage
 import DTCoreText
 
-extension UIViewController {
-    static var currentWindow: UIWindow? {
+public extension UIViewController {
+    class func viewController(_ identifier: String,
+                              storyboard: String,
+                              bundle: Bundle? = nil) -> UIViewController? {
+        return UIStoryboard(name: storyboard, bundle: bundle ?? Bundle.main).instantiateViewController(withIdentifier: identifier)
+    }
+
+    class var currentWindow: UIWindow? {
         let window = UIApplication.shared.keyWindow
         if let window = window {
             if window.windowLevel != .normal {
@@ -24,22 +30,22 @@ extension UIViewController {
         return window
     }
     
-    static var topViewController: UIViewController? {
+    class var top: UIViewController? {
         guard let viewController = UIViewController.currentWindow?.rootViewController else {
             return nil
         }
-        return UIViewController.topViewController(viewController: viewController)
+        return UIViewController.top(viewController: viewController)
     }
     
-    class func topViewController(viewController: UIViewController) -> UIViewController? {
+    class func top(viewController: UIViewController) -> UIViewController? {
         if let presentedViewController = viewController.presentedViewController {
-            return UIViewController.topViewController(viewController: presentedViewController)
+            return UIViewController.top(viewController: presentedViewController)
         } else if let tabBarController = viewController as? UITabBarController,
             let selectedViewController = tabBarController.selectedViewController {
-            return UIViewController.topViewController(viewController: selectedViewController)
+            return UIViewController.top(viewController: selectedViewController)
         } else if let navigationController = viewController as? UINavigationController,
             let visibleViewController = navigationController.visibleViewController {
-            return UIViewController.topViewController(viewController: visibleViewController)
+            return UIViewController.top(viewController: visibleViewController)
         }
         
         return viewController
@@ -89,16 +95,15 @@ extension UIViewController {
                      storyboard: String,
                      animated: Bool = true,
                      params: ParamDictionary? = nil) {
-        show(SRCommon.viewController(identifier, storyboard: storyboard),
+        show(UIViewController.viewController(identifier, storyboard: storyboard),
              animated: animated,
              params: params)
     }
     
-    public func show(_ viewController: UIViewController,
+    public func show(_ viewController: UIViewController?,
                      animated: Bool = true,
                      params: ParamDictionary? = nil) {
-        guard navigationController != nil else { return }
-        
+        guard let viewController = viewController, navigationController != nil else { return }
         if let params = params {
             viewController.params = params
         }
@@ -154,15 +159,11 @@ extension UIViewController {
     }
     
     //本视图是否展现在最前面
-    public var isFront: Bool {
-        //guard let navigationController = navigationController else { return false }
-        //return self === navigationController.topViewController
-        //    && presentedViewController == nil
-        //    && navigationController.presentedViewController == nil
-        let frontVC = SRCommon.frontVC()
-        if self === frontVC {
+    public var isTop: Bool {
+        let top = UIViewController.top
+        if self === top {
             return true
-        } else if let vc = frontVC as? UINavigationController,
+        } else if let vc = top as? UINavigationController,
             self === vc.topViewController {
             return true
         } else {
@@ -183,8 +184,8 @@ extension UIViewController {
     //MARK: - Common Features
     
     public func showToast(_ message: String?) {
-        if SRCommon.showToast(message, view) {
-            SRCommon.unableTimed(view)
+        if SRAlert.showToast(message, in: view) {
+            view.unableTimed()
         }
     }
     

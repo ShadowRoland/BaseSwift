@@ -6,7 +6,7 @@
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import UIKit
+import SRKit
 
 class SNSViewController: BaseViewController {
     @IBOutlet weak var childBackgroundView: UIView!
@@ -18,25 +18,25 @@ class SNSViewController: BaseViewController {
     
     weak var currentChildVC: UIViewController?
     lazy var chatListVC: ChatListViewController = {
-        let vc = Common.viewController("ChatListViewController", storyboard: "SNS")
+        let vc = UIViewController.viewController("ChatListViewController", storyboard: "SNS")
             as! ChatListViewController
         vc.parentVC = self
         return vc
     }()
     lazy var contactsVC: ContactsViewController = {
-        let vc = Common.viewController("ContactsViewController", storyboard: "SNS")
+        let vc = UIViewController.viewController("ContactsViewController", storyboard: "SNS")
             as! ContactsViewController
         vc.parentVC = self
         return vc
     }()
     lazy var findVC: FindViewController = {
-        let vc = Common.viewController("FindViewController", storyboard: "SNS")
+        let vc = UIViewController.viewController("FindViewController", storyboard: "SNS")
             as! FindViewController
         vc.parentVC = self
         return vc
     }()
     lazy var moreVC: MoreViewController =
-        Common.viewController("MoreViewController", storyboard: "More") as! MoreViewController
+        UIViewController.viewController("MoreViewController", storyboard: "More") as! MoreViewController
     
     lazy var contactsSC: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Friends".localized, "Official Accounts".localized])
@@ -61,12 +61,12 @@ class SNSViewController: BaseViewController {
         
         initNavigationBar()
         navigationItem.leftBarButtonItem =
-            UIBarButtonItem(title: EmptyString, style: .plain, target: nil, action: nil)
+            UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         tabBar.backgroundColor = UIColor.clear
         tabBar.isTranslucent = true
         
         //查询当前指令而执行的操作
-        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
             .showMore == option {
             tabBar.selectedItem = moreItem
             tabBar(tabBar, didSelect: moreItem)
@@ -77,7 +77,7 @@ class SNSViewController: BaseViewController {
         }
         
         //查询当前指令而执行的操作，加入状态机
-        if let option = Event.option(Common.currentActionParams?[ParamKey.action]),
+        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
             .showProfile == option || .showSetting == option {
             DispatchQueue.main.async { [weak self] in
                 self?.stateMachine.append(option: option)
@@ -113,27 +113,27 @@ class SNSViewController: BaseViewController {
     
     //直接计算和更新frame，可以更有效的进行屏幕适配 添加约束，可以比较方便地进行横竖屏的屏幕适配
     func updateChildViewFrame() {
-        let height = ScreenHeight() - NavigationHeaderHeight
-        let frame = CGRect(0, 0, ScreenWidth(), height) //正常带导航栏的子视图frame
+        let height = ScreenHeight - NavigationHeaderHeight
+        let frame = CGRect(0, 0, ScreenWidth, height) //正常带导航栏的子视图frame
         
         if currentChildVC === chatListVC || currentChildVC === contactsVC {
             currentChildVC?.view.frame = frame
         } else if currentChildVC === findVC {
-            currentChildVC?.view.frame = CGRect(0, 0, ScreenWidth(), ScreenHeight() - TabBarHeight)
+            currentChildVC?.view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight - TabBarHeight)
         } else if currentChildVC === moreVC {
             //为了实现更多列表的tableHeaderView的背景色和导航栏完全一致，需要往上移一点点
             //因为在group模式下的UITableView中tableHeaderView边缘会自带一条分隔线
             currentChildVC?.view.frame = CGRect(0,
                                                 frame.origin.y - SectionHeaderGroupNoHeight,
-                                                ScreenWidth(),
+                                                ScreenWidth,
                                                 height + SectionHeaderGroupNoHeight)
         }
     }
     
     func setNavigationBarRightButtonItems() {
         if currentChildVC === chatListVC {
-            var setting = NavigartionBar.buttonFullSetting
-            setting[.style] = NavigartionBar.ButtonItemStyle.image
+            var setting = NavigationBar.buttonFullSetting
+            setting[.style] = NavigationBar.ButtonItemStyle.image
             setting[.image] = UIImage(named: "qr")
             navBarRightButtonSettings = [setting]
         } else {
@@ -187,7 +187,7 @@ class SNSViewController: BaseViewController {
     //MARK: - 事件响应
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
-        guard Common.mutexTouch() else { return }
+        guard MutexTouch else { return }
         
         if currentChildVC === chatListVC {
             show("QRCodeReaderViewController", storyboard: "Utility")
@@ -200,7 +200,7 @@ class SNSViewController: BaseViewController {
     
     //在程序运行中收到指令，基本都可以通过走状态机实现
     @objc func newAction(_ notification: Notification) {
-        guard let option = Event.option(Common.currentActionParams?[ParamKey.action]) else {
+        guard let option = Event.option(Common.currentActionParams?[Param.Key.action]) else {
             return
         }
         
@@ -221,7 +221,7 @@ class SNSViewController: BaseViewController {
         
         switch option {
         case .showMore:
-            if !(isFront && moreVC === currentChildVC) {
+            if !(isTop && moreVC === currentChildVC) {
                 Common.clearPops()
                 Common.clearModals(viewController: self)
                 popBack(to: self)
@@ -253,8 +253,8 @@ class SNSViewController: BaseViewController {
                 DispatchQueue.main.async {
                     self.show("ProfileViewController",
                               storyboard: "Profile",
-                              params: [ParamKey.sender : String(pointer: self),
-                                       ParamKey.event : event])
+                              params: [Param.Key.sender : String(pointer: self),
+                                       Param.Key.event : event])
                 }
             }
             
@@ -280,8 +280,8 @@ class SNSViewController: BaseViewController {
                 DispatchQueue.main.async {
                     self.show("SettingViewController",
                               storyboard: "Profile",
-                              params: [ParamKey.sender : String(pointer: self),
-                                       ParamKey.event : event])
+                              params: [Param.Key.sender : String(pointer: self),
+                                       Param.Key.event : event])
                 }
             }
             

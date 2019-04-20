@@ -6,19 +6,19 @@
 //  Copyright © 2017年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-class CountryCodeModel: BusinessModel {
+class CountryCodeModel: SRBusinessModel {
     var name: String?
     var code: String?
     var letter: String? = "#"
     
-    override func mapping(map: Map) {
+    override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
         
-        name <- map[ParamKey.name]
-        code <- map[ParamKey.code]
-        letter <- map[ParamKey.letter]
+        name <- map[Param.Key.name]
+        code <- map[Param.Key.code]
+        letter <- map[Param.Key.letter]
     }
 }
