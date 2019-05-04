@@ -240,9 +240,9 @@ class CustomCalloutView: UIView {
             text = "From you".localized + distance + " "
         } else {
             if poi.distance < 1000 {
-                text = "From you".localized + String(int: poi.distance) + Configs.Unit.metre + " "
+                text = "From you".localized + String(int: poi.distance) + Config.Unit.metre + " "
             } else {
-                text = "From you".localized + String(format: "%.2f", Float(poi.distance) / 1000.0) + Configs.Unit.kilometre2 + " "
+                text = "From you".localized + String(format: "%.2f", Float(poi.distance) / 1000.0) + Config.Unit.kilometre2 + " "
             }
         }
         text = text! + poi.address

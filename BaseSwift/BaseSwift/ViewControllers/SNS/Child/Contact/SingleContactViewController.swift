@@ -46,10 +46,7 @@ class SingleContactViewController: BaseViewController {
     //MARK: - 业务处理
     
     func loadData() {
-        var contacts =
-            BF.callBusiness(BF.businessId(.profile,
-                                          Manager.Profile.funcId(.getSingleContacts))).value
-                as! [UserModel]
+        var contacts = ProfileManager.getContacts(.single)
         //先排序
         contacts.sort { (model1, model2) -> Bool in
             if isEmptyString(model1.letter) {

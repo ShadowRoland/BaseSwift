@@ -94,18 +94,25 @@ extension UIViewController {
     public func show(_ identifier: String,
                      storyboard: String,
                      animated: Bool = true,
-                     params: ParamDictionary? = nil) {
+                     params: ParamDictionary? = nil,
+                     event: Event? = nil) {
         show(UIViewController.viewController(identifier, storyboard: storyboard),
              animated: animated,
-             params: params)
+             params: params,
+             event: event)
     }
     
     public func show(_ viewController: UIViewController?,
                      animated: Bool = true,
-                     params: ParamDictionary? = nil) {
+                     params: ParamDictionary? = nil,
+                     event: Event? = nil) {
         guard let viewController = viewController, navigationController != nil else { return }
         if let params = params {
             viewController.params = params
+        }
+        if let event = event {
+            viewController.event = event
+            viewController.event?.sender = self
         }
         Keyboard.hide { [weak self] in
             self?.navigationController?.pushViewController(viewController, animated: animated)
@@ -158,6 +165,29 @@ extension UIViewController {
         navigationController.popToViewController(to, animated: animated)
     }
     
+    public func dismissModals() {
+        func dismiss(_ presentedViewController: UIViewController?) {
+            presentedViewController?.dismissModals()
+            if let modalVC = presentedViewController as? SRModalViewController {
+                modalVC.dismiss(animated: false, completion:modalVC.completionHandler)
+            } else {
+                presentedViewController?.dismiss(animated: false, completion: nil)
+            }
+        }
+        
+        if let navigationController = navigationController {
+            navigationController.viewControllers.reversed().forEach {
+                dismiss($0.presentedViewController)
+            }
+        } else if let navigationController = self as? UINavigationController {
+            navigationController.viewControllers.reversed().forEach {
+                dismiss($0.presentedViewController)
+            }
+        } else {
+            dismiss(presentedViewController)
+        }
+    }
+    
     //本视图是否展现在最前面
     public var isTop: Bool {
         let top = UIViewController.top
@@ -187,19 +217,6 @@ extension UIViewController {
         if SRAlert.showToast(message, in: view) {
             view.unableTimed()
         }
-    }
-    
-    public func showWebpage(_ url: URL,
-                            title: String? = nil,
-                            params: ParamDictionary? = [:]) {
-        var dictionary: ParamDictionary = ["url" : url]
-        if let title = title {
-            dictionary["title"] = title
-        }
-        if let params = params {
-            dictionary += params
-        }
-        self.show("WebpageViewController", storyboard: "Utility", params: dictionary)
     }
 }
 

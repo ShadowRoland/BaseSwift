@@ -69,7 +69,7 @@ class LeftMenuViewController: BaseViewController {
         // Do any additional setup after loading the view.
         NotifyDefault.add(self,
                           selector: #selector(reloadProfile),
-                          name:Configs.reloadProfileNotification)
+                          name:Config.reloadProfileNotification)
         initView()
     }
     
@@ -149,29 +149,26 @@ class LeftMenuViewController: BaseViewController {
     //MARK: - 业务处理
     
     func getProfile() {
-        httpRequest(.get(.profile), success: { response in
-            self.reloadProfile()
-        }, bfail: { response in
-            let message = self.logBFail(.get(.profile), response: response, show: false)
-            if !isEmptyString(message) {
-                SRAlert.showToast(message)
-            }
-        }, fail: { _ in
-            
+        httpRequest(.get("user/profile", nil), success: { [weak self] response in
+            self?.reloadProfile()
+            }, bfail: { [weak self] (method, response) in
+                SRAlert.showToast(self?.logBFail(method, response: response, show: false))
+            }, fail: { (_, _) in
+                
         })
     }
     
     @objc func reloadProfile() {
-        if !Common.isLogin() {
-            headPortraitImageView.image = Configs.Resource.defaultHeadPortrait(.normal)
+        if !ProfileManager.isLogin {
+            headPortraitImageView.image = Config.Resource.defaultHeadPortrait(.normal)
             nameLabel.text = "Please Login".localized
             return
         }
         
-        let url = URL(string: NonNull.string(Common.currentProfile()?.headPortrait))
+        let url = URL(string: NonNull.string(ProfileManager.currentProfile?.headPortrait))
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Configs.Resource.defaultHeadPortrait(.normal))
-        nameLabel.text = Common.currentProfile()?.name?.fullName
+                                          placeholderImage: Config.Resource.defaultHeadPortrait(.normal))
+        nameLabel.text = ProfileManager.currentProfile?.name?.fullName
     }
     
     //MARK: - 事件响应
@@ -179,7 +176,7 @@ class LeftMenuViewController: BaseViewController {
     @IBAction func clickProfileButton(_ sender: Any) {
         guard MutexTouch else { return }
         aggregationVC.closeLeft()
-        if !Common.isLogin() {
+        if !ProfileManager.isLogin {
             mainMenuVC.presentLoginVC()
         } else {
             mainMenuVC.show("ProfileViewController", storyboard: "Profile")

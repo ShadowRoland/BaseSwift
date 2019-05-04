@@ -40,12 +40,12 @@ class SimpleCell: UITableViewCell {
     public func update(_ dictionary: ParamDictionary) {
         let image = NonNull.string(dictionary[Param.Key.image])
         if isEmptyString(image)
-            || (isOnlyShowImageInWLAN && HttpManager.default.networkStatus != .reachable(.ethernetOrWiFi)) { //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
+            || (isOnlyShowImageInWLAN && HttpManager.shared.networkStatus != .reachable(.ethernetOrWiFi)) { //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
             headerImageWidthConstraint.constant = 0
         } else {
             headerImageWidthConstraint.constant = Const.headerImageWidthShowing
             headerImageView.sd_setImage(with: URL(string: image),
-                                        placeholderImage: Configs.Resource.defaultImage(.min))
+                                        placeholderImage: Config.Resource.defaultImage(.min))
         }
         titleLabel.attributedText = NSAttributedString(string: NonNull.string(dictionary[Param.Key.title]))
         var string: String?

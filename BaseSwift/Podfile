@@ -51,7 +51,7 @@ target 'BaseSwift' do
     pod 'ObjectMapper', '~> 3.4.2'
     
     ## gzip压缩和解压缩
-    # pod 'GzipSwift', '~> 5.0.0' # Recommended, 可以精简http请求和返回的数据量
+    pod 'GzipSwift', '~> 5.0.0' # Recommended, 可以精简http请求和返回的数据量
     
     ## 加密与解密
     pod 'CryptoSwift', :git => "https://github.com/krzyzanowskim/CryptoSwift", :branch => "master" # Optional
@@ -99,6 +99,9 @@ target 'BaseSwift' do
     
     ## 弹出框
     pod 'REMenu', '~> 1.10' # Optional
+    
+    ## 电话号码查询
+    pod 'libPhoneNumber-iOS', '~> 0.9.13'
     
     ## 定制弹出框
     pod 'SCLAlertView', '~> 0.8' # Required, added in project->"ThirdParty" 因SCLAlertView.appearance没有设置为public，已添加到项目工程中的ThirdParty

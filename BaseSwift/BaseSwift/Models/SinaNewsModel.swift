@@ -9,7 +9,7 @@
 import SRKit
 import ObjectMapper
 
-class SinaNewsModel: SRBusinessModel {
+class SinaNewsModel: BaseBusinessModel {
     enum MediaType: Int {
         case normal
         case video

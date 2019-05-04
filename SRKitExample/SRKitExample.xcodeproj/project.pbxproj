@@ -7,14 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E34B391226EF64B00CC37C6 /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 4E34B390226EF64B00CC37C6 /* Resource */; };
 		4E75755C2264510800394408 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E75755B2264510800394408 /* AppDelegate.swift */; };
 		4E75755E2264510800394408 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E75755D2264510800394408 /* ViewController.swift */; };
 		4E7575612264510800394408 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E75755F2264510800394408 /* Main.storyboard */; };
 		4E7575632264510900394408 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E7575622264510900394408 /* Assets.xcassets */; };
 		4E7575662264510900394408 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E7575642264510900394408 /* LaunchScreen.storyboard */; };
 		4E7575C42264513000394408 /* SRMJRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575702264512F00394408 /* SRMJRefresh.swift */; };
-		4E7575C52264513000394408 /* SRModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575722264512F00394408 /* SRModel.swift */; };
-		4E7575C62264513000394408 /* SRBusinessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575732264512F00394408 /* SRBusinessModel.swift */; };
 		4E7575C72264513000394408 /* SRNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575752264512F00394408 /* SRNavigationController.swift */; };
 		4E7575C82264513000394408 /* SRDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575772264512F00394408 /* SRDatePicker.swift */; };
 		4E7575C92264513000394408 /* SRDivisionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575782264512F00394408 /* SRDivisionPicker.swift */; };
@@ -67,7 +66,6 @@
 		4E7575F82264513000394408 /* SRBaseKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B22264513000394408 /* SRBaseKeyboard.swift */; };
 		4E7575F92264513000394408 /* SRBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B32264513000394408 /* SRBase.swift */; };
 		4E7575FB2264513000394408 /* SRLoadDataStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B52264513000394408 /* SRLoadDataStateView.swift */; };
-		4E7575FC2264513000394408 /* SRWebpageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B62264513000394408 /* SRWebpageViewController.swift */; };
 		4E7575FD2264513000394408 /* SRBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B72264513000394408 /* SRBaseViewController.swift */; };
 		4E7575FE2264513000394408 /* SRVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B92264513000394408 /* SRVideoPlayer.swift */; };
 		4E7575FF2264513000394408 /* SRBrightnessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575BA2264513000394408 /* SRBrightnessView.swift */; };
@@ -86,7 +84,6 @@
 		4E757621226452D200394408 /* SRBaseKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B22264513000394408 /* SRBaseKeyboard.swift */; };
 		4E757622226452D200394408 /* SRBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B32264513000394408 /* SRBase.swift */; };
 		4E757624226452D200394408 /* SRLoadDataStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B52264513000394408 /* SRLoadDataStateView.swift */; };
-		4E757625226452D200394408 /* SRWebpageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B62264513000394408 /* SRWebpageViewController.swift */; };
 		4E757626226452D200394408 /* SRBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575B72264513000394408 /* SRBaseViewController.swift */; };
 		4E757627226452D200394408 /* SRBusinessResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575A92264513000394408 /* SRBusinessResult.swift */; };
 		4E757628226452D200394408 /* SRBusinessListenerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575AA2264513000394408 /* SRBusinessListenerProtocol.swift */; };
@@ -120,8 +117,6 @@
 		4E757644226452D200394408 /* SRKeyboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575BF2264513000394408 /* SRKeyboardManager.swift */; };
 		4E757645226452D200394408 /* SRMJRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575702264512F00394408 /* SRMJRefresh.swift */; };
 		4E757646226452D200394408 /* SRModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E75759D2264512F00394408 /* SRModalViewController.swift */; };
-		4E757647226452D200394408 /* SRModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575722264512F00394408 /* SRModel.swift */; };
-		4E757648226452D200394408 /* SRBusinessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575732264512F00394408 /* SRBusinessModel.swift */; };
 		4E757649226452D200394408 /* SRNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575752264512F00394408 /* SRNavigationController.swift */; };
 		4E75764A226452D200394408 /* SRDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575772264512F00394408 /* SRDatePicker.swift */; };
 		4E75764B226452D200394408 /* SRDivisionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7575782264512F00394408 /* SRDivisionPicker.swift */; };
@@ -157,6 +152,7 @@
 		33357D879170AD5317BB11D2 /* Pods-abstract_pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKit/Pods-abstract_pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
 		3DA932185FB8547E0BCF3D00 /* Pods_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E34B390226EF64B00CC37C6 /* Resource */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resource; sourceTree = "<group>"; };
 		4E7575582264510800394408 /* SRKitExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SRKitExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E75755B2264510800394408 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4E75755D2264510800394408 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -165,8 +161,6 @@
 		4E7575652264510900394408 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4E7575672264510900394408 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E7575702264512F00394408 /* SRMJRefresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRMJRefresh.swift; sourceTree = "<group>"; };
-		4E7575722264512F00394408 /* SRModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRModel.swift; sourceTree = "<group>"; };
-		4E7575732264512F00394408 /* SRBusinessModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBusinessModel.swift; sourceTree = "<group>"; };
 		4E7575752264512F00394408 /* SRNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRNavigationController.swift; sourceTree = "<group>"; };
 		4E7575772264512F00394408 /* SRDatePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRDatePicker.swift; sourceTree = "<group>"; };
 		4E7575782264512F00394408 /* SRDivisionPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRDivisionPicker.swift; sourceTree = "<group>"; };
@@ -219,7 +213,6 @@
 		4E7575B22264513000394408 /* SRBaseKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBaseKeyboard.swift; sourceTree = "<group>"; };
 		4E7575B32264513000394408 /* SRBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBase.swift; sourceTree = "<group>"; };
 		4E7575B52264513000394408 /* SRLoadDataStateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRLoadDataStateView.swift; sourceTree = "<group>"; };
-		4E7575B62264513000394408 /* SRWebpageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRWebpageViewController.swift; sourceTree = "<group>"; };
 		4E7575B72264513000394408 /* SRBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBaseViewController.swift; sourceTree = "<group>"; };
 		4E7575B92264513000394408 /* SRVideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRVideoPlayer.swift; sourceTree = "<group>"; };
 		4E7575BA2264513000394408 /* SRBrightnessView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBrightnessView.swift; sourceTree = "<group>"; };
@@ -289,6 +282,7 @@
 				4E75755B2264510800394408 /* AppDelegate.swift */,
 				4E75755D2264510800394408 /* ViewController.swift */,
 				4E75755F2264510800394408 /* Main.storyboard */,
+				4E34B390226EF64B00CC37C6 /* Resource */,
 				4E7575622264510900394408 /* Assets.xcassets */,
 				4E75760A226451A000394408 /* Localizable.strings */,
 				4E7575642264510900394408 /* LaunchScreen.storyboard */,
@@ -313,7 +307,6 @@
 				4E770B5922680EED00D06831 /* SRLog */,
 				4E75756F2264512F00394408 /* SRMJRefresh */,
 				4E75759C2264512F00394408 /* SRModalViewController */,
-				4E7575712264512F00394408 /* SRModel */,
 				4E7575742264512F00394408 /* SRNavigationController */,
 				4E7575762264512F00394408 /* SRPickerView */,
 				4E7575C22264513000394408 /* SRPopover */,
@@ -332,15 +325,6 @@
 				4E7575702264512F00394408 /* SRMJRefresh.swift */,
 			);
 			path = SRMJRefresh;
-			sourceTree = "<group>";
-		};
-		4E7575712264512F00394408 /* SRModel */ = {
-			isa = PBXGroup;
-			children = (
-				4E7575732264512F00394408 /* SRBusinessModel.swift */,
-				4E7575722264512F00394408 /* SRModel.swift */,
-			);
-			path = SRModel;
 			sourceTree = "<group>";
 		};
 		4E7575742264512F00394408 /* SRNavigationController */ = {
@@ -481,7 +465,6 @@
 				4E7575B72264513000394408 /* SRBaseViewController.swift */,
 				4E7575B52264513000394408 /* SRLoadDataStateView.swift */,
 				4E7575AF2264513000394408 /* SRProgressComponent.swift */,
-				4E7575B62264513000394408 /* SRWebpageViewController.swift */,
 				4E7575B12264513000394408 /* UIViewController+SRBaseBusiness.swift */,
 			);
 			path = SRBase;
@@ -668,6 +651,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E34B391226EF64B00CC37C6 /* Resource in Resources */,
 				4E757608226451A000394408 /* Localizable.strings in Resources */,
 				4E7575662264510900394408 /* LaunchScreen.storyboard in Resources */,
 				4E7575632264510900394408 /* Assets.xcassets in Resources */,
@@ -742,7 +726,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nbundle_path=${SRCROOT}/SRKitExample/SRKit/SRKit.bundle\nif [[ ! -d \"${bundle_path}\" ]]; then\n    echo \"SRKit.bundle directory not found\"\n    exit 1\nfi\n\nrm -rf \"${bundle_path}/*\"\n\ncp -rf ${SRCROOT}/SRKitExample/*.lproj \"${bundle_path}/\"\nrm -rf \"${bundle_path}/Base.lproj\"\n\ncp -rf ${SRCROOT}/SRKitExample/Assets.xcassets \"${bundle_path}/\"\nrm -rf \"${bundle_path}/Assets.xcassets/*.appiconset\"\nrm -rf \"${bundle_path}/Assets.xcassets/*.launchimage\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nbundle_path=${SRCROOT}/SRKitExample/SRKit/SRKit.bundle\nif [[ ! -d \"${bundle_path}\" ]]; then\n    echo \"SRKit.bundle directory not found\"\n    exit 1\nfi\n\nrm -rf \"${bundle_path}/*\"\n\ncp -rf ${SRCROOT}/SRKitExample/*.lproj \"${bundle_path}/\"\nrm -rf \"${bundle_path}/Base.lproj\"\n\ncp -rf ${SRCROOT}/SRKitExample/Assets.xcassets \"${bundle_path}/\"\nrm -rf \"${bundle_path}/Assets.xcassets/*.appiconset\"\nrm -rf \"${bundle_path}/Assets.xcassets/*.launchimage\"\n\ncp -rf ${SRCROOT}/SRKitExample/Resource \"${bundle_path}/\"\n";
 		};
 		4E75765F22645FAF00394408 /* [CP] Copy Resource Files To Bundle */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -842,7 +826,6 @@
 				4E7575D52264513000394408 /* UIFont+SRExtension.swift in Sources */,
 				4E7575F22264513000394408 /* SRBusinessModule.swift in Sources */,
 				4E7575EC2264513000394408 /* SRHttpTool.swift in Sources */,
-				4E7575C62264513000394408 /* SRBusinessModel.swift in Sources */,
 				4E7575CA2264513000394408 /* SRPickerView.swift in Sources */,
 				4E7575F72264513000394408 /* UIViewController+SRBaseBusiness.swift in Sources */,
 				4E7575FF2264513000394408 /* SRBrightnessView.swift in Sources */,
@@ -851,14 +834,12 @@
 				4E7575F32264513000394408 /* SRBusinessFramework.swift in Sources */,
 				4E7575EB2264513000394408 /* SRHttpManager.swift in Sources */,
 				4E7575DB2264513000394408 /* UIColor+SRExtension.swift in Sources */,
-				4E7575FC2264513000394408 /* SRWebpageViewController.swift in Sources */,
 				4E7575E02264513000394408 /* String+SRExtension.swift in Sources */,
 				4E7575FD2264513000394408 /* SRBaseViewController.swift in Sources */,
 				4E7575ED2264513000394408 /* SRAlertController.swift in Sources */,
 				4E7575D82264513000394408 /* URL+SRExtension.swift in Sources */,
 				4E7575E62264513000394408 /* SRIndexPath.swift in Sources */,
 				4E7576012264513000394408 /* SRVideoRequestTask.swift in Sources */,
-				4E7575C52264513000394408 /* SRModel.swift in Sources */,
 				4E7576052264513000394408 /* SRPopover.swift in Sources */,
 				4E75767222659A4A00394408 /* NullSafe.m in Sources */,
 				4E7575CB2264513000394408 /* SRShareOption.swift in Sources */,
@@ -894,7 +875,6 @@
 				4E757621226452D200394408 /* SRBaseKeyboard.swift in Sources */,
 				4E757622226452D200394408 /* SRBase.swift in Sources */,
 				4E757624226452D200394408 /* SRLoadDataStateView.swift in Sources */,
-				4E757625226452D200394408 /* SRWebpageViewController.swift in Sources */,
 				4E757626226452D200394408 /* SRBaseViewController.swift in Sources */,
 				4E757627226452D200394408 /* SRBusinessResult.swift in Sources */,
 				4E757628226452D200394408 /* SRBusinessListenerProtocol.swift in Sources */,
@@ -928,8 +908,6 @@
 				4E757644226452D200394408 /* SRKeyboardManager.swift in Sources */,
 				4E757645226452D200394408 /* SRMJRefresh.swift in Sources */,
 				4E757646226452D200394408 /* SRModalViewController.swift in Sources */,
-				4E757647226452D200394408 /* SRModel.swift in Sources */,
-				4E757648226452D200394408 /* SRBusinessModel.swift in Sources */,
 				4E757649226452D200394408 /* SRNavigationController.swift in Sources */,
 				4E75764A226452D200394408 /* SRDatePicker.swift in Sources */,
 				4E75764B226452D200394408 /* SRDivisionPicker.swift in Sources */,

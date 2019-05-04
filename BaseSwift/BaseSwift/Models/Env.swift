@@ -1,5 +1,5 @@
 //
-//  Config.swift
+//  Env.swift
 //  BaseSwift
 //
 //  Created by Gary on 2018/8/7.
@@ -9,19 +9,19 @@
 import SRKit
 import ObjectMapper
 
-public class Config: SRModel {
+public class Env: BaseModel {
     var isProduction: Bool = true
-    var apiBaseUrl: String = Configs.BaseServerURLProduction
+    var apiBaseUrl: String = Config.BaseServerURLProduction
     var httpsCer: String = "" //https证书
     
-    public class var shared: Config {
+    public class var shared: Env {
         if sharedInstance == nil {
-            Config.reload()
+            Env.reload()
         }
         return sharedInstance!
     }
     
-    private static var sharedInstance: Config?
+    private static var sharedInstance: Env?
     
     private override init() {
         super.init()
@@ -37,9 +37,9 @@ public class Config: SRModel {
     }
     
     public class func reload() {
-        sharedInstance = Config()
+        sharedInstance = Env()
         guard Environment != .production,
-            let local = Config.local,
+            let local = Env.local,
             let current = local["current"] as? Int,
             current >= 0,
             let envs = local["envs"] as? [ParamDictionary],
@@ -48,32 +48,32 @@ public class Config: SRModel {
         }
         
         print(envs[current])
-        sharedInstance = Config(JSON: envs[current])
+        sharedInstance = Env(JSON: envs[current])
         sharedInstance?.isProduction = false
     }
     
     public static var local: ParamDictionary? {
         get {
-            if let config = UserStandard[USKey.config] as? ParamDictionary {
-                if let version = config[Param.Key.version] as? String,
-                    let newestConfig = (Configs.configFilePath.fileJsonObject) as? ParamDictionary,
-                    let newestVersion = newestConfig[Param.Key.version] as? String,
+            if let env = UserStandard[USKey.env] as? ParamDictionary {
+                if let version = env[Param.Key.version] as? String,
+                    let newestEnv = (Config.envFilePath.fileJsonObject) as? ParamDictionary,
+                    let newestVersion = newestEnv[Param.Key.version] as? String,
                     version != newestVersion {
-                    UserStandard[USKey.config] = newestConfig
-                    return newestConfig
+                    UserStandard[USKey.env] = newestEnv
+                    return newestEnv
                 }
-                return config
+                return env
             }
             
-            return Common.readJsonFile(Configs.configFilePath) as? ParamDictionary
+            return Config.envFilePath.fileJsonObject as? ParamDictionary
         }
         
         set {
             guard let local = local else {
-                 UserStandard[USKey.config] = nil
+                 UserStandard[USKey.env] = nil
                 return
             }
-            UserStandard[USKey.config] = local
+            UserStandard[USKey.env] = local
         }
     }
 }

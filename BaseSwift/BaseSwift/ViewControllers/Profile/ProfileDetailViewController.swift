@@ -8,6 +8,8 @@
 
 import SRKit
 import Alamofire
+import SwiftyJSON
+import SDWebImage
 //import MWPhotoBrowser
 
 class ProfileDetailForm: ProfileForm {
@@ -106,6 +108,18 @@ class ProfileDetailViewController: BaseViewController {
     
     weak var popover: SRPopover?
     var pickerView: SRPickerView!
+    lazy var divisionPicker: SRDivisionPicker = {
+        let picker = SRDivisionPicker()
+        //        let filePath = ResourceDirectory.appending(pathComponent: "china_locations.json.zip")
+        //        do {
+        //            let data = try Data(contentsOf: URL(fileURLWithPath: filePath)).gunzipped()
+        //            picker.chinaLocations = try JSON(data: data).rawValue as? [String : String] ?? [:]
+        //        } catch {
+        //            LogError("Unzip and transfer china locations file failed: \(filePath), error.localizedDescription")
+        //        }
+        picker.delegate = self
+        return picker
+    }()
     
     var faceImageUrl: String!
     var faceImageCookie: String!
@@ -219,7 +233,7 @@ class ProfileDetailViewController: BaseViewController {
                                     .isIgnoreParamValue : true]) {
             let url = URL(string: item.value as? String ?? "")
             headPortraitImageView.sd_setImage(with: url,
-                                              placeholderImage: Configs.Resource.defaultImage(.normal))
+                                              placeholderImage: Config.Resource.defaultImage(.normal))
             headPortraitImageView.isUserInteractionEnabled = isEditingProfile
             headPortraitURL = url
             headPortraitTrailingConstraint.constant = 0
@@ -314,7 +328,8 @@ class ProfileDetailViewController: BaseViewController {
             if let region = dictionary[Param.Key.region] as? String {
                 names.append(region)
             }
-            let divisions = Division.divisions(names: names)
+            let divisions = SRDivision.divisions(names: names,
+                                                 from: divisionPicker.provinces)
             var text = ""
             divisions.forEach { text.append($0.name) }
             item.showText = text
@@ -337,7 +352,8 @@ class ProfileDetailViewController: BaseViewController {
             if let region = dictionary[Param.Key.region] as? String {
                 names.append(region)
             }
-            let divisions = SRDivision.divisions(names: names)
+            let divisions = SRDivision.divisions(names: names,
+                                                 from: divisionPicker.provinces)
             var text = ""
             divisions.forEach { text.append($0.name) }
             item.showText = text
@@ -368,10 +384,10 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Config.Unit.centimetre)
                 
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.centimetre)
         }
         
         if let item = item(weightCell,
@@ -386,9 +402,9 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.kilogram)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Config.Unit.kilogram)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.kilogram)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.kilogram)
         }
         
         if let item = item(dickLengthCell,
@@ -403,9 +419,9 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Config.Unit.centimetre)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.centimetre)
         }
         
         if let item = item(fuckDurationCell,
@@ -420,9 +436,9 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.minute)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Config.Unit.minute)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.minute)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.minute)
         }
         
         if let item = item(houseAreaCell,
@@ -437,9 +453,9 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.squareMeter)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Config.Unit.squareMeter)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.squareMeter)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.squareMeter)
         }
         
         if let item = item(bustCell,
@@ -454,9 +470,9 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Config.Unit.centimetre)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.centimetre)
         }
         
         if let item = item(waistlineCell,
@@ -471,9 +487,9 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Config.Unit.centimetre)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.centimetre)
         }
         
         if let item = item(hiplineCell,
@@ -488,9 +504,9 @@ class ProfileDetailViewController: BaseViewController {
             } else {
                 let number = item.value as? NSNumber ?? NSNumber(value: 0)
                 item.inputText = String(object: number)
-                item.inputTextView?.setProperty(.text, value: item.inputText + Configs.Unit.centimetre)
+                item.inputTextView?.setProperty(.text, value: item.inputText + Config.Unit.centimetre)
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.centimetre)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.centimetre)
         }
         
         if let item = item(annualIncomeCell,
@@ -509,7 +525,7 @@ class ProfileDetailViewController: BaseViewController {
                 item.inputTextView?.setProperty(.text,
                                                 value: item.inputText.tenThousands(number.uintValue))
             }
-            item.inputTextView?.setProperty(.placeholder, value: Configs.Unit.yuan)
+            item.inputTextView?.setProperty(.placeholder, value: Config.Unit.yuan)
         }
         
         lastSection = lastSectionWillAdd
@@ -833,18 +849,19 @@ class ProfileDetailViewController: BaseViewController {
     }
     
     func getProfileDetail() {
-        //httpReq(.get(.profileDetail))
-        httpRequest(.get("user/profileDetail"), success: { response in
-            self.isFirstDidLoadSuccess = true
-            self.dismissProgress()
+        httpRequest(.get("user/profileDetail", nil), success: { [weak self] response in
+            guard let strongSelf = self else { return }
+            strongSelf.isFirstDidLoadSuccess = true
+            strongSelf.dismissProgress()
             if let dictionary =
                 (response as? JSON)?[HTTP.Key.Response.data].rawValue as? ParamDictionary {
-                self.profile = dictionary
-                self.initSections()
-                self.tableView.reloadData()
+                strongSelf.profile = dictionary
+                strongSelf.initSections()
+                strongSelf.tableView.reloadData()
             }
-        }, bfail: { response in
-            let message = self.logBFail(.get(.profileDetail), response: response, show: false)
+        }, bfail: { [weak self] (method, response) in
+            guard let strongSelf = self else { return }
+            let message = strongSelf.logBFail(method, response: response, show: false)
             if !isEmptyString(message) {
                 SRAlert.showToast(message)
             }
@@ -955,7 +972,7 @@ class ProfileDetailViewController: BaseViewController {
             //https://developer.qiniu.com/kodo/manual/1234/upload-types
             
             //若有自己的图片文件服务器，将图片转成Base64码，使用新的key放到post请求的参数：
-            //let directory = Common.currentProfile()!.directory(.upload)!
+            //let directory = ProfileManager.currentProfile()!.directory(.upload)!
             //let filePath = directory.appending(pathComponent: Const.editedHeadPortraitFileName)
             //let image = UIImage(contentsOfFile: filePath)
             //let data = UIImagePNGRepresentation(image!)
@@ -963,21 +980,19 @@ class ProfileDetailViewController: BaseViewController {
         }
         
         //httpReq(.post(.profileDetail), profile, nil)
-        httpRequest(.post("user/profileDetail"),
-                    params: profile,
-                    success:
-            { response in
-                SRAlert.showToast("Submit successfully".localized)
-                self.dismissProgress()
-                if let dictionary =
-                    (response as? JSON)?[HTTP.Key.Response.data].rawValue as? ParamDictionary {
-                    self.profile = dictionary
-                    self.isEditingProfile = false
-                    self.pageBackGestureStyle = .page
-                    self.initSections()
-                    self.tableView.reloadData()
-                    self.setNavigationBarRightButtonItems()
-                }
+        httpRequest(.post("user/profileDetail", profile), success: { [weak self] response in
+            guard let strongSelf = self else { return }
+            SRAlert.showToast("Submit successfully".localized)
+            strongSelf.dismissProgress()
+            if let dictionary =
+                (response as? JSON)?[HTTP.Key.Response.data].rawValue as? ParamDictionary {
+                strongSelf.profile = dictionary
+                strongSelf.isEditingProfile = false
+                strongSelf.pageBackGestureStyle = .page
+                strongSelf.initSections()
+                strongSelf.tableView.reloadData()
+                strongSelf.setNavigationBarRightButtonItems()
+            }
         })
     }
     
@@ -1092,9 +1107,9 @@ class ProfileDetailViewController: BaseViewController {
         }
         
         Keyboard.hide { [weak self] in
-            self?.currentItem = item
-            let divisionPicker = SRDivisionPicker()
-            divisionPicker.delegate = self
+            guard let strongSelf = self else { return }
+            
+            strongSelf.currentItem = item
             let dictionary = NonNull.dictionary(item.value)
             var names = [] as [String]
             if let province = dictionary[Param.Key.province] as? String {
@@ -1106,10 +1121,12 @@ class ProfileDetailViewController: BaseViewController {
             if let region = dictionary[Param.Key.region] as? String {
                 names.append(region)
             }
-            let divisions = SRDivision.divisions(names: names)
-            divisionPicker.currentDivisions = !divisions.isEmpty ? divisions : SRDivision.default
-            self?.pickerView = divisionPicker
-            divisionPicker.show()
+            let divisions = SRDivision.divisions(names: names,
+                                                 from: strongSelf.divisionPicker.provinces)
+            strongSelf.divisionPicker.currentDivisions =
+                !divisions.isEmpty ? divisions : strongSelf.divisionPicker.firstLocations
+            strongSelf.pickerView = strongSelf.divisionPicker
+            strongSelf.divisionPicker.show()
         }
     }
     
@@ -1144,27 +1161,24 @@ class ProfileDetailViewController: BaseViewController {
                                                     return
         }
         
-        //        httpReq(.post(.uploadFaceImage),
-        //                ["" : data.base64EncodedString()],
-        //                url: "http://kan.msxiaobing.com/Api",
-        //                encoding: CustomEncoding.default)
-        httpRequest(.post(.uploadFaceImage),
-                    ["" : data.base64EncodedString()],
-                    url: "http://kan.msxiaobing.com/Api",
-                    encoding: CustomEncoding.default,
-                    success:
-            { response in
-                self.dismissProgress()
+        httpRequest(.upload("http://kan.msxiaobing.com/Api/Image/UploadBase64",
+                            nil,
+                            [["" : data.base64EncodedString()]]),
+                          encoding: CustomEncoding.default,
+                          success:
+            { [weak self] response in
+                guard let strongSelf = self else { return }
+                strongSelf.dismissProgress()
                 if let dictionary = (response as? JSON)?.rawValue as? ParamDictionary {
                     let host = NonNull.string(dictionary["Host"])
                     let url = NonNull.string(dictionary["Url"])
-                    self.faceImageUrl = host + url
+                    strongSelf.faceImageUrl = host + url
                     DispatchQueue.main.async {
-                        self.showProgress()
-                        if self.faceImageCookie == nil {
-                            self.getFaceImageCookie()
+                        strongSelf.showProgress()
+                        if strongSelf.faceImageCookie == nil {
+                            strongSelf.getFaceImageCookie()
                         } else {
-                            self.faceImageAnalyze()
+                            strongSelf.faceImageAnalyze()
                         }
                     }
                 }
@@ -1209,47 +1223,40 @@ class ProfileDetailViewController: BaseViewController {
     }
     
     func faceImageAnalyze() {
-        //        httpReq(.post(.faceImageAnalyze),
-        //                ["MsgId" : String(long: CLong(Date().timeIntervalSince1970)) + "063",
-        //                 "CreateTime" : String(long: CLong(Date().timeIntervalSince1970)),
-        //                 "Content[imageUrl]" : faceImageUrl],
-        //                url: "http://kan.msxiaobing.com/Api",
-        //                encoding: URLEncoding.default,
-        //                headers: ["Referer" : "https://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi",
-        //                          "Cookie" : faceImageCookie])
-        httpRequest(.post(.faceImageAnalyze),
+        httpRequest(.post("http://kan.msxiaobing.com/Api/ImageAnalyze/Process?service=yanzhi",
                     ["MsgId" : String(long: CLong(Date().timeIntervalSince1970)) + "063",
                      "CreateTime" : String(long: CLong(Date().timeIntervalSince1970)),
-                     "Content[imageUrl]" : faceImageUrl as Any],
-                    url: "http://kan.msxiaobing.com/Api",
+                     "Content[imageUrl]" : faceImageUrl as Any]),
                     encoding: URLEncoding.default,
                     headers: ["Referer" : "https://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi",
                               "Cookie" : faceImageCookie],
                     success:
-            { response in
-                self.dismissProgress()
+            { [weak self] response in
+                guard let strongSelf = self else { return }
+                
+                strongSelf.dismissProgress()
                 if let json = response as? JSON {
                     if let text = json["content"]["text"].string {
-                        self.faceImageLabel.text = text
+                        strongSelf.faceImageLabel.text = text
                         let range = (text as NSString).range(of: "[+-]?[\\d]+(\\.[\\d]+)?",
                                                              options: .regularExpression)
                         if range.location != NSNotFound {
                             let string = (text as NSString).substring(with: range)
-                            self.currentItem?.value = NSDecimalNumber(string: string)
-                            self.currentItem?.showText = string
-                            self.currentItem?.showTextView?.setProperty(.text,
-                                                                        value: self.currentItem?.showText)
+                            strongSelf.currentItem?.value = NSDecimalNumber(string: string)
+                            strongSelf.currentItem?.showText = string
+                            strongSelf.currentItem?.showTextView?.setProperty(.text,
+                                                                        value: strongSelf.currentItem?.showText)
                         }
                     }
                     if let imageUrl = json["content"]["imageUrl"].string {
-                        self.faceImageView.sd_setImage(with: URL(string: imageUrl),
-                                                       placeholderImage: self.faceImageView.image!,
+                        strongSelf.faceImageView.sd_setImage(with: URL(string: imageUrl),
+                                                       placeholderImage: strongSelf.faceImageView.image!,
                                                        options: [],
                                                        completed:
                             { (_, error, _, _) in
                                 if error == nil {
-                                    DispatchQueue.main.async { [weak self] in
-                                        self?.layoutFaceImage()
+                                    DispatchQueue.main.async {
+                                        strongSelf.layoutFaceImage()
                                     }
                                 }
                         })
@@ -1483,7 +1490,7 @@ class ProfileDetailViewController: BaseViewController {
         let item = indexPathSet[headPortraitCell] as! ProfileDetailForm
         let url = URL(string: item.value as? String ?? "")
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Configs.Resource.defaultImage(.normal))
+                                          placeholderImage: Config.Resource.defaultImage(.normal))
         headPortraitURL = url
         headPortraitTrailingConstraint.constant = 0
         cleanHeadPortraitButton.isHidden = true
@@ -1524,7 +1531,7 @@ extension ProfileDetailViewController: UIImagePickerControllerDelegate, UINaviga
             let cropImage = image.cropped(size.width / size.height) //继续按定制比例裁剪
             let resizedImage = cropImage.resized(size) //再按尺寸缩放
             let data = resizedImage.pngData()
-            let directory = Common.currentProfile()!.directory(.upload)!
+            let directory = ProfileManager.currentProfile!.directory(.upload)!
             let filePath = directory.appending(pathComponent: Const.editedHeadPortraitFileName)
             let url = URL(fileURLWithPath: filePath) //保存到缓存图片
             do {
@@ -1537,7 +1544,7 @@ extension ProfileDetailViewController: UIImagePickerControllerDelegate, UINaviga
             }
             SDImageCache.shared.removeImage(forKey: url.absoluteString) //删除缓存中的图片再刷新图片
             headPortraitImageView.sd_setImage(with: url,
-                                              placeholderImage: Configs.Resource.defaultImage(.normal))
+                                              placeholderImage: Config.Resource.defaultImage(.normal))
             headPortraitURL = url
             headPortraitTrailingConstraint.constant = headPortraitTopConstraint.constant
             cleanHeadPortraitButton.isHidden = false

@@ -94,9 +94,9 @@ class ContactCell: UITableViewCell {
         let url = URL(string: NonNull.string(model.headPortrait))
         var headPortrait: UIImage?
         if contactType == .officialAccount {
-            headPortrait = Configs.Resource.defaultImage(.min)
+            headPortrait = Config.Resource.defaultImage(.min)
         } else {
-            headPortrait = Configs.Resource.defaultHeadPortrait(.min)
+            headPortrait = Config.Resource.defaultHeadPortrait(.min)
         }
         headPortraitImageView.contentMode = .scaleToFill
         headPortraitImageView.sd_setImage(with: url,

@@ -7,6 +7,7 @@
 //
 
 import SRKit
+import SwiftyJSON
 
 class SimpleViewController: BaseViewController {
     @IBOutlet weak var label: UILabel!
@@ -19,7 +20,7 @@ class SimpleViewController: BaseViewController {
         setNavigationBarRightButtonItems()
         
         getSimpleData()
-        setLoadDataFail(.get(.simpleData)) { [weak self] in
+        setLoadDataFail(.get("data/getSimpleData", nil)) { [weak self] in
             self?.getSimpleData()
         }
     }
@@ -48,7 +49,7 @@ class SimpleViewController: BaseViewController {
     
     func getSimpleData() {
         showProgress()
-        httpRequest(.get(.simpleData), success: { [weak self] response in
+        httpRequest(.get("data/getSimpleData", nil), success: { [weak self] response in
             self?.dismissProgress()
             self?.label.text =
                 (response as! JSON)[HTTP.Key.Response.data][Param.Key.title].string

@@ -163,7 +163,7 @@ class SettingViewController: BaseViewController {
     }
     
     func initTableFooterView() {
-        if !Common.isLogin() {
+        if !ProfileManager.isLogin {
             tableView.tableFooterView = UIView()
         }
     }
@@ -177,16 +177,6 @@ class SettingViewController: BaseViewController {
     }
     
     //MARK: - 业务处理
-    
-    override func performViewDidLoad() {
-        //FIXME: FOR DEBUG，广播“触发状态机的完成事件”的通知
-        if let sender = params[Param.Key.sender] as? String,
-            let event = params[Param.Key.event] as? Int {
-            LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), sender: \(sender), event: \(event)")
-            NotifyDefault.post(name: Notification.Name.Base.didEndStateMachineEvent,
-                               object: params)
-        }
-    }
     
     func updateCellHeight() {
         Const.textFont = UIFont.Preferred.body
@@ -215,7 +205,7 @@ class SettingViewController: BaseViewController {
     
     //查看业务上是否支持
     func checkAuthenticateBusiness() -> Bool {
-        return Common.isLogin()
+        return ProfileManager.isLogin
     }
     
     func checkAuthenticateSetting() -> Bool {
@@ -256,8 +246,8 @@ class SettingViewController: BaseViewController {
     
     func updateCacheSize() {
         var size = UInt64(SDImageCache.shared.totalDiskSize())
-        size += Configs.VideosDirectory.fileSize
-        size += Configs.VideosCacheDirectory.fileSize
+        size += Config.VideosDirectory.fileSize
+        size += Config.VideosCacheDirectory.fileSize
         if size == 0 {
             cacheLabel.text = "0M"
         } else if size >= 1000 * 1000 * 1000 {
@@ -307,8 +297,8 @@ class SettingViewController: BaseViewController {
             })
             
             do {
-                try FileManager.default.removeItem(atPath: Configs.VideosDirectory)
-                try FileManager.default.removeItem(atPath: Configs.VideosCacheDirectory)
+                try FileManager.default.removeItem(atPath: Config.VideosDirectory)
+                try FileManager.default.removeItem(atPath: Config.VideosCacheDirectory)
             } catch {
                 DispatchQueue.main.async {
                     LogError("Remove video files failed: \(error.localizedDescription)")
@@ -353,10 +343,10 @@ class SettingViewController: BaseViewController {
                             backgroundColor: NavigationBar.backgroundColor,
                             action:
                 {
-                    BF.callBusiness(BF.businessId(.profile, Manager.Profile.funcId(.logout)))
-                    if Configs.entrance == .sns {
+                    ProfileManager.currentProfile = nil
+                    if Config.entrance == .sns {
                         Common.clearForLogin()
-                    } else if Configs.entrance == .news || Configs.entrance == .aggregation {
+                    } else if Config.entrance == .news || Config.entrance == .aggregation {
                         self.initSections()
                         self.initTableFooterView()
                         self.tableView.reloadData()

@@ -9,7 +9,7 @@
 import SRKit
 import ObjectMapper
 
-public class MessageModel: SRBusinessModel {
+public class MessageModel: BaseBusinessModel {
     enum BlogType: Int {
         case text = 0,
         image,

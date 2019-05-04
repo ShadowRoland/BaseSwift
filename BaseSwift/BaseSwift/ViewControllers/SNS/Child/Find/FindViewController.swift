@@ -177,10 +177,10 @@ class FindViewController: BaseViewController, FindCellDelegate {
     //MARK: - 业务处理
     
     func reloadProfile() {
-        let url = URL(string: NonNull.string(Common.currentProfile()?.headPortrait))
+        let url = URL(string: NonNull.string(ProfileManager.currentProfile?.headPortrait))
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Configs.Resource.defaultHeadPortrait(.normal))
-        nameLabel.text = Common.currentProfile()?.name?.fullName
+                                          placeholderImage: Config.Resource.defaultHeadPortrait(.normal))
+        nameLabel.text = ProfileManager.currentProfile?.name?.fullName
     }
     
     func startRefreshNew() {
@@ -226,7 +226,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         params[Param.Key.limit] = TableLoadData.limit
         let offset = loadType == .more ? currentOffset + 1 : 0
         params[Param.Key.offset] = offset
-        httpRequest(.get(.messages), success: { [weak self] response in
+        httpRequest(.get("data/getMessages", params), success: { [weak self] response in
             guard let strongSelf = self else { return }
             let currentOffset = strongSelf.currentOffset
             if .more == loadType {
@@ -236,15 +236,15 @@ class FindViewController: BaseViewController, FindCellDelegate {
             } else {
                 strongSelf.updateNew(response as? JSON)
             }
-            }, bfail: { [weak self] (url, response) in
+            }, bfail: { [weak self] (method, response) in
                 guard let strongSelf = self else { return }
                 if .more == loadType {
-                    if offset == strongSelf.currentOffset + 1 {
+                   if offset == strongSelf.currentOffset + 1 {
                         if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
                             strongSelf.updateMore(nil)
                         } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
                             strongSelf.updateMore(nil,
-                                                  errMsg: strongSelf.logBFail(.get(.messages),
+                                                  errMsg: strongSelf.logBFail(method,
                                                                               response: response,
                                                                               show: false))
                         }
@@ -253,12 +253,12 @@ class FindViewController: BaseViewController, FindCellDelegate {
                     if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
                         strongSelf.updateNew(nil)
                     } else { //当前为空的话则交给列表展示错误信息
-                        strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(.get(.messages),
+                        strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(method,
                                                                               response: response,
                                                                               show: false))
                     }
                 }
-            }, fail: { [weak self] (url, error) in
+            }, fail: { [weak self] (_, error) in
                 guard let strongSelf = self else { return }
                 if .more == loadType {
                     if offset == strongSelf.currentOffset + 1 {

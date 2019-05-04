@@ -9,22 +9,30 @@
 import SRKit
 
 public class ProfileManager {
+    public static var currentProfile: ProfileModel?
+    
+    public static var isLogin: Bool {
+        if let profile = currentProfile {
+            return profile.isLogin
+        }
+        return false
+    }
+    
     //输入参数nil意味着清空当前所有数据
     class func updateProfile(_ dictionary: ParamDictionary?) {
-        let profile = Common.currentProfile()
         var model: ProfileModel?
-        if let profile = profile, let dictionary = dictionary {
+        if let profile = currentProfile, let dictionary = dictionary {
             model = ProfileModel(JSON: profile.toJSON().extend(dictionary))!
         } else {
             model = ProfileModel(JSON: dictionary ?? [:])!
         }
         
         if let model = model {
-            if let profile = profile {
+            if let profile = currentProfile {
                 model.imToken = profile.imToken
                 model.isLogin = profile.isLogin
             }
-            Common.updateCurrentProfile(model)
+            currentProfile = model
         }
     }
     

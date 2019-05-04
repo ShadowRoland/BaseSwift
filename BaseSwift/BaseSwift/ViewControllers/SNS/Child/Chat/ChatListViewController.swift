@@ -75,23 +75,22 @@ class ChatListViewController: BaseViewController {
         var params = [:] as ParamDictionary
         params[Param.Key.limit] = TableLoadData.row
         params[Param.Key.offset] = 1000
-        httpRequest(.get(.messages), success:
+        httpRequest(.get("data/getMessages", params), success:
             { [weak self] response in
-                guard let strongSelf = self else { return }
-                strongSelf.update(response as? JSON)
-            }, bfail: { [weak self] (url, response) in
+                self?.update(response as? JSON)
+            }, bfail: { [weak self] (method, response) in
                 guard let strongSelf = self else { return }
                 if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
                     strongSelf.update(nil)
-                    strongSelf.showToast(strongSelf.logBFail(.get(.messages),
+                    strongSelf.showToast(strongSelf.logBFail(method,
                                                              response: response,
                                                              show: false))
                 } else { //当前为空的话则交给列表展示错误信息
-                    strongSelf.update(nil, errMsg: strongSelf.logBFail(.get(.messages),
+                    strongSelf.update(nil, errMsg: strongSelf.logBFail(method,
                                                                        response: response,
                                                                        show: false))
                 }
-            }, fail: { [weak self] (url, error) in
+            }, fail: { [weak self] (_, error) in
                 guard let strongSelf = self else { return }
                 if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
                     strongSelf.update(nil)

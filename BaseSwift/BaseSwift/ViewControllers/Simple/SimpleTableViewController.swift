@@ -114,13 +114,13 @@ class SimpleTableViewController: BaseViewController {
                                                       screenSize().width,
                                                       Const.headerImageHeight))
            //imageView.sd_setImage(with: URL(string: url),
-            //                      placeholderImage: Configs.Resource.defaultImage(.normal))
+            //                      placeholderImage: Config.Resource.defaultImage(.normal))
             imageView.showProgress(.clear,
                                    progressType: .infinite,
                                    progress: nil,
                                    options: [.imageProgressSize : SRProgressHUD.ImageProgressSize.normal])
             imageView.sd_setImage(with: URL(string: url),
-                                  placeholderImage: Configs.Resource.defaultImage(.normal),
+                                  placeholderImage: Config.Resource.defaultImage(.normal),
                                   options: [],
                                   progress:
                 { (current, total, url) in
@@ -242,7 +242,7 @@ class SimpleTableViewController: BaseViewController {
         var params = [:] as ParamDictionary
         params[Param.Key.limit] = TableLoadData.row
         params[Param.Key.offset] = loadType == .more ? currentOffset + 1 : 0
-        httpRequest(.get("data/getSimpleList"), params: params, success: { [weak self] response in
+        httpRequest(.get("data/getSimpleList", params), success: { [weak self] response in
             guard let strongSelf = self else { return }
             let responseData = NonNull.dictionary((response as! JSON)[HTTP.Key.Response.data].rawValue)
             if loadType == .more {
@@ -253,7 +253,7 @@ class SimpleTableViewController: BaseViewController {
             } else {
                 strongSelf.updateNew(responseData)
             }
-            }, bfail: { [weak self] (url, response) in
+            }, bfail: { [weak self] (method, response) in
                 guard let strongSelf = self else { return }
                 if loadType == .more {
                     let offset = params[Param.Key.offset] as! Int
@@ -261,21 +261,22 @@ class SimpleTableViewController: BaseViewController {
                         if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
                             strongSelf.updateMore(nil)
                         } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                            strongSelf.updateMore(nil, errMsg: strongSelf.logBFail("data/getSimpleList",
-                                                                                   response:response,
-                                                                                   show: false))
+                            strongSelf.updateMore(nil,
+                                                  errMsg: strongSelf.logBFail(method,
+                                                                              response:response,
+                                                                              show: false))
                         }
                     }
                 } else {
                     if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
                         strongSelf.updateNew(nil)
                     } else { //当前为空的话则交给列表展示错误信息
-                        strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(.get(.simpleList),
+                        strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(method,
                                                                               response: response,
                                                                               show: false))
                     }
                 }
-            }, fail: { [weak self] error in
+            }, fail: { [weak self] (_, error) in
                 guard let strongSelf = self else { return }
                 if loadType == .more {
                     let offset = params[Param.Key.offset] as! Int

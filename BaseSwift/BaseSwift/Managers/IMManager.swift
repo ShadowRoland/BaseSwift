@@ -35,8 +35,7 @@ public class IMManager {
         return headers
     }
     
-    class func logBFail(_ url: String,
-                         _ response: Any? = nil) {
+    class func logBFail(_ method: HTTP.Method, response: Any? = nil) {
         var responseArg = "response can not be printed" as CVarArg
         var code = ""
         if let json = response as? JSON {
@@ -47,21 +46,21 @@ public class IMManager {
         } else if let arg = response as? CVarArg {
             responseArg = arg
         }
-        LogError(String(format: "request failed, api: %@\nreponse: %@",
-                        url,
+        LogError(String(format: "request failed %@ api: %@\nreponse: %@",
+                        method.type,
+                        method.url,
                         responseArg))
-        SRAlert.showToast("IM requet: \(url) fail, code=\(code)")
+        SRAlert.showToast("IM \(method.type) requet: \(method.url) fail, code=\(code)")
     }
     
     class func login() {
         RCIM.shared().initWithAppKey("sfci50a7sod0i")
         let current =
-            [Param.Key.userId : NonNull.string(Common.currentProfile()?.userId),
-             Param.Key.name : NonNull.string(Common.currentProfile()?.name?.fullName),
-             Param.Key.portraitUri : NonNull.string(Common.currentProfile()?.headPortrait)]
-        HttpManager.default.request(.post("http://api.cn.ronghub.com/user/getToken.json"),
+            [Param.Key.userId : NonNull.string(ProfileManager.currentProfile?.userId),
+             Param.Key.name : NonNull.string(ProfileManager.currentProfile?.name?.fullName),
+             Param.Key.portraitUri : NonNull.string(ProfileManager.currentProfile?.headPortrait)]
+        HttpManager.shared.request(.post("http://api.cn.ronghub.com/user/getToken.json", current),
                                     sender: String(pointer: self),
-                                    params: current,
                                     encoding: nil,
                                     headers: nil,
                                     options: nil,
@@ -70,21 +69,21 @@ public class IMManager {
                 if let json = response as? JSON {
                     login(json[Param.Key.token].stringValue)
                 }
-        }, bfail: { url, response in
-            logBFail(url, response)
+        }, bfail: { method, response in
+            logBFail(method, response: response)
         }) { _, error in
             SRAlert.showToast("Chat service: \(error.errorDescription ?? "")")
         }
     }
     
     class func login(_ token: String) {
-        guard Common.isLogin() else {
+        guard ProfileManager.isLogin else {
             return
         }
         
         RCIM.shared().connect(withToken: token, success: { (userId) in
             LogInfo("IM login success")
-            let profile = Common.currentProfile()
+            let profile = ProfileManager.currentProfile
             profile?.imToken = token
             profile?.isIMLogin = true
         }, error: { (code) in
@@ -98,4 +97,3 @@ public class IMManager {
         }
     }
 }
-

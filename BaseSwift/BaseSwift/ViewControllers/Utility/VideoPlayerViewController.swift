@@ -16,11 +16,9 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        HttpManager.shared.addListener(forNetworkStatus: self,
+                                        action: #selector(updateNetworkStatus))
         pageBackGestureStyle = .none
-        Common.shared.addObserver(self,
-                                forKeyPath: "networkStatus",
-                                options: .new,
-                                context: nil)
         defaultNavigationBar("")
         player = SRVideoPlayer()
         player.delegate = self
@@ -42,7 +40,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
     }
     
     deinit {
-        Common.shared.removeObserver(self, forKeyPath: "networkStatus")
+        HttpManager.shared.removeListener(forNetworkStatus: self)
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,14 +63,9 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
     
     // MARK: - 事件响应
     
-    override func observeValue(forKeyPath keyPath: String?,
-                               of object: Any?,
-                               change: [NSKeyValueChangeKey : Any]?,
-                               context: UnsafeMutableRawPointer?) {
-        if keyPath == "networkStatus" {
-            if HttpManager.default.networkStatus == .reachable(.wwan) {
-                player.connectWwan()
-            }
+    @objc func updateNetworkStatus() {
+        if HttpManager.shared.networkStatus == .reachable(.wwan) {
+            player.connectWwan()
         }
     }
     
@@ -83,7 +76,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
     }
         
     func player(isConnectingWwan player: SRVideoPlayer!) -> Bool {
-        return HttpManager.default.networkStatus == .reachable(.wwan)
+        return HttpManager.shared.networkStatus == .reachable(.wwan)
     }
     
     func player(controlViewsDidShow player: SRVideoPlayer!) {
@@ -91,7 +84,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
         navigationController?.navigationBar.alpha = 1.0
     }
     
-    func player(controlViewsWillHide player: SRKit.SRVideoPlayer!, animated: Bool) {
+    func player(controlViewsWillHide player: SRVideoPlayer!, animated: Bool) {
         if !animated {
             navigationController?.navigationBar.layer.removeAllAnimations()
             navigationController?.navigationBar.alpha = 0
@@ -104,5 +97,9 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
                 }
             })
         }
+    }
+    
+    func player(updateStatusBar player: SRVideoPlayer!, isStatusBarHidden: Bool) {
+        
     }
 }

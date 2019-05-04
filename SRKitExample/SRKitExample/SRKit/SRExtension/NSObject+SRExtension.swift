@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ObjectProperty: Equatable, Hashable, RawRepresentable {
+public struct ObjectProperty: RawRepresentable, Hashable {
     public typealias RawValue = String
     public var rawValue: String
     
@@ -19,8 +19,6 @@ public struct ObjectProperty: Equatable, Hashable, RawRepresentable {
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
-    
-    public var hashValue: Int { return self.rawValue.hashValue }
 }
 
 public extension NSObject {

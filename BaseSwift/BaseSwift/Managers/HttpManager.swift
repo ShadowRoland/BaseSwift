@@ -10,10 +10,19 @@ import SRKit
 import SwiftyJSON
 
 public class HttpManager: SRHttpManager {
+    public class var shared: SRHttpManager {
+        return sharedInstance
+    }
+    
+    private static var sharedInstance = SRHttpManager()
+    
+    private override init() {
+        super.init()
+    }
     
     //MARK: Analysis response data
     
-    override public func analysis(_ method: HTTP.Method<Any>, data: Any?) -> BFResult<Any> {
+    override public func analysis(_ method: HTTP.Method, data: Any?) -> BFResult<Any> {
         var result: BFResult<Any>?
         switch method {
         case .get:
@@ -47,11 +56,11 @@ public class HttpManager: SRHttpManager {
     
     func analysisSina(_ data: Any?, jsonCallback: String? = nil) -> BFResult<Any> {
         guard let data = data as? Data else {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nil)))
+            return .failure(BFError.http(.responseSerialization(nil)))
         }
         
         guard var jsonString = String(data: data, encoding: .utf8) else {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nil)))
+            return .failure(BFError.http(.responseSerialization(nil)))
         }
         
         if let jsonCallback = jsonCallback, !isEmptyString(jsonCallback) {
@@ -70,7 +79,7 @@ public class HttpManager: SRHttpManager {
             json = try JSON(data: jsonString.data(using: .utf8, allowLossyConversion: false)!,
                             options: .mutableContainers)
         } catch {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(error)))
+            return .failure(BFError.http(.responseSerialization(error)))
         }
         
         if Environment != .production {
@@ -82,7 +91,7 @@ public class HttpManager: SRHttpManager {
                 NSError(domain: NSCocoaErrorDomain,
                         code: -9999,
                         userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format"])
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nsError)))
+            return .failure(BFError.http(.responseSerialization(nsError)))
         }
         
         return status.intValue == 1 ? .success(json) : .bfailure(json)
@@ -90,11 +99,11 @@ public class HttpManager: SRHttpManager {
     
     func analysisSearchSuggestion(_ data: Any?, cb: String? = nil) -> BFResult<Any> {
         guard let data = data as? Data else {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nil)))
+            return .failure(BFError.http(.responseSerialization(nil)))
         }
         
         guard var jsonString = String(data: data, encoding: .utf8) else {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nil)))
+            return .failure(BFError.http(.responseSerialization(nil)))
         }
         
         if let cb = cb, !isEmptyString(cb) {
@@ -112,7 +121,7 @@ public class HttpManager: SRHttpManager {
             json = try JSON(data: jsonString.data(using: .utf8, allowLossyConversion: false)!,
                             options: .mutableContainers)
         } catch {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(error)))
+            return .failure(BFError.http(.responseSerialization(error)))
         }
         
         if Environment != .production {
@@ -124,7 +133,7 @@ public class HttpManager: SRHttpManager {
                 NSError(domain: NSCocoaErrorDomain,
                         code: -9999,
                         userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format"])
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nsError)))
+            return .failure(BFError.http(.responseSerialization(nsError)))
         }
         
         return code.intValue == 100000 ? .success(json) : .bfailure(json)
@@ -132,14 +141,14 @@ public class HttpManager: SRHttpManager {
     
     func analysisIM(_ data: Any?) -> BFResult<Any> {
         guard let data = data as? Data else {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nil)))
+            return .failure(BFError.http(.responseSerialization(nil)))
         }
         
         var json: JSON!
         do {
             json = try JSON(data: data, options: .mutableContainers)
         } catch {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(error)))
+            return .failure(BFError.http(.responseSerialization(error)))
         }
         
         if Environment != .production {
@@ -151,7 +160,7 @@ public class HttpManager: SRHttpManager {
                 NSError(domain: NSCocoaErrorDomain,
                         code: -9999,
                         userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format"])
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nsError)))
+            return .failure(BFError.http(.responseSerialization(nsError)))
         }
         
         return errCode.intValue == HTTP.ErrorCode.imSuccess ? .success(json) : .bfailure(json)
@@ -161,14 +170,14 @@ public class HttpManager: SRHttpManager {
     
     func analysisMSXiaoBing(_ data: Any?) -> BFResult<Any> {
         guard let data = data as? Data else {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(nil)))
+            return .failure(BFError.http(.responseSerialization(nil)))
         }
         
         var json: JSON!
         do {
             json = try JSON(data: data, options: .mutableContainers)
         } catch {
-            return .failure(BFError.httpFailed(.responseSerializationFailed(error)))
+            return .failure(BFError.http(.responseSerialization(error)))
         }
         
         if Environment != .production {

@@ -32,6 +32,9 @@ pod 'SwiftyJSON', '~> 4.3.0' # Required
 ## Json与数据模型
 pod 'ObjectMapper', '~> 3.4.2'
 
+## gzip压缩和解压缩
+pod 'GzipSwift', '~> 5.0.0' # Recommended, 可以精简http请求和返回的数据量
+
 ## 加密与解密
 pod 'CryptoSwift', :git => "https://github.com/krzyzanowskim/CryptoSwift", :branch => "master" # Optional
 

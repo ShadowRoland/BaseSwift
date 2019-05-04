@@ -91,7 +91,7 @@ class AppGuideViewController: BaseViewController {
             return;
         }
         
-        Configs.entrance = .aggregation
+        Config.entrance = .aggregation
         
         SlideMenuOptions.leftViewWidth = 240.0
         let mainMenuVC = UIViewController.viewController("MainMenuViewController", storyboard: "Aggregation")

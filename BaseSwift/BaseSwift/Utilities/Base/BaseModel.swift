@@ -1,18 +1,18 @@
 //
-//  SRModel.swift
+//  BaseModel.swift
 //  BaseSwift
 //
 //  Created by Shadow on 2016/11/14.
 //  Copyright © 2016年 shadowR. All rights reserved.
 //
 
-import Foundation
+import SRKit
 import ObjectMapper
 
-open class SRModel: NSObject, Mappable {
+open class BaseModel: NSObject, Mappable {
     override public init() { }
     
     required public init?(map: Map) { }
     
-    public func mapping(map: Map) { }
+    open func mapping(map: Map) { }
 }

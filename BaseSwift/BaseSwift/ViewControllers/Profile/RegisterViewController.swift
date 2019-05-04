@@ -7,6 +7,7 @@
 //
 
 import SRKit
+import SwiftyJSON
 import DTCoreText
 import libPhoneNumber_iOS
 
@@ -240,29 +241,29 @@ class RegisterViewController: BaseViewController {
         //                [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
         //                 Param.Key.phone : phoneTextField.text!,
         //                 Param.Key.type : VerificationCodeType.login.rawValue])
-        httpRequest(.get(.getVerificationCode),
+        httpRequest(.get("getVerificationCode",
                     [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
                      Param.Key.phone : phoneTextField.text!,
-                     Param.Key.type : VerificationCodeType.login.rawValue],
+                     Param.Key.type : VerificationCodeType.login.rawValue]),
                     success:
-            { response in
-                self.isGettingVerifyCode = false
-                self.startTimer()
-                self.changeVerifyButton(self.checkVerifyButtonEnabled())
+            { [weak self] response in
+                guard let strongSelf = self else { return }
+                strongSelf.isGettingVerifyCode = false
+                strongSelf.startTimer()
+                strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
                 if let code = (response as? JSON)?[HTTP.Key.Response.data][Param.Key.code] {
-                    self.verifyTextField.text = String(object: code.rawValue as AnyObject)
-                    Common.change(submitButton: self.submitButton,
-                                  enabled: self.checkSubmitButtonEnabled())
+                    strongSelf.verifyTextField.text = String(object: code.rawValue as AnyObject)
+                    strongSelf.submitButton.set(submit: strongSelf.checkSubmitButtonEnabled())
                 }
-        }, bfail: { response in
-            self.isGettingVerifyCode = false
-            self.changeVerifyButton(self.checkVerifyButtonEnabled())
-            SRAlert.showToast(self.logBFail(.get(.getVerificationCode),
-                                           response: response,
-                                           show: false))
-        }, fail: { error in
-            self.isGettingVerifyCode = false
-            self.changeVerifyButton(self.checkVerifyButtonEnabled())
+        }, bfail: { [weak self] (method, response) in
+            guard let strongSelf = self else { return }
+            strongSelf.isGettingVerifyCode = false
+            strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
+            SRAlert.showToast(strongSelf.logBFail(method, response: response, show: false))
+        }, fail: { [weak self] (method, error) in
+            guard let strongSelf = self else { return }
+            strongSelf.isGettingVerifyCode = false
+            strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
         })
     }
     
@@ -272,31 +273,26 @@ class RegisterViewController: BaseViewController {
             SRAlert.showToast("Please enter the correct password!".localized)
             return
         }
-        Keyboard.hide {
-            self.showProgress()
-            //            self?.httpReq(.post(.register),
-            //                          [Param.Key.countryCode : Int((self?.countryCodeLabel.text!)!)!,
-            //                           Param.Key.phone : (self?.phoneTextField.text)!,
-            //                           Param.Key.code : (self?.verifyTextField.text)!,
-            //                           Param.Key.password : (self?.passwordTextField.text)!])
-            self.httpRequest(.post(.register),
-                             [Param.Key.countryCode : Int(self.countryCodeLabel.text!)!,
-                              Param.Key.phone : (self.phoneTextField.text)!,
-                              Param.Key.code : (self.verifyTextField.text)!,
-                              Param.Key.password : (self.passwordTextField.text)!],
-                             success:
-                { response in
-                    let alert = SRAlert()
-                    alert.appearance.showCloseButton = false
-                    alert.addButton("OK".localized,
-                                    backgroundColor: NavigationBar.backgroundColor,
-                                    action:
-                        {
-                            self.popBack(toClasses: [LoginViewController.self])
-                    })
-                    alert.show(.notice,
-                               title: "Registered successfully".localized,
-                               message: "Please login again".localized)
+        Keyboard.hide { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.showProgress()
+            strongSelf.httpRequest(.post("user/register",
+                                   [Param.Key.countryCode : Int(strongSelf.countryCodeLabel.text!)!,
+                                    Param.Key.phone : (strongSelf.phoneTextField.text)!,
+                                    Param.Key.code : (strongSelf.verifyTextField.text)!,
+                                    Param.Key.password : (strongSelf.passwordTextField.text)!]), success:
+            { [weak self] response in
+                let alert = SRAlert()
+                //alert.appearance.showCloseButton = false
+                alert.addButton("OK".localized,
+                                backgroundColor: NavigationBar.backgroundColor,
+                                action:
+                    { [weak self] in
+                        self?.popBack(toClasses: [LoginViewController.self])
+                })
+                alert.show(.notice,
+                           title: "Registered successfully".localized,
+                           message: "Please login again".localized)
             })
         }
     }

@@ -7,6 +7,7 @@
 //
 
 import SRKit
+import SwiftyJSON
 import Cartography
 
 class NewsSearchViewController: BaseViewController {
@@ -115,24 +116,23 @@ class NewsSearchViewController: BaseViewController {
     
     func getSearchSuggestions(_ key: String) {
         var params = ["ver" : "1", "Refer" : "sina_sug"]
-        params[Param.Key.cb] =
-            "func_" + String(longLong: CLongLong(Date().timeIntervalSince1970 * 1000))
+        params[Param.Key.cb] = "func_" + String(longLong: CLongLong(Date().timeIntervalSince1970 * 1000))
         params[Param.Key.t] = String(float: Float(Int.random(in: 1 ..< 10000)) / 10000.0)
         params[Param.Key.key] = key
-        //httpReq(.get(.newsSuggestions), params, userInfo, url : "http://s.weibo.com")
-        httpRequest(.get("http://interface.sina.cn/ajax/jsonp/suggestion"), success: { response in
-            guard let json = response as? JSON,
+        httpRequest(.get("http://interface.sina.cn/ajax/jsonp/suggestion", params), success: { [weak self] response in
+            guard let strongSelf = self,
+                let json = response as? JSON,
                 let array = json[Param.Key.data].rawValue as? [String],
-                self.pageStatus == .inputing else {
+                strongSelf.pageStatus == .inputing else {
                     return
             }
             
-            self.suggestions = array
-            self.updateTableHeaderView()
-            self.tableView.reloadData()
-        }, bfail: { response in
-            self.logBFail(.get(.newsSuggestions), response: response, show: false)
-        }, fail: { error in
+            strongSelf.suggestions = array
+            strongSelf.updateTableHeaderView()
+            strongSelf.tableView.reloadData()
+        }, bfail: { [weak self] method, response in
+            self?.logBFail(method, response: response, show: false)
+        }, fail: { _, error in
         })
     }
     
@@ -212,10 +212,8 @@ extension NewsSearchViewController: UISearchBarDelegate {
     }
     
     public func searchBarTextDidEndEditing(_ searchBar: UISearchBar) { // called when text ends editing
-        DispatchQueue.main.asyncAfter(deadline: .now() + PerformDelay,
-                                      execute:
-            { [weak self] in
-                self?.enableSearchBarCancelButton()
+        DispatchQueue.main.asyncAfter(deadline: .now() + PerformDelay, execute: { [weak self] in
+            self?.enableSearchBarCancelButton()
         })
     }
     
@@ -281,49 +279,52 @@ extension NewsSearchViewController: NewsListDelegate {
         params["act"] = loadType == .more ? "more" : "new"
         let offset = loadType == .more ? sendVC.currentOffset + 1 : 0
         params["page"] = String(int: offset + 1)
-        //httpReq(.get(.sinaNewsList), params, userInfo, url: "http://interface.sina.cn")
-        httpRequest(.get("http://interface.sina.cn/ent/feed.d.json"), success: { response in
+        httpRequest(.get("http://interface.sina.cn/ent/feed.d.json", params), success: { [weak self] response in
+            guard let strongSelf = self else { return }
             let responseData = NonNull.dictionary(response)
             if .more == loadType {
                 let offset = Int(params[Param.Key.offset] as! String)
-                if offset == self.newsListVC.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
-                    self.newsListVC.updateMore(responseData)
+                if offset == strongSelf.newsListVC.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
+                    strongSelf.newsListVC.updateMore(responseData)
                 }
             } else {
-                self.newsListVC.updateNew(responseData)
+                strongSelf.newsListVC.updateNew(responseData)
             }
-        }, bfail: { response in
-            if .more == loadType {
-                let offset = Int(params[Param.Key.offset] as! String)
-                if offset == self.newsListVC.currentOffset + 1 {
-                    return
-                }
-            } else {
-                if !self.newsListVC.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
-                    self.newsListVC?.updateNew(nil)
-                } else { //当前为空的话则交给列表展示错误信息
-                    self.newsListVC.updateNew(nil, errMsg: self.logBFail(.get(.sinaNewsList),
-                                                                         response: response,
-                                                                         show: false))
-                }
-            }
-        }, fail: { error in
-            if .more == loadType {
-                let offset = Int(params[Param.Key.offset] as! String)
-                if offset == self.newsListVC.currentOffset + 1 {
-                    if !self.newsListVC.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
-                        self.newsListVC.updateMore(nil)
-                    } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                        self.newsListVC.updateMore(nil, errMsg: error.errorDescription)
+            }, bfail: { [weak self] (method, response) in
+                guard let strongSelf = self else { return }
+                if .more == loadType {
+                    let offset = Int(params[Param.Key.offset] as! String)
+                    if offset == strongSelf.newsListVC.currentOffset + 1 {
+                        return
+                    }
+                } else {
+                    if !strongSelf.newsListVC.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
+                        strongSelf.newsListVC?.updateNew(nil)
+                    } else { //当前为空的话则交给列表展示错误信息
+                        strongSelf.newsListVC.updateNew(nil,
+                                                        errMsg: strongSelf.logBFail(method,
+                                                                                    response: response,
+                                                                                    show: false))
                     }
                 }
-            } else {
-                if !self.newsListVC.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
-                    self.newsListVC.updateNew(nil)
-                } else { //当前为空的话则交给列表展示错误信息
-                    self.newsListVC.updateNew(nil, errMsg: error.errorDescription)
+            }, fail: { [weak self] (_, error) in
+                guard let strongSelf = self else { return }
+                if .more == loadType {
+                    let offset = Int(params[Param.Key.offset] as! String)
+                    if offset == strongSelf.newsListVC.currentOffset + 1 {
+                        if !strongSelf.newsListVC.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
+                            strongSelf.newsListVC.updateMore(nil)
+                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
+                            strongSelf.newsListVC.updateMore(nil, errMsg: error.errorDescription)
+                        }
+                    }
+                } else {
+                    if !strongSelf.newsListVC.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
+                        strongSelf.newsListVC.updateNew(nil)
+                    } else { //当前为空的话则交给列表展示错误信息
+                        strongSelf.newsListVC.updateNew(nil, errMsg: error.errorDescription)
+                    }
                 }
-            }
         })
     }
     

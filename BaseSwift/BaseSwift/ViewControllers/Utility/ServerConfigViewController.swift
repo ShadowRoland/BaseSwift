@@ -55,11 +55,11 @@ class ServerConfigViewController: BaseViewController {
         
         tableView.tableFooterView = UIView()
         
-        let local = Config.local!
+        let local = Env.local!
         let envs = local["envs"] as! [Any]
         var current = min(local["current"] as! Int, envs.count)
         current = min(current, runEnvSC.numberOfSegments - 2)
-        env = current >= 0 ? envs[current] as! ParamDictionary : Config.shared.toJSON()
+        env = current >= 0 ? envs[current] as! ParamDictionary : Env.shared.toJSON()
         runEnvSC.selectedSegmentIndex = current >= 0 ? current : runEnvSC.numberOfSegments - 1
         initCells()
         tableView.reloadData()
@@ -284,12 +284,12 @@ class ServerConfigViewController: BaseViewController {
         }
         
         let index = runEnvSC.selectedSegmentIndex
-        var local = Config.local!
+        var local = Env.local!
         var envs = local["envs"] as! [Any]
         local["current"] = index
         envs[index] = env as Any
-        UserStandard[USKey.config] = local
-        Config.reload()
+        UserStandard[USKey.env] = local
+        Env.reload()
     }
     
     //MARK: - 事件响应
@@ -300,8 +300,8 @@ class ServerConfigViewController: BaseViewController {
     
     @IBAction func runEnvChanged(_ sender: Any) {
         env = !isProduction
-            ? (Config.local!["envs"] as! [Any])[runEnvSC.selectedSegmentIndex] as! ParamDictionary
-            : Config.shared.toJSON()
+            ? (Env.local!["envs"] as! [Any])[runEnvSC.selectedSegmentIndex] as! ParamDictionary
+            : Env.shared.toJSON()
         initCells()
         tableView.reloadData()
     }

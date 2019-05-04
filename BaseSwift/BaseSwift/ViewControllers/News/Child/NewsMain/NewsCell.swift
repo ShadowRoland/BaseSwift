@@ -46,13 +46,13 @@ class NewsCell: UITableViewCell {
         //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
         if isEmptyString(image)
             || (isOnlyShowImageInWLAN
-                && HttpManager.default.networkStatus != .reachable(.ethernetOrWiFi)) {
+                && HttpManager.shared.networkStatus != .reachable(.ethernetOrWiFi)) {
             headerImageWidthConstraint.constant = 0
             playImageView.isHidden = true
         } else {
             headerImageWidthConstraint.constant = Const.headerImageWidthShowing
             headerImageView.sd_setImage(with: URL(string: image),
-                                        placeholderImage: Configs.Resource.defaultImage(.min))
+                                        placeholderImage: Config.Resource.defaultImage(.min))
             playImageView.isHidden = model.mediaType != .video
         }
         titleLabel.attributedText = NSAttributedString(string: NonNull.string(model.title))

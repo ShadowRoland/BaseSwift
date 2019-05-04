@@ -37,7 +37,7 @@ extension UIViewController {
         
         //MARK: Load Data Fail
         
-        public var loadDataFailRetryMethod: HTTP.Method<Any>?//请求数据失败时显示点击重试的请求，一般是 页面刚进入发出的第一个http请求
+        public var loadDataFailRetryMethod: HTTP.Method?//请求数据失败时显示点击重试的请求，一般是 页面刚进入发出的第一个http请求
         public var loadDataFailRetryHandler: (() -> Void)?  //请求数据失败时点击重试的操作
         public lazy var loadDataFailContainerView: UIView = UIView()
         public var loadDataFailView: SRLoadDataStateView?
@@ -104,7 +104,7 @@ extension UIViewController {
             didSet {
                 if let decorator = decorator, decorator.isModalRootViewController {
                     if let vc = decorator.navigationController as? SRNavigationController {
-                        vc.panEnable = false
+                        vc.isPageSwipeEnabled = false
                         vc.interactivePopGestureRecognizer?.isEnabled = false
                     }
                     return
@@ -112,11 +112,11 @@ extension UIViewController {
                 
                 if pageBackGestureStyle.contains(.page) {
                     if let vc = decorator?.navigationController as? SRNavigationController {
-                        vc.panEnable = true
+                        vc.isPageSwipeEnabled = true
                     }
                 } else {
                     if let vc = decorator?.navigationController as? SRNavigationController {
-                        vc.panEnable = false
+                        vc.isPageSwipeEnabled = false
                         if pageBackGestureStyle.contains(.edge) {
                             vc.interactivePopGestureRecognizer?.isEnabled = true
                             vc.interactivePopGestureRecognizer?.delegate =
@@ -132,9 +132,8 @@ extension UIViewController {
         public var isPageLongPressEnabled = false {
             didSet {
                 guard Environment != .production else { return }
-                
                 if let vc = decorator?.navigationController as? SRNavigationController {
-                    vc.longPressEnable = isPageLongPressEnabled
+                    vc.isNavPageLongPressEnabled = isPageLongPressEnabled
                 }
             }
         }
@@ -146,6 +145,10 @@ extension UIViewController {
         //MARK: State machine
         
         fileprivate var stateMachine = SRStateMachine()
+        
+        //MARK: Event
+        
+        fileprivate var event: Event? = nil
         
         //MARK: 3D Touch
         
@@ -181,6 +184,15 @@ extension UIViewController {
     
     public var stateMachine: SRStateMachine {
         return baseBusinessComponent.stateMachine
+    }
+    
+    public var event: Event? {
+        get {
+            return baseBusinessComponent.event
+        }
+        set {
+            baseBusinessComponent.event = event
+        }
     }
     
     public var isPreviewed: Bool {

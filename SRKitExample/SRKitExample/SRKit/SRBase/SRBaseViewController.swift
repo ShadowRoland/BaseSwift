@@ -15,17 +15,16 @@ import Cartography
 
 open class SRBaseViewController: UIViewController,
     UIScrollViewDelegate,
-    SRBaseViewControllerEventDelegate,
     SRLoadDataStateDelegate,
     SRStateMachineDelegate,
 DTAttributedTextContentViewDelegate {
-    open lazy var eventTarget = EventTarget(self)
+    lazy var eventTarget = EventTarget(self)
     //内部的事件响应类
-    open class EventTarget: NSObject {
-        weak var delegate: SRBaseViewControllerEventDelegate?
+    class EventTarget: NSObject {
+        weak var viewController: SRBaseViewController?
         
-        init(_ delegate: SRBaseViewControllerEventDelegate) {
-            self.delegate = delegate
+        init(_ viewController: SRBaseViewController) {
+            self.viewController = viewController
         }
         
         deinit {
@@ -34,29 +33,41 @@ DTAttributedTextContentViewDelegate {
         
         //MARK: - Selector
         @objc func contentSizeCategoryDidChange() {
-            delegate?.contentSizeCategoryDidChange()
+            viewController?.contentSizeCategoryDidChange()
         }
         
         @objc func deviceOrientationDidChange(_ sender: AnyObject?) {
-            delegate?.deviceOrientationDidChange(sender)
+            viewController?.deviceOrientationDidChange(sender)
         }
         
         @objc func clickNavigationBarLeftButton(_ button: UIButton) {
-            delegate?.clickNavigationBarLeftButton(button)
+            viewController?.clickNavigationBarLeftButton(button)
         }
         
         @objc func clickNavigationBarRightButton(_ button: UIButton) {
-            delegate?.clickNavigationBarRightButton(button)
+            viewController?.clickNavigationBarRightButton(button)
+        }
+        
+        //在程序运行中收到指令，基本都可以通过走状态机实现
+        @objc func newAction(_ notification: Notification) {
+            if let event = notification.object as? Event,
+                let viewController = viewController {
+                viewController.stateMachine.append(event)
+            }
         }
         
         //FIXME: FOR DEBUG，由self push的WebpageViewController完成加载后会发出通知，触发状态机的完成事件
         //TODO: 此处若是其他程序调用而启动本应用（如在本应用被杀死的状态下点击退送消息），似乎会收不到该通知，等待解决
-        @objc func didEndStateMachineEvent(_ notification: Notification) {
-            delegate?.didEndStateMachineEvent(notification)
+        @objc func didEndStateMachinePageEvent(_ notification: Notification) {
+            if let event = notification.object as? Event,
+                let viewController = viewController,
+                viewController === event.sender {
+                viewController.stateMachine(viewController.stateMachine, didEnd: event)
+            }
         }
         
         @objc func clickDTLinkButton(_ sender: Any) {
-            delegate?.clickDTLinkButton(sender)
+            viewController?.clickDTLinkButton(sender)
         }
     }
     
@@ -66,6 +77,12 @@ DTAttributedTextContentViewDelegate {
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.contentSizeCategoryDidChange),
                           name: UIContentSizeCategory.didChangeNotification)
+        NotifyDefault.add(eventTarget,
+                          selector: #selector(EventTarget.newAction(_:)),
+                          name: SRBase.newActionNotification)
+        NotifyDefault.add(eventTarget,
+                          selector: #selector(EventTarget.didEndStateMachinePageEvent(_:)),
+                          name: SRBase.didEndStateMachinePageEventNotification)
     }
     
     override open func viewWillAppear(_ animated: Bool) {
@@ -138,6 +155,12 @@ DTAttributedTextContentViewDelegate {
                 view.bottom == topLayoutGuide.bottom
             }
         }
+        
+        //广播“触发状态机的完成事件”的通知
+        if let event = event {
+            LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), event: \(event)")
+            NotifyDefault.post(name: SRBase.didEndStateMachinePageEventNotification, object: params)
+        }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
@@ -155,12 +178,47 @@ DTAttributedTextContentViewDelegate {
     deinit {
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
         NotifyDefault.remove(self)
-        SRHttpManager.default.cancel(sender: String(pointer: self))
+        //SRHttpManager.shared.cancel(sender: String(pointer: self))
     }
     
     override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //MARK: Event
+    
+    open func contentSizeCategoryDidChange() {
+        
+    }
+    
+    open func deviceOrientationDidChange(_ sender: AnyObject?) {
+        guard guardDeviceOrientationDidChange(sender) else { return }
+        //只在屏幕旋转时才更新位置
+        if sender != nil {
+            resetProgressPosition()
+            resetLoadDataFailViewPosition()
+        }
+    }
+    
+    open func clickNavigationBarLeftButton(_ button: UIButton) {
+        guard MutexTouch else { return }
+    }
+    
+    open func clickNavigationBarRightButton(_ button: UIButton) {
+        guard MutexTouch else { return }
+    }
+    
+    open func didEndStateMachineEvent(_ notification: Notification) {
+        if let event = notification.object as? Event, self === event.sender {
+            stateMachine.end(event)
+        }
+    }
+    
+    open func clickDTLinkButton(_ sender: Any) {
+        if let button = sender as? DTLinkButton {
+            clickDTLink(button.guid, url: button.url)
+        }
     }
     
     //MARK: - Status Bar
@@ -211,9 +269,6 @@ DTAttributedTextContentViewDelegate {
     
     open func initNavigationBar() {
         guard let navigationController = navigationController else { return }
-        
-        navigationBarBackgroundAlpha = NavigationBar.backgroundBlurAlpha
-        navigationBarTintColor = NavigationBar.tintColor
         
         let navigationBar = navigationController.navigationBar
         navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white,
@@ -451,12 +506,12 @@ DTAttributedTextContentViewDelegate {
         return baseBusinessComponent.isShowingLoadDataFailView
     }
     
-    open func setLoadDataFail(_ method: HTTP.Method<Any>, retry: (() -> Void)?) {
+    open func setLoadDataFail(_ method: HTTP.Method, retry: (() -> Void)?) {
         baseBusinessComponent.loadDataFailRetryMethod = method
         baseBusinessComponent.loadDataFailRetryHandler = retry
     }
     
-    open var loadDataFailMethod: HTTP.Method<Any>? {
+    open var loadDataFailMethod: HTTP.Method? {
         return baseBusinessComponent.loadDataFailRetryMethod
     }
     
@@ -466,54 +521,49 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: - Http Request
     
-    open func httpRequest(_ method: HTTP.Method<Any>,
-                            params: ParamDictionary? = nil,
+    open func httpRequest(_ method: HTTP.Method,
                             anonymous: Bool = false,
                             encoding: ParamEncoding? = nil,
                             headers: ParamHeaders? = nil,
                             options: [HTTP.Key.Option : Any]? = nil,
                             success: ((Any) -> Void)? = nil,
-                            bfail: ((String, Any) -> Void)? = nil,
-                            fail: ((String, BFError) -> Void)? = nil) {
-        var successHandler: ((Any) -> Void)!
-        if let success = success {
-            successHandler = success
-        } else {
-            successHandler = { [weak self] response in
-                guard let strongSelf = self else { return }
-                strongSelf.httpRespondSuccess(response)
-            }
-        }
-        
-        var bfailHandler: ((String, Any) -> Void)!
-        if let bfail = bfail {
-            bfailHandler = bfail
-        } else {
-            bfailHandler = { [weak self] (url, response) in
-                guard let strongSelf = self else { return }
-                strongSelf.httpRespondBfail(url, response: response)
-            }
-        }
-        
-        var failHandler: ((String, BFError) -> Void)!
-        if let fail = fail {
-            failHandler = fail
-        } else {
-            failHandler = { [weak self] (url, error) in
-                guard let strongSelf = self else { return }
-                strongSelf.httpRespondFail(url, error: error)
-            }
-        }
-        
-        SRHttpManager.default.request(method,
-                                      sender: anonymous ? nil : String(pointer: self),
-                                      params: params,
-                                      encoding: encoding,
-                                      headers: headers,
-                                      options: options,
-                                      success: successHandler,
-                                      bfail: bfailHandler,
-                                      fail: failHandler)
+                            bfail: ((HTTP.Method, Any) -> Void)? = nil,
+                            fail: ((HTTP.Method, BFError) -> Void)? = nil) {
+//        var successHandler: ((Any) -> Void)!
+//        if let success = success {
+//            successHandler = success
+//        } else {
+//            successHandler = { [weak self] response in
+//                self?.httpRespondSuccess(response)
+//            }
+//        }
+//
+//        var bfailHandler: ((HTTP.Method, Any) -> Void)!
+//        if let bfail = bfail {
+//            bfailHandler = bfail
+//        } else {
+//            bfailHandler = { [weak self] (method, response) in
+//                self?.httpRespondBfail(method, response: response)
+//            }
+//        }
+//
+//        var failHandler: ((HTTP.Method, BFError) -> Void)!
+//        if let fail = fail {
+//            failHandler = fail
+//        } else {
+//            failHandler = { [weak self] (method, error) in
+//                self?.httpRespondFail(method, error: error)
+//            }
+//        }
+//
+//        SRHttpManager.shared.request(method,
+//                                     sender: anonymous ? nil : String(pointer: self),
+//                                     encoding: encoding,
+//                                     headers: headers,
+//                                     options: options,
+//                                     success: successHandler,
+//                                     bfail: bfailHandler,
+//                                     fail: failHandler)
     }
     
     open func httpRespondSuccess(_ response: Any) {
@@ -524,20 +574,20 @@ DTAttributedTextContentViewDelegate {
         }
     }
     
-    open func httpRespondBfail(_ url: String, response: Any) {
+    open func httpRespondBfail(_ method: HTTP.Method, response: Any) {
         dismissProgress()
-        if url == loadDataFailMethod?.url {
-            showLoadDataFailView(logBFail(url,
+        if method == loadDataFailMethod {
+            showLoadDataFailView(logBFail(method,
                                           response: response,
                                           show: false))
         } else {
-            logBFail(url, response: response)
+            logBFail(method, response: response)
         }
     }
     
-    open func httpRespondFail(_ url: String, error: BFError) {
+    open func httpRespondFail(_ method: HTTP.Method, error: BFError) {
         dismissProgress()
-        if url == loadDataFailMethod?.url {
+        if method == loadDataFailMethod {
             showLoadDataFailView(error.errorDescription)
         } else {
             showToast(error.errorDescription)
@@ -545,7 +595,7 @@ DTAttributedTextContentViewDelegate {
     }
     
     @discardableResult
-    open func logBFail(_ url: String,
+    open func logBFail(_ method: HTTP.Method,
                          response: Any?,
                          show: Bool = true) -> String {
         var message = ""
@@ -553,7 +603,7 @@ DTAttributedTextContentViewDelegate {
             message = NonNull.string(json[HTTP.Key.Response.errorMessage].string)
         }
         LogError(String(format: "request failed, url: %@\nreponse: %@\nmessage: %@",
-                        url,
+                        method.url,
                         (response as? JSON)?.rawValue as? CVarArg ?? "",
                         message))
         if show {
@@ -569,7 +619,7 @@ DTAttributedTextContentViewDelegate {
         baseBusinessComponent.loadDataFailRetryHandler?()
     }
     
-    //MARK: DTAttributedTextContentViewDelegate
+    //MARK: - DTAttributedTextContentViewDelegate
     
     open func attributedTextContentView(_ attributedTextContentView: DTAttributedTextContentView!,
                                           viewFor string: NSAttributedString!,
@@ -598,61 +648,13 @@ DTAttributedTextContentViewDelegate {
         return button;
     }
     
-    //MARK: SRBaseViewControllerEventDelegate
-    
-    open func contentSizeCategoryDidChange() {
-        
-    }
-    
-    open func deviceOrientationDidChange(_ sender: AnyObject?) {
-        guard guardDeviceOrientationDidChange(sender) else { return }
-        //只在屏幕旋转时才更新位置
-        if sender != nil {
-            resetProgressPosition()
-            resetLoadDataFailViewPosition()
-        }
-    }
-    
-    open func clickNavigationBarLeftButton(_ button: UIButton) {
-        guard MutexTouch else { return }
-    }
-    
-    open func clickNavigationBarRightButton(_ button: UIButton) {
-        guard MutexTouch else { return }
-    }
-    
-    open func didEndStateMachineEvent(_ notification: Notification) {
-        guard let params = notification.object as? [AnyHashable : Any],
-            let sender = params[Param.Key.sender] as? String,
-            sender == String(pointer: self),
-            let event = params[Param.Key.event] as? Int else {
-                return
-        }
-        stateMachine.end(event)
-    }
-    
-    open func clickDTLinkButton(_ sender: Any) {
-        if let button = sender as? DTLinkButton {
-            clickDTLink(button.guid, url: button.url)
-        }
-    }
-    
     //MARK: SRStateMachineDelegate
     
-    open func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
+    open func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) {
         
     }
     
-    open func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) {
+    open func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Event) {
         
     }
-}
-
-public protocol SRBaseViewControllerEventDelegate: class {
-    func contentSizeCategoryDidChange()
-    func deviceOrientationDidChange(_ sender: AnyObject?)
-    func clickNavigationBarLeftButton(_ button: UIButton)
-    func clickNavigationBarRightButton(_ button: UIButton)
-    func didEndStateMachineEvent(_ notification: Notification)
-    func clickDTLinkButton(_ sender: Any)
 }

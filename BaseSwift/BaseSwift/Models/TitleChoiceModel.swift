@@ -9,7 +9,7 @@
 import SRKit
 import ObjectMapper
 
-open class TitleChoiceModel: SRModel {
+open class TitleChoiceModel: BaseModel {
     var id: String?
     var title: String?
     var isSelected = false

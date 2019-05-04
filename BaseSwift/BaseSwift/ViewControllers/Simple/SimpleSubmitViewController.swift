@@ -26,7 +26,7 @@ class SimpleSubmitViewController: BaseViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         defaultNavigationBar("Submit".localized)
         initView()
-        setLoadDataFail(.get("data/getSimpleData")) { [weak self] in
+        setLoadDataFail(.get("data/getSimpleData", nil)) { [weak self] in
             self?.showProgress()
             self?.getSimpleData()
         }
@@ -58,7 +58,7 @@ class SimpleSubmitViewController: BaseViewController {
     
     func getSimpleData() {
         showProgress()
-        httpRequest(.get("data/getSimpleData"), success: { [weak self] response in
+        httpRequest(.get("data/getSimpleData", nil), success: { [weak self] response in
             guard let strongSelf = self else { return }
             strongSelf.dismissProgress()
             strongSelf.placeholderTextField.text =
@@ -70,7 +70,7 @@ class SimpleSubmitViewController: BaseViewController {
     
     func simpleSubmit() {
         self.showProgress()
-        httpRequest(.post("data/simpleSubmit"), success: { [weak self] response in
+        httpRequest(.post("data/simpleSubmit", nil), success: { [weak self] response in
             guard let strongSelf = self else { return }
             strongSelf.dismissProgress()
             SRAlert.show(message: "Winner Winner, Chicken Dinner!".localized)

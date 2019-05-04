@@ -48,7 +48,7 @@ public class SRModalViewController: SRNavigationController {
     //MARK: - UINavigationBarDelegate
     
     //拦截导航栏默认提供的返回按钮的点击
-    public override func navigationBar(_ navigationBar: UINavigationBar,
+    public func navigationBar(_ navigationBar: UINavigationBar,
                               shouldPop item: UINavigationItem) -> Bool {
         if viewControllers.count == 2 {
             DispatchQueue.main.async {
@@ -56,6 +56,6 @@ public class SRModalViewController: SRNavigationController {
             }
             return false
         }
-        return super.navigationBar(navigationBar, shouldPop: item)
+        return true
     }
 }

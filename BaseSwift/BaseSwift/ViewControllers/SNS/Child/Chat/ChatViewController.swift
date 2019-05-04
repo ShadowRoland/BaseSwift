@@ -24,7 +24,7 @@ class ChatViewController: RCConversationViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let vc = navigationController as? SRNavigationController {
-            vc.panEnable = true
+            vc.isPageSwipeEnabled = true
         }
     }
 

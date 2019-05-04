@@ -7,6 +7,7 @@
 //
 
 import SRKit
+import SwiftyJSON
 import SDWebImage
 //import MWPhotoBrowser
 
@@ -60,7 +61,7 @@ class ProfileViewController: BaseViewController {
     var lastRow = -1
     weak var currentItem: ProfileForm?
     
-    lazy var profile: ParamDictionary = Common.currentProfile()?.toJSON() ?? [:]
+    lazy var profile: ParamDictionary = ProfileManager.currentProfile?.toJSON() ?? [:]
     lazy var editingProfile: ParamDictionary = [:]
     
     lazy var genderChoices: [TitleChoiceModel] = TitleChoiceModel.choices(Param.Key.gender)!
@@ -110,6 +111,18 @@ class ProfileViewController: BaseViewController {
     //var photos: [MWPhoto] = []
     
     var pickerView: SRPickerView!
+    lazy var divisionPicker: SRDivisionPicker = {
+        let picker = SRDivisionPicker()
+//        let filePath = ResourceDirectory.appending(pathComponent: "china_locations.json.zip")
+//        do {
+//            let data = try Data(contentsOf: URL(fileURLWithPath: filePath)).gunzipped()
+//            picker.chinaLocations = try JSON(data: data).rawValue as? [String : String] ?? [:]
+//        } catch {
+//            LogError("Unzip and transfer china locations file failed: \(filePath), error.localizedDescription")
+//        }
+        picker.delegate = self
+        return picker
+    }()
     
     struct Const {
         static let titleViewTag = 100
@@ -173,7 +186,7 @@ class ProfileViewController: BaseViewController {
                                     .isIgnoreParamValue : true]) {
             let url = URL(string: item.value as? String ?? "")
             headPortraitImageView.sd_setImage(with: url,
-                                              placeholderImage: Configs.Resource.defaultImage(.normal))
+                                              placeholderImage: Config.Resource.defaultImage(.normal))
             headPortraitURL = url
             headPortraitTrailingConstraint.constant = 0
             cleanHeadPortraitButton.isHidden = true
@@ -268,7 +281,8 @@ class ProfileViewController: BaseViewController {
             if let region = dictionary[Param.Key.region] as? String {
                 names.append(region)
             }
-            let divisions = SRDivision.divisions(names: names)
+            let divisions = SRDivision.divisions(names: names,
+                                                 from: divisionPicker.provinces)
             var text = ""
             divisions.forEach { text.append($0.name) }
             item.showText = text
@@ -496,16 +510,6 @@ class ProfileViewController: BaseViewController {
     
     //MARK: - 业务处理
     
-    override func performViewDidLoad() {
-        //FIXME: FOR DEBUG，广播“触发状态机的完成事件”的通知
-        if let sender = params[Param.Key.sender] as? String,
-            let event = params[Param.Key.event] as? Int {
-            LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), sender: \(sender), event: \(event)")
-            NotifyDefault.post(name: Notification.Name.Base.didEndStateMachineEvent,
-                               object: params)
-        }
-    }
-    
     func saveProfile() {
         //准备提交参数
         var profile = editingProfile
@@ -525,7 +529,7 @@ class ProfileViewController: BaseViewController {
             //https://developer.qiniu.com/kodo/manual/1234/upload-types
             
             //若有自己的图片文件服务器，将图片转成Base64码，使用新的key放到post请求的参数：
-            //let directory = Common.currentProfile()!.directory(.upload)!
+            //let directory = ProfileManager.currentProfile()!.directory(.upload)!
             //let filePath = directory.appending(pathComponent: Const.editedHeadPortraitFileName)
             //let image = UIImage(contentsOfFile: filePath)
             //let data = UIImagePNGRepresentation(image!)
@@ -533,10 +537,10 @@ class ProfileViewController: BaseViewController {
         }
         
         //        httpReq(.post(.profileDetail), profile, nil)
-        httpRequest(.post(.profileDetail), success: { response in
+        httpRequest(.post("user/profileDetail", nil), success: { response in
             SRAlert.showToast("Submit successfully".localized)
             self.dismissProgress()
-            self.profile = Common.currentProfile()?.toJSON() ?? [:]
+            self.profile = ProfileManager.currentProfile?.toJSON() ?? [:]
             self.initSections()
             self.tableView.reloadData()
         })
@@ -645,9 +649,9 @@ class ProfileViewController: BaseViewController {
         }
         
         Keyboard.hide { [weak self] in
-            self?.currentItem = item
-            let divisionPicker = SRDivisionPicker()
-            divisionPicker.delegate = self
+            guard let strongSelf = self else { return }
+            
+            strongSelf.currentItem = item
             let dictionary = NonNull.dictionary(item.value)
             var names = [] as [String]
             if let province = dictionary[Param.Key.province] as? String {
@@ -659,10 +663,12 @@ class ProfileViewController: BaseViewController {
             if let region = dictionary[Param.Key.region] as? String {
                 names.append(region)
             }
-            let divisions = SRDivision.divisions(names: names)
-            divisionPicker.currentDivisions = !divisions.isEmpty ? divisions : SRDivision.default
-            self?.pickerView = divisionPicker
-            divisionPicker.show()
+            let divisions = SRDivision.divisions(names: names,
+                                                 from: strongSelf.divisionPicker.provinces)
+            strongSelf.divisionPicker.currentDivisions =
+                !divisions.isEmpty ? divisions : strongSelf.divisionPicker.firstLocations
+            strongSelf.pickerView = strongSelf.divisionPicker
+            strongSelf.divisionPicker.show()
         }
     }
     
@@ -772,7 +778,7 @@ class ProfileViewController: BaseViewController {
         let item = indexPathSet[headPortraitCell] as! ProfileForm
         let url = URL(string: item.value as? String ?? "")
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Configs.Resource.defaultImage(.normal))
+                                          placeholderImage: Config.Resource.defaultImage(.normal))
         headPortraitURL = url
         headPortraitTrailingConstraint.constant = 0
         cleanHeadPortraitButton.isHidden = true
@@ -815,7 +821,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         let cropImage = image.cropped(size.width / size.height) //继续按定制比例裁剪
         let resizedImage = cropImage.resized(size) //再按尺寸缩放
         let data = resizedImage.pngData()
-        let directory = Common.currentProfile()!.directory(.upload)!
+        let directory = ProfileManager.currentProfile!.directory(.upload)!
         let filePath = directory.appending(pathComponent: Const.editedHeadPortraitFileName)
         let url = URL(fileURLWithPath: filePath) //保存到缓存图片
         do {
@@ -828,7 +834,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
         SDImageCache.shared.removeImage(forKey: url.absoluteString) //删除缓存中的图片再刷新图片
         headPortraitImageView.sd_setImage(with: url,
-                                          placeholderImage: Configs.Resource.defaultImage(.normal))
+                                          placeholderImage: Config.Resource.defaultImage(.normal))
         headPortraitURL = url
         headPortraitTrailingConstraint.constant = headPortraitTopConstraint.constant
         cleanHeadPortraitButton.isHidden = false

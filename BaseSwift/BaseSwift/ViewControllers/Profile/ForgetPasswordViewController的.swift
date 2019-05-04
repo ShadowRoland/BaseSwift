@@ -200,10 +200,10 @@ class ForgetPasswordViewController: BaseViewController {
         guard MutexTouch else { return }
         isGettingVerifyCode = true
         changeVerifyButton(checkVerifyButtonEnabled())
-        httpRequest(.get("getVerificationCode"),
-                    params: [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
-                             Param.Key.phone : phoneTextField.text!,
-                             Param.Key.type : VerificationCodeType.login.rawValue],
+        httpRequest(.get("getVerificationCode",
+                         [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
+                          Param.Key.phone : phoneTextField.text!,
+                          Param.Key.type : VerificationCodeType.login.rawValue]),
                     success:
             { [weak self] response in
                 guard let strongSelf = self else { return }

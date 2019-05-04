@@ -8,11 +8,13 @@
 
 import Foundation
 import UIKit
+import SwiftyJSON
 import Alamofire
 import KeychainSwift
 
-class SRBase {
-
+public class SRBase {
+    public static let newActionNotification = Notification.Name(rawValue: "SRBase.newAction")
+    public static let didEndStateMachinePageEventNotification = Notification.Name("SRBase.didEndStateMachinePageEvent") //FIXME: FOR DEBUG，跨页面的通知
 }
 
 //MARK: Environment
@@ -45,15 +47,6 @@ public var HomeDirectory: String {
     return homeDirectory
 }
 
-
-fileprivate var resourceDirectory: String!
-public var ResourceDirectory: String {
-    if resourceDirectory == nil {
-        resourceDirectory = Bundle.main.resourcePath!.appending(pathComponent: "Resource")
-    }
-    return resourceDirectory
-}
-
 //默认文档目录
 fileprivate var documentsDirectory: String!
 public var DocumentsDirectory: String {
@@ -63,6 +56,14 @@ public var DocumentsDirectory: String {
                                                                         true).first!)
     }
     return documentsDirectory
+}
+
+fileprivate var resourceDirectory: String!
+public var ResourceDirectory: String {
+    if resourceDirectory == nil {
+        resourceDirectory = Bundle.main.resourcePath!.appending(pathComponent: "Resource")
+    }
+    return resourceDirectory
 }
 
 //日志文件目录
@@ -89,7 +90,6 @@ public var DatabaseFilePath: String {
             databaseFilePath = DocumentsDirectory.appending(pathComponent: "app.db")
         }
         return databaseFilePath
-        
     }
     set {
         databaseFilePath = newValue
@@ -257,14 +257,6 @@ public struct USKey {
     public static let forbidAuthenticateToLogin      = "forbidAuthenticateToLogin"
 }
 
-//自定义的通知名
-public extension Notification.Name {
-    struct Base {
-        public static let newAction = Notification.Name("Base.newAction")
-        public static let didEndStateMachineEvent = Notification.Name("Base.didEndStateMachineEvent") //FIXME: FOR DEBUG，跨页面的通知
-    }
-}
-
 //MARK: - 常用的常量值
 
 public var PerformDelay = 0.1 as TimeInterval
@@ -340,7 +332,6 @@ public var SubviewMargin = 15.0 as CGFloat //子视图内的默认外间距，�
 
 public class NavigationBar {
     static public var buttonItemHeight = NavigationBarHeight
-    static public var backgroundBlurAlpha = 0.2 as CGFloat
     static public var tintColor = UIColor.white
     static public var backgroundColor = UIColor(255, 127, 0)
     
@@ -371,7 +362,7 @@ public class NavigationBar {
          //.highlightedBackgroundImage: "",
          .customView: ""]
     
-    public struct ButtonItemKey : RawRepresentable, Equatable, Hashable {
+    public struct ButtonItemKey : RawRepresentable, Hashable {
         public typealias RawValue = String
         public var rawValue: String
         
@@ -382,8 +373,6 @@ public class NavigationBar {
         public init(rawValue: String) {
             self.rawValue = rawValue
         }
-        
-        public var hashValue: Int { return self.rawValue.hashValue }
         
         public static let style = ButtonItemKey("style") //用于在Setting中的key，不可为空
         public static let title = ButtonItemKey("title") //按钮标题，内容为String类型，在样式为text和textAndImage时有效，不可为空
@@ -511,5 +500,71 @@ public class Param {
     
     public struct DefaultValue {
         
+    }
+}
+
+//MARK: - Event
+
+public class Event: Equatable, CustomStringConvertible, CustomDebugStringConvertible {
+    public var option: Option
+    public var params: ParamDictionary?
+    public weak var sender: AnyObject?
+    public init(_ option: Option, params: ParamDictionary? = nil, sender: AnyObject? = nil) {
+        self.option = option
+        self.params = params
+        self.sender = sender
+    }
+    
+    public static func == (lhs: Event, rhs: Event) -> Bool {
+        return lhs.option == rhs.option
+    }
+    
+    public var description: String {
+        return "option: \(option.rawValue), params: \(String(jsonObject: params)), sender: \(String(describing: sender))"
+    }
+    
+    public var debugDescription: String {
+        return description
+    }
+
+    // 根据外部的调用参数（推送，第三方应用，peek & pop）返回的应用内部事件，以及内部定义的d独有事件
+    public struct Option : RawRepresentable, Hashable {
+        public typealias RawValue = Int
+        public var rawValue: Int
+        
+        public init(_ rawValue: Int) {
+            self.rawValue = rawValue
+        }
+        
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+        
+        public static func == (lhs: Option, rhs: Option) -> Bool {
+            return lhs.rawValue == rhs.rawValue
+        }
+    }
+    
+    // 系统应用、第三方应用、推送通知等调用本应用时的操作
+    public struct Action : RawRepresentable, Hashable {
+        public typealias RawValue = String
+        public var rawValue: String
+        public var option: Option?
+        
+        public init(_ rawValue: String) {
+            self.rawValue = rawValue
+        }
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+        
+        public init(_ rawValue: String, option: Option) {
+            self.rawValue = rawValue
+            self.option = option
+        }
+        
+        public static func ==(lhs: Action, rhs: Action) -> Bool {
+            return lhs.rawValue == rhs.rawValue
+        }
     }
 }

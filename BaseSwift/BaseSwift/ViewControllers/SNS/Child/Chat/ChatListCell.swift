@@ -15,7 +15,7 @@ class ChatListCell: UITableViewCell {
             let url = URL(string: NonNull.string(message?.headPortrait))
             headerImageView.contentMode = .scaleToFill
             headerImageView.sd_setImage(with: url,
-                                        placeholderImage: Configs.Resource.defaultImage(.min),
+                                        placeholderImage: Config.Resource.defaultImage(.min),
                                         options: [],
                                         completed:
                 { [weak headerImageView] (image, error, cacheType, url) in

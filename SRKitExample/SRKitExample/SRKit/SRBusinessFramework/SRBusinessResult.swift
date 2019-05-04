@@ -55,14 +55,12 @@ public enum BFResult<Value> {
     }
     
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    public var error: Any? {
+    public var error: Error? {
         switch self {
-        case .success:
-            return nil
-        case .bfailure(let value):
-            return value
         case .failure(let error):
             return error
+        default:
+            return nil
         }
     }
 }
@@ -102,8 +100,8 @@ extension BFResult: CustomDebugStringConvertible {
 // MARK: - BFError
 
 public enum BFError: Error {
-    case callModuleFailed(CallModuleFailureReason)
-    case httpFailed(LoadDataFailureReason)
+    case callModule(CallModuleFailureReason)
+    case http(LoadDataFailureReason)
 }
 
 
@@ -112,9 +110,9 @@ public enum BFError: Error {
 extension BFError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .callModuleFailed(let reason):
+        case .callModule(let reason):
             return reason.localizedDescription
-        case .httpFailed(let reason):
+        case .http(let reason):
             return reason.localizedDescription
         }
     }
@@ -127,8 +125,9 @@ extension BFError {
     }
     
     public enum LoadDataFailureReason {
-        case afResponseFailed(Error)
-        case responseSerializationFailed(Error?)
+        case afResponse(Error)
+        case responseSerialization(Error?)
+        case other(String?)
     }
 }
 
@@ -138,6 +137,7 @@ extension BFError.CallModuleFailureReason {
         case .moduleNotExist(let moduleId):
             return String(format: "[SR]Business module (moduleId: %d)  does not exist".srLocalized,
                           moduleId)
+            
         case .capabilityNotExist(let funId):
             return String(format: "[SR]Business capability (funId: %d)  does not exist".srLocalized,
                           funId)
@@ -148,12 +148,16 @@ extension BFError.CallModuleFailureReason {
 extension BFError.LoadDataFailureReason {
     public var localizedDescription: String {
         switch self {
-        case .afResponseFailed(let error):
+        case .afResponse(let error):
             return error.localizedDescription
-        case .responseSerializationFailed(let error):
+            
+        case .responseSerialization(let error):
             return error == nil
                 ? "[SR]Response serialization failed".srLocalized
                 : "[SR]Response serialization failed".srLocalized + error!.localizedDescription
+            
+        case .other(let error):
+            return error == nil ? "" : error!.srLocalized
         }
     }
 }

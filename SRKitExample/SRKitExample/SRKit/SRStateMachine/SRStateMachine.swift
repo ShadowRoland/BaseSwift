@@ -10,13 +10,13 @@ import UIKit
 import TransitionKit
 
 public protocol SRStateMachineDelegate: class {
-    func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int)
-    func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int)
+    func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event)
+    func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Event)
 }
 
 extension SRStateMachineDelegate {
-    public func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) { }
-    public func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) { }
+    public func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) { }
+    public func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Event) { }
 }
 
 /*
@@ -30,11 +30,11 @@ extension SRStateMachineDelegate {
  */
 public class SRStateMachine {
     public weak var delegate: SRStateMachineDelegate?
-    public var currentEvent: Int? { return _currentEvent }
+    public var currentEvent: Event? { return _currentEvent }
     
     private(set) var stateMachine = TKStateMachine() //状态机
-    private(set) var events: [Int] = [] //所有的状态机互斥事件
-    private(set) var _currentEvent: Int? //当前事件
+    private(set) var events: [Event] = [] //所有的状态机互斥事件
+    private(set) var _currentEvent: Event? //当前事件
     
     private var idleState: TKState! //空闲状态
     private var busyState: TKState! //忙碌状态
@@ -84,13 +84,13 @@ public class SRStateMachine {
         try! stateMachine.fireEvent(resetEvent, userInfo: nil)
     }
     
-    public func contains(_ event: Int) -> Bool {
-        return events.contains(event)
+    public func contains(_ event: Event) -> Bool {
+        return events.first { $0.option == event.option } != nil
     }
 
-    public func append(_ event: Int) {
+    public func append(_ event: Event) {
         objc_sync_enter(events)
-        if !events.contains(event) { //相同事件不用添加
+        if !contains(event) { //相同事件不用添加
             events.append(event)
         }
         objc_sync_exit(events)
@@ -99,9 +99,22 @@ public class SRStateMachine {
         }
     }
     
-    public func remove(_ event: Int) {
+    public func append(contentsOf newElements: [Event]) {
         objc_sync_enter(events)
-        if let index = events.firstIndex(of: event) {
+        newElements.forEach {
+            if !contains($0) {
+                events.append($0)
+            }
+        }
+        objc_sync_exit(events)
+        if stateMachine.currentState == idleState {
+            try! stateMachine.fireEvent(watingEvent, userInfo: nil)
+        }
+    }
+    
+    public func remove(_ event: Event) {
+        objc_sync_enter(events)
+        if let index = events.firstIndex(where: { $0.option == event.option }) {
             events.remove(at: index)
         }
         objc_sync_exit(events)
@@ -111,7 +124,7 @@ public class SRStateMachine {
         try! stateMachine.fireEvent(currentEndEvent, userInfo: nil)
     }
     
-    public func end(_ event: Int) {
+    public func end(_ event: Event) {
         if event == _currentEvent {
             endCurrentEvent()
         } else {

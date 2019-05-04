@@ -15,8 +15,6 @@ class ViewController: BaseViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the vivar typically from a nib.
         defaultNavigationBar("Root")
-        navigationBarBackgroundAlpha = NavigationBar.backgroundBlurAlpha
-        navigationBarTintColor = NavigationBar.tintColor
         initNavigationBar()
         navBarLeftButtonSettings = nil
         tableView.backgroundColor = UIColor.groupTableViewBackground
@@ -28,13 +26,14 @@ class ViewController: BaseViewController {
         
         if UserStandard[USKey.showAdvertisingGuide] != nil {
             UserStandard[USKey.showAdvertisingGuide] = nil
-            stateMachine.append(option: .showAdvertisingGuard)
+            stateMachine.append(SRKit.Event(.showAdvertisingGuard))
         }
         
         //启动程序检查并执行可以执行的option
-        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
-            .openWebpage == option {
-            stateMachine.append(option: option)
+        if let event = Common.events.first(where: { $0.option == .openWebpage }) {
+            DispatchQueue.main.async {
+                self.stateMachine.append(event)
+            }
         }
     }
     
@@ -50,12 +49,8 @@ class ViewController: BaseViewController {
     
     //MARK: - SRStateMachineDelegate
     
-    override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
-        guard let option = Event.Option(rawValue: event) else {
-            return
-        }
-        
-        switch option {
+    override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) {
+        switch event.option {
         case .showAdvertisingGuard:
             publicBusinessComponent.showAdvertisingGuard()
             
@@ -109,15 +104,15 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            Configs.entrance = .simple
+            Config.entrance = .simple
             show("SimpleViewController", storyboard: "Simple")
             
         case 1:
-            Configs.entrance = .sns
+            Config.entrance = .sns
             show("LoginViewController", storyboard: "Profile")
             
         case 2:
-            Configs.entrance = .news
+            Config.entrance = .news
             show("NewsViewController", storyboard: "News")
             
         case 3:

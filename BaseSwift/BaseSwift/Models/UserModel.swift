@@ -9,7 +9,7 @@
 import SRKit
 import ObjectMapper
 
-open class UserModel: SRBusinessModel {
+public class UserModel: BaseBusinessModel {
     enum UserStatus: EnumInt {
         case normal = 0
         case vip = 1

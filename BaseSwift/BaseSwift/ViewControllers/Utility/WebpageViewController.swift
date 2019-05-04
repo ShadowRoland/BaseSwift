@@ -11,9 +11,7 @@ import WebKit
 import M13ProgressSuite
 import Cartography
 
-let WebpageBackGestureStyle = "WebpageBackGestureStyle"
-
-class WebpageViewController: BaseViewController,
+public class WebpageViewController: BaseViewController,
 WKNavigationDelegate,
 WKUIDelegate,
 SRShareToolDelegate {
@@ -24,7 +22,7 @@ SRShareToolDelegate {
     private var progressView: M13ProgressViewBar!
     private var canGoBack = false
     
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
@@ -35,14 +33,8 @@ SRShareToolDelegate {
         reload()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let enumInt = params[WebpageBackGestureStyle] as? UInt {
-            let style = BaseBusinessComponent.PageBackGestureStyle(rawValue: enumInt)
-            if style != baseBusinessComponent.pageBackGestureStyle {
-                pageBackGestureStyle = style
-            }
-        }
     }
     
     deinit {
@@ -50,7 +42,7 @@ SRShareToolDelegate {
         webView.removeObserver(self, forKeyPath: "title")
     }
 
-    override func didReceiveMemoryWarning() {
+    override public func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -121,16 +113,6 @@ SRShareToolDelegate {
     
     //MARK: - 业务处理
     
-    override func performViewDidLoad() {
-        //FIXME: FOR DEBUG，广播“触发状态机的完成事件”的通知
-        if let sender = params[Param.Key.sender] as? String,
-            let event = params[Param.Key.event] as? Int {
-            LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), sender: \(sender), event: \(event)")
-            NotifyDefault.post(name: Notification.Name.Base.didEndStateMachineEvent,
-                               object: params)
-        }
-    }
-    
     func pageBack() {
         //webView.backForwardList.backList
         if webView.canGoBack {
@@ -141,7 +123,7 @@ SRShareToolDelegate {
         }
     }
     
-    override func clickNavigationBarLeftButton(_ button: UIButton) {
+    override public func clickNavigationBarLeftButton(_ button: UIButton) {
         guard MutexTouch else { return }
         
         if button.tag == 0 {
@@ -152,7 +134,7 @@ SRShareToolDelegate {
         }
     }
     
-    override func clickNavigationBarRightButton(_ button: UIButton) {
+    override public func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
         
         if let url = params[Param.Key.url] as? URL {
@@ -187,7 +169,7 @@ SRShareToolDelegate {
     //MARK: - 事件响应
     
     //获得网页加载进度和标题
-    override func observeValue(forKeyPath keyPath: String?,
+    override public func observeValue(forKeyPath keyPath: String?,
                                of object: Any?,
                                change: [NSKeyValueChangeKey : Any]?,
                                context: UnsafeMutableRawPointer?) {
@@ -207,21 +189,21 @@ SRShareToolDelegate {
     
     // MARK: - WKNavigationDelegate
     
-    func webViewDidClose(_ webView: WKWebView) {
+    public func webViewDidClose(_ webView: WKWebView) {
         pageBack()
     }
     
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         currentUrl = webView.url
         updateProgressView(0, animated: false)
     }
     
-    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+    public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         canGoBack = webView.canGoBack
         setNavigationBarLeftButtonItems()
     }
     
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         if !NonNull.check(params[Param.Key.title]) {
             updateProgressView(1.0, animated: true)
             title = webView.title
@@ -233,17 +215,17 @@ SRShareToolDelegate {
         }
     }
     
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
 
     }
     
     // MARK: - SRShareToolDelegate
     
-    func shareTool(types shareTool: SRShareTool) -> [SRShareTool.CellType]? {
+    public func shareTool(types shareTool: SRShareTool) -> [SRShareTool.CellType]? {
         return SRShareTool.defaultTypes + [.tool(.refresh)]
     }
     
-    func shareTool(didSelect shareTool: SRShareTool, type: SRShareTool.CellType) -> Bool {
+    public func shareTool(didSelect shareTool: SRShareTool, type: SRShareTool.CellType) -> Bool {
         if type == .tool(.refresh) {
             if let currentUrl = currentUrl {
                 webView.stopLoading()
@@ -253,15 +235,4 @@ SRShareToolDelegate {
         }
         return false
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

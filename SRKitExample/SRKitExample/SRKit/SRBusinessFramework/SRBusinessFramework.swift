@@ -10,7 +10,7 @@ import Foundation
 
 let BF: SRBusinessFramework = SRBusinessFramework.shared
 
-public struct SRManager: Equatable, Hashable, RawRepresentable {
+public struct SRManager: RawRepresentable, Hashable {
     public typealias RawValue = UInt
     public var rawValue: UInt
     
@@ -21,8 +21,6 @@ public struct SRManager: Equatable, Hashable, RawRepresentable {
     public init(rawValue: UInt) {
         self.rawValue = rawValue
     }
-    
-    public var hashValue: Int { return self.rawValue.hashValue }
 }
 
 public class SRBusinessFramework {
@@ -117,7 +115,7 @@ public class SRBusinessFramework {
         if let module = modules[moduleId]?.module {
             return module.callBusiness(funcId(businessId), params: params)
         }
-        return .failure(BFError.callModuleFailed(.moduleNotExist(moduleId)))
+        return .failure(BFError.callModule(.moduleNotExist(moduleId)))
     }
     
     public func notify(_ businessId: UInt, params: Any? = nil) {

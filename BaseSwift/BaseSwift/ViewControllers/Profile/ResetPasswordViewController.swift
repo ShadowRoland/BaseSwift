@@ -119,10 +119,9 @@ class ResetPasswordViewController: BaseViewController {
                           Param.Key.password : self.passwordTextField.text!,
                           Param.Key.newPassword : self.newPasswordTextField.text!]
             }
-            //            self?.httpReq(.post(.resetPassword), params)
-            self.httpRequest(.post("user/resetPassword"), params: params, success: { response in
+            self.httpRequest(.post("user/resetPassword", params), success: { response in
                 let alert = SRAlert()
-                alert.appearance.showCloseButton = false
+                //alert.appearance.showCloseButton = false
                 alert.addButton("OK".localized,
                                 backgroundColor: NavigationBar.backgroundColor,
                                 action:
@@ -130,11 +129,11 @@ class ResetPasswordViewController: BaseViewController {
                         if self?.resetPasswordType == .smsCode {
                             self?.popBack(toClasses: [LoginViewController.self])
                         } else {
-                            if Configs.entrance == .sns {
+                            if Config.entrance == .sns {
                                 self?.popBack(toClasses: [LoginViewController.self])
-                            } else if Configs.entrance == .news || Configs.entrance == .aggregation {
-                                Common.currentProfile()?.isLogin = false
-                                NotifyDefault.post(Configs.reloadProfileNotification)
+                            } else if Config.entrance == .news || Config.entrance == .aggregation {
+                                ProfileManager.currentProfile?.isLogin = false
+                                NotifyDefault.post(Config.reloadProfileNotification)
                                 self?.popBack(toClasses: [MoreViewController.self])
                             }
                         }

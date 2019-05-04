@@ -36,9 +36,6 @@ class MainMenuViewController: BaseViewController {
         defaultNavigationBar()
         pageBackGestureStyle = .none
         Common.rootVC = self
-        NotifyDefault.add(self,
-                          selector: #selector(newAction(_:)),
-                          name: Notification.Name.Base.newAction)
         initView()
         
         addChild(latestVC)
@@ -50,14 +47,14 @@ class MainMenuViewController: BaseViewController {
         
         if UserStandard[USKey.showAdvertisingGuide] != nil {
             UserStandard[USKey.showAdvertisingGuide] = nil
-            stateMachine.append(Event.Option.showAdvertisingGuard.rawValue)
+            stateMachine.append(Event(.showAdvertisingGuard))
         }
         
         //查询当前指令而执行的操作，加入状态机
-        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
-            .showProfile == option || .showSetting == option {
+        if let event = Common.events.first(where: { $0.option == .showProfile || $0.option == .showSetting }) {
+            Common.removeEvent(event)
             DispatchQueue.main.async { [weak self] in
-                self?.stateMachine.append(option: option)
+                self?.stateMachine.append(event)
             }
         }
     }
@@ -89,7 +86,7 @@ class MainMenuViewController: BaseViewController {
         
         hottestVC =
             UIViewController.viewController("HottestViewController",
-                                  storyboard: "Aggregation") as? HottestViewController
+                                            storyboard: "Aggregation") as? HottestViewController
         hottestVC.parentVC = self
         
         jokersVC =
@@ -218,14 +215,6 @@ class MainMenuViewController: BaseViewController {
         })
     }
     
-    func presentLoginVC(_ params: ParamDictionary? = nil) {
-        let vc = UIViewController.viewController("LoginViewController", storyboard: "Profile") as! LoginViewController
-        if let params = params {
-            vc.params = params
-        }
-        present(SRModalViewController.standard(vc), animated: true, completion: nil)
-    }
-    
     func sendNewsListVC(_ sendChildVC: String?,
                         sendNewsListVC: String?) ->NewsListViewController? {
         guard let sendChildVC = sendChildVC, let sendNewsListVC = sendNewsListVC else {
@@ -263,29 +252,10 @@ class MainMenuViewController: BaseViewController {
         show("NewsSearchViewController", storyboard: "News")
     }
     
-    //在程序运行中收到指令，基本都可以通过走状态机实现
-    @objc func newAction(_ notification: Notification) {
-        guard let option = Event.option(Common.currentActionParams?[Param.Key.action]) else {
-            return
-        }
-        
-        switch option {
-        case .showProfile, .showSetting:
-            stateMachine.append(option: option)
-            
-        default:
-            break
-        }
-    }
-    
     //MARK: - SRStateMachineDelegate
     
-    override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
-        guard let option = Event.Option(rawValue: event) else {
-            return
-        }
-        
-        switch option {
+    override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) {
+        switch event.option {
         case .openWebpage:
             if aggregationVC.isLeftOpen() {
                 aggregationVC.closeLeft()
@@ -298,82 +268,8 @@ class MainMenuViewController: BaseViewController {
         case .showAdvertising:
             publicBusinessComponent.showAdvertising()
             
-        case .showProfile:
-            if aggregationVC.isLeftOpen() {
-                aggregationVC.closeLeft()
-            }
-            let viewControllers = navigationController!.viewControllers
-            let profileVCs = viewControllers.filter { $0.isKind(of: ProfileViewController.self) }
-            if viewControllers.last!.isKind(of: ProfileViewController.self) { //当前页面是Profile页面
-                Common.clearActionParams(option: option)
-                stateMachine.end(event)
-            } else if !profileVCs.isEmpty { //Profile页面在当前页面之前
-                Common.clearActionParams(option: option)
-                stateMachine.end(event)
-                Common.clearPops()
-                Common.clearModals(viewController: profileVCs.last!)
-                popBack(to: profileVCs.last!)
-            } else { //视图栈中没有Profile页面，退出到主页，再push新的Profile页面入栈
-                Common.clearPops()
-                Common.clearModals(viewController: self)
-                popBack(to: self, animated: false)
-                NotifyDefault.add(self,
-                                  selector: .didEndStateMachineEvent,
-                                  name: Notification.Name.Base.didEndStateMachineEvent)
-                DispatchQueue.main.async {
-                    let params = [Param.Key.sender : String(pointer: self),
-                                  Param.Key.event : event] as ParamDictionary
-                    //若是非登录状态，弹出登录页面，因为查看个人信息需要先登录
-                    if !Common.isLogin() {
-                        self.presentLoginVC(params)
-                    } else { //push新的Profile页面入栈
-                        self.show("ProfileViewController",
-                                  storyboard: "Profile",
-                                  params: params)
-                    }
-                }
-            }
-            
-        case .showSetting:
-            if aggregationVC.isLeftOpen() {
-                aggregationVC.closeLeft()
-            }
-            let viewControllers = navigationController!.viewControllers
-            let settingVCs = viewControllers.filter { $0 is SettingViewController }
-            if viewControllers.last! is SettingViewController { //当前页面是Setting页面
-                Common.clearActionParams(option: option)
-                stateMachine.end(event)
-            } else if !settingVCs.isEmpty { //Setting页面在当前页面之前
-                Common.clearActionParams(option: option)
-                stateMachine.end(event)
-                Common.clearPops()
-                Common.clearModals(viewController: settingVCs.last!)
-                popBack(to: settingVCs.last!)
-            } else { //视图栈中没有Setting页面，退出到主页，再push新的Setting页面入栈
-                Common.clearPops()
-                Common.clearModals(viewController: self)
-                popBack(to: self, animated: false)
-                NotifyDefault.add(self,
-                                  selector: .didEndStateMachineEvent,
-                                  name: Notification.Name.Base.didEndStateMachineEvent)
-                DispatchQueue.main.async {
-                    self.show("SettingViewController", storyboard: "Profile",
-                              params: [Param.Key.sender : String(pointer: self),
-                                       Param.Key.event : event])
-                }
-            }
-            
         default:
             super.stateMachine(stateMachine, didFire: event)
-        }
-    }
-    
-    override func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) {
-        super.stateMachine(stateMachine, didEnd: event)
-        
-        if Event.Option.showProfile.rawValue == event
-            || Event.Option.showSetting.rawValue == event {
-            NotifyDefault.remove(self, name: Notification.Name.Base.didEndStateMachineEvent)
         }
     }
 }
@@ -396,66 +292,65 @@ extension MainMenuViewController: NewsListDelegate {
             sendChildVC = String(pointer: parentVC)
         }
         let sendNewsListVC = String(pointer: sendVC)
-        httpRequest(.get(.sinaNewsList),
-                    params,
-                    url: "http://interface.sina.cn",
-                    success:
-            { response in
-                guard let vc = self.sendNewsListVC(sendChildVC,
+        httpRequest(.get("http://interface.sina.cn/ent/feed.d.json", params), success: { [weak self] response in
+            guard let strongSelf = self,
+                let vc = strongSelf.sendNewsListVC(sendChildVC,
                                                    sendNewsListVC: sendNewsListVC) else {
                                                     return
+            }
+            
+            if loadType == .more {
+                let offset = params[Param.Key.offset] as! Int
+                if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
+                    vc.updateMore(NonNull.dictionary(response))
+                }
+            } else {
+                vc.updateNew(NonNull.dictionary(response))
+            }
+            }, bfail: { [weak self] (method, response) in
+                guard let strongSelf = self,
+                    let vc = strongSelf.sendNewsListVC(sendChildVC,
+                                                       sendNewsListVC: sendNewsListVC) else {
+                                                        return
                 }
                 
                 if loadType == .more {
                     let offset = params[Param.Key.offset] as! Int
-                    if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
-                        vc.updateMore(NonNull.dictionary(response))
+                    if offset == vc.currentOffset + 1 {
+                        return
                     }
                 } else {
-                    vc.updateNew(NonNull.dictionary(response))
-                }
-        }, bfail: { response in
-            guard let vc = self.sendNewsListVC(sendChildVC,
-                                               sendNewsListVC: sendNewsListVC) else {
-                                                return
-            }
-            
-            if loadType == .more {
-                let offset = params[Param.Key.offset] as! Int
-                if offset == vc.currentOffset + 1 {
-                    return
-                }
-            } else {
-                if !vc.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
-                    vc.updateNew(nil)
-                } else { //当前为空的话则交给列表展示错误信息
-                    vc.updateNew(nil, errMsg: self.logBFail(.get(.sinaNewsList),
-                                                            response: response,
-                                                            show: false))
-                }
-            }
-        }, fail: { error in
-            guard let vc = self.sendNewsListVC(sendChildVC,
-                                               sendNewsListVC: sendNewsListVC) else {
-                                                return
-            }
-            
-            if loadType == .more {
-                let offset = params[Param.Key.offset] as! Int
-                if offset == vc.currentOffset + 1 {
-                    if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
-                        vc.updateMore(nil)
-                    } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                        vc.updateMore(nil, errMsg: error.errorDescription)
+                    if !vc.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
+                        vc.updateNew(nil)
+                    } else { //当前为空的话则交给列表展示错误信息
+                        vc.updateNew(nil, errMsg: strongSelf.logBFail(method,
+                                                                      response: response,
+                                                                      show: false))
                     }
                 }
-            } else {
-                if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
-                    vc.updateNew(nil)
-                } else { //当前为空的话则交给列表展示错误信息
-                    vc.updateNew(nil, errMsg: error.errorDescription)
+            }, fail: { [weak self] (_, error) in
+                guard let strongSelf = self,
+                    let vc = strongSelf.sendNewsListVC(sendChildVC,
+                                                       sendNewsListVC: sendNewsListVC) else {
+                                                        return
                 }
-            }
+                
+                if loadType == .more {
+                    let offset = params[Param.Key.offset] as! Int
+                    if offset == vc.currentOffset + 1 {
+                        if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
+                            vc.updateMore(nil)
+                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
+                            vc.updateMore(nil, errMsg: error.errorDescription)
+                        }
+                    }
+                } else {
+                    if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
+                        vc.updateNew(nil)
+                    } else { //当前为空的话则交给列表展示错误信息
+                        vc.updateNew(nil, errMsg: error.errorDescription)
+                    }
+                }
         })
     }
     

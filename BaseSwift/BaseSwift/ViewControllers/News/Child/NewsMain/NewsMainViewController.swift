@@ -267,7 +267,7 @@ SRTabHeaderDelegate {
         vc.channelId = channel.id
         
         //设置不同参数以尽量让每个分页显示不同的新闻
-        var params = [:]
+        var params = [:] as ParamDictionary
         params[Param.Key.jsonCallback] = "callback"
         params[Param.Key.callback] = "callback"
         var newsType = "news"

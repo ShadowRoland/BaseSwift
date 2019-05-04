@@ -23,12 +23,10 @@ class HttpServerViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Common.shared.addObserver(self,
-                                forKeyPath: "networkStatus",
-                                options: .new,
-                                context: nil)
+        HttpManager.shared.addListener(forNetworkStatus: self,
+                                        action: #selector(updateNetworkStatus))
         initView()
-        SRHttpServer.shared.start()
+        HttpServer.shared.start()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -38,7 +36,7 @@ class HttpServerViewController: UITableViewController {
     
     deinit {
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
-        Common.shared.removeObserver(self, forKeyPath: "networkStatus")
+        HttpManager.shared.removeListener(forNetworkStatus: self)
     }
     
     override func didReceiveMemoryWarning() {
@@ -74,46 +72,22 @@ class HttpServerViewController: UITableViewController {
         holdToExitButton.layer.cornerRadius = SubmitButton.cornerRadius
         tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         
-        if let responseResult = SRHttpServer.shared.responseResult {
-            if responseResult.isSuccess {
-                responseSuccessCell.detailTextLabel?.text = "返回成功"
-            } else if responseResult.isBFailure {
-                responseSuccessCell.detailTextLabel?.text = "返回业务失败"
-            } else if responseResult.isFailure {
-                responseSuccessCell.detailTextLabel?.text = "返回失败"
-            }
+        responseSuccessCell.detailTextLabel?.text = HttpServer.shared.responseResult?.description
+        if let responseResult = HttpServer.shared.responseResult {
+            responseSuccessCell.detailTextLabel?.text = responseResult.description
         } else {
             responseTimeCell.detailTextLabel?.text = "如实返回"
         }
         
-        switch SRHttpServer.shared.responseTime {
-        case .immediately:
-            responseTimeCell.detailTextLabel?.text = "立即返回"
-        case .speediness:
-            responseTimeCell.detailTextLabel?.text = "快(0.3秒)"
-        case .normal:
-            responseTimeCell.detailTextLabel?.text = "一般(1秒)"
-        case .long:
-            responseTimeCell.detailTextLabel?.text = "长(10秒)"
-        case .timeout:
-            responseTimeCell.detailTextLabel?.text = "超时(100秒)"
-        }
-        
-        if SRHttpServer.shared.token == "Expired" {
-            clearTokenCell.detailTextLabel?.text = "已失效"
-        } else if SRHttpServer.shared.token == "" {
-            clearTokenCell.detailTextLabel?.text = "未登录"
-        } else {
-            clearTokenCell.detailTextLabel?.text = "已登录"
-        }
+        responseTimeCell.detailTextLabel?.text = HttpServer.shared.responseTimeInterval.description
         
         updateNetworkStatus()
     }
     
     //MARK: - 业务处理
     
-    func updateNetworkStatus() {
-        let wifiEnable = HttpManager.default.networkStatus == .reachable(.ethernetOrWiFi)
+    @objc func updateNetworkStatus() {
+        let wifiEnable = HttpManager.shared.networkStatus == .reachable(.ethernetOrWiFi)
         var format = "<p style=\"font-family: sans-serif; font-weight: bold; font-size: 18px; color: black\">当前WIFI状态  <span style=\"color: %@\">%@</span></p>"
         if !wifiEnable {
             networkStatusLabel.attributedString =
@@ -139,22 +113,13 @@ class HttpServerViewController: UITableViewController {
     // MARK: - 事件响应
     
     @IBAction func stopToExit(_ sender: Any) {
-        SRHttpServer.shared.stop()
+        HttpServer.shared.stop()
         self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func holdToExit(_ sender: Any) {
-        SRHttpServer.shared.start()
+        HttpServer.shared.start()
         self.dismiss(animated: true, completion: nil)
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?,
-                               of object: Any?,
-                               change: [NSKeyValueChangeKey : Any]?,
-                               context: UnsafeMutableRawPointer?) {
-        if keyPath == "networkStatus" {
-            updateNetworkStatus()
-        }
     }
     
     //MARK: - UITableViewDelegate, UITableViewDataSource
@@ -179,28 +144,28 @@ class HttpServerViewController: UITableViewController {
                                           handler:
                 { [weak self] (action) in
                     self?.responseSuccessCell.detailTextLabel?.text = "如实返回"
-                    //SRHttpServer.shared.responseResult = nil
+                    //HttpServer.shared.responseResult = nil
             }))
             alert.addAction(UIAlertAction(title: "返回成功",
                                           style: .default,
                                           handler:
                 { [weak self] (action) in
                     //self?.responseSuccessCell.detailTextLabel?.text = "返回成功"
-                    //SRHttpServer.shared.responseResult = .success(nil)
+                    //HttpServer.shared.responseResult = .success(nil)
             }))
             alert.addAction(UIAlertAction(title: "返回业务失败",
                                           style: .default,
                                           handler:
                 { [weak self] (action) in
                     self?.responseSuccessCell.detailTextLabel?.text = "返回业务失败"
-                    //SRHttpServer.shared.responseResult = .bfailure(nil)
+                    //HttpServer.shared.responseResult = .bfailure(nil)
             }))
             alert.addAction(UIAlertAction(title: "返回失败",
                                           style: .default,
                                           handler:
                 { [weak self] (action) in
                     self?.responseSuccessCell.detailTextLabel?.text = "返回失败"
-                    //SRHttpServer.shared.responseResult = .failure(NSError())
+                    //HttpServer.shared.responseResult = .failure(NSError())
             }))
             alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler:nil))
             present(alert, animated: true, completion: nil)
@@ -213,35 +178,35 @@ class HttpServerViewController: UITableViewController {
                                           handler:
                 { [weak self] (action) in
                     self?.responseTimeCell.detailTextLabel?.text = "立即返回"
-                    //SRHttpServer.shared.responseTime = .immediately
+                    //HttpServer.shared.responseTime = .immediately
             }))
             alert.addAction(UIAlertAction(title: "快(0.3秒)",
                                           style: .default,
                                           handler:
                 { [weak self] (action) in
                     self?.responseTimeCell.detailTextLabel?.text = "快(0.3秒)"
-                    //SRHttpServer.shared.responseTime = .speediness
+                    //HttpServer.shared.responseTime = .speediness
             }))
             alert.addAction(UIAlertAction(title: "一般(1秒)",
                                           style: .default,
                                           handler:
                 { [weak self] (action) in
                     self?.responseTimeCell.detailTextLabel?.text = "一般(1秒)"
-                    //SRHttpServer.shared.responseTime = .normal
+                    //HttpServer.shared.responseTime = .normal
             }))
             alert.addAction(UIAlertAction(title: "长(10秒)",
                                           style: .default,
                                           handler:
                 { [weak self] (action) in
                     self?.responseTimeCell.detailTextLabel?.text = "长(10秒)"
-                    //SRHttpServer.shared.responseTime = .long
+                    //HttpServer.shared.responseTime = .long
             }))
             alert.addAction(UIAlertAction(title: "超时(100秒)",
                                           style: .default,
                                           handler:
                 { [weak self] (action) in
                     self?.responseTimeCell.detailTextLabel?.text = "超时(100秒)"
-                    //SRHttpServer.shared.responseTime = .timeout
+                    //HttpServer.shared.responseTime = .timeout
             }))
             alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler:nil))
             present(alert, animated: true, completion: nil)
@@ -254,7 +219,7 @@ class HttpServerViewController: UITableViewController {
                                           handler:
                 { [weak self] (action) in
                     self?.clearTokenCell.detailTextLabel?.text = "已失效"
-                    //SRHttpServer.shared.token = "Expired"
+                    //HttpServer.shared.token = "Expired"
             }))
             alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler:nil))
             present(alert, animated: true, completion: nil)

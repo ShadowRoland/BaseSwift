@@ -1,5 +1,5 @@
 //
-//  Configs.swift
+//  Config.swift
 //  BaseSwift
 //
 //  Created by Shadow on 2016/11/14.
@@ -8,11 +8,11 @@
 
 import SRKit
 
-public typealias Event = Configs.Event
-public typealias IntForBool = Configs.IntForBool
-public typealias TableLoadData = Configs.TableLoadData
+public typealias Event = SRKit.Event
+public typealias IntForBool = Config.IntForBool
+public typealias TableLoadData = Config.TableLoadData
 
-public class Configs {
+public class Config {
     //MARK: DEBUG，入口类型
     static var entrance: EntranceStyle = .none
     public enum EntranceStyle {
@@ -26,8 +26,8 @@ public class Configs {
     //MARK: 生产环境的参数
     static let BaseServerURLProduction = "https://api.xxxxxx.com/internal"
     
-    //MARK: 配置参数
-    static let configFilePath = ResourceDirectory.appending(pathComponent: "json/config.json")
+    //MARK: 环境配置参数
+    static let envFilePath = ResourceDirectory.appending(pathComponent: "json/env.json")
     
     //MARK: - 应用程序可配置项
     
@@ -46,89 +46,6 @@ public class Configs {
         
         static let amap = "iosamap" //高德地图
         static let baiduMap = "baidumap" //百度地图
-    }
-    
-    //MARK: - Event
-    
-    //此处事件使用Int而不使用Enum是为了兼容State machine中event
-    public class Event {
-        //根据外部的调用参数（推送，第三方应用，peek & pop）返回的应用内部事件，以及内部定义的d独有事件
-        public enum Option: Int, CaseIterable {
-            case showAdvertisingGuard = 1
-            case showAdvertising = 2
-            
-            case showMore = 1000
-            case showProfile = 1001
-            case showSetting = 1002
-            case openWebpage = 1003
-        }
-        
-        //根据外部的调用参数（推送，第三方应用，peek & pop）返回的应用内部事件
-        class func option(_ any: Any?) -> Option? {
-            if let string = any as? String,
-                let action = Action(rawValue: string) {
-                return option(action: action)
-            } else if let action = any as? Action {
-                return option(action: action)
-            } else {
-                return nil
-            }
-        }
-        
-        class func option(action: Action) -> Option? {
-            switch action {
-            case .more:
-                return .showMore
-                
-            case .profile:
-                return .showProfile
-                
-            case .setting:
-                return .showSetting
-                
-            case .openWebpage:
-                return .openWebpage
-            }
-        }
-        
-        // 系统应用、第三方应用、推送通知等调用本应用时的操作
-        public enum Action: String, CaseIterable {
-            case more = "more" //跳转到更多页面
-            case profile = "profile" //跳转到个人页面
-            case setting = "setting" //跳转到设置页面
-            case openWebpage = "openWebpage" //打开指定的网页
-        }
-        
-        //根据内部事件查询外部参数队列
-        class func actions(_ any: Any?) -> [Action] {
-            if let event = any as? Int,
-                let option = Option(rawValue: event) {
-                return actions(option: option)
-            } else if let option = any as? Option {
-                return actions(option: option)
-            } else {
-                return []
-            }
-        }
-        
-        class func actions(option: Option) -> [Action] {
-            switch option {
-            case .showMore:
-                return [.more]
-                
-            case .showProfile:
-                return [.profile]
-                
-            case .showSetting:
-                return [.setting]
-                
-            case .openWebpage:
-                return [.openWebpage]
-                
-            default:
-                return []
-            }
-        }
     }
     
     static let refreshProfileNotification = Notification.Name("This.refreshProfile")
@@ -242,11 +159,46 @@ public class Configs {
     }
 }
 
+extension SRKit.Event {
+    convenience init?(params: ParamDictionary) {
+        let action = params[Param.Key.action] as? String
+        if let option = Event.Action.allCases.first(where: { $0.rawValue == action })?.option {
+            self.init(option, params: params)
+        } else {
+            return nil
+        }
+    }
+}
+
+extension SRKit.Event.Option {
+    static let showAdvertisingGuard = Event.Option(1)
+    static let showAdvertising = Event.Option(2)
+    
+    static let openWebpage = Event.Option(1000) //打开指定的网页
+    static let showMore = Event.Option(1001) //跳转到更多页面
+    static let showProfile = Event.Option(1002) //跳转到个人页面
+    static let showSetting = Event.Option(1003) //跳转到设置页面
+}
+
+extension SRKit.Event.Action: Swift.CaseIterable {
+    static let openWebpage = Event.Action("openWebpage", option: .openWebpage)
+    static let more = Event.Action("more", option: .showMore)
+    static let profile = Event.Action("profile", option: .showProfile)
+    static let setting = Event.Action("setting", option: .showSetting)
+    
+    public static var allCases: [SRKit.Event.Action] {
+                return [.openWebpage,
+                        .more,
+                        .profile,
+                        .setting]
+    }
+}
+
 //MARK: 在UserDefault使用的KEY
 
 //格式为前缀"USKey" + 带语意的后缀
 extension USKey {
-    static let config = "config"
+    static let env = "env"
     static let showGuide = "showGuide"
     static let showAdvertisingGuide = "showAdvertisingGuide"
     static let serverConfig = "serverConfig"

@@ -103,17 +103,17 @@ public class ProfileModel: UserModel {
 
 //MARK: -
 
-class NameModel: SRModel {
+class NameModel: BaseModel {
     var first: String?
     var middle: String?
     var last: String?
     var fullName: String {
         return NonNull.string(first) + NonNull.string(middle) + NonNull.string(last)
     }
-    
+
     override public func mapping(map: ObjectMapper.Map) {
         super.mapping(map: map)
-        
+
         first <- map[Param.Key.first]
         middle <- map[Param.Key.middle]
         last <- map[Param.Key.last]

@@ -56,10 +56,10 @@ class MoreViewController: BaseViewController {
         
         NotifyDefault.add(self,
                           selector: #selector(getProfile),
-                          name: Configs.refreshProfileNotification)
+                          name: Config.refreshProfileNotification)
         NotifyDefault.add(self,
                           selector: #selector(reloadProfile),
-                          name: Configs.reloadProfileNotification)
+                          name: Config.reloadProfileNotification)
         updateCellHeight()
         initView()
     }
@@ -88,7 +88,7 @@ class MoreViewController: BaseViewController {
     
     func initView() {
         let freshHeader = SRMJRefreshHeader(refreshingBlock: { [weak self] in
-            if Common.isLogin() {
+            if ProfileManager.isLogin {
                 self?.getProfile()
             } else {
                 self?.tableView.mj_header.endRefreshing()
@@ -162,7 +162,7 @@ class MoreViewController: BaseViewController {
     //MARK: - 业务处理
     
     @objc func getProfile() {
-        httpRequest(.get("user/profile"), success: { [weak self]  response in
+        httpRequest(.get("user/profile", [:]), success: { [weak self]  response in
             self?.tableView.mj_header.endRefreshing()
             self?.reloadProfile()
         }, bfail: { [weak self] (url, response) in
@@ -173,13 +173,13 @@ class MoreViewController: BaseViewController {
     }
     
     @objc func reloadProfile() {
-        if let profile = Common.currentProfile(), profile.isLogin {
+        if let profile = ProfileManager.currentProfile, profile.isLogin {
             headPortraitImageView.sd_setImage(with: URL(string: NonNull.string(profile.headPortrait)),
-                                              placeholderImage: Configs.Resource.defaultHeadPortrait(.normal))
+                                              placeholderImage: Config.Resource.defaultHeadPortrait(.normal))
             nameLabel.text = profile.name?.fullName
             userNameLabel.text = profile.userName
         } else {
-            headPortraitImageView.image = Configs.Resource.defaultHeadPortrait(.normal)
+            headPortraitImageView.image = Config.Resource.defaultHeadPortrait(.normal)
             nameLabel.text = "Click Login".localized
             userNameLabel.text = "More money, more power".localized
         }
@@ -190,15 +190,6 @@ class MoreViewController: BaseViewController {
         Const.detailFont = UIFont.Preferred.subheadline
         Const.cellHeight = max(TableCellHeight,
                                Const.textFont.lineHeight + 2.0 * Const.textLabelMarginVertical)
-    }
-    
-    func presentLoginVC(_ params: ParamDictionary? = nil) {
-        let vc =
-            UIViewController.viewController("LoginViewController", storyboard: "Profile") as! LoginViewController
-        if let params = params {
-            vc.params = params
-        }
-        present(SRModalViewController.standard(vc), animated: true, completion: nil)
     }
     
     //MARK: Stock
@@ -243,7 +234,7 @@ class MoreViewController: BaseViewController {
                 }
                 
                 strongSelf.stockCode = text
-                strongSelf.httpRequest(.get(String(format: "http://hq.sinajs.cn/list=%@", (self?.stockExchange)! + text)), success:
+                strongSelf.httpRequest(.get("http://hq.sinajs.cn/list=\(strongSelf.stockExchange + text)", nil), success:
                     { [weak self] response in
                         guard let strongSelf = self else { return }
                         if let data = response as? Data {
@@ -358,7 +349,7 @@ class MoreViewController: BaseViewController {
     
     @IBAction func clickTableHeaderButton(_ sender: Any) {
         guard MutexTouch else { return }
-        if Common.isLogin() {
+        if ProfileManager.isLogin {
             show("ProfileViewController", storyboard: "Profile")
         } else {
             presentLoginVC()
@@ -536,7 +527,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
             return
         }
         
-        if !Common.isLogin() {
+        if !ProfileManager.isLogin {
             presentLoginVC()
             return
         }

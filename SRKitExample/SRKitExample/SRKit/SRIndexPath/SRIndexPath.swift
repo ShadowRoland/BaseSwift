@@ -112,7 +112,7 @@ open class SRIndexPath {
     }
     
     open class AttributedString {
-        public struct Key: Equatable, Hashable, RawRepresentable {
+        public struct Key: RawRepresentable, Hashable {
             public typealias RawValue = String
             public var rawValue: String
             
@@ -123,8 +123,6 @@ open class SRIndexPath {
             public init(rawValue: String) {
                 self.rawValue = rawValue
             }
-            
-            public var hashValue: Int { return self.rawValue.hashValue }
         }
     }
 }

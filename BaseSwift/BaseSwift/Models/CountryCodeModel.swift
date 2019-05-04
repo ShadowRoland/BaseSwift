@@ -9,7 +9,7 @@
 import SRKit
 import ObjectMapper
 
-class CountryCodeModel: SRBusinessModel {
+class CountryCodeModel: BaseBusinessModel {
     var name: String?
     var code: String?
     var letter: String? = "#"

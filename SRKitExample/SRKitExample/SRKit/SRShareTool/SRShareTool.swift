@@ -56,8 +56,8 @@ public class SRShareTool: UIViewController {
             twitter //404-2
         }
         
-        public static func == (lhs: CellType, rhs: CellType?) -> Bool {
-            return rhs != nil && lhs.rawValue == rhs!.rawValue
+        public static func == (lhs: CellType, rhs: CellType) -> Bool {
+            return lhs.rawValue == rhs.rawValue
         }
         
         public var rawValue: UInt {

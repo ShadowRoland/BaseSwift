@@ -27,7 +27,7 @@ class FindCell: UITableViewCell {
             let url = URL(string: NonNull.string(model?.headPortrait))
             headPortraitImageView.contentMode = .scaleToFill
             headPortraitImageView.sd_setImage(with: url,
-                                              placeholderImage: Configs.Resource.defaultHeadPortrait(.min),
+                                              placeholderImage: Config.Resource.defaultHeadPortrait(.min),
                                               options: [],
                                               completed:
                 { [weak headPortraitImageView] (image, error, cacheType, url) in
@@ -424,7 +424,7 @@ class FindCell: UITableViewCell {
             weak var weakSelf = self
             imageButton.sd_setImage(with: url,
                                     for: .normal,
-                                    placeholderImage: Configs.Resource.defaultImage(imagesCount > 1 ? .min : .normal),
+                                    placeholderImage: Config.Resource.defaultImage(imagesCount > 1 ? .min : .normal),
                                     options: [],
                                     completed:
                 { [weak imageButton] (image, error, cacheType, url) in
@@ -502,7 +502,7 @@ class FindCell: UITableViewCell {
         imagesView.removeFromSuperview()
         
         let url = URL(string: NonNull.string(model.thumbnail))
-        shareThumbnail.sd_setImage(with: url, placeholderImage: Configs.Resource.defaultImage(.normal))
+        shareThumbnail.sd_setImage(with: url, placeholderImage: Config.Resource.defaultImage(.normal))
         shareLabel.text = model.shareText
         //文字内容宽度
         let shareTextwidth = width - Const.shareThumbnailSide - 3.0 * Const.shareThumbnailMargin

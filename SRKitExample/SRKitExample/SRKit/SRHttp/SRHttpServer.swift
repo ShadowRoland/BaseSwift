@@ -10,18 +10,8 @@ import UIKit
 import GCDWebServer
 import SwiftyJSON
 
-public class SRHttpServer {
-    var isRunning: Bool { return webServer.isRunning }
-    var webServer: GCDWebServer!
-    
-    //为nil时按正常流程返回，否则强制设置网络返回的结果
-    var responseResult: BFResult<Any>?
-    
-    public class var shared: SRHttpServer { return sharedInstance }
-    
-    private static let sharedInstance = SRHttpServer()
-    
-    private init() {
+open class SRHttpServer {
+    public init() {
         webServer = GCDWebServer()
         
         webServer.addDefaultHandler(forMethod: "GET",
@@ -46,67 +36,121 @@ public class SRHttpServer {
         }
     }
     
+    open var isRunning: Bool { return webServer.isRunning }
+    var webServer: GCDWebServer!
+    
+    open var responseResult: GCDWebServerResponseResult? //为nil时按正常流程返回，否则强制设置网络返回的结果
+    
+    public struct GCDWebServerResponseResult: RawRepresentable {
+        public typealias RawValue = BFResult<Any>
+        public var rawValue: BFResult<Any>
+        public var description: String?
+        public var result: BFResult<Any> { return rawValue }
+        
+        public init(rawValue: BFResult<Any>) {
+            self.rawValue = rawValue
+        }
+        
+        public init(_ rawValue: BFResult<Any>, description: String?) {
+            self.init(rawValue: rawValue)
+            self.description = description
+        }
+        
+        public static let success =
+            GCDWebServerResponseResult(.success(nil), description: "Allways success".srLocalized)
+        public static var bfail =
+            GCDWebServerResponseResult(.bfailure([HTTP.Key.Response.errorCode : -1,
+                                                  HTTP.Key.Response.errorMessage : "[GCDWebServer]Business fail"]),
+                                       description: "Allways business fail".srLocalized)
+        public static var fail =
+            GCDWebServerResponseResult(.failure(BFError.http(.other("Server boom shakalaka".srLocalized))),
+                                       description: "Allways http fail".srLocalized)
+    }
+    
+    open var responseTimeInterval: GCDWebServerResponseTimeInterval = .normal
+    
+    public struct GCDWebServerResponseTimeInterval: RawRepresentable {
+        public typealias RawValue = TimeInterval
+        public var rawValue: TimeInterval
+        public var _description: String?
+        public var description: String {
+            var string = "\(interval)" + "second\(interval > 1 ? "s" : "")".srLocalized
+            if !isEmptyString(_description) {
+                string = _description!.srLocalized + " (\(string))"
+            }
+            return string
+        }
+        public var interval: TimeInterval { return rawValue }
+        
+        public init(rawValue: TimeInterval) {
+            self.rawValue = rawValue
+        }
+        
+        public init(_ rawValue: TimeInterval, description: String?) {
+            self.init(rawValue: rawValue)
+            _description = description
+        }
+        
+        public static let immediately = GCDWebServerResponseTimeInterval(0, description: "No delay")
+        public static var speediness = GCDWebServerResponseTimeInterval(0.3, description: "Fast")
+        public static var normal = GCDWebServerResponseTimeInterval(1, description: "Normal")
+        public static var long = GCDWebServerResponseTimeInterval(10, description: "Long")
+        public static var timeout = GCDWebServerResponseTimeInterval(10, description: "Timeout")
+    }
+    
     public struct Const {
         public static let htmlBaseFormat = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body>%@</body></html>"
         static let logfileTailLength = 10000
     }
     
-    public func start() {
+    open func start() {
         if !webServer.isRunning {
+            LogInfo("GCDWebServer is starting ...")
             if webServer.start(withPort: 9999, bonjourName: "") {
-                LogInfo("已启动")
+                LogInfo("GCDWebServer is started")
             } else {
-                LogInfo("启动失败")
+                LogInfo("GCDWebServer failed to start")
             }
         } else {
-            LogInfo("已启动")
+            LogInfo("GCDWebServer is started")
         }
     }
     
-    public func stop() {
+    open func stop() {
         if webServer.isRunning {
             webServer.stop()
         }
-        LogInfo("已停止服务")
+        LogInfo("GCDWebServer is stopped")
     }
     
-    public func response(_ result: BFResult<Any>?) -> GCDWebServerResponse? {
-        var serverResponse: GCDWebServerResponse?
-        if responseResult == nil {
-            if result == nil {
-                let dictionary = BFResult.bfailure("操作失败，请求姿势不对").gcdWebServerResponse
-                serverResponse = GCDWebServerDataResponse(jsonObject: dictionary)
-            } else {
-                serverResponse = GCDWebServerDataResponse(jsonObject: result?.gcdWebServerResponse as Any)
-            }
-        } else {
-            if responseResult!.isSuccess {
-                if let result = result, result.isSuccess {
-                    serverResponse = GCDWebServerDataResponse(jsonObject: result.gcdWebServerResponse)
-                } else {
-                    serverResponse = GCDWebServerDataResponse(jsonObject: BFResult<Any>.success(nil).gcdWebServerResponse)
-                }
-            } else if responseResult!.isBFailure {
-                if let result = result, result.isBFailure {
-                    serverResponse = GCDWebServerDataResponse(jsonObject: result.gcdWebServerResponse)
-                } else {
-                    serverResponse =
-                        GCDWebServerDataResponse(jsonObject: BFResult<Any>.bfailure(nil).gcdWebServerResponse)
-                }
-            } else if responseResult!.isFailure {
-                serverResponse =
+    open func response(_ result: BFResult<Any>) -> GCDWebServerResponse? {
+        if responseTimeInterval.interval > 0 {
+            usleep(useconds_t(responseTimeInterval.interval * 1000000))
+        }
+        
+        if let responseResult = responseResult {
+            if responseResult.result.isSuccess {
+                let r = result.isSuccess ? result : responseResult.result
+                return GCDWebServerDataResponse(jsonObject: r.gcdWebServerResponse)
+            } else if responseResult.result.isBFailure {
+                let r = result.isBFailure ? result : responseResult.result
+                return GCDWebServerDataResponse(jsonObject: r.gcdWebServerResponse)
+            } else if responseResult.result.isFailure {
+                let r = result.isFailure ? result : responseResult.result
+                let message = r.error?.localizedDescription ?? "Invalid request"
+                return
                     GCDWebServerErrorResponse.responseWithServerError(.httpStatusCode_InternalServerError,
-                                                                      "服务器已经Boom Shakalaka")
+                                                                      message)
             }
         }
         
-        return serverResponse
+        return GCDWebServerDataResponse(jsonObject: result.gcdWebServerResponse)
     }
     
     //MARK: - Request Handler
     
-    public func handleRequest(_ method: String,
-                              request: GCDWebServerRequest) -> GCDWebServerResponse? {
+    open func handleRequest(_ method: String,
+                            request: GCDWebServerRequest) -> GCDWebServerResponse? {
         if method == "GET" {
             let path = format(request.url.path)
             if isEmptyString(path) {
@@ -129,10 +173,10 @@ public class SRHttpServer {
                 return getLocalHtml(request, path: path)
             }
         }
-        return  response(nil)
+        return  response(.failure(BFError.http(.other(nil))))
     }
     
-    public func format(_ path: String?) -> String {
+    open func format(_ path: String?) -> String {
         var pathStr = NSString(string: path ?? "")
         pathStr = pathStr.replacingOccurrences(of: "/",
                                                with: "",
@@ -249,28 +293,33 @@ public class SRHttpServer {
     }
 }
 
-extension BFResult {
-    var gcdWebServerResponse: [AnyHashable : Any] {
-        var dictionary: ParamDictionary = [HTTP.Key.Response.errorCode : 0,
-                                           HTTP.Key.Response.errorMessage : "操作成功",
-                                           Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
+extension BFResult where Value : Any {
+    public var gcdWebServerResponse: [AnyHashable : Any] {
         switch self {
         case .success(let value):
+            var dictionary: ParamDictionary = [Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
+            dictionary[HTTP.Key.Response.errorCode] = 0
+            dictionary[HTTP.Key.Response.errorMessage] = "The request completed successfully".srLocalized
             dictionary[HTTP.Key.Response.data] = NonNull.dictionary(value)
+            return dictionary
+            
         case .bfailure(let value):
-            if let respondDictionary = value as? ParamDictionary,
-                respondDictionary[HTTP.Key.Response.errorCode] != nil,
-                respondDictionary[HTTP.Key.Response.errorMessage] != nil {
-                dictionary = respondDictionary
-                break
-            }
+            var dictionary: ParamDictionary = [Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
             dictionary[HTTP.Key.Response.errorCode] = 1
-            dictionary[HTTP.Key.Response.errorMessage] =
-                isEmptyString(value) ? "操作失败，请求姿势不对" : value
-        case .failure:
-            dictionary = [:]
+            dictionary[HTTP.Key.Response.errorMessage] = "The request failed with business".srLocalized
+            if let errorCode = value as? Int {
+                dictionary[HTTP.Key.Response.errorCode] = errorCode
+            } else if let errorMessage = value as? String {
+                dictionary[HTTP.Key.Response.errorMessage] = errorMessage
+            } else if let respondDictionary = value as? ParamDictionary {
+                dictionary += respondDictionary
+            }
+            return dictionary
+            
+        default:
+            break
         }
-        return dictionary
+        return [:] as [AnyHashable : Any]
     }
 }
 

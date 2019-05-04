@@ -9,7 +9,7 @@
 import SRKit
 import ObjectMapper
 
-class ChannelModel: SRBusinessModel {
+class ChannelModel: BaseBusinessModel {
     var name: String? {
         var name = base
         if let localLang = localLang, NSLocale.preferredLanguages[0].hasPrefix(localLang) {

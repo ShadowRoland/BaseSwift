@@ -55,9 +55,6 @@ class SNSViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         pageBackGestureStyle = .none
-        NotifyDefault.add(self,
-                          selector: #selector(newAction(_:)),
-                          name: Notification.Name.Base.newAction)
         
         initNavigationBar()
         navigationItem.leftBarButtonItem =
@@ -66,21 +63,20 @@ class SNSViewController: BaseViewController {
         tabBar.isTranslucent = true
         
         //查询当前指令而执行的操作
-        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
-            .showMore == option {
+        if let event = Common.events.first(where: { $0.option == .showMore }) {
+            Common.removeEvent(event)
             tabBar.selectedItem = moreItem
             tabBar(tabBar, didSelect: moreItem)
-            Common.clearActionParams(option: option)
         } else {
             tabBar.selectedItem = chatListItem
             tabBar(tabBar, didSelect: chatListItem)
         }
         
         //查询当前指令而执行的操作，加入状态机
-        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
-            .showProfile == option || .showSetting == option {
+        if let event = Common.events.first(where: { $0.option == .showProfile || $0.option == .showSetting }) {
+            Common.removeEvent(event)
             DispatchQueue.main.async { [weak self] in
-                self?.stateMachine.append(option: option)
+                self?.stateMachine.append(event)
             }
         }
     }
@@ -198,104 +194,22 @@ class SNSViewController: BaseViewController {
         contactsVC.bringChildVC(toFront: contactsSC.selectedSegmentIndex)
     }
     
-    //在程序运行中收到指令，基本都可以通过走状态机实现
-    @objc func newAction(_ notification: Notification) {
-        guard let option = Event.option(Common.currentActionParams?[Param.Key.action]) else {
-            return
-        }
-        
-        switch option {
-        case .showMore, .showProfile, .showSetting:
-            stateMachine.append(option: option)
-        default:
-            break
-        }
-    }
-    
     //MARK: - SRStateMachineDelegate
     
-    override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Int) {
-        guard let option = Event.Option(rawValue: event) else {
-            return
-        }
-        
-        switch option {
+    override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) {
+        switch event.option {
         case .showMore:
             if !(isTop && moreVC === currentChildVC) {
                 Common.clearPops()
-                Common.clearModals(viewController: self)
+                dismissModals()
                 popBack(to: self)
                 tabBar.selectedItem = tabBar.items?[3]
                 bringChildVC(toFront: moreVC)
             }
-            Common.clearActionParams(option: option)
             stateMachine.end(event)
-            
-        case .showProfile:
-            let viewControllers = navigationController!.viewControllers
-            let profileVCs = viewControllers.filter { $0.isKind(of: ProfileViewController.self) }
-            if viewControllers.last!.isKind(of: ProfileViewController.self) { //当前页面是Profile页面
-                Common.clearActionParams(option: option)
-                stateMachine.end(event)
-            } else if !profileVCs.isEmpty { //Profile页面在当前页面之前
-                Common.clearActionParams(option: option)
-                stateMachine.end(event)
-                Common.clearPops()
-                Common.clearModals(viewController: profileVCs.last!)
-                popBack(to: profileVCs.last!)
-            } else { //视图栈中没有Profile页面，退出到主页，再push新的Profile页面入栈
-                Common.clearPops()
-                Common.clearModals(viewController: self)
-                popBack(to: self, animated: false)
-                NotifyDefault.add(self,
-                                  selector: .didEndStateMachineEvent,
-                                  name: Notification.Name.Base.didEndStateMachineEvent)
-                DispatchQueue.main.async {
-                    self.show("ProfileViewController",
-                              storyboard: "Profile",
-                              params: [Param.Key.sender : String(pointer: self),
-                                       Param.Key.event : event])
-                }
-            }
-            
-        case .showSetting:
-            let viewControllers = navigationController!.viewControllers
-            let settingVCs = viewControllers.filter { $0 is SettingViewController }
-            if viewControllers.last! is SettingViewController { //当前页面是Setting页面
-                Common.clearActionParams(option: option)
-                stateMachine.end(event)
-            } else if !settingVCs.isEmpty { //Setting页面在当前页面之前
-                Common.clearActionParams(option: option)
-                stateMachine.end(event)
-                Common.clearPops()
-                Common.clearModals(viewController: settingVCs.last!)
-                popBack(to: settingVCs.last!)
-            } else { //视图栈中没有Setting页面，退出到主页，再push新的Setting页面入栈
-                Common.clearPops()
-                Common.clearModals(viewController: self)
-                popBack(to: self, animated: false)
-                NotifyDefault.add(self,
-                                  selector: .didEndStateMachineEvent,
-                                  name: Notification.Name.Base.didEndStateMachineEvent)
-                DispatchQueue.main.async {
-                    self.show("SettingViewController",
-                              storyboard: "Profile",
-                              params: [Param.Key.sender : String(pointer: self),
-                                       Param.Key.event : event])
-                }
-            }
             
         default:
             super.stateMachine(stateMachine, didFire: event)
-        }
-    }
-    
-    override func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Int) {
-        super.stateMachine(stateMachine, didEnd: event)
-        
-        if Event.Option.showProfile.rawValue == event || Event.Option.showSetting.rawValue == event {
-            NotifyDefault.remove(self,
-                                 name: Notification.Name.Base.didEndStateMachineEvent)
         }
     }
 }

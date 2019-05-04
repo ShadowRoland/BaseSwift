@@ -155,16 +155,16 @@ class LoginViewController: BaseViewController {
     }
     
     func initView() {
-        if Configs.entrance == .sns {
+        if Config.entrance == .sns {
             closeButton.isHidden = true
-        } else if Configs.entrance == .news {
+        } else if Config.entrance == .news {
             closeButton.isHidden = false
         }
         loginView.layer.borderWidth = 0.5
         loginView.layer.borderColor = UIColor.gray.cgColor
         
         //屏幕适配
-        switch Common.screenScale() {
+        switch ScreenScale {
         case .iPad:
             headTopConstraint.constant = 200.0
         case .iPhone6P:
@@ -189,16 +189,6 @@ class LoginViewController: BaseViewController {
     }
     
     //MARK: - 业务处理
-    
-    override func performViewDidLoad() {
-        //FIXME: FOR DEBUG，广播“触发状态机的完成事件”的通知
-        if let sender = params[Param.Key.sender] as? String,
-            let event = params[Param.Key.event] as? Int {
-            LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), sender: \(sender), event: \(event)")
-            NotifyDefault.post(name: Notification.Name.Base.didEndStateMachineEvent,
-                               object: params)
-        }
-    }
     
     func securityAnimate() {
         guard !isSecurityAnimating else {
@@ -332,40 +322,33 @@ class LoginViewController: BaseViewController {
     
     func login() {
         isLogining = true
-        //httpReq(.post(.login),
-        //        [Param.Key.userName : accountTextField.text!,
-        //         Param.Key.password : passwordTextField.text!.md5(),
-        //         Param.Key.type : 0])
-        httpRequest(.post(.login),
-                    [Param.Key.userName : accountTextField.text!,
-                     Param.Key.password : passwordTextField.text!.md5(),
-                     Param.Key.type : 0],
-                    success:
+        httpRequest(.post("user/login",
+                          [Param.Key.userName : accountTextField.text!,
+                           Param.Key.password : passwordTextField.text!.md5(),
+                           Param.Key.type : 0]), success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
                 strongSelf.isLogining = false
                 strongSelf.dismissProgress()
                 UserStandard[USKey.lastLoginUserName] = strongSelf.accountTextField.text!
                 UserStandard[USKey.lastLoginPassword] = strongSelf.passwordTextField.text!
-                BF.callBusiness(BF.businessId(.im, Manager.IM.funcId(.login)))
-                if Configs.entrance == .sns {
+                IMManager.login()
+                if Config.entrance == .sns {
                     strongSelf.show("SNSViewController", storyboard: "SNS")
-                } else if Configs.entrance == .news || Configs.entrance == .aggregation {
-                    NotifyDefault.post(name:Configs.reloadProfileNotification, object: nil)
+                } else if Config.entrance == .news || Config.entrance == .aggregation {
+                    NotifyDefault.post(name:Config.reloadProfileNotification, object: nil)
                     strongSelf.popBack()
                 }
-        }, bfail: { [weak self] response in
-            guard let strongSelf = self else { return }
-            strongSelf.isLogining = false
-            Common.change(submitButton: strongSelf.submitButton,
-                          enabled: strongSelf.checkSubmitButtonEnabled())
-            strongSelf.httpRespondBfail(.post(.login), response: response)
-        }, fail: { [weak self] error in
-            guard let strongSelf = self else { return }
-            strongSelf.isLogining = false
-            Common.change(submitButton: strongSelf.submitButton,
-                          enabled: strongSelf.checkSubmitButtonEnabled())
-            strongSelf.httpRespondFail(.post(.login), error: error)
+            }, bfail: { [weak self] (method, response) in
+                guard let strongSelf = self else { return }
+                strongSelf.isLogining = false
+                strongSelf.submitButton.set(submit: strongSelf.checkSubmitButtonEnabled())
+                strongSelf.httpRespondBfail(method, response: response)
+            }, fail: { [weak self] (method, error) in
+                guard let strongSelf = self else { return }
+                strongSelf.isLogining = false
+                strongSelf.submitButton.set(submit: strongSelf.checkSubmitButtonEnabled())
+                strongSelf.httpRespondFail(method, error: error)
         })
     }
     

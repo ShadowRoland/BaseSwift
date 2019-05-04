@@ -9,7 +9,7 @@
 import SRKit
 import ObjectMapper
 
-class AddressModel: SRModel {
+class AddressModel: BaseModel {
     var country: String? //国家
     var province: String? //省/直辖市
     var city: String? //市
@@ -21,9 +21,9 @@ class AddressModel: SRModel {
     var countryCode: Int? //手机的国家码
     var phone: String? //电话号码
     
-    override public func mapping(map: ObjectMapper.Map) {
+    public override func mapping(map: Map) {
         super.mapping(map: map)
-        
+
         country <- map[Param.Key.country]
         province <- map[Param.Key.province]
         city <- map[Param.Key.city]

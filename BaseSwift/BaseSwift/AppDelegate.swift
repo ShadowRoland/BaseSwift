@@ -23,7 +23,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                           encoding: String.Encoding.utf8))
         DispatchQueue.global(qos: .default).async {
             TitleChoiceModel.updatesChoicesDic()
-            SRDivision.update()
         }
         
         if let options = launchOptions {
@@ -184,7 +183,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         LogInfo("\(#function), url: \(url.absoluteString)")
         
         //调用本应用
-        if Configs.Scheme.base == url.scheme || Configs.Scheme.base2 == url.scheme {
+        if Config.Scheme.base == url.scheme || Config.Scheme.base2 == url.scheme {
             self.application(application, handleOptions: url.queryDictionary)
             return true
         }
@@ -225,7 +224,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     //MARK: - 处理应用的指令，指令可能来源于推送（本地&远程），其他程序调用，指压peek & pop等
     
-    private var options: [AnyHashable : Any]?
+    private var event: Event?
     
     /* options格式为
      * { "action" : "xxx",
@@ -237,11 +236,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      *  alert为苹果推送自带的推送文字参数
      */
     func application(_ application: UIApplication, handleOptions options: [AnyHashable : Any]) {
-        guard Event.option(options[Param.Key.action] as? String) != nil else {
+        guard let params = options as? ParamDictionary, let event = Event(params: params) else {
             return
         }
         
-        self.options = options
+        self.event = event
         if UIApplication.shared.applicationState == .active { //应用位于前台时收到推送，此时弹出提示询问是否需要执行推送的操作
             DispatchQueue.main.async {
                 Keyboard.hide {
@@ -253,7 +252,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             self.handleOptions()
                     })
                     var message = "You have a new message".localized
-                    if let string = self.options?[Param.Key.message] as? String {
+                    if let string = self.event?.params?[Param.Key.message] as? String {
                         message = string
                     }
                     alert.show(.notice,
@@ -268,16 +267,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func handleOptions() {
-        Common.updateActionParams(self.options as? ParamDictionary)
-        if let option = Event.option(Common.currentActionParams?[Param.Key.action]),
-            .openWebpage == option {
-            let vc = Common.rootVC?.navigationController?.topViewController as? BaseViewController
-            vc?.stateMachine.append(option: option)
-            return
-        }
-        
-        DispatchQueue.main.async {
-            NotifyDefault.post(Notification.Name.Base.newAction)
+        if let event = self.event {
+            Common.events = [event]
+            DispatchQueue.main.async {
+                NotifyDefault.post(SRBase.newActionNotification)
+            }
         }
     }
     
@@ -308,7 +302,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func initHttpServer() {
         guard Environment != .production else { return }
-        SRHttpServer.shared.start()
+        HttpServer.shared.start()
     }
     
     func initShare() {
@@ -358,7 +352,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func createSlideMenu() {
-        Configs.entrance = .aggregation
+        Config.entrance = .aggregation
         
         SlideMenuOptions.leftViewWidth = 240.0
         let mainMenuVC = UIViewController.viewController("MainMenuViewController", storyboard: "Aggregation")

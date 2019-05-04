@@ -12,13 +12,13 @@ import Alamofire
 public class HTTP {
     public static var defaultTimeout = 15.0 as TimeInterval
     public static var defaultRetryCount = 3
-
-    public enum Method<Value> {
-        case get(Value?)
-        case post(Value?)
-        case upload(Value?)
+    
+    public enum Method: Equatable {
+        case get(String, ParamDictionary?)
+        case post(String, ParamDictionary?)
+        case upload(String, ParamDictionary?, Array<ParamDictionary>)
         
-        public var name: String {
+        public var type: String {
             switch self {
             case .get:
                 return "GET"
@@ -30,51 +30,47 @@ public class HTTP {
         
         public var url: String {
             switch self {
-            case .get(let value):
-                if let url = value as? String {
-                    return url
-                } else if let dictionary = value as? Dictionary<Key.Request, Any>,
-                    let url = dictionary[.url] as? String {
-                    return url
-                }
+            case .get(let url, _):
+                return url
                 
-            case .post(let value):
-                if let url = value as? String {
-                    return url
-                } else if let dictionary = value as? Dictionary<Key.Request, Any>,
-                    let url = dictionary[.url] as? String {
-                    return url
-                }
+            case .post(let url, _):
+                return url
                 
-            case .upload(let value):
-                if let url = value as? String {
-                    return url
-                } else if let dictionary = value as? Dictionary<Key.Request, Any>,
-                    let url = dictionary[.url] as? String {
-                    return url
-                }
+            case .upload(let url, _, _):
+                return url
             }
-            
-            return ""
+        }
+        
+        public var params: ParamDictionary? {
+            switch self {
+            case .get(_, let params):
+                return params
+                
+            case .post(_, let params):
+                return params
+                
+            case .upload(_, let params, _):
+                return params
+            }
         }
         
         public var files: Array<ParamDictionary>? {
             switch self {
-            case .upload(let value):
-                if let dictionary = value as? Dictionary<Key.Request, Any>,
-                    let files = dictionary[.files] as? Array<ParamDictionary> {
-                    return files
-                } else {
-                    return nil
-                }
+            case .upload(_, _, let files):
+                return files
+                
             default:
                 return nil
             }
         }
+        
+        public static func == (lhs: HTTP.Method, rhs: HTTP.Method) -> Bool {
+            return lhs.type == rhs.type && lhs.url == rhs.url
+        }
     }
     
     public struct Key {
-        public struct Request: Equatable, Hashable, RawRepresentable {
+        public struct Request: RawRepresentable, Hashable {
             public typealias RawValue = String
             public var rawValue: String
             
@@ -85,11 +81,9 @@ public class HTTP {
             public init(rawValue: String) {
                 self.rawValue = rawValue
             }
-            
-            public var hashValue: Int { return self.rawValue.hashValue }
         }
         
-        public struct Option: Equatable, Hashable, RawRepresentable {
+        public struct Option: RawRepresentable, Hashable {
             public typealias RawValue = String
             public var rawValue: String
             
@@ -100,8 +94,6 @@ public class HTTP {
             public init(rawValue: String) {
                 self.rawValue = rawValue
             }
-            
-            public var hashValue: Int { return self.rawValue.hashValue }
         }
         
         public struct Response { //需要和服务器端的返回字段保持一致，可定制

@@ -19,7 +19,7 @@ public class SRBaseKeyboard: NSObject {
         unable//不使用键盘管理捕捉，多用于网页或者自定义控制键盘事件
     }
     
-    var manager = Manager.iq {
+    public var manager = Manager.iq {
         didSet {
             let center = NotificationCenter.default as NotificationCenter
             if .iq == manager {
