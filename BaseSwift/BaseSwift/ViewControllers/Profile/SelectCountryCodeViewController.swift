@@ -18,7 +18,7 @@ class SelectCountryCodeViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        defaultNavigationBar("Select country or region".localized)
+        setDefaultNavigationBar("Select country or region".localized)
         initView()
         loadData()
     }

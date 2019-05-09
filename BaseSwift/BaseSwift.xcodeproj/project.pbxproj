@@ -12,7 +12,8 @@
 		4E3DDF9A227D696F00F6086A /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3DDF97227D696F00F6086A /* BaseViewController.swift */; };
 		4E3DDF9B227D696F00F6086A /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3DDF98227D696F00F6086A /* BaseModel.swift */; };
 		4E3DDF9C227D696F00F6086A /* BaseBusinessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3DDF99227D696F00F6086A /* BaseBusinessModel.swift */; };
-		4E3DDFA2227D76CC00F6086A /* SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3DDFA1227D76CB00F6086A /* SRKit.framework */; };
+		4E3DDFB3227EE1BA00F6086A /* SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3DDFB1227EE1AD00F6086A /* SRKit.framework */; };
+		4E3DDFB4227EE1BA00F6086A /* SRKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3DDFB1227EE1AD00F6086A /* SRKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4EABAE6A1FF617A90007CCA7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE691FF617A90007CCA7 /* AppDelegate.swift */; };
 		4EABAE6C1FF617A90007CCA7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAE6B1FF617A90007CCA7 /* ViewController.swift */; };
 		4EABAE711FF617A90007CCA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4EABAE701FF617A90007CCA7 /* Assets.xcassets */; };
@@ -149,6 +150,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4E3DDFA8227E8AE700F6086A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4E3DDFB4227EE1BA00F6086A /* SRKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		00FB5FDB1034B83F2C5D4566 /* Pods_BaseSwiftUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BaseSwiftUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		22E101976A6539482421B013 /* Pods-BaseSwiftUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseSwiftUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BaseSwiftUITests/Pods-BaseSwiftUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -158,7 +173,7 @@
 		4E3DDF97227D696F00F6086A /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		4E3DDF98227D696F00F6086A /* BaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
 		4E3DDF99227D696F00F6086A /* BaseBusinessModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseBusinessModel.swift; sourceTree = "<group>"; };
-		4E3DDFA1227D76CB00F6086A /* SRKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SRKit.framework; sourceTree = "<group>"; };
+		4E3DDFB1227EE1AD00F6086A /* SRKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SRKit.framework; sourceTree = "<group>"; };
 		4EABAE661FF617A90007CCA7 /* BaseSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BaseSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EABAE691FF617A90007CCA7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4EABAE6B1FF617A90007CCA7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -325,7 +340,7 @@
 				4EABB0B21FF720620007CCA7 /* libc++.tbd in Frameworks */,
 				4EABB0B01FF720500007CCA7 /* SystemConfiguration.framework in Frameworks */,
 				4EABB0AE1FF720420007CCA7 /* CoreTelephony.framework in Frameworks */,
-				4E3DDFA2227D76CC00F6086A /* SRKit.framework in Frameworks */,
+				4E3DDFB3227EE1BA00F6086A /* SRKit.framework in Frameworks */,
 				4EABB0AC1FF720390007CCA7 /* WebKit.framework in Frameworks */,
 				AB943273CD683F607E4A9297 /* Pods_BaseSwift.framework in Frameworks */,
 			);
@@ -892,9 +907,9 @@
 		4EC312DA2119A120007E30C6 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				4E3DDFB1227EE1AD00F6086A /* SRKit.framework */,
 				4E3DDF96227D696F00F6086A /* Base */,
 				4E3DDF83227835E700F6086A /* HttpServer */,
-				4E3DDFA1227D76CB00F6086A /* SRKit.framework */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -925,6 +940,7 @@
 				4EABAE641FF617A90007CCA7 /* Resources */,
 				DEF6D34FA19EEFEC0E852566 /* [CP] Embed Pods Frameworks */,
 				13B6D5F90C778F6DC4217227 /* [CP] Copy Pods Resources */,
+				4E3DDFA8227E8AE700F6086A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1572,7 +1588,6 @@
 				DEVELOPMENT_TEAM = BNJNLWZCKW;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/BaseSwift/ThirdParty/SRKit",
 					"$(PROJECT_DIR)/BaseSwift/Utilities",
 				);
 				INFOPLIST_FILE = BaseSwift/Info.plist;
@@ -1600,7 +1615,6 @@
 				DEVELOPMENT_TEAM = BNJNLWZCKW;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/BaseSwift/ThirdParty/SRKit",
 					"$(PROJECT_DIR)/BaseSwift/Utilities",
 				);
 				INFOPLIST_FILE = BaseSwift/Info.plist;

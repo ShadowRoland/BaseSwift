@@ -19,10 +19,13 @@ public final class SRKeyboardManager: NSObject {
     var keyboardHideGr: UITapGestureRecognizer? //响应键盘消失的手势
     
     public class var shared: SRKeyboardManager {
-        return sharedInstance
+        if sharedInstance == nil {
+            sharedInstance = SRKeyboardManager()
+        }
+        return sharedInstance!
     }
     
-    private static let sharedInstance = SRKeyboardManager()
+    private static var sharedInstance: SRKeyboardManager?
     
     private override init() { }
     

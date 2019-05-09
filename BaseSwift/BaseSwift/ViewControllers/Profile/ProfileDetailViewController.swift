@@ -135,7 +135,7 @@ class ProfileDetailViewController: BaseViewController {
         
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        defaultNavigationBar("Profile".localized)
+        setDefaultNavigationBar("Profile".localized)
         setNavigationBarRightButtonItems()
         
         tableView.tableFooterView = UIView()
@@ -550,9 +550,9 @@ class ProfileDetailViewController: BaseViewController {
                                     .titleChoices : boolChoices]) {
             //adapter bool -> enum
             if let bool = item.value as? Bool {
-                item.value = bool ? IntForBool.True.rawValue : IntForBool.False.rawValue
+                item.value = bool ? 1 : 0
             } else {
-                item.value = IntForBool.True.rawValue
+                item.value = 0
             }
             item.showText = item.selectedChoicesTitle!
             item.showTextView?.setProperty(.text, value: item.showText)
@@ -716,7 +716,7 @@ class ProfileDetailViewController: BaseViewController {
             textField.textAlignment = .right
             NotifyDefault.add(self,
                               selector: #selector(textFieldEditingChanged(_:)),
-                              name: UIResponder.keyboardWillChangeFrameNotification,
+                              name: UITextField.textDidChangeNotification,
                               object: textField)
             if config.jsonValue(configKey: .placeholder, type: .string, outValue: &value),
                 NonNull.check(value) {
@@ -726,7 +726,7 @@ class ProfileDetailViewController: BaseViewController {
             textView.delegate = self
             NotifyDefault.add(self,
                               selector: #selector(textViewEditingChanged(_:)),
-                              name: UIResponder.keyboardWillChangeFrameNotification,
+                              name: UITextView.textDidChangeNotification,
                               object: textView)
         }
         
@@ -835,11 +835,8 @@ class ProfileDetailViewController: BaseViewController {
         
         Keyboard.hide {
             let alert = SRAlert()
-            alert.addButton("Exit".localized,
-                            backgroundColor: NavigationBar.backgroundColor,
-                            action:
-                { [weak self] in
-                    self?.popBack()
+            alert.addButton("Exit".localized, backgroundColor: NavigationBar.backgroundColor, action: { [weak self] in
+                self?.popBack()
             })
             alert.show(.notice,
                        title: "Are you sure?".localized,
@@ -951,9 +948,9 @@ class ProfileDetailViewController: BaseViewController {
                 //adapter enum -> bool
                 if item.cell === transvestismCell {
                     if let enumInt = item.value as? EnumInt {
-                        item.value = enumInt == IntForBool.True.rawValue
-                    } else if let array = item.value as? [EnumInt], !array.isEmpty {
-                        item.value = array.first! == IntForBool.True.rawValue
+                        item.value = enumInt == 0
+                    } else if let first = (item.value as? [EnumInt])?.first {
+                        item.value = first == 1
                     } else {
                         item.value = nil
                     }
@@ -1001,27 +998,25 @@ class ProfileDetailViewController: BaseViewController {
                                       message: nil,
                                       preferredStyle: .actionSheet)
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            alert.addAction(UIAlertAction(title: "Take photo".localized,
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
+            alert.addAction(UIAlertAction(title: "Take photo".localized, style: .default, handler: { [weak self] (action) in
+                if let strongSelf = self {
                     let vc = UIImagePickerController()
                     vc.allowsEditing = true
                     vc.sourceType = .camera
-                    vc.delegate = self
-                    self?.present(vc, animated: true, completion: nil)
+                    vc.delegate = strongSelf
+                    strongSelf.present(vc, animated: true, completion: nil)
+                }
             }))
         }
         if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            alert.addAction(UIAlertAction(title: "Photo album".localized,
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
+            alert.addAction(UIAlertAction(title: "Photo album".localized, style: .default, handler: { [weak self] (action) in
+                if let strongSelf = self {
                     let vc = UIImagePickerController()
                     vc.allowsEditing = true
                     vc.sourceType = .photoLibrary
-                    vc.delegate = self
-                    self?.present(vc, animated: true, completion: nil)
+                    vc.delegate = strongSelf
+                    strongSelf.present(vc, animated: true, completion: nil)
+                }
             }))
         }
         alert.addAction(UIAlertAction(title: "Cancel".localized, style: .cancel, handler:nil))
@@ -1141,15 +1136,14 @@ class ProfileDetailViewController: BaseViewController {
         let alert = SRAlertController(title: "Test your beauty level".localized,
                                       message: "Use the iPhone self-timer, then upload the photo to the Microsoft ice for color value identification, this operation is best under the Wifi".localized,
                                       preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "OK".localized,
-                                      style: .default,
-                                      handler:
-            { [weak self] (action) in
+        alert.addAction(UIAlertAction(title: "OK".localized, style: .default, handler: { [weak self] (action) in
+            if let strongSelf = self {
                 let vc = UIImagePickerController()
                 vc.allowsEditing = true
                 vc.sourceType = .camera
-                vc.delegate = self
-                self?.present(vc, animated: true, completion: nil)
+                vc.delegate = strongSelf
+                strongSelf.present(vc, animated: true, completion: nil)
+            }
         }))
         alert.addAction(UIAlertAction(title: "Cancel".localized, style: .cancel, handler:nil))
         present(alert, animated: true, completion: nil)
@@ -1384,9 +1378,11 @@ class ProfileDetailViewController: BaseViewController {
             }
             tableView.isUserInteractionEnabled = false
             Keyboard.hide({ [weak self] in
-                self?.tableView.isUserInteractionEnabled = true
-                self?.showProgress()
-                self?.saveProfileDetail()
+                if let strongSelf = self {
+                    strongSelf.tableView.isUserInteractionEnabled = true
+                    strongSelf.showProgress()
+                    strongSelf.saveProfileDetail()
+                }
             })
         }
     }
@@ -1551,8 +1547,10 @@ extension ProfileDetailViewController: UIImagePickerControllerDelegate, UINaviga
             picker.dismiss(animated: true, completion: nil)
         } else if faceValueCell == currentItem?.cell {
             DispatchQueue.main.async { [weak self] in
-                self?.showProgress()
-                self?.uploadFaceImage(image)
+                if let strongSelf = self {
+                    strongSelf.showProgress()
+                    strongSelf.uploadFaceImage(image)
+                }
             }
             picker.dismiss(animated: true, completion: nil)
             showFaceImage(image, text: "")

@@ -11,10 +11,13 @@ import MessageUI
 
 class SRShareToolDefaultDelegate: NSObject {
     class var shared: SRShareToolDefaultDelegate {
-        return sharedInstance
+        if sharedInstance == nil {
+            sharedInstance = SRShareToolDefaultDelegate()
+        }
+        return sharedInstance!
     }
     
-    private static var sharedInstance = SRShareToolDefaultDelegate()
+    private static var sharedInstance: SRShareToolDefaultDelegate?
     
     private override init() {
         super.init()

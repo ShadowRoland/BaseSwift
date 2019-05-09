@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 import Alamofire
 
-open class SRHttpManager {    
+open class SRHttpManager {
     public init() {
         startNetworkMonitor()
     }
@@ -75,10 +75,7 @@ open class SRHttpManager {
                         success: ((Any) -> Void)?,
                         bfail: ((HTTP.Method, Any) -> Void)?,
                         fail: ((HTTP.Method, BFError) -> Void)?) {
-        var url = method.url
-        if !url.hasPrefix("http:") && !url.hasPrefix("https:") {
-            url = BaseHttpURL.appending(urlComponent: url)
-        }
+        let url = method.url
         guard let requestUrl = URL(string: url) else {
             let error =
                 NSError(domain: NSCocoaErrorDomain,
@@ -172,7 +169,7 @@ open class SRHttpManager {
     
     open func logRequest(_ method: HTTP.Method, params: ParamDictionary) {
         let url = method.url
-        LogInfo(String(format: "Http request %@ url: %@\nparameters:\n%@",
+        LogInfo(String(format: "New http request: %@, url: %@\nparameters:\n%@",
                        method.type,
                        url,
                        String(jsonObject: params)))
@@ -219,12 +216,14 @@ open class SRHttpManager {
                             success: ((Any) -> Void)? = nil,
                             bfail: ((HTTP.Method, Any) -> Void)? = nil,
                             fail: ((HTTP.Method, BFError) -> Void)? = nil) {
-        if result.isSuccess, let success = success {
-            success(result.value!)
-        } else if result.isBFailure, let bfail = bfail {
-            bfail(method, result.value!)
-        } else if result.isFailure, let fail = fail {
-            fail(method, result.error as! BFError)
+        DispatchQueue.main.async {
+            if result.isSuccess, let success = success {
+                success(result.value!)
+            } else if result.isBFailure, let bfail = bfail {
+                bfail(method, result.value!)
+            } else if result.isFailure, let fail = fail {
+                fail(method, result.error as! BFError)
+            }
         }
     }
     

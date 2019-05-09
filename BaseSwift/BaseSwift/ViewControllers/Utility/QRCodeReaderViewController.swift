@@ -30,7 +30,7 @@ class QRCodeReaderViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        defaultNavigationBar("Scan QR Code".localized)
+        setDefaultNavigationBar("Scan QR Code".localized)
         pageBackGestureStyle = .none
     }
     

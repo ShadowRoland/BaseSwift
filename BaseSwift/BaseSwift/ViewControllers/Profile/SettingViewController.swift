@@ -78,7 +78,7 @@ class SettingViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        defaultNavigationBar("Setting".localized)
+        setDefaultNavigationBar("Setting".localized)
         initView()
     }
     

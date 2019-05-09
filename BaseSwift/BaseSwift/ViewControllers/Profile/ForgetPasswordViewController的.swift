@@ -10,12 +10,12 @@ import SRKit
 import SwiftyJSON
 import libPhoneNumber_iOS
 
-enum VerificationCodeType: Int {
+public enum VerificationCodeType: Int {
     case login = 0
     case forgetPassword = 1
 }
 
-enum ResetPasswordType: Int {
+public enum ResetPasswordType: Int {
     case smsCode = 0
     case password = 1
 }
@@ -37,7 +37,7 @@ class ForgetPasswordViewController: BaseViewController {
         phoneTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
+                          name: UITextField.textDidChangeNotification,
                           object: phoneTextField)
         return cell
     }()
@@ -50,7 +50,7 @@ class ForgetPasswordViewController: BaseViewController {
         verifyTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
+                          name: UITextField.textDidChangeNotification,
                           object: verifyTextField)
         verifyButton = cell.contentView.viewWithTag(101) as? UIButton
         verifyButton.clicked(self, action: #selector(clickVerifyButton(_:)))
@@ -79,7 +79,7 @@ class ForgetPasswordViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        defaultNavigationBar("Forget Password".localized)
+        setDefaultNavigationBar("Forget Password".localized)
         isGettingVerifyCode = false
         changeVerifyButton(false)
         submitButton.set(submit: false)

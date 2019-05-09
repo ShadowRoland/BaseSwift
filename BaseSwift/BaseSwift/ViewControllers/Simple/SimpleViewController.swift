@@ -16,7 +16,7 @@ class SimpleViewController: BaseViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        defaultNavigationBar("Single initialization request page".localized)
+        setDefaultNavigationBar("Single initialization request page".localized)
         setNavigationBarRightButtonItems()
         
         getSimpleData()

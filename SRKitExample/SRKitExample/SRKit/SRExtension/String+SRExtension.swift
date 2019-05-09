@@ -469,10 +469,10 @@ extension String {
     var srLocalized: String {
         if String.srBundle == nil {
             var language = NSLocale.preferredLanguages.first!
-            if language.hasPrefix("en") {
-                language = "en"
-            } else if language.hasPrefix("zh-Hans") {
+            if language.hasPrefix("zh-Hans") {
                 language = "zh-Hans"
+            } else {
+                language = "en"
             }
             String.srBundle = Bundle(path: Bundle.sr.path(forResource: language, ofType: "lproj")!)
         }

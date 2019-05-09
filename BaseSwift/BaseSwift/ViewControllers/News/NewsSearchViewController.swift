@@ -184,10 +184,11 @@ class NewsSearchViewController: BaseViewController {
                         backgroundColor: NavigationBar.backgroundColor,
                         action:
             { [weak self] in
-                self?.history.removeAll()
+                guard let strongSelf = self else { return }
+                strongSelf.history.removeAll()
                 UserStandard[USKey.searchSuggestionHistory] = nil
-                self?.updateTableHeaderView()
-                self?.tableView.reloadData()
+                strongSelf.updateTableHeaderView()
+                strongSelf.tableView.reloadData()
         })
         alert.show(.notice,
                    title: "Confirm clear all search history?".localized,
@@ -244,7 +245,7 @@ extension NewsSearchViewController: UISearchBarDelegate {
         updateHistory(searchBar.text!)
         Keyboard.hide { [weak self] in
             self?.newsListVC.view.isHidden = false
-            self?.newsListVC.loadData(.new, progressType: .opaqueMask)
+            self?.newsListVC.loadData()
         }
     }
     
@@ -270,19 +271,19 @@ extension NewsSearchViewController: UISearchBarDelegate {
 
 extension NewsSearchViewController: NewsListDelegate {
     //使用第三方新闻客户端的请求参数
-    func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController) {
+    func getNewsList(_ isNextPage: Bool, sendVC: NewsListViewController) {
         var params = sendVC.params
         let time = CLongLong(Date().timeIntervalSince1970 * 1000)
         params["t"] = String(longLong: time)
         params["_"] = String(longLong: time + 2)
         params["show_num"] = "10"
-        params["act"] = loadType == .more ? "more" : "new"
-        let offset = loadType == .more ? sendVC.currentOffset + 1 : 0
+        params["act"] = isNextPage ? "more" : "new"
+        let offset = isNextPage ? sendVC.currentOffset + 1 : 0
         params["page"] = String(int: offset + 1)
         httpRequest(.get("http://interface.sina.cn/ent/feed.d.json", params), success: { [weak self] response in
             guard let strongSelf = self else { return }
             let responseData = NonNull.dictionary(response)
-            if .more == loadType {
+            if isNextPage {
                 let offset = Int(params[Param.Key.offset] as! String)
                 if offset == strongSelf.newsListVC.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                     strongSelf.newsListVC.updateMore(responseData)
@@ -292,7 +293,7 @@ extension NewsSearchViewController: NewsListDelegate {
             }
             }, bfail: { [weak self] (method, response) in
                 guard let strongSelf = self else { return }
-                if .more == loadType {
+                if isNextPage {
                     let offset = Int(params[Param.Key.offset] as! String)
                     if offset == strongSelf.newsListVC.currentOffset + 1 {
                         return
@@ -309,7 +310,7 @@ extension NewsSearchViewController: NewsListDelegate {
                 }
             }, fail: { [weak self] (_, error) in
                 guard let strongSelf = self else { return }
-                if .more == loadType {
+                if isNextPage {
                     let offset = Int(params[Param.Key.offset] as! String)
                     if offset == strongSelf.newsListVC.currentOffset + 1 {
                         if !strongSelf.newsListVC.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
@@ -370,7 +371,7 @@ extension NewsSearchViewController: UITableViewDelegate, UITableViewDataSource {
             searchBar.text = label.text
             Keyboard.hide { [weak self] in
                 self?.newsListVC.view.isHidden = false
-                self?.newsListVC.loadData(.new, progressType: .opaqueMask)
+                self?.newsListVC.loadData()
             }
         }
     }

@@ -30,7 +30,7 @@ class MapViewController: BaseViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        defaultNavigationBar("Nearby hospitals".localized)
+        setDefaultNavigationBar("Nearby hospitals".localized)
         initView()
     }
     

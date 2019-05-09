@@ -14,8 +14,8 @@ class ViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the vivar typically from a nib.
-        defaultNavigationBar("Root")
-        initNavigationBar()
+        setDefaultNavigationBar("Root")
+        setNavigationBar()
         navBarLeftButtonSettings = nil
         tableView.backgroundColor = UIColor.groupTableViewBackground
         tableView.tableFooterView = UIView()

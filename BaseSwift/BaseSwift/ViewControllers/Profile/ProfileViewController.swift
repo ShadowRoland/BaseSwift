@@ -147,7 +147,7 @@ class ProfileViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        defaultNavigationBar("Profile".localized)
+        setDefaultNavigationBar("Profile".localized)
         setNavigationBarRightButtonItems()
         
         tableView.tableFooterView = UIView()
@@ -411,7 +411,7 @@ class ProfileViewController: BaseViewController {
             textField.textAlignment = .right
             NotifyDefault.add(self,
                               selector: #selector(textFieldEditingChanged(_:)),
-                              name: UIResponder.keyboardWillChangeFrameNotification,
+                              name: UITextField.textDidChangeNotification,
                               object: textField)
             if config.jsonValue(configKey: .placeholder, type: .string, outValue: &value),
                 NonNull.check(value) {
@@ -420,8 +420,8 @@ class ProfileViewController: BaseViewController {
         } else if let textView = inputTextView as? UITextView {
             textView.delegate = self
             NotifyDefault.add(self,
-                              selector: #selector(textFieldEditingChanged(_:)),
-                              name: UIResponder.keyboardWillChangeFrameNotification,
+                              selector: #selector(textViewEditingChanged(_:)),
+                              name: UITextView.textDidChangeNotification,
                               object: textView)
         }
         
@@ -551,27 +551,25 @@ class ProfileViewController: BaseViewController {
                                       message: nil,
                                       preferredStyle: .actionSheet)
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            alert.addAction(UIAlertAction(title: "Take photo".localized,
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
+            alert.addAction(UIAlertAction(title: "Take photo".localized, style: .default, handler: { [weak self] (action) in
+                if let strongSelf = self {
                     let vc = UIImagePickerController()
                     vc.allowsEditing = true
                     vc.sourceType = .camera
-                    vc.delegate = self
-                    self?.present(vc, animated: true, completion: nil)
+                    vc.delegate = strongSelf
+                    strongSelf.present(vc, animated: true, completion: nil)
+                }
             }))
         }
         if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            alert.addAction(UIAlertAction(title: "Photo album".localized,
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
+            alert.addAction(UIAlertAction(title: "Photo album".localized, style: .default, handler: { [weak self] (action) in
+                if let strongSelf = self {
                     let vc = UIImagePickerController()
                     vc.allowsEditing = true
                     vc.sourceType = .photoLibrary
-                    vc.delegate = self
-                    self?.present(vc, animated: true, completion: nil)
+                    vc.delegate = strongSelf
+                    strongSelf.present(vc, animated: true, completion: nil)
+                }
             }))
         }
         alert.addAction(UIAlertAction(title: "Cancel".localized, style: .cancel, handler:nil))
@@ -631,14 +629,16 @@ class ProfileViewController: BaseViewController {
         }
         
         Keyboard.hide { [weak self] in
-            self?.currentItem = item
+            guard let strongSelf = self else { return }
+            
+            strongSelf.currentItem = item
             let datePicker = SRDatePicker()
-            datePicker.delegate = self
-            if let string = self?.currentItem?.value as? String,
+            datePicker.delegate = strongSelf
+            if let string = strongSelf.currentItem?.value as? String,
                 let date = string.date(DateFormat.full) {
                 datePicker.currentDate = date
             }
-            self?.pickerView = datePicker
+            strongSelf.pickerView = datePicker
             datePicker.show()
         }
     }

@@ -294,11 +294,11 @@ public var ScreenWidth: CGFloat { return UIScreen.main.bounds.size.width }
 public var ScreenHeight: CGFloat { return UIScreen.main.bounds.size.height }
 
 public extension UIFont {
-    static var title = UIFont.systemFont(ofSize: 18.0)
-    static var heavyTitle = UIFont.boldSystemFont(ofSize: 18.0)
-    static var text = UIFont.systemFont(ofSize: 15.0)
-    static var detail = UIFont.systemFont(ofSize: 14.0)
-    static var tip = UIFont.systemFont(ofSize: 13.0)
+    static var title = UIFont.medium(18.0)
+    static var heavyTitle = UIFont.bold(18.0)
+    static var text = UIFont.system(15.0)
+    static var detail = UIFont.system(14.0)
+    static var tip = UIFont.system(13.0)
 }
 
 public extension NSObject.property {
@@ -332,8 +332,20 @@ public var SubviewMargin = 15.0 as CGFloat //子视图内的默认外间距，�
 
 public class NavigationBar {
     static public var buttonItemHeight = NavigationBarHeight
-    static public var tintColor = UIColor.white
-    static public var backgroundColor = UIColor(255, 127, 0)
+    static public var titleTextAttributes: [NSAttributedString.Key : Any] =
+        [.foregroundColor : UIColor.black, .font : UIFont.title]
+    static public var tintColor = UIColor.black
+    static public var backgroundColor = UIColor.white
+    static  var _backgroundColor: UIColor?
+    private static var _backgroundImage: UIImage?
+    static var backgroundImage: UIImage {
+        if _backgroundImage == nil || _backgroundColor !== backgroundColor {
+            _backgroundColor = backgroundColor
+            _backgroundImage = UIImage.rect(_backgroundColor!,
+                                            size: CGSize(ScreenWidth, NavigationBarHeight))
+        }
+        return _backgroundImage!
+    }
     
     //导航栏在视图控制器中的显示方式，默认为不隐藏导航栏，建议在viewDidLoad中重新设置
     public enum Appear {
@@ -344,7 +356,6 @@ public class NavigationBar {
     
     //按钮样式
     public enum ButtonItemStyle: Int {
-        case none
         case text                //纯文字
         case image               //纯图片
         //case textAndImage        //文字和图片
@@ -352,7 +363,7 @@ public class NavigationBar {
     }
     
     public static let buttonFullSetting: [NavigationBar.ButtonItemKey : Any] =
-        [.style : NavigationBar.ButtonItemStyle.none,
+        [.style : NavigationBar.ButtonItemStyle.text,
          .title: "",
          .font: "",
          .textColor: "",
@@ -389,8 +400,9 @@ public class NavigationBar {
                                  target: Any? = nil,
                                  action: Selector? = nil,
                                  tag: NSInteger? = nil) -> UIBarButtonItem? {
-        guard let style = setting[.style] as? ButtonItemStyle else {
-            return nil
+        var style: ButtonItemStyle = .text
+        if let itemStyle = setting[.style] as? ButtonItemStyle {
+            style = itemStyle
         }
         
         var item: UIBarButtonItem?
@@ -435,8 +447,6 @@ public class NavigationBar {
             gestureRecognizers?.forEach { view.removeGestureRecognizer($0) }
             view.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
             item = UIBarButtonItem(customView: view)
-            
-        default: break
         }
         
         if let tag = tag {

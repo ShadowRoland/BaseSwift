@@ -60,10 +60,7 @@ class LoginViewController: BaseViewController {
         
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification)
-        NotifyDefault.add(self,
-                          selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification)
+                          name: UITextField.textDidChangeNotification)
         
         accountTextField.text = "233" //FIXME: for debug, remember to remark when submit
         //passwordTextField.text = "666666"
@@ -198,49 +195,53 @@ class LoginViewController: BaseViewController {
         if isSecurity {//正在输入密码状态
             isSecurityAnimating = true
             UIView.animate(withDuration: 0.5, animations: { [weak self] in
-                self?.leftArmTailConstraint.constant = Const.leftArmTailConstraintUp
-                self?.leftArmBottomConstraint.constant = Const.leftArmBottomConstraintUp
+                guard let strongSelf = self else { return }
                 
-                self?.rightArmLeadConstraint.constant = Const.rightArmLeadConstraintUp
-                self?.rightArmBottomConstraint.constant = Const.rightArmBottomConstraintUp
+                strongSelf.leftArmTailConstraint.constant = Const.leftArmTailConstraintUp
+                strongSelf.leftArmBottomConstraint.constant = Const.leftArmBottomConstraintUp
                 
-                self?.leftHandLeadConstraint.constant = Const.leftHandLeadConstraintHide
-                self?.leftHandCenterYConstraint.constant = Const.leftHandLeadCenterYConstraintHide
-                self?.leftHandHeightConstraint.constant = Const.leftHandHeightConstraintHide
+                strongSelf.rightArmLeadConstraint.constant = Const.rightArmLeadConstraintUp
+                strongSelf.rightArmBottomConstraint.constant = Const.rightArmBottomConstraintUp
                 
-                self?.rightHandTailConstraint.constant = Const.rightHandTailConstraintHide
-                self?.rightHandCenterYConstraint.constant = Const.rightHandLeadCenterYConstraintHide
-                self?.rightHandHeightConstraint.constant = Const.rightHandHeightConstraintHide
+                strongSelf.leftHandLeadConstraint.constant = Const.leftHandLeadConstraintHide
+                strongSelf.leftHandCenterYConstraint.constant = Const.leftHandLeadCenterYConstraintHide
+                strongSelf.leftHandHeightConstraint.constant = Const.leftHandHeightConstraintHide
                 
-                self?.view.layoutIfNeeded()
+                strongSelf.rightHandTailConstraint.constant = Const.rightHandTailConstraintHide
+                strongSelf.rightHandCenterYConstraint.constant = Const.rightHandLeadCenterYConstraintHide
+                strongSelf.rightHandHeightConstraint.constant = Const.rightHandHeightConstraintHide
+                
+                strongSelf.view.layoutIfNeeded()
                 }, completion: { [weak self] (finished) in
-                    if finished {
-                        self?.isSecurityAnimating = false
-                        if !(self?.isSecurity)! { self?.securityAnimate() }
+                    if finished, let strongSelf = self {
+                        strongSelf.isSecurityAnimating = false
+                        if strongSelf.isSecurity { strongSelf.securityAnimate() }
                     }
             })
         } else {//脱离输入密码状态
             isSecurityAnimating = true
             UIView.animate(withDuration: 0.5, animations: { [weak self] in
-                self?.leftArmTailConstraint.constant = Const.leftArmTailConstraintDown
-                self?.leftArmBottomConstraint.constant = Const.leftArmBottomConstraintDown
+                guard let strongSelf = self else { return }
                 
-                self?.rightArmLeadConstraint.constant = Const.rightArmLeadConstraintDown
-                self?.rightArmBottomConstraint.constant = Const.rightArmBottomConstraintDown
+                strongSelf.leftArmTailConstraint.constant = Const.leftArmTailConstraintDown
+                strongSelf.leftArmBottomConstraint.constant = Const.leftArmBottomConstraintDown
                 
-                self?.leftHandLeadConstraint.constant = Const.leftHandLeadConstraintShow
-                self?.leftHandCenterYConstraint.constant = Const.leftHandLeadCenterYConstraintShow
-                self?.leftHandHeightConstraint.constant = Const.leftHandHeightConstraintShow
+                strongSelf.rightArmLeadConstraint.constant = Const.rightArmLeadConstraintDown
+                strongSelf.rightArmBottomConstraint.constant = Const.rightArmBottomConstraintDown
                 
-                self?.rightHandTailConstraint.constant = Const.rightHandTailConstraintShow
-                self?.rightHandCenterYConstraint.constant = Const.rightHandLeadCenterYConstraintShow
-                self?.rightHandHeightConstraint.constant = Const.rightHandHeightConstraintShow
+                strongSelf.leftHandLeadConstraint.constant = Const.leftHandLeadConstraintShow
+                strongSelf.leftHandCenterYConstraint.constant = Const.leftHandLeadCenterYConstraintShow
+                strongSelf.leftHandHeightConstraint.constant = Const.leftHandHeightConstraintShow
                 
-                self?.view.layoutIfNeeded()
+                strongSelf.rightHandTailConstraint.constant = Const.rightHandTailConstraintShow
+                strongSelf.rightHandCenterYConstraint.constant = Const.rightHandLeadCenterYConstraintShow
+                strongSelf.rightHandHeightConstraint.constant = Const.rightHandHeightConstraintShow
+                
+                strongSelf.view.layoutIfNeeded()
                 }, completion: { [weak self] (finished) in
-                    if finished {
-                        self?.isSecurityAnimating = false
-                        if (self?.isSecurity)! { self?.securityAnimate() }
+                    if finished, let strongSelf = self {
+                        strongSelf.isSecurityAnimating = false
+                        if strongSelf.isSecurity { strongSelf.securityAnimate() }
                     }
             })
         }
@@ -396,8 +397,8 @@ extension LoginViewController: UITextFieldDelegate {
             passwordTextField.becomeFirstResponder()
         } else if passwordTextField == textField {
             Keyboard.hide({ [weak self] in
-                if (self?.checkSubmitButtonEnabled())! {
-                    self?.clickSubmitButton((self?.submitButton)!)
+                if let strongSelf = self, strongSelf.checkSubmitButtonEnabled() {
+                    strongSelf.clickSubmitButton(strongSelf.submitButton as Any)
                 }
             })
         }

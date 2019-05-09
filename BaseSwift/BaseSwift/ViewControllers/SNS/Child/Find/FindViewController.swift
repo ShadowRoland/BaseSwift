@@ -88,7 +88,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         view.progressMaskColor = tableView.backgroundColor!
         tableView.mj_footer = MJRefreshBackNormalFooter(refreshingBlock: { [weak self] in
-            self?.loadData(.more, progressType: .none)
+            self?.loadData(true, progressType: .none)
         })
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -195,7 +195,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
             self?.refreshNewImageView.frame = Const.refreshNewFrameShown
             self?.refreshNewImageView.alpha = 1.0
         }) { [weak self] (finished) in
-            self?.loadData(.new, progressType: .none)
+            self?.loadData(progressType: .none)
         }
     }
     
@@ -212,7 +212,8 @@ class FindViewController: BaseViewController, FindCellDelegate {
         }
     }
     
-    func loadData(_ loadType: TableLoadData.Page, progressType: TableLoadData.ProgressType) {
+    func loadData(_ isNextPage: Bool = false,
+                  progressType: TableLoadData.ProgressType = .opaqueMask) {
         switch progressType {
         case .clearMask:
             view.showProgress()
@@ -224,12 +225,12 @@ class FindViewController: BaseViewController, FindCellDelegate {
         
         var params = [:] as ParamDictionary
         params[Param.Key.limit] = TableLoadData.limit
-        let offset = loadType == .more ? currentOffset + 1 : 0
+        let offset = isNextPage ? currentOffset + 1 : 0
         params[Param.Key.offset] = offset
         httpRequest(.get("data/getMessages", params), success: { [weak self] response in
             guard let strongSelf = self else { return }
             let currentOffset = strongSelf.currentOffset
-            if .more == loadType {
+            if isNextPage {
                 if offset == currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                     strongSelf.updateMore(response as? JSON)
                 }
@@ -238,7 +239,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
             }
             }, bfail: { [weak self] (method, response) in
                 guard let strongSelf = self else { return }
-                if .more == loadType {
+                if isNextPage {
                    if offset == strongSelf.currentOffset + 1 {
                         if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
                             strongSelf.updateMore(nil)
@@ -260,7 +261,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
                 }
             }, fail: { [weak self] (_, error) in
                 guard let strongSelf = self else { return }
-                if .more == loadType {
+                if isNextPage {
                     if offset == strongSelf.currentOffset + 1 {
                         if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
                             strongSelf.updateMore(nil)
@@ -310,8 +311,10 @@ class FindViewController: BaseViewController, FindCellDelegate {
         currentOffset = 0 //页数重置
         tableView.reloadData()
         DispatchQueue.main.async { [weak self] in //tableView更新完数据后再设置contentOffset
-            self?.tableView.setContentOffset(CGPoint(0, -(self?.tableView.contentInset.top)!),
-                                             animated: true)
+            if let strongSelf = self {
+                strongSelf.tableView.setContentOffset(CGPoint(0, -strongSelf.tableView.contentInset.top),
+                                                      animated: true)
+            }
         }
     }
     
@@ -528,7 +531,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
     //MARK: - SRLoadDataStateDelegate
     
     override func retryLoadData() {
-        //loadData(.new, progressType: .opaqueMask)
+        //loadData()
         startRefreshNew()
     }
 }

@@ -73,6 +73,9 @@ DTAttributedTextContentViewDelegate {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Do any additional setup after loading the view.
+        self.view.backgroundColor = UIColor.white
         stateMachine.delegate = self
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.contentSizeCategoryDidChange),
@@ -203,6 +206,9 @@ DTAttributedTextContentViewDelegate {
     
     open func clickNavigationBarLeftButton(_ button: UIButton) {
         guard MutexTouch else { return }
+        if button.tag == 0 {
+            popBack()
+        }
     }
     
     open func clickNavigationBarRightButton(_ button: UIButton) {
@@ -250,86 +256,58 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: Navigation Bar
     
-    open func defaultNavigationBar(_ title: String? = nil) {
-        defaultNavigationBar(title: title, leftImage: nil)
+    open func setDefaultNavigationBar(_ title: String? = nil) {
+        setDefaultNavigationBar(title: title, leftImage: nil)
     }
     
-    open func defaultNavigationBar(title: String?, leftImage image: UIImage?) {
+    open func setDefaultNavigationBar(title: String?, leftImage image: UIImage?) {
         if let title = title {
             self.title = title
         }
         
-        initNavigationBar()
-        
-        var setting = NavigationBar.buttonFullSetting
-        setting[.style] = NavigationBar.ButtonItemStyle.image
-        setting[.image] = image == nil ? UIImage.srNamed("sr_page_back") : image
-        navBarLeftButtonSettings = [setting]
+        setNavigationBar()
+        if self !== navigationController?.viewControllers.first {
+            navBarLeftButtonSettings = [[.style : NavigationBar.ButtonItemStyle.image,
+                                         .image : UIImage.srNamed("sr_page_back")!]]
+        }
     }
     
-    open func initNavigationBar() {
+    open func setNavigationBar() {
         guard let navigationController = navigationController else { return }
         
         let navigationBar = navigationController.navigationBar
-        navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white,
-                                             .font : UIFont.heavyTitle]
-        navigationBar.setBackgroundImage(nil, for: .default)
-        navigationBar.backgroundColor = UIColor.clear
+        navigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
+        navigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
+        navigationBar.tintColor = UIColor.darkGray
+        navigationBar.shadowImage = UIImage()
+        navigationBar.layer.shadowColor = UIColor(white: 0, alpha: 0.1).cgColor
+        navigationBar.layer.shadowOpacity = 1.0
+        navigationBar.layer.shadowRadius = 2.0
+        navigationBar.layer.shadowOffset = CGSize(0, 2.0)
     }
     
     open var navBarLeftButtonSettings: [[NavigationBar.ButtonItemKey : Any]]? {
         didSet {
             guard let settings = navBarLeftButtonSettings, !settings.isEmpty else { //左边完全无按钮
-                navigationController?.navigationBar.backIndicatorImage = nil
-                navigationController?.navigationBar.backIndicatorTransitionMaskImage = nil
-                navigationItem.backBarButtonItem = nil
-                navigationItem.leftBarButtonItems = nil
                 navigationItem.leftBarButtonItem =
                     UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
                 return
             }
             
-            if settings.first!.isEmpty { //使用默认的返回
-                //navigationController?.navigationBar.backIndicatorImage = UIImage.srNamed("page_back")
-                //navigationController?.navigationBar.backIndicatorTransitionMaskImage =
-                //    UIImage("page_back")
-                navigationItem.backBarButtonItem =
-                    UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
-                
-                let items = (1 ..< settings.count).compactMap {
-                    NavigationBar.buttonItem(settings[$0],
-                                             target: eventTarget,
-                                             action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
-                                             tag: $0)
-                }
-                
-                //再添加新的按钮
-                if items.isEmpty {
-                    navigationItem.leftBarButtonItem = nil
-                    navigationItem.leftBarButtonItems = nil
-                } else if items.count == 1 {
-                    navigationItem.leftBarButtonItem = items.first
-                } else {
-                    navigationItem.leftBarButtonItems = items
-                }
+            //再添加新的按钮
+            let items = (0 ..< settings.count).compactMap {
+                NavigationBar.buttonItem(settings[$0],
+                                         target: eventTarget,
+                                         action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
+                                         tag: $0)
+            }
+            if items.isEmpty {
+                navigationItem.leftBarButtonItem = nil
+                navigationItem.leftBarButtonItems = nil
+            } else if items.count == 1 {
+                navigationItem.leftBarButtonItem = items.first
             } else {
-                //返回按钮亦自定义
-                let items = (0 ..< settings.count).compactMap {
-                    NavigationBar.buttonItem(settings[$0],
-                                             target: eventTarget,
-                                             action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
-                                             tag: $0)
-                }
-                
-                navigationItem.backBarButtonItem = nil
-                if items.isEmpty {
-                    navigationItem.leftBarButtonItem = nil
-                    navigationItem.leftBarButtonItems = nil
-                } else if items.count == 1 {
-                    navigationItem.leftBarButtonItem = items.first
-                } else {
-                    navigationItem.leftBarButtonItems = items
-                }
+                navigationItem.leftBarButtonItems = items
             }
         }
     }
@@ -348,8 +326,6 @@ DTAttributedTextContentViewDelegate {
                                          action: #selector(EventTarget.clickNavigationBarRightButton(_:)),
                                          tag: $0)
             }
-            
-            
             if items.isEmpty {
                 navigationItem.rightBarButtonItem = nil
                 navigationItem.rightBarButtonItems = nil
@@ -397,7 +373,7 @@ DTAttributedTextContentViewDelegate {
         }
         
         //在此改变默认的加载转圈样式
-        component.progressContainerView.showProgress()
+        component.progressContainerView.showProgress(maskType)
         //component.progressContainerView.showProgress(maskType,
         //                                             progressType: .svRing,
         //                                             options: [ProgressOptionKey.showPercentage : true])

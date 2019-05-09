@@ -33,7 +33,7 @@ class ServerConfigViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         pageBackGestureStyle = .none
-        defaultNavigationBar("Server Configuration".localized)
+        setDefaultNavigationBar("Server Configuration".localized)
         initView()
     }
     
@@ -189,7 +189,7 @@ class ServerConfigViewController: BaseViewController {
             textField.delegate = self
             NotifyDefault.add(self,
                               selector: #selector(textFieldEditingChanged(_:)),
-                              name: UIResponder.keyboardWillChangeFrameNotification,
+                              name: UITextField.textDidChangeNotification,
                               object: textField)
             if config.jsonValue(configKey: .placeholder,
                                 type: .string,

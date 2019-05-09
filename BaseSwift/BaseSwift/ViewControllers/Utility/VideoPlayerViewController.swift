@@ -19,7 +19,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
         HttpManager.shared.addListener(forNetworkStatus: self,
                                         action: #selector(updateNetworkStatus))
         pageBackGestureStyle = .none
-        defaultNavigationBar("")
+        setDefaultNavigationBar("")
         player = SRVideoPlayer()
         player.delegate = self
         view.backgroundColor = UIColor.black

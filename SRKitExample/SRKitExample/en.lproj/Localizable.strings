@@ -41,6 +41,22 @@
 "[SR]Send message" = "Send message";
 "[SR]The device does not support SMS function" = "The device does not support SMS function";
 
+//MARK: - Htpp Server
+
+"[SRHttpServer]The request completed successfully" = "The request completed successfully";
+"[SRHttpServer]The request failed with business" = "The request failed with business";
+"[SRHttpServer]Business fail" = "Business fail";
+"[SRHttpServer]Allways success" = "Allways success";
+"[SRHttpServer]Allways business fail" = "Allways business fail";
+"[SRHttpServer]Allways http fail" = "Allways http fail";
+"[SRHttpServer]No delay" = "No delay";
+"[SRHttpServer]Fast" = "Fast";
+"[SRHttpServer]Normal" = "Normal";
+"[SRHttpServer]Long" = "Long";
+"[SRHttpServer]Timeout" = "Timeout";
+"[SRHttpServer]second" = "second";
+"[SRHttpServer]s" = "s";
+
 //MARK: - Load Data
 
 "[SR]Loading ..." = "Loading ...";

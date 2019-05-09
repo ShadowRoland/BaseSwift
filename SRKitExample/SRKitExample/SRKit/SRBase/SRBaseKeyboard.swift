@@ -77,7 +77,7 @@ public class SRBaseKeyboard: NSObject {
         return sharedInstance!
     }
     
-    private static var sharedInstance: SRBaseKeyboard?
+    private static var sharedInstance: SRBaseKeyboard!
     
     private override init() {
         IQKeyboardManager.shared.enable = true

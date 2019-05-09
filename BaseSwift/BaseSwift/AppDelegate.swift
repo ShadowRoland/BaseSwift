@@ -36,6 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             LogInfo("\(#function)")
         }
 
+        Env.reload()
         initHttpServer()
         
         initShare()

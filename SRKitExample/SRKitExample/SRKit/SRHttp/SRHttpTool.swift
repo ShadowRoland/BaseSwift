@@ -31,13 +31,25 @@ public class HTTP {
         public var url: String {
             switch self {
             case .get(let url, _):
-                return url
+                if !url.hasPrefix("http:") && !url.hasPrefix("https:") {
+                    return BaseHttpURL.appending(urlComponent: url)
+                } else {
+                    return url
+                }
                 
             case .post(let url, _):
-                return url
+                if !url.hasPrefix("http:") && !url.hasPrefix("https:") {
+                    return BaseHttpURL.appending(urlComponent: url)
+                } else {
+                    return url
+                }
                 
             case .upload(let url, _, _):
-                return url
+                if !url.hasPrefix("http:") && !url.hasPrefix("https:") {
+                    return BaseHttpURL.appending(urlComponent: url)
+                } else {
+                    return url
+                }
             }
         }
         

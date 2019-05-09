@@ -9,7 +9,6 @@
 import SRKit
 
 public typealias Event = SRKit.Event
-public typealias IntForBool = Config.IntForBool
 public typealias TableLoadData = Config.TableLoadData
 
 public class Config {
@@ -50,11 +49,6 @@ public class Config {
     
     static let refreshProfileNotification = Notification.Name("This.refreshProfile")
     static let reloadProfileNotification = Notification.Name("This.reloadProfile")
-    
-    public enum IntForBool: Int {
-        case False = 0,//否
-        True = 1//是
-    }
     
     //MARK: - 资源
     

@@ -56,7 +56,7 @@ class SNSViewController: BaseViewController {
         // Do any additional setup after loading the view.
         pageBackGestureStyle = .none
         
-        initNavigationBar()
+        setNavigationBar()
         navigationItem.leftBarButtonItem =
             UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         tabBar.backgroundColor = UIColor.clear
@@ -169,7 +169,7 @@ class SNSViewController: BaseViewController {
             findVC.deviceOrientationDidChange()
             if !(findVC.isTouched) {
                 findVC.isTouched = true
-                //self?.findVC.loadData(.new, progressType: .opaqueMask)
+                //self?.findVC.loadData()
                 findVC.startRefreshNew()
             }
         } else if currentChildVC === moreVC {
@@ -259,7 +259,7 @@ extension SNSViewController: UITabBarDelegate {
             if newVC === chatListVC {
                 chatListVC.loadData()
             } else if newVC === findVC {
-                //findVC.loadData(.new, progressType: .clearMask)
+                //findVC.loadData(progressType: .clearMask)
                 findVC.startRefreshNew()
             }
         } else if (newVC != nil) {

@@ -57,8 +57,10 @@ class LeftMenuViewController: BaseViewController {
             }
             
             DispatchQueue.main.async { [weak self] in
-                self?.tableView((self?.tableView)!,
-                                didSelectRowAt: IndexPath(row: index, section: 0))
+                if let strongSelf = self {
+                    strongSelf.tableView(strongSelf.tableView,
+                                         didSelectRowAt: IndexPath(row: index, section: 0))
+                }
             }
         }
     }

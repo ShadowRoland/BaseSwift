@@ -29,7 +29,7 @@ class NewsViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        defaultNavigationBar()
+        setDefaultNavigationBar()
         pageBackGestureStyle = .edge
         initView()
         
@@ -46,7 +46,7 @@ class NewsViewController: BaseViewController {
             addChild(mainVC)
             childBackgroundView.addSubview(mainVC.view)
             currentChildVC = mainVC
-            mainVC.currentNewsListVC?.loadData(.new, progressType: .clearMask)
+            mainVC.currentNewsListVC?.loadData(progressType: .clearMask)
         }
         
         //查询当前指令而执行的操作，加入状态机
@@ -184,36 +184,36 @@ class NewsViewController: BaseViewController {
                    animations: nil,
                    completion:
             { [weak self] (finished) in
-                guard finished else {
+                guard finished, let strongSelf = self else {
                     childVC.removeFromParent()
                     self?.currentChildVC?.view.isUserInteractionEnabled = true
                     return
                 }
                 
-                childVC.didMove(toParent: self)
+                childVC.didMove(toParent: strongSelf)
                 childVC.view.isUserInteractionEnabled = true
-                self?.currentChildVC?.willMove(toParent: self)
-                self?.currentChildVC?.removeFromParent()
-                self?.currentChildVC = childVC
-                self?.childBackgroundView.addSubview((self?.currentChildVC.view)!)
-                self?.updateChildViewFrame()
-                if self?.currentChildVC === self?.mainVC {
-                    self?.navigationController?.isNavigationBarHidden = true
-                    if let vc = self?.mainVC.currentNewsListVC, !vc.isTouched {
-                        vc.loadData(.new, progressType: .clearMask)
+                strongSelf.currentChildVC?.willMove(toParent: self)
+                strongSelf.currentChildVC?.removeFromParent()
+                strongSelf.currentChildVC = childVC
+                strongSelf.childBackgroundView.addSubview((strongSelf.currentChildVC.view)!)
+                strongSelf.updateChildViewFrame()
+                if strongSelf.currentChildVC === strongSelf.mainVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = true
+                    if let vc = strongSelf.mainVC.currentNewsListVC, !vc.isTouched {
+                        vc.loadData(progressType: .clearMask)
                     }
-                } else if self?.currentChildVC === self?.secondaryVC {
-                    self?.navigationController?.isNavigationBarHidden = true
-                    if let vc = self?.secondaryVC.currentNewsListVC, !vc.isTouched {
-                        vc.loadData(.new, progressType: .clearMask)
+                } else if strongSelf.currentChildVC === strongSelf.secondaryVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = true
+                    if let vc = strongSelf.secondaryVC.currentNewsListVC, !vc.isTouched {
+                        vc.loadData(progressType: .clearMask)
                     }
-                } else  if self?.currentChildVC === self?.yellowVC {
-                    self?.navigationController?.isNavigationBarHidden = false
-                    self?.title = "Title Party".localized
-                } else if self?.currentChildVC === self?.moreVC {
-                    self?.navigationController?.isNavigationBarHidden = false
-                    self?.title = "Me".localized
-                    self?.moreVC.deviceOrientationDidChange()
+                } else  if strongSelf.currentChildVC === strongSelf.yellowVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    strongSelf.title = "Title Party".localized
+                } else if strongSelf.currentChildVC === strongSelf.moreVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    strongSelf.title = "Me".localized
+                    strongSelf.moreVC.deviceOrientationDidChange()
                 }
         })
     }
@@ -265,14 +265,14 @@ class NewsViewController: BaseViewController {
 
 extension NewsViewController: NewsListDelegate {
     //使用第三方新闻客户端的请求参数
-    func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController) {
+    func getNewsList(_ isNextPage: Bool, sendVC: NewsListViewController) {
         var params = sendVC.params
         let time = CLongLong(Date().timeIntervalSince1970 * 1000)
         params["t"] = String(longLong: time)
         params["_"] = String(longLong: time + 2)
         params["show_num"] = "10"
-        params["act"] = loadType == .more ? "more" : "new"
-        let offset = loadType == .more ? sendVC.currentOffset + 1 : 0
+        params["act"] = isNextPage ? "more" : "new"
+        let offset = isNextPage ? sendVC.currentOffset + 1 : 0
         params["page"] = String(int: offset + 1)
         var sendChildVC: String?
         if let parentVC = sendVC.parentVC {
@@ -286,7 +286,7 @@ extension NewsViewController: NewsListDelegate {
                         return
                 }
                 
-                if loadType == .more {
+                if isNextPage {
                     let offset = params[Param.Key.offset] as! Int
                     if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                         vc.updateMore(NonNull.dictionary(response))
@@ -300,7 +300,7 @@ extension NewsViewController: NewsListDelegate {
                         return
                 }
                 
-                if loadType == .more {
+                if isNextPage {
                     let offset = params[Param.Key.offset] as! Int
                     if offset == vc.currentOffset + 1 {
                         return
@@ -318,7 +318,7 @@ extension NewsViewController: NewsListDelegate {
                         return
                 }
                 
-                if loadType == .more {
+                if isNextPage {
                     let offset = params[Param.Key.offset] as! Int
                     if offset == vc.currentOffset + 1 {
                         if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
@@ -401,10 +401,9 @@ extension NewsViewController: UITabBarDelegate {
             bringChildVCFront(childVC)
             if childVC === currentChildVC { //重复点击下方，会重新加载列表或发送请求
                 if childVC === mainVC {
-                    mainVC.currentNewsListVC?.loadData(.new, progressType: .opaqueMask)
+                    mainVC.currentNewsListVC?.loadData()
                 } else if childVC === secondaryVC {
-                    secondaryVC.currentNewsListVC?.loadData(.new,
-                                                            progressType: .opaqueMask)
+                    secondaryVC.currentNewsListVC?.loadData()
                 }
             }
         }

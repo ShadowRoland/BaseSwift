@@ -24,7 +24,7 @@ class SimpleSubmitViewController: BaseViewController {
         
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        defaultNavigationBar("Submit".localized)
+        setDefaultNavigationBar("Submit".localized)
         initView()
         setLoadDataFail(.get("data/getSimpleData", nil)) { [weak self] in
             self?.showProgress()
@@ -47,8 +47,8 @@ class SimpleSubmitViewController: BaseViewController {
         textField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
-                          object: textField)
+                          name: UITextField.textDidChangeNotification,
+                          object: textField)        
         submitButton.set(submit: false)
     }
     
@@ -69,7 +69,7 @@ class SimpleSubmitViewController: BaseViewController {
     }
     
     func simpleSubmit() {
-        self.showProgress()
+        showProgress(.translucence)
         httpRequest(.post("data/simpleSubmit", nil), success: { [weak self] response in
             guard let strongSelf = self else { return }
             strongSelf.dismissProgress()

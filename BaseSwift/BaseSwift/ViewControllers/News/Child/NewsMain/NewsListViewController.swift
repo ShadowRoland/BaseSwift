@@ -10,7 +10,7 @@ import SRKit
 import MJRefresh
 
 protocol NewsListDelegate: class {
-    func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController)
+    func getNewsList(_ isNextPage: Bool, sendVC: NewsListViewController)
     func newsListVC(_ newsListVC: NewsListViewController, didSelect model: SinaNewsModel)
 }
 
@@ -66,11 +66,11 @@ class NewsListViewController: BaseViewController {
         
         //Refresh header & footer
         tableView.mj_header = SRMJRefreshHeader(refreshingBlock: { [weak self] in
-            self?.loadData(.new, progressType: .none)
+            self?.loadData(progressType: .none)
         })
         tableView.mj_header.endRefreshing()
         tableView.mj_footer = MJRefreshAutoNormalFooter(refreshingBlock: { [weak self] in
-            self?.loadData(.more, progressType: .none)
+            self?.loadData(progressType: .none)
         })
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -84,8 +84,8 @@ class NewsListViewController: BaseViewController {
     
     //MARK: - 业务处理
     
-    func loadData(_ loadType: TableLoadData.Page,
-                  progressType: TableLoadData.ProgressType) {
+    func loadData(_ isNextPage: Bool = false,
+                  progressType: TableLoadData.ProgressType = .opaqueMask) {
         isTouched = true
         switch progressType {
         case .clearMask:
@@ -95,7 +95,7 @@ class NewsListViewController: BaseViewController {
         default:
             break
         }
-        delegate?.getNewsList(loadType, sendVC: self)
+        delegate?.getNewsList(isNextPage, sendVC: self)
     }
     
     public func updateNew(_ dictionary: [AnyHashable : Any]?, errMsg: String? = nil) {
@@ -126,8 +126,10 @@ class NewsListViewController: BaseViewController {
         currentOffset = 0 //页数重置
         tableView.reloadData()
         DispatchQueue.main.async { [weak self] in //tableView更新完数据后再设置contentOffset
-            self?.tableView.setContentOffset(CGPoint(0, -(self?.tableView.contentInset.top)!),
-                                             animated: true)
+            if let strongSelf = self {
+                strongSelf.tableView.setContentOffset(CGPoint(0, -strongSelf.tableView.contentInset.top),
+                                                      animated: true)
+            }
         }
     }
     
@@ -202,7 +204,7 @@ class NewsListViewController: BaseViewController {
     //MARK: - SRLoadDataStateDelegate
     
     override func retryLoadData() {
-        loadData(.new, progressType: .opaqueMask)
+        loadData()
     }
 }
 
@@ -264,6 +266,6 @@ extension NewsListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController) {
+func getNewsList(_ isNextPage: Bool, sendVC: NewsListViewController) {
     
 }

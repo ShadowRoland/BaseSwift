@@ -12,6 +12,16 @@ import MBProgressHUD
 import M13ProgressSuite
 
 public final class SRProgressHUD {
+    private init() {
+        if SRProgressHUD.defaultGif == nil {
+            var gif = UIImage.SRGif()
+            gif.images = (0 ..< 30).compactMap { UIImage.srNamed("sr_progress_\($0)") }
+            gif.imageSize = CGSize(60.0, 60.0)
+            gif.duration = 1.0
+            SRProgressHUD.defaultGif = gif
+        }
+    }
+    
     public enum ProgressType {
         case infinite
         case m13Ring
@@ -122,7 +132,7 @@ public final class SRProgressHUD {
  
     private(set) weak var hudView: UIView!
     private var mbProgressHUD: MBProgressHUD!
-    fileprivate var animationImageView: UIImageView!
+    fileprivate var animationImageView = UIImageView()
     var mb13ProgressHUD: M13ProgressHUD!
     
     var constraintGroup = ConstraintGroup()

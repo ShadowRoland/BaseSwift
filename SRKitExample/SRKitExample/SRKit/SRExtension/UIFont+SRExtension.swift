@@ -10,8 +10,20 @@ import UIKit
 import Foundation
 
 public extension UIFont {
+    class func light(_ size: CGFloat) -> UIFont {
+        return  UIFont.systemFont(ofSize: size, weight: .light)
+    }
+    
     class func system(_ size: CGFloat) -> UIFont {
         return  UIFont.systemFont(ofSize: size)
+    }
+    
+    class func medium(_ size: CGFloat) -> UIFont {
+        return  UIFont.systemFont(ofSize: size, weight: .medium)
+    }
+    
+    class func bold(_ size: CGFloat) -> UIFont {
+        return  UIFont.systemFont(ofSize: size, weight: .bold)
     }
     
     struct Preferred {

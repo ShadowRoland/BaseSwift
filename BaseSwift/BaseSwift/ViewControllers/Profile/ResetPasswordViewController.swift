@@ -17,7 +17,7 @@ class ResetPasswordViewController: BaseViewController {
         passwordTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
+                          name: UITextField.textDidChangeNotification,
                           object: passwordTextField)
         return cell
     }()
@@ -29,7 +29,7 @@ class ResetPasswordViewController: BaseViewController {
         newPasswordTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
+                          name: UITextField.textDidChangeNotification,
                           object: newPasswordTextField)
         return cell
     }()
@@ -41,7 +41,7 @@ class ResetPasswordViewController: BaseViewController {
         confirmPasswordTextField.delegate = self
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
+                          name: UITextField.textDidChangeNotification,
                           object: confirmPasswordTextField)
         return cell
     }()
@@ -55,7 +55,7 @@ class ResetPasswordViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        defaultNavigationBar("Reset Password".localized)
+        setDefaultNavigationBar("Reset Password".localized)
         resetPasswordType = params.isEmpty ? .password : .smsCode
         submitButton.set(submit: false)
     }
@@ -126,15 +126,17 @@ class ResetPasswordViewController: BaseViewController {
                                 backgroundColor: NavigationBar.backgroundColor,
                                 action:
                     { [weak self] in
-                        if self?.resetPasswordType == .smsCode {
-                            self?.popBack(toClasses: [LoginViewController.self])
+                        guard let strongSelf = self else { return }
+                        
+                        if strongSelf.resetPasswordType == .smsCode {
+                            strongSelf.popBack(toClasses: [LoginViewController.self])
                         } else {
                             if Config.entrance == .sns {
-                                self?.popBack(toClasses: [LoginViewController.self])
+                                strongSelf.popBack(toClasses: [LoginViewController.self])
                             } else if Config.entrance == .news || Config.entrance == .aggregation {
                                 ProfileManager.currentProfile?.isLogin = false
                                 NotifyDefault.post(Config.reloadProfileNotification)
-                                self?.popBack(toClasses: [MoreViewController.self])
+                                strongSelf.popBack(toClasses: [MoreViewController.self])
                             }
                         }
                 })

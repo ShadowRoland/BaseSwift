@@ -26,7 +26,7 @@ class SimpleTableViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        defaultNavigationBar("List".localized)
+        setDefaultNavigationBar("List".localized)
         initView()
         
         baseBusinessComponent.progressContainerView.progressMaskColor =
@@ -62,7 +62,7 @@ class SimpleTableViewController: BaseViewController {
         })
         tableView.mj_header.endRefreshing()
         tableView.mj_footer = MJRefreshBackNormalFooter(refreshingBlock: { [weak self] in
-            self?.getSimpleList(.more)
+            self?.getSimpleList(true)
         })
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
@@ -164,8 +164,10 @@ class SimpleTableViewController: BaseViewController {
         currentOffset = 0 //页数重置
         tableView.reloadData()
         DispatchQueue.main.async { [weak self] in //tableView更新完数据后再设置contentOffset
-            self?.tableView.setContentOffset(CGPoint(0, -(self?.tableView.contentInset.top)!),
-                                             animated: true)
+            if let strongSelf = self {
+                strongSelf.tableView.setContentOffset(CGPoint(0, -strongSelf.tableView.contentInset.top),
+                                                      animated: true)
+            }
         }
     }
     
@@ -238,14 +240,14 @@ class SimpleTableViewController: BaseViewController {
     
     //MARK: Http request
     
-    func getSimpleList(_ loadType: TableLoadData.Page? = .new) {
+    func getSimpleList(_ isNextPage: Bool = false) {
         var params = [:] as ParamDictionary
         params[Param.Key.limit] = TableLoadData.row
-        params[Param.Key.offset] = loadType == .more ? currentOffset + 1 : 0
+        params[Param.Key.offset] = isNextPage ? currentOffset + 1 : 0
         httpRequest(.get("data/getSimpleList", params), success: { [weak self] response in
             guard let strongSelf = self else { return }
             let responseData = NonNull.dictionary((response as! JSON)[HTTP.Key.Response.data].rawValue)
-            if loadType == .more {
+            if isNextPage {
                 let offset = params[Param.Key.offset] as! Int
                 if offset == strongSelf.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                     strongSelf.updateMore(responseData)
@@ -255,7 +257,7 @@ class SimpleTableViewController: BaseViewController {
             }
             }, bfail: { [weak self] (method, response) in
                 guard let strongSelf = self else { return }
-                if loadType == .more {
+                if isNextPage {
                     let offset = params[Param.Key.offset] as! Int
                     if offset == strongSelf.currentOffset + 1 {
                         if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
@@ -278,7 +280,7 @@ class SimpleTableViewController: BaseViewController {
                 }
             }, fail: { [weak self] (_, error) in
                 guard let strongSelf = self else { return }
-                if loadType == .more {
+                if isNextPage {
                     let offset = params[Param.Key.offset] as! Int
                     if offset == strongSelf.currentOffset + 1 {
                         if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态

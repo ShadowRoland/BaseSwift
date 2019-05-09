@@ -33,7 +33,7 @@ class MainMenuViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        defaultNavigationBar()
+        setDefaultNavigationBar()
         pageBackGestureStyle = .none
         Common.rootVC = self
         initView()
@@ -43,7 +43,7 @@ class MainMenuViewController: BaseViewController {
         currentChildVC = latestVC
         title = "Latest".localized
         latestVC.backToTopButtonBottomConstraint.constant = 0
-        latestVC.loadData(.new, progressType: .clearMask)
+        latestVC.loadData(progressType: .clearMask)
         
         if UserStandard[USKey.showAdvertisingGuide] != nil {
             UserStandard[USKey.showAdvertisingGuide] = nil
@@ -156,7 +156,7 @@ class MainMenuViewController: BaseViewController {
                    animations: nil,
                    completion:
             { [weak self] (finished) in
-                guard finished, self != nil else {
+                guard finished, let strongSelf = self else {
                     childVC.removeFromParent()
                     self?.currentChildVC?.view.isUserInteractionEnabled = true
                     return
@@ -164,52 +164,52 @@ class MainMenuViewController: BaseViewController {
                 
                 childVC.didMove(toParent: self)
                 childVC.view.isUserInteractionEnabled = true
-                self?.currentChildVC?.willMove(toParent: self)
-                self?.currentChildVC?.removeFromParent()
-                self?.currentChildVC = childVC
-                self?.childBackgroundView.addSubview((self?.currentChildVC.view)!)
-                self?.updateChildViewFrame()
-                if self?.currentChildVC === self?.hottestVC {
-                    self?.title = "Hottest".localized
-                    self?.navigationController?.isNavigationBarHidden = true
-                    if let vc = self?.hottestVC.currentNewsListVC, !vc.isTouched {
+                strongSelf.currentChildVC?.willMove(toParent: self)
+                strongSelf.currentChildVC?.removeFromParent()
+                strongSelf.currentChildVC = childVC
+                strongSelf.childBackgroundView.addSubview((strongSelf.currentChildVC.view)!)
+                strongSelf.updateChildViewFrame()
+                if strongSelf.currentChildVC === strongSelf.hottestVC {
+                    strongSelf.title = "Hottest".localized
+                    strongSelf.navigationController?.isNavigationBarHidden = true
+                    if let vc = strongSelf.hottestVC.currentNewsListVC, !vc.isTouched {
                         vc.backToTopButtonBottomConstraint.constant = 0
-                        vc.loadData(.new, progressType: .clearMask)
+                        vc.loadData(progressType: .clearMask)
                     }
-                } else if self?.currentChildVC === self?.latestVC {
-                    self?.navigationController?.isNavigationBarHidden = false
-                    self?.title = "Latest".localized
-                    if !(self?.latestVC.isTouched)! {
-                        self?.latestVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.latestVC.loadData(.new, progressType: .clearMask)
+                } else if strongSelf.currentChildVC === strongSelf.latestVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    strongSelf.title = "Latest".localized
+                    if !strongSelf.latestVC.isTouched {
+                        strongSelf.latestVC.backToTopButtonBottomConstraint.constant = 0
+                        strongSelf.latestVC.loadData(progressType: .clearMask)
                     }
-                } else if self?.currentChildVC === self?.jokersVC {
-                    self?.navigationController?.isNavigationBarHidden = false
-                    self?.title = "Jokers".localized
-                    if !(self?.jokersVC.isTouched)! {
-                        self?.jokersVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.jokersVC.loadData(.new, progressType: .clearMask)
+                } else if strongSelf.currentChildVC === strongSelf.jokersVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    strongSelf.title = "Jokers".localized
+                    if !strongSelf.jokersVC.isTouched {
+                        strongSelf.jokersVC.backToTopButtonBottomConstraint.constant = 0
+                        strongSelf.jokersVC.loadData(progressType: .clearMask)
                     }
-                } else  if self?.currentChildVC === self?.videosVC {
-                    self?.navigationController?.isNavigationBarHidden = false
-                    self?.title = "Videos".localized
-                    if !(self?.videosVC.isTouched)! {
-                        self?.videosVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.videosVC.loadData(.new, progressType: .clearMask)
+                } else  if strongSelf.currentChildVC === strongSelf.videosVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    strongSelf.title = "Videos".localized
+                    if !strongSelf.videosVC.isTouched {
+                        strongSelf.videosVC.backToTopButtonBottomConstraint.constant = 0
+                        strongSelf.videosVC.loadData(progressType: .clearMask)
                     }
-                } else if self?.currentChildVC === self?.picturesVC {
-                    self?.navigationController?.isNavigationBarHidden = false
-                    self?.title = "Pictures".localized
-                    if !(self?.picturesVC.isTouched)! {
-                        self?.picturesVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.picturesVC.loadData(.new, progressType: .clearMask)
+                } else if strongSelf.currentChildVC === strongSelf.picturesVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    strongSelf.title = "Pictures".localized
+                    if !strongSelf.picturesVC.isTouched {
+                        strongSelf.picturesVC.backToTopButtonBottomConstraint.constant = 0
+                        strongSelf.picturesVC.loadData(progressType: .clearMask)
                     }
-                } else if self?.currentChildVC === self?.favoritesVC {
-                    self?.navigationController?.isNavigationBarHidden = false
-                    self?.title = "Favorites".localized
-                    if !(self?.favoritesVC.isTouched)! {
-                        self?.favoritesVC.backToTopButtonBottomConstraint.constant = 0
-                        self?.favoritesVC.loadData(.new, progressType: .clearMask)
+                } else if strongSelf.currentChildVC === strongSelf.favoritesVC {
+                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    strongSelf.title = "Favorites".localized
+                    if !strongSelf.favoritesVC.isTouched {
+                        strongSelf.favoritesVC.backToTopButtonBottomConstraint.constant = 0
+                        strongSelf.favoritesVC.loadData(progressType: .clearMask)
                     }
                 }
         })
@@ -278,14 +278,14 @@ class MainMenuViewController: BaseViewController {
 
 extension MainMenuViewController: NewsListDelegate {
     //使用第三方新闻客户端的请求参数
-    func getNewsList(_ loadType: TableLoadData.Page?, sendVC: NewsListViewController) {
+    func getNewsList(_ isNextPage: Bool, sendVC: NewsListViewController) {
         var params = sendVC.params
         let time = CLongLong(Date().timeIntervalSince1970 * 1000)
         params["t"] = String(longLong: time)
         params["_"] = String(longLong: time + 2)
         params["show_num"] = "10"
-        params["act"] = loadType == .more ? "more" : "new"
-        let offset = loadType == .more ? sendVC.currentOffset + 1 : 0
+        params["act"] = isNextPage ? "more" : "new"
+        let offset = isNextPage ? sendVC.currentOffset + 1 : 0
         params["page"] = String(int: offset + 1)
         var sendChildVC: String?
         if let parentVC = sendVC.parentVC {
@@ -299,7 +299,7 @@ extension MainMenuViewController: NewsListDelegate {
                                                     return
             }
             
-            if loadType == .more {
+            if isNextPage {
                 let offset = params[Param.Key.offset] as! Int
                 if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
                     vc.updateMore(NonNull.dictionary(response))
@@ -314,7 +314,7 @@ extension MainMenuViewController: NewsListDelegate {
                                                         return
                 }
                 
-                if loadType == .more {
+                if isNextPage {
                     let offset = params[Param.Key.offset] as! Int
                     if offset == vc.currentOffset + 1 {
                         return
@@ -335,7 +335,7 @@ extension MainMenuViewController: NewsListDelegate {
                                                         return
                 }
                 
-                if loadType == .more {
+                if isNextPage {
                     let offset = params[Param.Key.offset] as! Int
                     if offset == vc.currentOffset + 1 {
                         if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态

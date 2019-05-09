@@ -26,7 +26,7 @@ SRShareToolDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        defaultNavigationBar(title: "Loading ...".localized,
+        setDefaultNavigationBar(title: "Loading ...".localized,
                              leftImage: UIImage(named: "close_left"))
         setNavigationBarRightButtonItems()
         initView()

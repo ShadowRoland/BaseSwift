@@ -75,21 +75,21 @@ class RegisterViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        defaultNavigationBar("Register".localized)
+        setDefaultNavigationBar("Register".localized)
         isGettingVerifyCode = false
         initView()
         deviceOrientationDidChange()
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
+                          name: UITextField.textDidChangeNotification,
                           object: phoneTextField)
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
+                          name: UITextField.textDidChangeNotification,
                           object: verifyTextField)
         NotifyDefault.add(self,
                           selector: #selector(textFieldEditingChanged(_:)),
-                          name: UIResponder.keyboardWillChangeFrameNotification,
+                          name: UITextField.textDidChangeNotification,
                           object: passwordTextField)
     }
     

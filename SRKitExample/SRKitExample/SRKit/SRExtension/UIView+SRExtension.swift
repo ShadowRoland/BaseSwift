@@ -190,9 +190,14 @@ public var MutexTouch: Bool {
 
 extension UIView {
     class MutexTouchClass: NSObject {
-        class var shared: MutexTouchClass { return sharedInstance }
+        class var shared: MutexTouchClass {
+            if sharedInstance == nil {
+                sharedInstance = MutexTouchClass()
+            }
+            return sharedInstance!
+        }
         
-        private static let sharedInstance = MutexTouchClass()
+        private static var sharedInstance: MutexTouchClass?
         
         private override init() {
             super.init()

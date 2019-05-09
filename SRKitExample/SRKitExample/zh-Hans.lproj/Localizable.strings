@@ -41,6 +41,22 @@
 "[SR]Send message" = "发送短信";
 "[SR]The device does not support SMS function" = "该设备不支持短信功能";
 
+//MARK: - Htpp Server
+
+"[SRHttpServer]The request completed successfully" = "操作成功";
+"[SRHttpServer]The request failed with business" = "操作失败";
+"[SRHttpServer]Business fail" = "业务失败";
+"[SRHttpServer]Allways success" = "总是成功";
+"[SRHttpServer]Allways business fail" = "总是业务失败";
+"[SRHttpServer]Allways http fail" = "总是请求失败";
+"[SRHttpServer]No delay" = "无延迟";
+"[SRHttpServer]Fast" = "快速";
+"[SRHttpServer]Normal" = "普通";
+"[SRHttpServer]Long" = "长";
+"[SRHttpServer]Timeout" = "超时";
+"[SRHttpServer]second" = "秒";
+"[SRHttpServer]s" = "";
+
 //MARK: - Load Data
 
 "[SR]Loading ..." = "加载中……";

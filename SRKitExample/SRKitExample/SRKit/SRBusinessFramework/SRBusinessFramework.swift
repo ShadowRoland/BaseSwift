@@ -29,10 +29,13 @@ public class SRBusinessFramework {
     fileprivate var notiCenter = NotificationCenter()
     
     public class var shared: SRBusinessFramework {
-        return sharedInstance
+        if sharedInstance == nil {
+            sharedInstance = SRBusinessFramework()
+        }
+        return sharedInstance!
     }
     
-    private static let sharedInstance = SRBusinessFramework()
+    private static var sharedInstance: SRBusinessFramework?
     
     private init() { }
     

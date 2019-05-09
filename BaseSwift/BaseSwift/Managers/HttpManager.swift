@@ -188,8 +188,6 @@ public class HttpManager: SRHttpManager {
     }
 }
 
-
 extension HTTP.ErrorCode {
     public static let imSuccess = 200  //im http请求完全成功时的错误码
-
 }

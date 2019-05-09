@@ -23,7 +23,7 @@ class DebugViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        defaultNavigationBar()
+        setDefaultNavigationBar()
         
         tableView.tableFooterView = UIView()
         //let filePath = ResourceDirectory.appending(pathComponent: "html/debug_call_app.html")

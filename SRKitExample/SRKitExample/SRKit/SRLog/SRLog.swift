@@ -27,10 +27,13 @@ public func LogError(_ message: @autoclosure () -> String) {
 
 public class SRLog {
     public class var shared: SRLog {
-        return sharedInstance
+        if sharedInstance == nil {
+            sharedInstance = SRLog()
+        }
+        return sharedInstance!
     }
     
-    private static let sharedInstance = SRLog()
+    private static var sharedInstance: SRLog?
     
     private init() {
         initLogger()
@@ -92,6 +95,8 @@ public class SRLog {
     func initLogger() {
         if _logger != nil {
             DDLog.remove(_logger)
+        } else {
+            DDLog.add(DDASLLogger.sharedInstance)
         }
         
         if !_directory.isEmpty {
@@ -100,6 +105,7 @@ public class SRLog {
             _logger = DDFileLogger()
         }
         
+        CocoaLumberjack.dynamicLogLevel = level
         _logger.rollingFrequency = rollingFrequency > 0 ? rollingFrequency : Const.defaultRollingFrequency
         _logger.logFileManager.maximumNumberOfLogFiles = maxNumber > 0 ? maxNumber : Const.defaultMaxNumber
         _logger.logFileManager.logFilesDiskQuota = filesDiskQuota > 0 ? filesDiskQuota : Const.defaultFilesDiskQuota

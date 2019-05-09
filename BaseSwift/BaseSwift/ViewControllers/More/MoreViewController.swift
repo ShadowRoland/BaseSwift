@@ -88,11 +88,12 @@ class MoreViewController: BaseViewController {
     
     func initView() {
         let freshHeader = SRMJRefreshHeader(refreshingBlock: { [weak self] in
+            guard let strongSelf = self else { return }
             if ProfileManager.isLogin {
-                self?.getProfile()
+                strongSelf.getProfile()
             } else {
-                self?.tableView.mj_header.endRefreshing()
-                self?.presentLoginVC()
+                strongSelf.tableView.mj_header.endRefreshing()
+                strongSelf.presentLoginVC()
             }
         })
         freshHeader.stateLabel.isHidden = true

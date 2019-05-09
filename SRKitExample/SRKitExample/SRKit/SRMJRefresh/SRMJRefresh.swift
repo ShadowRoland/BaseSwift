@@ -39,13 +39,24 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
     lazy var stateGifs: [MJRefreshState : UIImage.SRGif] = [:]
     
     public init(refreshingBlock: MJRefresh.MJRefreshComponentRefreshingBlock!,
-                gif: UIImage.SRGif? = defaultGif) {
+                gif: UIImage.SRGif? = nil) {
         super.init(frame: CGRect())
         self.refreshingBlock = refreshingBlock
         setTitle("MJRefreshHeaderIdleText".srLocalized, for: .idle)
         setTitle("MJRefreshHeaderPullingText".srLocalized, for: .pulling)
         setTitle("MJRefreshHeaderRefreshingText".srLocalized, for: .refreshing)
-        self.gif = gif
+        if SRMJRefreshHeader.defaultGif == nil {
+            var gif = UIImage.SRGif()
+            gif.images = (0 ..< 30).compactMap { UIImage.srNamed("sr_refresh_header_\($0)") }
+            gif.imageSize = CGSize(65.0, 80.0)
+            gif.duration = Double(gif.images!.count) * 0.05
+            SRMJRefreshHeader.defaultGif = gif
+        }
+        if let gif = gif {
+            self.gif = gif
+        } else {
+            self.gif = SRMJRefreshHeader.defaultGif
+        }
     }
     
     required public init?(coder aDecoder: NSCoder) {

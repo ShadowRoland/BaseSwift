@@ -162,8 +162,11 @@ SRTabHeaderDelegate {
         
         tabScrollHeader.titles = titles
         DispatchQueue.main.async { [weak self] in
-            self?.tabScrollHeader.layout()
-            self?.tabScrollHeader.activeTab((self?.tabScrollHeader.selectedIndex)!, animated: false)
+            if let strongSelf = self {
+                strongSelf.tabScrollHeader.layout()
+                strongSelf.tabScrollHeader.activeTab(strongSelf.tabScrollHeader.selectedIndex,
+                                                     animated: false)
+            }
         }
         
         //为加号添加渐变背景色
@@ -394,12 +397,14 @@ SRTabHeaderDelegate {
 //            self?.searchButton.isUserInteractionEnabled = false
 //        })
         UIView.animate(withDuration: Const.channelAnimationDuration, animations: { [weak self] in
-            self?.parentVC?.tabBarBottomConstraint.constant = -TabBarHeight
-            self?.parentVC?.view.layoutIfNeeded()
+            guard let strongSelf = self else { return }
             
-            self?.isEditViewAnimating = false
-            self?.searchHeaderView.addGestureRecognizer((self?.searchHeaderGr)!)
-            self?.searchButton.isUserInteractionEnabled = false
+            strongSelf.parentVC?.tabBarBottomConstraint.constant = -TabBarHeight
+            strongSelf.parentVC?.view.layoutIfNeeded()
+            
+            strongSelf.isEditViewAnimating = false
+            strongSelf.searchHeaderView.addGestureRecognizer(strongSelf.searchHeaderGr)
+            strongSelf.searchButton.isUserInteractionEnabled = false
         })
     }
     
@@ -461,16 +466,20 @@ SRTabHeaderDelegate {
         tabAddButton.animationTransform(to: .plus)
         let frame = channelEditView.frame.offsetBy(dx: 0, dy: -channelEditView.height)
         UIView.animate(withDuration: Const.channelAnimationDuration, animations: { [weak self] in
-            self?.channelEditView.frame = frame
-            self?.channelEditBackgroundView.alpha = 0
-            self?.parentVC?.tabBarBottomConstraint.constant = 0
-            self?.parentVC?.view.layoutIfNeeded()
+            guard let strongSelf = self else { return }
+            
+            strongSelf.channelEditView.frame = frame
+            strongSelf.channelEditBackgroundView.alpha = 0
+            strongSelf.parentVC?.tabBarBottomConstraint.constant = 0
+            strongSelf.parentVC?.view.layoutIfNeeded()
             }, completion: { [weak self] finished in
-                self?.isEditViewAnimating = false
-                self?.channelEditView.removeFromSuperview()
-                self?.channelEditBackgroundView.removeFromSuperview()
-                self?.searchButton.isUserInteractionEnabled = true
-                self?.searchHeaderView.removeGestureRecognizer((self?.searchHeaderGr)!)
+                guard finished, let strongSelf = self else { return }
+                
+                strongSelf.isEditViewAnimating = false
+                strongSelf.channelEditView.removeFromSuperview()
+                strongSelf.channelEditBackgroundView.removeFromSuperview()
+                strongSelf.searchButton.isUserInteractionEnabled = true
+                strongSelf.searchHeaderView.removeGestureRecognizer(strongSelf.searchHeaderGr)
         })
     }
     
@@ -554,7 +563,7 @@ SRTabHeaderDelegate {
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
-                currentNewsListVC?.loadData(.new, progressType: .clearMask)
+                currentNewsListVC?.loadData(progressType: .clearMask)
             }
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
@@ -565,8 +574,7 @@ SRTabHeaderDelegate {
                 currentNewsListVC = newsListVCs[index]
                 if !(currentNewsListVC?.isTouched)! {
                     DispatchQueue.main.async { [weak self] in
-                        self?.currentNewsListVC?.loadData(.new,
-                                                          progressType: .clearMask)
+                        self?.currentNewsListVC?.loadData(progressType: .clearMask)
                     }
                 }
             }
@@ -609,7 +617,7 @@ SRTabHeaderDelegate {
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
             DispatchQueue.main.async { [weak self] in
-                self?.currentNewsListVC?.loadData(.new, progressType: .clearMask)
+                self?.currentNewsListVC?.loadData(progressType: .clearMask)
             }
         }
         isSilent = false

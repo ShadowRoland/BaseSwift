@@ -25,6 +25,13 @@ public class Env: BaseModel {
     
     private override init() {
         super.init()
+        #if PRODUCTION
+        Environment = .production
+        #elseif TEST
+        Environment = .test
+        #else
+        Environment = .develop
+        #endif
     }
     
     required public init?(map: ObjectMapper.Map) { super.init() }
@@ -44,12 +51,14 @@ public class Env: BaseModel {
             current >= 0,
             let envs = local["envs"] as? [ParamDictionary],
             current < envs.count else {
+                BaseHttpURL = sharedInstance!.apiBaseUrl
                 return
         }
         
         print(envs[current])
         sharedInstance = Env(JSON: envs[current])
         sharedInstance?.isProduction = false
+        BaseHttpURL = sharedInstance!.apiBaseUrl
     }
     
     public static var local: ParamDictionary? {
@@ -70,7 +79,7 @@ public class Env: BaseModel {
         
         set {
             guard let local = local else {
-                 UserStandard[USKey.env] = nil
+                UserStandard[USKey.env] = nil
                 return
             }
             UserStandard[USKey.env] = local

@@ -163,7 +163,7 @@ class NewsSecondaryViewController: BaseViewController {
         tabHeader.activeTab(index, animated: true)
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
-            currentNewsListVC?.loadData(.new, progressType: .clearMask)
+            currentNewsListVC?.loadData(progressType: .clearMask)
         }
         isSilent = false
     }
@@ -177,7 +177,7 @@ extension NewsSecondaryViewController: SRTabHeaderDelegate {
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
-                currentNewsListVC?.loadData(.new, progressType: .clearMask)
+                currentNewsListVC?.loadData(progressType: .clearMask)
             }
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
@@ -187,7 +187,7 @@ extension NewsSecondaryViewController: SRTabHeaderDelegate {
             if !animated {
                 currentNewsListVC = newsListVCs[index]
                 if !(currentNewsListVC?.isTouched)! {
-                    currentNewsListVC?.loadData(.new, progressType: .clearMask)
+                    currentNewsListVC?.loadData(progressType: .clearMask)
                 }
             }
         }

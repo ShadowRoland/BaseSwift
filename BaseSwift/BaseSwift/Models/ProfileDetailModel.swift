@@ -28,8 +28,8 @@ class ProfileDetailModel: ProfileModel {
     var waistline: Double? //腰围
     var hipline: Double? //胸围
     var annualIncome: Double? //年收入
-    var sexualOrientation: IntForBool? //性取向
-    var transvestism: IntForBool = .True //是否有异(女)装癖
+    var sexualOrientation: Int? //性取向
+    var transvestism: Int = 0 //是否有异(女)装癖
     var tofuCurdTaste: Taste? //豆腐脑口味
     var loveGames: [Int]? //沉迷游戏
     var stayWebs: [Int]? //常驻网站
