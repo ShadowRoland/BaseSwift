@@ -91,22 +91,24 @@ extension UIViewController {
         }
     }
     
+    @discardableResult
     public func show(_ identifier: String,
                      storyboard: String,
                      animated: Bool = true,
                      params: ParamDictionary? = nil,
-                     event: Event? = nil) {
-        show(UIViewController.viewController(identifier, storyboard: storyboard),
-             animated: animated,
-             params: params,
-             event: event)
+                     event: Event? = nil) -> UIViewController? {
+        return show(UIViewController.viewController(identifier, storyboard: storyboard),
+                    animated: animated,
+                    params: params,
+                    event: event)
     }
     
+    @discardableResult
     public func show(_ viewController: UIViewController?,
                      animated: Bool = true,
                      params: ParamDictionary? = nil,
-                     event: Event? = nil) {
-        guard let viewController = viewController, navigationController != nil else { return }
+                     event: Event? = nil) -> UIViewController? {
+        guard let viewController = viewController, navigationController != nil else { return nil }
         if let params = params {
             viewController.params = params
         }
@@ -117,6 +119,7 @@ extension UIViewController {
         Keyboard.hide { [weak self] in
             self?.navigationController?.pushViewController(viewController, animated: animated)
         }
+        return viewController
     }
     
     public func popBack(_ animated: Bool = true) {

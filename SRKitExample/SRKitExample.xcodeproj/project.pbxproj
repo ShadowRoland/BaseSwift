@@ -308,7 +308,6 @@
 		4E75755A2264510800394408 /* SRKitExample */ = {
 			isa = PBXGroup;
 			children = (
-				4E75756D2264512F00394408 /* SRKit */,
 				4E75755B2264510800394408 /* AppDelegate.swift */,
 				4E75755D2264510800394408 /* ViewController.swift */,
 				4EACFFE12282C10700F563FD /* SRViewController.swift */,
@@ -541,6 +540,7 @@
 		4E7576122264525800394408 /* SRKit */ = {
 			isa = PBXGroup;
 			children = (
+				4E75756D2264512F00394408 /* SRKit */,
 				4E7576142264525800394408 /* Info.plist */,
 			);
 			path = SRKit;
