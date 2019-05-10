@@ -15,6 +15,6 @@ class SRViewController: SRBaseViewController {
 
         // Do any additional setup after loading the view.
         setDefaultNavigationBar("Base")
-        view.backgroundColor = UIColor.white
+        pageBackGestureStyle = .edge
     }
 }

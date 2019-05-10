@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIViewController {
-    public class SRBaseBusinessComponent: NSObject {
+    public class SRBaseBusinessComponent: NSObject, UIGestureRecognizerDelegate {
         public weak var decorator: UIViewController?
         
         public lazy var navigationBarBackgroundView: UIView = {
@@ -114,17 +114,15 @@ extension UIViewController {
                     if let vc = decorator?.navigationController as? SRNavigationController {
                         vc.isPageSwipeEnabled = true
                     }
-                } else {
-                    if let vc = decorator?.navigationController as? SRNavigationController {
-                        vc.isPageSwipeEnabled = false
-                        if pageBackGestureStyle.contains(.edge) {
-                            vc.interactivePopGestureRecognizer?.isEnabled = true
-                            vc.interactivePopGestureRecognizer?.delegate =
-                                decorator as? UIGestureRecognizerDelegate
-                        } else {
-                            vc.interactivePopGestureRecognizer?.isEnabled = false
-                        }
-                    }
+                //} else {
+                //    if let vc = decorator?.navigationController as? SRNavigationController {
+                //        vc.isPageSwipeEnabled = false
+                //        if pageBackGestureStyle.contains(.edge) {
+                //            vc.interactivePopGestureRecognizer?.isEnabled = true
+                //        } else {
+                //            vc.interactivePopGestureRecognizer?.isEnabled = false
+                //        }
+                //    }
                 }
             }
         }

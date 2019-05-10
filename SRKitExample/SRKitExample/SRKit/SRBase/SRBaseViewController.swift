@@ -33,19 +33,27 @@ DTAttributedTextContentViewDelegate {
         
         //MARK: - Selector
         @objc func contentSizeCategoryDidChange() {
-            viewController?.contentSizeCategoryDidChange()
+            DispatchQueue.main.async { [weak self] in
+                self?.viewController?.contentSizeCategoryDidChange()
+            }
         }
         
         @objc func deviceOrientationDidChange(_ sender: AnyObject?) {
-            viewController?.deviceOrientationDidChange(sender)
+            DispatchQueue.main.async { [weak self] in
+                self?.viewController?.deviceOrientationDidChange(sender)
+            }
         }
         
         @objc func clickNavigationBarLeftButton(_ button: UIButton) {
-            viewController?.clickNavigationBarLeftButton(button)
+            DispatchQueue.main.async { [weak self] in
+                self?.viewController?.clickNavigationBarLeftButton(button)
+            }
         }
         
         @objc func clickNavigationBarRightButton(_ button: UIButton) {
-            viewController?.clickNavigationBarRightButton(button)
+            DispatchQueue.main.async { [weak self] in
+                self?.viewController?.clickNavigationBarRightButton(button)
+            }
         }
         
         //在程序运行中收到指令，基本都可以通过走状态机实现
@@ -132,10 +140,10 @@ DTAttributedTextContentViewDelegate {
             SRKeyboardManager.shared.viewController = self
             
             component.isNavigationBarButtonsActive = true
-            let style = component.pageBackGestureStyle
-            component.pageBackGestureStyle = style
-            let enabled = component.isPageLongPressEnabled
-            component.isPageLongPressEnabled = enabled
+            //let style = component.pageBackGestureStyle
+            //component.pageBackGestureStyle = style
+            //let enabled = component.isPageLongPressEnabled
+            //component.isPageLongPressEnabled = enabled
         }
         
         if !component.isViewDidAppear {

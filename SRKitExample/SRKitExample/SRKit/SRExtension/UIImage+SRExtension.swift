@@ -219,31 +219,10 @@ extension UIImage {
 }
 
 extension UIImage {
-    static var srBundle: Bundle!
     class func srNamed(_ name: String) -> UIImage? {
-        if let image = UIImage(named: name, in: Bundle.main, compatibleWith: nil) {
+        if let image = UIImage(named: name, in: Bundle.srUser, compatibleWith: nil) {
             return image
         }
-        
-        if UIImage.srBundle == nil {
-            UIImage.srBundle = Bundle(path: Bundle.sr.bundlePath.appending(pathComponent: "images"))
-        }
-        
-        if name.hasSuffix(".png") || name.hasSuffix(".jpg"),
-            let file = UIImage.srBundle.path(forResource: name, ofType: nil) {
-            return UIImage(contentsOfFile: file)
-        }
-        
-        if let file = UIImage.srBundle.path(forResource: name, ofType: "png"),
-            let image = UIImage(contentsOfFile: file) {
-            return image
-        }
-        
-        if let file = UIImage.srBundle.path(forResource: name, ofType: "jpg"),
-            let image = UIImage(contentsOfFile: file) {
-            return image
-        }
-        
-        return nil
+        return UIImage(named: name, in: Bundle.sr, compatibleWith: nil)
     }
 }

@@ -188,6 +188,10 @@ public var MutexTouch: Bool {
     return UIView.MutexTouchClass.shared.startTouchHandling()
 }
 
+public func MutexTouch(_ interval: TimeInterval) -> Bool {
+    return UIView.MutexTouchClass.shared.startTouchHandling(interval)
+}
+
 extension UIView {
     class MutexTouchClass: NSObject {
         class var shared: MutexTouchClass {
@@ -219,25 +223,20 @@ extension UIView {
             }
         }
         
-        private var touchHandling = false
-        private var touchHandleTimer: Timer?
+        private var isTouchHandling = false
         
-        func startTouchHandling() -> Bool {
-            guard !touchHandling else { return false }
-            
-            touchHandling = true
-            touchHandleTimer?.invalidate()
-            touchHandleTimer =
-                Timer.scheduledTimer(timeInterval: 0.2,
-                                     target: self,
-                                     selector: #selector(resetTouchHandling),
-                                     userInfo: nil,
-                                     repeats: false)
+        func startTouchHandling(_ interval: TimeInterval = 0.3) -> Bool {
+            guard !isTouchHandling else { return false }
+            isTouchHandling = true
+            perform(#selector(resetTouchHandling),
+                    with: nil,
+                    afterDelay: interval,
+                    inModes: [.common])
             return true
         }
         
         @objc func resetTouchHandling() {
-            touchHandling = false
+            isTouchHandling = false
         }
     }
     

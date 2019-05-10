@@ -13,6 +13,11 @@ import Alamofire
 import KeychainSwift
 
 public class SRBase {
+    private static let shared = SRBase()
+    private init() {
+        LogInfo("\(ScreenScale)")
+    }
+    
     public static let newActionNotification = Notification.Name(rawValue: "SRBase.newAction")
     public static let didEndStateMachinePageEventNotification = Notification.Name("SRBase.didEndStateMachinePageEvent") //FIXME: FOR DEBUG，跨页面的通知
 }

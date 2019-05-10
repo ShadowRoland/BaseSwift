@@ -11,9 +11,7 @@ import UIKit
 import REMenu
 import SwiftyJSON
 
-public class SRNavigationController: UINavigationController,
-    UIGestureRecognizerDelegate,
-UINavigationBarDelegate {
+public class SRNavigationController: UINavigationController, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     public var isPageSwipeEnabled = false {
         didSet {
             if isPageSwipeEnabled != oldValue {
@@ -92,14 +90,16 @@ UINavigationBarDelegate {
         debugMenu.items = items
     }
     
-    override public func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     @objc func handleLongPressed() {
         guard !debugMenu.isOpen && !debugMenu.isAnimating else { return }
         debugMenu.show(from: UIApplication.shared.keyWindow!.bounds,
                        in: UIApplication.shared.keyWindow)
+    }
+    
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+        self.delegate = self
+        interactivePopGestureRecognizer?.delegate = self
     }
     
     //MARK: - Orientations
@@ -129,5 +129,25 @@ UINavigationBarDelegate {
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         return topViewController?.preferredStatusBarStyle ?? .default
+    }
+    
+    //MARK: - UIGestureRecognizerDelegate
+    
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer === interactivePopGestureRecognizer  {
+            if let topViewController = topViewController {
+                return topViewController.pageBackGestureStyle.contains(.edge)
+            }
+        }
+        return true
+    }
+    
+    //MARK: - UINavigationControllerDelegate
+    
+    public func navigationController(_ navigationController: UINavigationController,
+                              didShow viewController: UIViewController,
+                              animated: Bool) {
+        isPageSwipeEnabled = viewController.pageBackGestureStyle.contains(.page)
+        isPageLongPressEnabled = viewController.isPageLongPressEnabled
     }
 }

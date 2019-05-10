@@ -453,7 +453,6 @@ public extension String {
 
 public extension String {
     var localized: String {
-        //return NSLocalizedString(self, comment:"")
         return Bundle.main.localizedString(forKey: self, value: nil, table: "Localizable")
     }
 }
@@ -476,10 +475,10 @@ extension String {
             }
             String.srBundle = Bundle(path: Bundle.sr.path(forResource: language, ofType: "lproj")!)
         }
-        return Bundle.main.localizedString(forKey: self,
-                                           value: String.srBundle.localizedString(forKey: self,
-                                                                                  value: nil,
-                                                                                  table: ""),
-                                           table: "")
+        return Bundle.srUser.localizedString(forKey: self,
+                                             value: String.srBundle.localizedString(forKey: self,
+                                                                                    value: nil,
+                                                                                    table: ""),
+                                             table: "")
     }
 }
