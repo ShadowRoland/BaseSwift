@@ -70,3 +70,4 @@ fastlane/test_output
 SRKitExample/SRKitExample.xcodeproj/xcshareddata
 BaseSwift/BaseSwift/Utilities/SRKit.framework
 SRKitExample/SRKitExample/SRKit/SRKit.bundle/*
+SRKitExample/SRKit/SRKit.bundle
