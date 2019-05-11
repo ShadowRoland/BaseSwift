@@ -271,7 +271,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let event = self.event {
             Common.events = [event]
             DispatchQueue.main.async {
-                NotifyDefault.post(SRBase.newActionNotification)
+                NotifyDefault.post(SRKit.newActionNotification)
             }
         }
     }

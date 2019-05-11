@@ -58,4 +58,30 @@ public class SRModalViewController: SRNavigationController {
         }
         return true
     }
+    
+    //MARK: - UIGestureRecognizerDelegate
+    
+    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer === interactivePopGestureRecognizer  {
+            if let topViewController = topViewController, topViewController.isModalRootViewController {
+                return false
+            }
+        }
+        return super.gestureRecognizerShouldBegin(gestureRecognizer)
+    }
+    
+    //MARK: - UINavigationControllerDelegate
+    
+    public override func navigationController(_ navigationController: UINavigationController,
+                                              didShow viewController: UIViewController,
+                                              animated: Bool) {
+        if viewController.isModalRootViewController {
+            isPageSwipeEnabled = false
+            isPageLongPressEnabled = viewController.isPageLongPressEnabled
+        } else {
+            super.navigationController(navigationController,
+                                       didShow: viewController,
+                                       animated: animated)
+        }
+    }
 }

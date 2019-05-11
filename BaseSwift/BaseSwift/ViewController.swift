@@ -26,7 +26,7 @@ class ViewController: BaseViewController {
         
         if UserStandard[USKey.showAdvertisingGuide] != nil {
             UserStandard[USKey.showAdvertisingGuide] = nil
-            stateMachine.append(SRKit.Event(.showAdvertisingGuard))
+            stateMachine.append(Event(.showAdvertisingGuard))
         }
         
         //启动程序检查并执行可以执行的option

@@ -151,7 +151,7 @@ extension UIViewController {
         
         //MARK: Event
         
-        fileprivate var event: Event? = nil
+        fileprivate var event: SRKit.Event? = nil
         
         //MARK: 3D Touch
         
@@ -189,7 +189,7 @@ public extension UIViewController {
         return baseBusinessComponent.stateMachine
     }
     
-    var event: Event? {
+    var event: SRKit.Event? {
         get {
             return baseBusinessComponent.event
         }
@@ -318,7 +318,7 @@ extension UIViewController {
                      storyboard: String,
                      animated: Bool = true,
                      params: ParamDictionary? = nil,
-                     event: Event? = nil) -> UIViewController? {
+                     event: SRKit.Event? = nil) -> UIViewController? {
         return show(UIViewController.viewController(identifier, storyboard: storyboard),
                     animated: animated,
                     params: params,
@@ -329,7 +329,7 @@ extension UIViewController {
     public func show(_ viewController: UIViewController?,
                      animated: Bool = true,
                      params: ParamDictionary? = nil,
-                     event: Event? = nil) -> UIViewController? {
+                     event: SRKit.Event? = nil) -> UIViewController? {
         guard let viewController = viewController, navigationController != nil else { return nil }
         if let params = params {
             viewController.params = params
@@ -340,6 +340,42 @@ extension UIViewController {
         }
         Keyboard.hide { [weak self] in
             self?.navigationController?.pushViewController(viewController, animated: animated)
+        }
+        return viewController
+    }
+    
+    @discardableResult
+    public func modal(_ identifier: String,
+                      storyboard: String,
+                      animated: Bool = true,
+                      params: ParamDictionary? = nil,
+                      event: SRKit.Event? = nil,
+                      completion: (() -> Void)? = nil) -> UIViewController? {
+        return modal(UIViewController.viewController(identifier, storyboard: storyboard),
+                     animated: animated,
+                     params: params,
+                     event: event,
+                     completion: completion)
+    }
+    
+    @discardableResult
+    public func modal(_ viewController: UIViewController?,
+                      animated: Bool = true,
+                      params: ParamDictionary? = nil,
+                      event: SRKit.Event? = nil,
+                      completion: (() -> Void)? = nil) -> UIViewController? {
+        guard let viewController = viewController else { return nil }
+        if let params = params {
+            viewController.params = params
+        }
+        if let event = event {
+            viewController.event = event
+            viewController.event?.sender = self
+        }
+        Keyboard.hide { [weak self] in
+            self?.present(SRModalViewController.standard(viewController),
+                          animated: animated,
+                          completion: completion)
         }
         return viewController
     }

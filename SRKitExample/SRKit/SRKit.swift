@@ -249,17 +249,17 @@ public var canAuthenticateToLogin: Bool {
 //MARK: - 存储在UserDefault中的数据Key
 
 public struct USKey {
-    public static let appIsFirstRun                  = "AppIsFirstRun"
-    public static let baseHttpURL                    = "baseHttpURL"
-    public static let currentUserInfo                = "CurrentUserInfo"
-    public static let currentDeviceToken             = "CurrentDeviceToken"
-    public static let currentToken                   = "CurrentToken"
-    public static let currentUserId                  = "CurrentUserId"
-    public static let currentLoginPassword           = "CurrentLoginPassword"
-    public static let dbVersion                      = "DBVersion"
-    public static let isFreeInterfaceOrientations    = "isFreeInterfaceOrientations"
-    public static let isAllowShowImageInWLAN         = "isAllowShowImageInWLAN"
-    public static let forbidAuthenticateToLogin      = "forbidAuthenticateToLogin"
+    public static let appIsFirstRun                  = "SRKit.USKey.appIsFirstRun"
+    public static let baseHttpURL                    = "SRKit.USKey.baseHttpURL"
+    public static let currentUserInfo                = "SRKit.USKey.currentUserInfo"
+    public static let currentDeviceToken             = "SRKit.USKey.currentDeviceToken"
+    public static let currentToken                   = "SRKit.USKey.currentToken"
+    public static let currentUserId                  = "SRKit.USKey.currentUserId"
+    public static let currentLoginPassword           = "SRKit.USKey.currentLoginPassword"
+    public static let dbVersion                      = "SRKit.USKey.dbVersion"
+    public static let isFreeInterfaceOrientations    = "SRKit.USKey.isFreeInterfaceOrientations"
+    public static let isAllowShowImageInWLAN         = "SRKit.USKey.isAllowShowImageInWLAN"
+    public static let forbidAuthenticateToLogin      = "SRKit.USKey.forbidAuthenticateToLogin"
 }
 
 //MARK: - 常用的常量值
@@ -267,7 +267,7 @@ public struct USKey {
 public var PerformDelay = 0.1 as TimeInterval
 public var DelayPerformForOldDevice = 0.5 as TimeInterval
 public var ViewControllerTransitionInterval = 0.3 as TimeInterval //视图切换动画
-public var ReuseIdentifier = "reuseIdentifier"
+public var ReuseIdentifier = "SRKit.reuseIdentifier"
 public var AppCallUrlSchemeKey = "scheme"
 //var Description = "description"
 public var HtmlTextFormat = "<span style=\"font-family: sans-serif;font-size: 15px;margin: 0;padding: 0\">%@</span>"
@@ -374,9 +374,9 @@ public class NavigationBar {
          .textColor: "",
          .image: "",
          //.highlightedImage: "",
-         //.backgroundImage: "",
-         //.highlightedBackgroundImage: "",
-         .customView: ""]
+            //.backgroundImage: "",
+            //.highlightedBackgroundImage: "",
+            .customView: ""]
     
     public struct ButtonItemKey : RawRepresentable, Hashable {
         public typealias RawValue = String
@@ -390,15 +390,15 @@ public class NavigationBar {
             self.rawValue = rawValue
         }
         
-        public static let style = ButtonItemKey("style") //用于在Setting中的key，不可为空
-        public static let title = ButtonItemKey("title") //按钮标题，内容为String类型，在样式为text和textAndImage时有效，不可为空
-        public static let font = ButtonItemKey("font") //按钮标题字体，内容为UIFont类型，在样式为text和textAndImage时有效，可为空
-        public static let textColor = ButtonItemKey("textColor") //按钮标题颜色，内容为UIColor类型，在样式为text和textAndImage时有效，可为空
-        public static let image = ButtonItemKey("normal.image") //按钮图片，内容为UIImage类型, 在样式为image时有效，其中normal不能为空，highlighted可为空
+        public static let style = ButtonItemKey("SRKit.style") //用于在Setting中的key，不可为空
+        public static let title = ButtonItemKey("SRKit.title") //按钮标题，内容为String类型，在样式为text和textAndImage时有效，不可为空
+        public static let font = ButtonItemKey("SRKit.font") //按钮标题字体，内容为UIFont类型，在样式为text和textAndImage时有效，可为空
+        public static let textColor = ButtonItemKey("SRKit.textColor") //按钮标题颜色，内容为UIColor类型，在样式为text和textAndImage时有效，可为空
+        public static let image = ButtonItemKey("SRKit.normal.image") //按钮图片，内容为UIImage类型, 在样式为image时有效，其中normal不能为空，highlighted可为空
         //static let highlightedImage = ButtonItemKey("highlighted.image")
         //static let backgroundImage = ButtonItemKey("normal.backgroundImage") //按钮背景图片，内容为UIImage类型, 在样式为textAndImage时有效，其中normal不能为空，highlighted可为空
         //static let highlightedBackgroundImage = ButtonItemKey("highlighted.backgroundImage")
-        public static let customView = ButtonItemKey("customView") //自定义的视图，内容为UIView类型，在样式为custom有效，不可为空
+        public static let customView = ButtonItemKey("SRKit.customView") //自定义的视图，内容为UIView类型，在样式为custom有效，不可为空
     }
     
     public class func buttonItem(_ setting: [ButtonItemKey : Any],
@@ -465,9 +465,9 @@ public class NavigationBar {
 //提交按钮的样式
 public class SubmitButton {
     public static var frame                        = CGRect(0,
-                                                     0,
-                                                     ScreenWidth - SubviewMargin,
-                                                     TableCellHeight) //默认尺寸
+                                                            0,
+                                                            ScreenWidth - SubviewMargin,
+                                                            TableCellHeight) //默认尺寸
     public static var cornerRadius                 = 5.0 as CGFloat //圆角
     public static var backgroundColorNormal        = UIColor(0, 191.0, 255.0) //提交按钮正常状态的颜色
     public static var backgroundColorHighlighted   = UIColor(175.0, 238.0, 238.0) //提交按钮高亮状态的颜色
@@ -519,67 +519,68 @@ public class Param {
 }
 
 //MARK: - Event
-
-public class Event: Equatable, CustomStringConvertible, CustomDebugStringConvertible {
-    public var option: Option
-    public var params: ParamDictionary?
-    public weak var sender: AnyObject?
-    public init(_ option: Option, params: ParamDictionary? = nil, sender: AnyObject? = nil) {
-        self.option = option
-        self.params = params
-        self.sender = sender
-    }
-    
-    public static func == (lhs: Event, rhs: Event) -> Bool {
-        return lhs.option == rhs.option
-    }
-    
-    public var description: String {
-        return "option: \(option.rawValue), params: \(String(jsonObject: params)), sender: \(String(describing: sender))"
-    }
-    
-    public var debugDescription: String {
-        return description
-    }
-
-    // 根据外部的调用参数（推送，第三方应用，peek & pop）返回的应用内部事件，以及内部定义的d独有事件
-    public struct Option : RawRepresentable, Hashable {
-        public typealias RawValue = Int
-        public var rawValue: Int
-        
-        public init(_ rawValue: Int) {
-            self.rawValue = rawValue
-        }
-        
-        public init(rawValue: Int) {
-            self.rawValue = rawValue
-        }
-        
-        public static func == (lhs: Option, rhs: Option) -> Bool {
-            return lhs.rawValue == rhs.rawValue
-        }
-    }
-    
-    // 系统应用、第三方应用、推送通知等调用本应用时的操作
-    public struct Action : RawRepresentable, Hashable {
-        public typealias RawValue = String
-        public var rawValue: String
-        public var option: Option?
-        
-        public init(_ rawValue: String) {
-            self.rawValue = rawValue
-        }
-        public init(rawValue: String) {
-            self.rawValue = rawValue
-        }
-        
-        public init(_ rawValue: String, option: Option) {
-            self.rawValue = rawValue
+extension SRKit {
+    public class Event: Equatable, CustomStringConvertible, CustomDebugStringConvertible {
+        public var option: Option
+        public var params: ParamDictionary?
+        public weak var sender: AnyObject?
+        public init(_ option: Option, params: ParamDictionary? = nil, sender: AnyObject? = nil) {
             self.option = option
+            self.params = params
+            self.sender = sender
         }
         
-        public static func ==(lhs: Action, rhs: Action) -> Bool {
-            return lhs.rawValue == rhs.rawValue
+        public static func == (lhs: Event, rhs: Event) -> Bool {
+            return lhs.option == rhs.option
+        }
+        
+        public var description: String {
+            return "option: \(option.rawValue), params: \(String(jsonObject: params)), sender: \(String(describing: sender))"
+        }
+        
+        public var debugDescription: String {
+            return description
+        }
+        
+        // 根据外部的调用参数（推送，第三方应用，peek & pop）返回的应用内部事件，以及内部定义的d独有事件
+        public struct Option : RawRepresentable, Hashable {
+            public typealias RawValue = Int
+            public var rawValue: Int
+            
+            public init(_ rawValue: Int) {
+                self.rawValue = rawValue
+            }
+            
+            public init(rawValue: Int) {
+                self.rawValue = rawValue
+            }
+            
+            public static func == (lhs: Option, rhs: Option) -> Bool {
+                return lhs.rawValue == rhs.rawValue
+            }
+        }
+        
+        // 系统应用、第三方应用、推送通知等调用本应用时的操作
+        public struct Action : RawRepresentable, Hashable {
+            public typealias RawValue = String
+            public var rawValue: String
+            public var option: Option?
+            
+            public init(_ rawValue: String) {
+                self.rawValue = rawValue
+            }
+            public init(rawValue: String) {
+                self.rawValue = rawValue
+            }
+            
+            public init(_ rawValue: String, option: Option) {
+                self.rawValue = rawValue
+                self.option = option
+            }
+            
+            public static func ==(lhs: Action, rhs: Action) -> Bool {
+                return lhs.rawValue == rhs.rawValue
+            }
         }
     }
 }

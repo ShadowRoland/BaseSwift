@@ -58,7 +58,7 @@ DTAttributedTextContentViewDelegate {
         
         //在程序运行中收到指令，基本都可以通过走状态机实现
         @objc func newAction(_ notification: Notification) {
-            if let event = notification.object as? Event,
+            if let event = notification.object as? SRKit.Event,
                 let viewController = viewController {
                 viewController.stateMachine.append(event)
             }
@@ -67,7 +67,7 @@ DTAttributedTextContentViewDelegate {
         //FIXME: FOR DEBUG，由self push的WebpageViewController完成加载后会发出通知，触发状态机的完成事件
         //TODO: 此处若是其他程序调用而启动本应用（如在本应用被杀死的状态下点击退送消息），似乎会收不到该通知，等待解决
         @objc func didEndStateMachinePageEvent(_ notification: Notification) {
-            if let event = notification.object as? Event,
+            if let event = notification.object as? SRKit.Event,
                 let viewController = viewController,
                 viewController === event.sender {
                 viewController.stateMachine(viewController.stateMachine, didEnd: event)
@@ -224,7 +224,7 @@ DTAttributedTextContentViewDelegate {
     }
     
     open func didEndStateMachineEvent(_ notification: Notification) {
-        if let event = notification.object as? Event, self === event.sender {
+        if let event = notification.object as? SRKit.Event, self === event.sender {
             stateMachine.end(event)
         }
     }
@@ -634,11 +634,11 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: SRStateMachineDelegate
     
-    open func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) {
+    open func stateMachine(_ stateMachine: SRStateMachine, didFire event: SRKit.Event) {
         
     }
     
-    open func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Event) {
+    open func stateMachine(_ stateMachine: SRStateMachine, didEnd event: SRKit.Event) {
         
     }
 }
