@@ -756,13 +756,13 @@
 		4EABAEFB1FF61EE70007CCA7 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				4EABAF001FF61EE70007CCA7 /* LoginViewController.swift */,
-				4EABAF031FF61EE70007CCA7 /* RegisterViewController.swift */,
 				4EABAF021FF61EE70007CCA7 /* ForgetPasswordViewController的.swift */,
+				4EABAF001FF61EE70007CCA7 /* LoginViewController.swift */,
+				4EABAEFC1FF61EE70007CCA7 /* ProfileDetailViewController.swift */,
+				4EABAF011FF61EE70007CCA7 /* ProfileViewController.swift */,
+				4EABAF031FF61EE70007CCA7 /* RegisterViewController.swift */,
 				4EABAEFF1FF61EE70007CCA7 /* ResetPasswordViewController.swift */,
 				4EABAEFE1FF61EE70007CCA7 /* SelectCountryCodeViewController.swift */,
-				4EABAF011FF61EE70007CCA7 /* ProfileViewController.swift */,
-				4EABAEFC1FF61EE70007CCA7 /* ProfileDetailViewController.swift */,
 				4EABAEFD1FF61EE70007CCA7 /* SettingViewController.swift */,
 			);
 			path = Profile;

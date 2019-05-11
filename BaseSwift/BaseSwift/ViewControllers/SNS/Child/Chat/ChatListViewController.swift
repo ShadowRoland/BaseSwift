@@ -74,7 +74,7 @@ class ChatListViewController: BaseViewController {
         
         var params = [:] as ParamDictionary
         params[Param.Key.limit] = TableLoadData.row
-        params[Param.Key.offset] = 1000
+        params[Param.Key.offset] = 0
         httpRequest(.get("data/getMessages", params), success:
             { [weak self] response in
                 self?.update(response as? JSON)

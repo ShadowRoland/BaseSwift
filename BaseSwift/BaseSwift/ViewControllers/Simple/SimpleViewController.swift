@@ -17,8 +17,7 @@ class SimpleViewController: BaseViewController {
 
         // Do any additional setup after loading the view.
         setDefaultNavigationBar("Single initialization request page".localized)
-        setNavigationBarRightButtonItems()
-        
+        navBarRightButtonSettings = [[.title : "List".localized]]
         getSimpleData()
         setLoadDataFail(.get("data/getSimpleData", nil)) { [weak self] in
             self?.getSimpleData()
@@ -35,13 +34,6 @@ class SimpleViewController: BaseViewController {
     }
     
     //MARK: - 视图初始化
-
-    func setNavigationBarRightButtonItems() {
-        var setting = NavigationBar.buttonFullSetting
-        setting[.style] = NavigationBar.ButtonItemStyle.text
-        setting[.title] = "List".localized
-        navBarRightButtonSettings = [setting]
-    }
     
     //MARK: - 业务处理
     

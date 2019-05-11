@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Ecv-jb-uQy">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Ecv-jb-uQy">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -60,6 +60,9 @@
                             <tabBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jYa-SW-sTG">
                                 <rect key="frame" x="0.0" y="618" width="375" height="49"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="49" id="HLh-nd-ESf"/>
+                                </constraints>
                                 <items>
                                     <tabBarItem systemItem="mostViewed" id="Rwi-nt-Diw"/>
                                     <tabBarItem tag="1" systemItem="contacts" id="2DH-MM-ef7"/>
@@ -90,6 +93,7 @@
                         <outlet property="findItem" destination="SfI-tD-qgM" id="M4S-v1-Ii8"/>
                         <outlet property="moreItem" destination="dnD-2R-Zq1" id="vwQ-1F-6Nt"/>
                         <outlet property="tabBar" destination="jYa-SW-sTG" id="svv-dw-Vgz"/>
+                        <outlet property="tabBarHeightConstraint" destination="HLh-nd-ESf" id="c44-Qi-LgA"/>
                         <segue destination="jn9-qu-BGO" kind="show" identifier="" id="IN9-AE-wAl"/>
                         <segue destination="Tek-oE-ZFJ" kind="show" identifier="" id="jF7-SI-snJ"/>
                         <segue destination="igq-4K-SE0" kind="show" identifier="" id="0jP-Fb-v3A"/>
@@ -97,7 +101,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oFh-yH-aXt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-203" y="137"/>
+            <point key="canvasLocation" x="79" y="136"/>
         </scene>
         <!--List-->
         <scene sceneID="b56-EC-123">

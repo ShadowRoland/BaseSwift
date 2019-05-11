@@ -357,7 +357,11 @@ extension RegisterViewController: UITableViewDelegate, UITableViewDataSource {
         guard MutexTouch else { return }
         
         if indexPath.section == 0 && indexPath.row == 0 {
-            performSegue(withIdentifier: "registerShowCountrySegue", sender: self)
+            let vc = show("SelectCountryCodeViewController", storyboard: "Profile") as! SelectCountryCodeViewController
+            vc.didSelectBlock = { [weak self] model in
+                self?.countryNameLabel.text = model.name
+                self?.countryCodeLabel.text = model.code
+            }
         }
     }
 }

@@ -99,12 +99,8 @@ class FindViewController: BaseViewController, FindCellDelegate {
         loadDataFailView.delegate = self
         
         refreshNewImageView = UIImageView(frame: Const.refreshNewFrameHidden)
-        var array = [] as [UIImage]
-        for i in 0 ..< 30 {
-            array.append(UIImage(named: "huaji_\(i)")!)
-        }
-        refreshNewImageView.animationImages = array
-        refreshNewImageView.animationDuration = 1.0
+        refreshNewImageView.animationImages = SRProgressHUD.defaultGif?.images
+        refreshNewImageView.animationDuration = SRProgressHUD.defaultGif!.duration
         refreshNewImageView.animationRepeatCount = 0
         refreshNewImageView.alpha = 0
         view.addSubview(refreshNewImageView)

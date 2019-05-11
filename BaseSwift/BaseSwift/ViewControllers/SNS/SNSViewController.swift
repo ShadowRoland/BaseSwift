@@ -11,6 +11,7 @@ import SRKit
 class SNSViewController: BaseViewController {
     @IBOutlet weak var childBackgroundView: UIView!
     @IBOutlet weak var tabBar: UITabBar!
+    @IBOutlet weak var tabBarHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var chatListItem: UITabBarItem!
     @IBOutlet weak var contactsItem: UITabBarItem!
     @IBOutlet weak var findItem: UITabBarItem!
@@ -54,11 +55,10 @@ class SNSViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        pageBackGestureStyle = .none
-        
         setNavigationBar()
-        navigationItem.leftBarButtonItem =
-            UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navBarLeftButtonSettings = [[.title : ""]]
+        pageBackGestureStyle = .none
+        tabBarHeightConstraint.constant = TabBarHeight
         tabBar.backgroundColor = UIColor.clear
         tabBar.isTranslucent = true
         
@@ -128,10 +128,8 @@ class SNSViewController: BaseViewController {
     
     func setNavigationBarRightButtonItems() {
         if currentChildVC === chatListVC {
-            var setting = NavigationBar.buttonFullSetting
-            setting[.style] = NavigationBar.ButtonItemStyle.image
-            setting[.image] = UIImage(named: "qr")
-            navBarRightButtonSettings = [setting]
+            navBarRightButtonSettings = [[.style : NavigationBar.ButtonItemStyle.image,
+                                          .image : UIImage("qr")!]]
         } else {
             navigationItem.rightBarButtonItems = nil
         }
@@ -181,6 +179,10 @@ class SNSViewController: BaseViewController {
     }
         
     //MARK: - 事件响应
+    
+    override func clickNavigationBarLeftButton(_ button: UIButton) {
+        
+    }
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }

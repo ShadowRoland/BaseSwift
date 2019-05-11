@@ -7,6 +7,7 @@
 //
 
 import SRKit
+import Cartography
 
 class NewsSecondaryViewController: BaseViewController {
     public weak var parentVC: NewsViewController? {
@@ -14,7 +15,13 @@ class NewsSecondaryViewController: BaseViewController {
             newsListVCs.forEach { $0.delegate = parentVC }
         }
     }
-    @IBOutlet weak var tabHeader: SRTabHeader!
+    @IBOutlet weak var tabHeaderView: UIView!
+    lazy var tabHeader: SRTabHeader = {
+        let tabHeader = SRTabHeader()
+        tabHeaderView.addSubview(tabHeader)
+        constrain(tabHeader) { $0.edges == inset($0.superview!.edges, 0) }
+        return tabHeader
+    }()
     @IBOutlet weak var scrollView: UIScrollView!
     
     var isSilent = false //scrollView左右滚动和停下时是否会触发tabHeader的事件

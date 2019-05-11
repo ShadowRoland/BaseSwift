@@ -15,3 +15,4 @@ NSLocationWhenInUseUsageDescription = "是否允许Swift基线使用定位？";
 NSMicrophoneUsageDescription        = "是否允许Swift基线使用你的麦克风？";
 NSPhotoLibraryUsageDescription      = "是否允许Swift基线访问你的相册？";
 NSRemindersUsageDescription         = "是否允许接收Swift基线的推送消息？";
+NSFaceIDUsageDescription            = "验证面容以进行登录";

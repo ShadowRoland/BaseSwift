@@ -27,8 +27,9 @@ class SimpleTableViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         setDefaultNavigationBar("List".localized)
+        navBarRightButtonSettings = [[.title : "Submit".localized]]
+        pageBackGestureStyle = .edge
         initView()
-        
         baseBusinessComponent.progressContainerView.progressMaskColor =
             UIColor.groupTableViewBackground
         showProgress(.opaque)
@@ -47,8 +48,6 @@ class SimpleTableViewController: BaseViewController {
     }
     
     func initView() {
-        setNavigationBarRightButtonItems()
-        
         tableView.backgroundColor = UIColor.groupTableViewBackground
         tableView.tableHeaderView = nil
         tableHeaderView.frame = CGRect(0, 0, screenSize().width, Const.headerImageHeight)
@@ -70,13 +69,6 @@ class SimpleTableViewController: BaseViewController {
         noDataView.backgroundColor = tableView.backgroundColor
         loadDataFailView.backgroundColor = tableView.backgroundColor
         loadDataFailView.delegate = self
-    }
-    
-    func setNavigationBarRightButtonItems() {
-        var setting = NavigationBar.buttonFullSetting
-        setting[.style] = NavigationBar.ButtonItemStyle.text
-        setting[.title] = "Submit".localized
-        navBarRightButtonSettings = [setting]
     }
     
     //MARK: - Autorotate Orientation

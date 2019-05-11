@@ -15,3 +15,4 @@ NSLocationWhenInUseUsageDescription = "Allow Base Swift to use your microphone?"
 NSMicrophoneUsageDescription        = "Allow Base Swift to access your media library?";
 NSPhotoLibraryUsageDescription      = "Allow Base Swift to use location?";
 NSRemindersUsageDescription         = "Allow this device to receive the push notification of Base Swift?";
+NSFaceIDUsageDescription            = "Login buy using your FaceId";

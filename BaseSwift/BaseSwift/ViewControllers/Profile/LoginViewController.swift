@@ -366,12 +366,12 @@ class LoginViewController: BaseViewController {
     
     @IBAction func clickForgetPasswordButton(_ sender: Any) {
         guard MutexTouch else { return }
-        performSegue(withIdentifier: "loginShowForgetPasswordSegue", sender: self)
+        show("ForgetPasswordViewController", storyboard: "Profile")
     }
     
     @IBAction func clickRegisterButton(_ sender: Any) {
         guard MutexTouch else { return }
-        performSegue(withIdentifier: "loginShowRegisterSegue", sender: self)
+        show("RegisterViewController", storyboard: "Profile")
     }
     
     @IBAction func clickSubmitButton(_ sender: Any) {

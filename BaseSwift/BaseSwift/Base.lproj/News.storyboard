@@ -390,7 +390,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="euN-3p-WZR">
                                 <rect key="frame" x="0.0" y="64" width="375" height="40"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Esi-OS-2yT" customClass="SRTabHeader" customModule="BaseSwift" customModuleProvider="target">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Esi-OS-2yT">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
@@ -421,7 +421,7 @@
                     </view>
                     <connections>
                         <outlet property="scrollView" destination="vaR-0k-ip7" id="x9F-Uk-XkN"/>
-                        <outlet property="tabHeader" destination="Esi-OS-2yT" id="kBC-E2-8hc"/>
+                        <outlet property="tabHeaderView" destination="Esi-OS-2yT" id="6f8-bJ-rhl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3B1-6r-qtz" userLabel="First Responder" sceneMemberID="firstResponder"/>

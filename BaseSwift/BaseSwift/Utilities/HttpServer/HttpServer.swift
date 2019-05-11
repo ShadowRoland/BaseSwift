@@ -348,8 +348,10 @@ extension HttpServer {
         var endIndex = limit * (offset + 1)
         if startIndex < list.count {
             endIndex = min(list.count, endIndex)
+            listData[Param.Key.list] = Array(list[startIndex ..< endIndex])
+        } else {
+            listData[Param.Key.list] = []
         }
-        listData[Param.Key.list] = Array(list[startIndex ..< endIndex])
         
         return BFResult.success(listData)
     }

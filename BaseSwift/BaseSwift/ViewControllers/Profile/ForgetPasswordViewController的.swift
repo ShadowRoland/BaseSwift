@@ -52,7 +52,7 @@ class ForgetPasswordViewController: BaseViewController {
                           selector: #selector(textFieldEditingChanged(_:)),
                           name: UITextField.textDidChangeNotification,
                           object: verifyTextField)
-        verifyButton = cell.contentView.viewWithTag(101) as? UIButton
+        let verifyButton = cell.contentView.viewWithTag(101) as! UIButton
         verifyButton.clicked(self, action: #selector(clickVerifyButton(_:)))
         verifyWidthConstraint =
             verifyButton.constraints.first { "verifyWidthConstraint" == $0.identifier }
@@ -66,7 +66,7 @@ class ForgetPasswordViewController: BaseViewController {
         return cell
     }()
     weak var verifyTextField: UITextField!
-    weak var verifyButton: UIButton!
+    lazy var verifyButton: UIButton = verifyCell.contentView.viewWithTag(101) as! UIButton
     weak var verifyWidthConstraint: NSLayoutConstraint!
     
     @IBOutlet weak var submitButton: UIButton!
@@ -282,7 +282,11 @@ extension ForgetPasswordViewController: UITableViewDelegate, UITableViewDataSour
         guard MutexTouch else { return }
         
         if indexPath.row == 0 {
-            performSegue(withIdentifier: "forgetPasswordShowCountrySegue", sender: self)
+            let vc = show("SelectCountryCodeViewController", storyboard: "Profile") as! SelectCountryCodeViewController
+            vc.didSelectBlock = { [weak self] model in
+                self?.countryNameLabel.text = model.name
+                self?.countryCodeLabel.text = model.code
+            }
         }
     }
 }
