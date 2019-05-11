@@ -1,5 +1,5 @@
 //
-//  SRBase.swift
+//  SRKit.swift
 //  BaseSwift
 //
 //  Created by Shadow on 2016/11/14.
@@ -12,14 +12,14 @@ import SwiftyJSON
 import Alamofire
 import KeychainSwift
 
-public class SRBase {
-    private static let shared = SRBase()
+public class SRKit {
+    private static let shared = SRKit()
     private init() {
         LogInfo("\(ScreenScale)")
     }
     
-    public static let newActionNotification = Notification.Name(rawValue: "SRBase.newAction")
-    public static let didEndStateMachinePageEventNotification = Notification.Name("SRBase.didEndStateMachinePageEvent") //FIXME: FOR DEBUG，跨页面的通知
+    public static let newActionNotification = Notification.Name(rawValue: "SRKit.newAction")
+    public static let didEndStateMachinePageEventNotification = Notification.Name("SRKit.didEndStateMachinePageEvent") //跨页面的通知
 }
 
 //MARK: Environment

@@ -90,10 +90,10 @@ DTAttributedTextContentViewDelegate {
                           name: UIContentSizeCategory.didChangeNotification)
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.newAction(_:)),
-                          name: SRBase.newActionNotification)
+                          name: SRKit.newActionNotification)
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.didEndStateMachinePageEvent(_:)),
-                          name: SRBase.didEndStateMachinePageEventNotification)
+                          name: SRKit.didEndStateMachinePageEventNotification)
     }
     
     override open func viewWillAppear(_ animated: Bool) {
@@ -170,7 +170,7 @@ DTAttributedTextContentViewDelegate {
         //广播“触发状态机的完成事件”的通知
         if let event = event {
             LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), event: \(event)")
-            NotifyDefault.post(name: SRBase.didEndStateMachinePageEventNotification, object: params)
+            NotifyDefault.post(name: SRKit.didEndStateMachinePageEventNotification, object: params)
         }
     }
     

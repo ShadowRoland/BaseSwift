@@ -14,7 +14,7 @@ extension Bundle {
     static var srBundle: Bundle!
     class var sr: Bundle {
         if Bundle.srBundle == nil {
-            Bundle.srBundle = Bundle(path: Bundle(for: SRBase.self).path(forResource: "SRKit", ofType: "bundle")!)
+            Bundle.srBundle = Bundle(path: Bundle(for: SRKit.self).path(forResource: "SRKit", ofType: "bundle")!)
         }
         return Bundle.srBundle
     }
