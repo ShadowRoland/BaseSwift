@@ -12,18 +12,48 @@ import ObjectiveC
 import SwiftyJSON
 import SDWebImage
 import DTCoreText
+import Cartography
 
 extension UIViewController {
     public class SRBaseBusinessComponent: NSObject, UIGestureRecognizerDelegate {
         public weak var decorator: UIViewController?
         
+        public var navigationBarType: NavigationBarType = .system
         public lazy var navigationBarBackgroundView: UIView = {
-            let view = UIView(frame: CGRect(0, 0, ScreenWidth, NavigationBarHeight))
-            decorator?.view.addSubview(view)
-            view.backgroundColor = NavigationBar.backgroundColor
+            let view = UIView()
+            if let decorator = decorator {
+                decorator.view.addSubview(view)
+                view.backgroundColor = NavigationBar.backgroundColor
+                constrain(view) {
+                    $0.leading == $0.superview!.leading
+                    $0.trailing == $0.superview!.trailing
+                    $0.top == $0.superview!.top
+                    $0.height == NavigationBarHeight
+                }
+            }
             return view
         }()
         public var navigationBackgroundAlpha = 0.5 as CGFloat
+        
+        public lazy var navigationBar: UINavigationBar = {
+            let navigationBar = UINavigationBar()
+            if let decorator = decorator {
+                decorator.view.addSubview(navigationBar)
+                constrain(navigationBar) {
+                    $0.leading == $0.superview!.leading
+                    $0.trailing == $0.superview!.trailing
+                    $0.top == $0.superview!.top + StatusBarHeight
+                    $0.height == NavigationBarHeight
+                }
+            }
+            return navigationBar
+        }()
+        
+        public lazy var navigationItem: SRNavigationItem = {
+            let navigationItem = SRNavigationItem()
+            navigationBar.pushItem(navigationItem, animated: false)
+            return navigationItem
+        }()
         
         fileprivate struct AssociatedKeys {
             static var baseBusiness = "UIViewController.SRBaseBusinessComponent.baseBusiness"
@@ -69,22 +99,45 @@ extension UIViewController {
         
         //MARK: Navigation Bar Appear
         
-        public var navigartionBarAppear: NavigationBar.Appear = .visible {
-            didSet {
-                if let navigationController = decorator?.navigationController,
-                    isViewDidAppear,
-                    oldValue != navigartionBarAppear {
+        var _navigartionBarAppear: NavigationBar.Appear = .visible
+        public var navigartionBarAppear: NavigationBar.Appear {
+            get {
+                return _navigartionBarAppear
+            }
+            set {
+                setNavigartionBarAppear(newValue, animated: false)
+            }
+        }
+        
+        public func setNavigartionBarAppear(_ navigartionBarAppear: NavigationBar.Appear,
+                                            animated: Bool) {
+            guard let decorator = decorator else { return }
+            
+            switch decorator.navigationBarType {
+            case .system:
+                navigationBar.isHidden = true
+                if let navigationController = decorator.navigationController, isViewDidAppear {
                     switch navigartionBarAppear {
                     case .visible:
-                        navigationController.isNavigationBarHidden = false
+                        navigationController.setNavigationBarHidden(false, animated: animated)
                         navigationBarBackgroundView.isHidden = false
                     case .hidden:
-                        navigationController.isNavigationBarHidden = true
+                        navigationController.setNavigationBarHidden(true, animated: animated)
                         navigationBarBackgroundView.isHidden = true
                     default: break
                     }
                 } else {
                     navigationBarBackgroundView.isHidden = false
+                }
+                
+            case .sr:
+                decorator.navigationController?.isNavigationBarHidden = true
+                switch navigartionBarAppear {
+                case .visible:
+                    navigationBar.isHidden = false
+                case .hidden:
+                    navigationBar.isHidden = true
+                default: break
                 }
             }
         }
@@ -99,9 +152,7 @@ extension UIViewController {
             }
             
             public static var none = PageBackGestureStyle(rawValue: 0)
-            
             public static var page = PageBackGestureStyle(rawValue: 1)
-            
             public static var edge = PageBackGestureStyle(rawValue: 2)
         }
         
@@ -116,18 +167,10 @@ extension UIViewController {
                 }
                 
                 if pageBackGestureStyle.contains(.page) {
-                    if let vc = decorator?.navigationController as? SRNavigationController {
+                    if let decorator = decorator,
+                        let vc = decorator.navigationController as? SRNavigationController {
                         vc.isPageSwipeEnabled = true
                     }
-                    //} else {
-                    //    if let vc = decorator?.navigationController as? SRNavigationController {
-                    //        vc.isPageSwipeEnabled = false
-                    //        if pageBackGestureStyle.contains(.edge) {
-                    //            vc.interactivePopGestureRecognizer?.isEnabled = true
-                    //        } else {
-                    //            vc.interactivePopGestureRecognizer?.isEnabled = false
-                    //        }
-                    //    }
                 }
             }
         }
@@ -135,7 +178,8 @@ extension UIViewController {
         public var isPageLongPressEnabled = false {
             didSet {
                 guard Environment != .production else { return }
-                if let vc = decorator?.navigationController as? SRNavigationController {
+                if let decorator = decorator,
+                    let vc = decorator.navigationController as? SRNavigationController {
                     vc.isNavPageLongPressEnabled = isPageLongPressEnabled
                 }
             }
@@ -185,6 +229,33 @@ public extension UIViewController {
         }
     }
     
+    enum NavigationBarType {
+        case system
+        case sr
+    }
+    
+    var navigationBarType: NavigationBarType {
+        get {
+            return baseBusinessComponent.navigationBarType
+        }
+        set {
+            baseBusinessComponent.navigationBarType = newValue
+        }
+    }
+    
+    var navigartionBarAppear: NavigationBar.Appear {
+        get {
+            return baseBusinessComponent.navigartionBarAppear
+        }
+        set {
+            baseBusinessComponent.navigartionBarAppear = newValue
+        }
+    }
+    
+    func setNavigartionBarAppear(_ navigartionBarAppear: NavigationBar.Appear, animated: Bool) {
+        
+    }
+    
     var stateMachine: SRStateMachine {
         return baseBusinessComponent.stateMachine
     }
@@ -204,15 +275,6 @@ public extension UIViewController {
         }
         set {
             baseBusinessComponent.isPreviewed = newValue
-        }
-    }
-    
-    var navigartionBarAppear: NavigationBar.Appear {
-        get {
-            return baseBusinessComponent.navigartionBarAppear
-        }
-        set {
-            baseBusinessComponent.navigartionBarAppear = newValue
         }
     }
     
@@ -275,7 +337,6 @@ public extension UIViewController {
 }
 
 extension UIViewController {
-    
     //MARK: - Autorotate Orientation
     
     public func guardDeviceOrientationDidChange(_ sender: AnyObject?) -> Bool {
@@ -464,9 +525,10 @@ extension UIViewController {
     
     //防止页面加载成功但是导航栏没有同步，限定在viewDidAppear使用
     public func ensureNavigationBarHidden(_ isHidden: Bool) {
-        if let navigationController = navigationController,
+        if navigationBarType == .system,
+            let navigationController = navigationController,
             navigationController.topViewController === self
-            && navigationController.navigationBar.topItem != self.navigationItem {
+            && navigationController.navigationBar.topItem != navigationItem {
                 navigationController.setNavigationBarHidden(!isHidden, animated: false)
                 navigationController.setNavigationBarHidden(isHidden, animated: false)
         }

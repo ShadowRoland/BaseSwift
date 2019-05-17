@@ -14,6 +14,7 @@ class ViewController: SRBaseViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         LogInfo("喵喵喵")
+        navigationBarType = .sr
         setDefaultNavigationBar("Root")
 //        navigationItem.backBarButtonItem = nil
         navBarRightButtonSettings = [[.title : "Base"]]

@@ -15,6 +15,20 @@ public extension UIImage {
     }
 }
 
+public extension UIImage {
+    //图片是否透明
+    var isTranslucent: Bool {
+        if let alphaInfo = cgImage?.alphaInfo {
+            switch alphaInfo {
+            case .first, .last, .premultipliedFirst, .premultipliedLast:
+                return true
+            default: return false
+            }
+        }
+        return false
+    }
+}
+
 //MARK: 形状
 
 public extension UIImage {

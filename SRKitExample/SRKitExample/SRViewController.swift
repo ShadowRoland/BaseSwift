@@ -14,6 +14,7 @@ class SRViewController: SRBaseViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        navigationBarType = .sr
         setDefaultNavigationBar("Base")
         pageBackGestureStyle = .edge
     }

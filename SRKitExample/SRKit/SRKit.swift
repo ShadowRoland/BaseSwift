@@ -365,6 +365,7 @@ public class NavigationBar {
         case image               //纯图片
         //case textAndImage        //文字和图片
         case custom              //自定义
+        case space          //空白间距
     }
     
     public static let buttonFullSetting: [NavigationBar.ButtonItemKey : Any] =
@@ -391,20 +392,23 @@ public class NavigationBar {
         }
         
         public static let style = ButtonItemKey("SRKit.style") //用于在Setting中的key，不可为空
-        public static let title = ButtonItemKey("SRKit.title") //按钮标题，内容为String类型，在样式为text和textAndImage时有效，不可为空
-        public static let font = ButtonItemKey("SRKit.font") //按钮标题字体，内容为UIFont类型，在样式为text和textAndImage时有效，可为空
-        public static let textColor = ButtonItemKey("SRKit.textColor") //按钮标题颜色，内容为UIColor类型，在样式为text和textAndImage时有效，可为空
+        public static let title = ButtonItemKey("SRKit.title") ///按钮标题，内容为String类型，在样式为text和textAndImage时有效，不可为空
+        public static let font = ButtonItemKey("SRKit.font") ///按钮标题字体，内容为UIFont类型，在样式为text和textAndImage时有效，可为空
+        public static let textColor = ButtonItemKey("SRKit.textColor") ///按钮标题颜色，内容为UIColor类型，在样式为text和textAndImage时有效，可为空
+        public static let attributedText = ButtonItemKey("SRKit.attributedText") ///title定制，内容为NSAttributedString，在样式为image时并且navigationBarType为.sr时有效，可为空
         public static let image = ButtonItemKey("SRKit.normal.image") //按钮图片，内容为UIImage类型, 在样式为image时有效，其中normal不能为空，highlighted可为空
         //static let highlightedImage = ButtonItemKey("highlighted.image")
         //static let backgroundImage = ButtonItemKey("normal.backgroundImage") //按钮背景图片，内容为UIImage类型, 在样式为textAndImage时有效，其中normal不能为空，highlighted可为空
         //static let highlightedBackgroundImage = ButtonItemKey("highlighted.backgroundImage")
         public static let customView = ButtonItemKey("SRKit.customView") //自定义的视图，内容为UIView类型，在样式为custom有效，不可为空
+        public static let spaceWidth = ButtonItemKey("SRKit.spaceWidth") //间距的宽度
     }
     
     public class func buttonItem(_ setting: [ButtonItemKey : Any],
                                  target: Any? = nil,
                                  action: Selector? = nil,
-                                 tag: NSInteger? = nil) -> UIBarButtonItem? {
+                                 tag: NSInteger? = nil,
+                                 isCustomView: Bool = false) -> UIBarButtonItem? {
         var style: ButtonItemStyle = .text
         if let itemStyle = setting[.style] as? ButtonItemStyle {
             style = itemStyle
@@ -413,45 +417,84 @@ public class NavigationBar {
         var item: UIBarButtonItem?
         switch style {
         case .text:
-            guard  let title = setting[.title] as? String else {
-                return nil
+            if !isCustomView, let title = setting[.title] as? String {
+                item = UIBarButtonItem(title: title, style: .plain, target: target, action: action)
+                var attributes : [NSAttributedString.Key : Any] =
+                    [.font : UIFont.text, .foregroundColor : tintColor]
+                
+                if let font = setting[.font] as? UIFont {
+                    attributes[.font] = font
+                }
+                
+                if let textColor = setting[.textColor] as? UIColor {
+                    attributes[.foregroundColor] = textColor
+                }
+                
+                item?.setTitleTextAttributes(attributes, for: .normal)
+            } else {
+                let button = UIButton(type: .custom)
+                if let attributedText = setting[.attributedText] as? NSAttributedString {
+                    button.titleLabel?.font = UIFont.text
+                    button.setTitleColor(tintColor, for: .normal)
+                    button.titleLabel?.attributedText = attributedText
+                } else if let title = setting[.title] as? String {
+                    if let font = setting[.font] as? UIFont {
+                        button.titleLabel?.font = font
+                    } else {
+                        button.titleLabel?.font = UIFont.text
+                    }
+                    
+                    if let textColor = setting[.textColor] as? UIColor {
+                        button.setTitleColor(textColor, for: .normal)
+                    } else {
+                        button.setTitleColor(tintColor, for: .normal)
+                    }
+                    
+                    button.setTitle(title, for: .normal)
+                }
+                item = UIBarButtonItem(customView: button)
             }
-            
-            item = UIBarButtonItem(title: title, style: .plain, target: target, action: action)
-            var attributes : [NSAttributedString.Key : Any] =
-                [.font : UIFont.text, .foregroundColor : tintColor]
-            
-            if let font = setting[.font] as? UIFont {
-                attributes[.font] = font
-            }
-            if let textColor = setting[.textColor] as? UIColor {
-                attributes[.foregroundColor] = textColor
-            }
-            
-            item?.setTitleTextAttributes(attributes, for: .normal)
             
         case .image:
             guard let normal = setting[.image] as? UIImage,
                 normal.size.width > 0 && normal.size.height > 0 else {
-                    return nil
+                    break
             }
             
-            let item = UIBarButtonItem(image: normal, style: .plain, target: target, action: action)
-            if let tag = tag {
-                item.tag = tag
+            if !isCustomView {
+                item = UIBarButtonItem(image: normal, style: .plain, target: target, action: action)
+            } else {
+                let button = UIButton(type: .custom)
+                button.setImage(normal, for: .normal)
+                if let action = action {
+                    button.addTarget(target, action: action, for: .touchUpInside)
+                }
+                item = UIBarButtonItem(customView: button)
             }
-            
-            return item
             
         case .custom:
             guard let view = setting[.customView] as? UIView else {
                 break
             }
             
-            let gestureRecognizers = view.gestureRecognizers
-            gestureRecognizers?.forEach { view.removeGestureRecognizer($0) }
-            view.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
+            //let gestureRecognizers = view.gestureRecognizers
+            //gestureRecognizers?.forEach { view.removeGestureRecognizer($0) }
+            //view.addGestureRecognizer(UITapGestureRecognizer(target: target, action: action))
             item = UIBarButtonItem(customView: view)
+            
+        case .space:
+            if !isCustomView {
+                item = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+                if let width = setting[.spaceWidth] as? CGFloat {
+                    item?.width = width
+                }
+            } else {
+                let view = UIView()
+                if let width = setting[.spaceWidth] as? CGFloat {
+                    view.frame = CGRect(0, 0, width, 0)
+                }
+                item = UIBarButtonItem(customView: view)
+            }
         }
         
         if let tag = tag {

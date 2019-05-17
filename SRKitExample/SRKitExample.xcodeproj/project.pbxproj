@@ -134,6 +134,10 @@
 		4E13768E2286A16900330EBE /* SRPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B45F228698F200E98791 /* SRPlayerView.swift */; };
 		4E13768F2286A16900330EBE /* SRKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B432228698F200E98791 /* SRKit.swift */; };
 		4E1376922286A21D00330EBE /* SRKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4E1376902286A20300330EBE /* SRKit.bundle */; };
+		4E1376CA2289374D00330EBE /* SRNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376C92289374D00330EBE /* SRNavigationBar.swift */; };
+		4E1376CC228937C600330EBE /* SRNavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376CB228937C600330EBE /* SRNavigationItem.swift */; };
+		4E28DF6D228D30660026C78A /* SRNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376C92289374D00330EBE /* SRNavigationBar.swift */; };
+		4E28DF6E228D30670026C78A /* SRNavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376CB228937C600330EBE /* SRNavigationItem.swift */; };
 		4E34B391226EF64B00CC37C6 /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 4E34B390226EF64B00CC37C6 /* Resource */; };
 		4E5627012285424100C6CE1D /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 4E34B390226EF64B00CC37C6 /* Resource */; };
 		4E5627022285424A00C6CE1D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E7575622264510900394408 /* Assets.xcassets */; };
@@ -158,6 +162,8 @@
 		4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E13761022869ADB00330EBE /* SRKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRKeyboard.swift; sourceTree = "<group>"; };
 		4E1376902286A20300330EBE /* SRKit.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SRKit.bundle; sourceTree = "<group>"; };
+		4E1376C92289374D00330EBE /* SRNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRNavigationBar.swift; sourceTree = "<group>"; };
+		4E1376CB228937C600330EBE /* SRNavigationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRNavigationItem.swift; sourceTree = "<group>"; };
 		4E34B390226EF64B00CC37C6 /* Resource */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resource; sourceTree = "<group>"; };
 		4E5626FB2285413400C6CE1D /* SRKitRes.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SRKitRes.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E5626FD2285413500C6CE1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -270,6 +276,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4E1376C82289372D00330EBE /* SRNavigationBar */ = {
+			isa = PBXGroup;
+			children = (
+				4E1376C92289374D00330EBE /* SRNavigationBar.swift */,
+				4E1376CB228937C600330EBE /* SRNavigationItem.swift */,
+			);
+			path = SRNavigationBar;
+			sourceTree = "<group>";
+		};
 		4E5626FC2285413500C6CE1D /* SRKitRes */ = {
 			isa = PBXGroup;
 			children = (
@@ -333,6 +348,7 @@
 				4E89B460228698F200E98791 /* SRLog */,
 				4E89B41F228698F100E98791 /* SRMJRefresh */,
 				4E89B427228698F100E98791 /* SRModalViewController */,
+				4E1376C82289372D00330EBE /* SRNavigationBar */,
 				4E89B429228698F100E98791 /* SRNavigationController */,
 				4E89B435228698F200E98791 /* SRPickerView */,
 				4E89B462228698F200E98791 /* SRPopover */,
@@ -428,10 +444,10 @@
 		4E89B42D228698F200E98791 /* SRBaseBusiness */ = {
 			isa = PBXGroup;
 			children = (
+				4E89B434228698F200E98791 /* SRBaseViewController.swift */,
+				4E89B433228698F200E98791 /* SRLoadDataStateView.swift */,
 				4E89B42E228698F200E98791 /* UIView+SRProgress.swift */,
 				4E89B430228698F200E98791 /* UIViewController+SRBaseBusiness.swift */,
-				4E89B433228698F200E98791 /* SRLoadDataStateView.swift */,
-				4E89B434228698F200E98791 /* SRBaseViewController.swift */,
 			);
 			path = SRBaseBusiness;
 			sourceTree = "<group>";
@@ -831,6 +847,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E28DF6D228D30660026C78A /* SRNavigationBar.swift in Sources */,
+				4E28DF6E228D30670026C78A /* SRNavigationItem.swift in Sources */,
 				4E1376512286A16900330EBE /* NullSafe.m in Sources */,
 				4E1376522286A16900330EBE /* SRAlert.swift in Sources */,
 				4E1376532286A16900330EBE /* SRAlertController.swift in Sources */,
@@ -906,6 +924,7 @@
 			files = (
 				4E1376122286A0C100330EBE /* NullSafe.m in Sources */,
 				4E1376132286A0C100330EBE /* SRAlert.swift in Sources */,
+				4E1376CC228937C600330EBE /* SRNavigationItem.swift in Sources */,
 				4E1376142286A0C100330EBE /* SRAlertController.swift in Sources */,
 				4E1376152286A0C100330EBE /* UIView+SRProgress.swift in Sources */,
 				4E1376162286A0C100330EBE /* UIViewController+SRBaseBusiness.swift in Sources */,
@@ -962,6 +981,7 @@
 				4E1376492286A0C100330EBE /* SRTabHeader.swift in Sources */,
 				4E13764A2286A0C100330EBE /* SRTabItem.swift in Sources */,
 				4E13764B2286A0C100330EBE /* SRVideoPlayer.swift in Sources */,
+				4E1376CA2289374D00330EBE /* SRNavigationBar.swift in Sources */,
 				4E13764C2286A0C100330EBE /* SRBrightnessView.swift in Sources */,
 				4E13764D2286A0C100330EBE /* SRAssetResourceLoader.swift in Sources */,
 				4E13764E2286A0C100330EBE /* SRVideoRequestTask.swift in Sources */,

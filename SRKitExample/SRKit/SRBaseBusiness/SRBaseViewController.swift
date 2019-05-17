@@ -98,18 +98,8 @@ DTAttributedTextContentViewDelegate {
     
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        if let navigationController = navigationController,
-            navigationController.viewControllers.contains(self) {
-            if baseBusinessComponent.navigartionBarAppear == .visible
-                && navigationController.isNavigationBarHidden {
-                navigationController.setNavigationBarHidden(false, animated: animated)
-            } else if baseBusinessComponent.navigartionBarAppear == .hidden
-                && !navigationController.isNavigationBarHidden {
-                navigationController.setNavigationBarHidden(true, animated: animated)
-            }
-        }
-        
+        let appear = navigartionBarAppear
+        navigartionBarAppear = appear
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.contentSizeCategoryDidChange),
                           name: UIDevice.orientationDidChangeNotification,
@@ -124,16 +114,18 @@ DTAttributedTextContentViewDelegate {
         let component = baseBusinessComponent
         if let navigationController = navigationController,
             navigationController.viewControllers.contains(self) {
-            if baseBusinessComponent.navigartionBarAppear == .visible {
-                if navigationController.isNavigationBarHidden {
-                    navigationController.setNavigationBarHidden(false, animated: false)
+            if navigationBarType == .system {
+                if navigartionBarAppear == .visible {
+                    if navigationController.isNavigationBarHidden {
+                        navigationController.setNavigationBarHidden(false, animated: false)
+                    }
+                    ensureNavigationBarHidden(false)
+                } else if navigartionBarAppear == .hidden {
+                    if !navigationController.isNavigationBarHidden {
+                        navigationController.setNavigationBarHidden(true, animated: false)
+                    }
+                    ensureNavigationBarHidden(true)
                 }
-                ensureNavigationBarHidden(false)
-            } else if baseBusinessComponent.navigartionBarAppear == .hidden {
-                if !navigationController.isNavigationBarHidden {
-                    navigationController.setNavigationBarHidden(true, animated: false)
-                }
-                ensureNavigationBarHidden(true)
             }
             
             Keyboard.manager = .iq
@@ -184,6 +176,13 @@ DTAttributedTextContentViewDelegate {
         }
         
         NotifyDefault.remove(self, name: UIDevice.orientationDidChangeNotification)
+    }
+    
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if navigationBarType == .sr {
+            view.bringSubviewToFront(baseBusinessComponent.navigationBar)
+        }
     }
     
     deinit {
@@ -264,6 +263,25 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: Navigation Bar
     
+    open override var title: String? {
+        didSet {
+            switch navigationBarType {
+            case .system:
+                super.title = self.title
+            case .sr:
+                baseBusinessComponent.navigationItem.title = self.title
+            }
+        }
+    }
+    
+    open override var navigationItem: UINavigationItem {
+        if navigationBarType == .sr {
+            return baseBusinessComponent.navigationItem
+        } else {
+            return super.navigationItem
+        }
+    }
+    
     open func setDefaultNavigationBar(_ title: String? = nil) {
         setDefaultNavigationBar(title: title, leftImage: nil)
     }
@@ -308,6 +326,7 @@ DTAttributedTextContentViewDelegate {
                                          target: eventTarget,
                                          action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
                                          tag: $0)
+//                                         isCustomView: navigationBarType != .system)
             }
             if items.isEmpty {
                 navigationItem.leftBarButtonItem = nil
@@ -333,6 +352,7 @@ DTAttributedTextContentViewDelegate {
                                          target: eventTarget,
                                          action: #selector(EventTarget.clickNavigationBarRightButton(_:)),
                                          tag: $0)
+//                                         isCustomView: navigationBarType != .system)
             }
             if items.isEmpty {
                 navigationItem.rightBarButtonItem = nil
@@ -340,6 +360,7 @@ DTAttributedTextContentViewDelegate {
             } else {
                 navigationItem.rightBarButtonItems = items
             }
+            navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "haha", style: .plain, target: nil, action: nil)]
         }
     }
     

@@ -11,8 +11,8 @@ import UIKit
 import REMenu
 import SwiftyJSON
 
-public class SRNavigationController: UINavigationController, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
-    public var isPageSwipeEnabled = false {
+open class SRNavigationController: UINavigationController, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+    open var isPageSwipeEnabled = false {
         didSet {
             if isPageSwipeEnabled != oldValue {
                 let gr = interactivePopGestureRecognizer
@@ -25,7 +25,7 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
         }
     }
     
-    public var isNavPageLongPressEnabled = false {
+    open var isNavPageLongPressEnabled = false {
         didSet {
             if isNavPageLongPressEnabled != oldValue {
                 let gr = interactivePopGestureRecognizer
@@ -75,7 +75,7 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
         return menu
     }()
     
-    public func appendMenuItem(title: String,
+    open func appendMenuItem(title: String,
                                description: String?,
                                action: @escaping (() -> Void)) {
         let item = REMenuItem(title: title,
@@ -96,7 +96,7 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
                        in: UIApplication.shared.keyWindow)
     }
     
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
         interactivePopGestureRecognizer?.delegate = self
@@ -104,21 +104,21 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
     
     //MARK: - Orientations
     
-    override public var shouldAutorotate: Bool {
+    override open var shouldAutorotate: Bool {
         if let topViewController = topViewController {
             return topViewController.shouldAutorotate
         }
         return super.shouldAutorotate
     }
     
-    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if let topViewController = topViewController {
             return topViewController.supportedInterfaceOrientations
         }
         return super.supportedInterfaceOrientations
     }
     
-    override public var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+    override open var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         if let topViewController = topViewController {
             return topViewController.preferredInterfaceOrientationForPresentation
         }
@@ -133,7 +133,7 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
     
     //MARK: - UIGestureRecognizerDelegate
     
-    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer === interactivePopGestureRecognizer  {
             if let topViewController = topViewController {
                 return topViewController.pageBackGestureStyle.contains(.edge)
@@ -144,7 +144,7 @@ public class SRNavigationController: UINavigationController, UIGestureRecognizer
     
     //MARK: - UINavigationControllerDelegate
     
-    public func navigationController(_ navigationController: UINavigationController,
+    open func navigationController(_ navigationController: UINavigationController,
                               didShow viewController: UIViewController,
                               animated: Bool) {
         isPageSwipeEnabled = viewController.pageBackGestureStyle.contains(.page)
