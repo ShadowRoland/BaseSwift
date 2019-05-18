@@ -18,7 +18,7 @@ class AppGuideViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        navigartionBarAppear = .hidden
+        navigationBarAppear = .hidden
         initView()
     }
     
@@ -86,7 +86,7 @@ class AppGuideViewController: BaseViewController {
     }
     
     func next() {
-        if UserStandard[USKey.enterAggregationEntrance] == nil {
+        if UserStandard[UDKey.enterAggregationEntrance] == nil {
             show("ViewController", storyboard: "Main", animated: false)
             return;
         }

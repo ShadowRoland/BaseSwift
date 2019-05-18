@@ -96,7 +96,7 @@ public class SRLog {
         if _logger != nil {
             DDLog.remove(_logger)
         } else {
-            DDLog.add(DDASLLogger.sharedInstance)
+            //DDLog.add(DDASLLogger.sharedInstance)
         }
         
         if !_directory.isEmpty {
@@ -113,18 +113,22 @@ public class SRLog {
     }
     
     fileprivate func debug(_ message: @autoclosure () -> String) {
+        print(message())
         DDLogDebug(message())
     }
     
     fileprivate func info(_ message: @autoclosure () -> String) {
+        print(message())
         DDLogInfo(message())
     }
     
     fileprivate func warn(_ message: @autoclosure () -> String) {
+        print(message())
         DDLogWarn(message())
     }
     
     fileprivate func error(_ message: @autoclosure () -> String) {
+        print(message())
         DDLogError(message())
     }
 }

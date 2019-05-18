@@ -169,18 +169,18 @@ class SettingViewController: BaseViewController {
     }
     
     func initSwitches() {
-        lockScreenSwitch.isOn = UserStandard[USKey.isFreeInterfaceOrientations] == nil
-        wifiLoadImagesSwitch.isOn = isOnlyShowImageInWLAN
+        lockScreenSwitch.isOn = UserStandard[UDKey.isFreeInterfaceOrientations] == nil
+        wifiLoadImagesSwitch.isOn = Config.shared.isOnlyShowImageInWLAN
         if canAuthenticate {
-            authenticateSwitch.isOn = UserStandard[USKey.forbidAuthenticateToLogin] == nil
+            authenticateSwitch.isOn = UserStandard[UDKey.forbidAuthenticateToLogin] == nil
         }
     }
     
     //MARK: - 业务处理
     
     func updateCellHeight() {
-        Const.textFont = UIFont.Preferred.body
-        Const.detailFont = UIFont.Preferred.subheadline
+        Const.textFont = UIFont.preferred.body
+        Const.detailFont = UIFont.preferred.subheadline
         Const.cellHeight = max(TableCellHeight,
                                Const.textFont.lineHeight + 2.0 * Const.textLabelMarginVertical)
     }
@@ -229,7 +229,7 @@ class SettingViewController: BaseViewController {
         { (success, error) in
             if success {
                 DispatchQueue.main.async {
-                    UserStandard[USKey.forbidAuthenticateToLogin] = nil
+                    UserStandard[UDKey.forbidAuthenticateToLogin] = nil
                 }
             } else {
                 DispatchQueue.main.async {
@@ -313,17 +313,16 @@ class SettingViewController: BaseViewController {
         if lockScreenSwitch.isOn {
             ShouldAutorotate = false
             SupportedInterfaceOrientations = .portrait
-            UserStandard[USKey.isFreeInterfaceOrientations] = nil
+            UserStandard[UDKey.isFreeInterfaceOrientations] = nil
         } else {
             ShouldAutorotate = true
             SupportedInterfaceOrientations = .allButUpsideDown
-            UserStandard[USKey.isFreeInterfaceOrientations] = true
+            UserStandard[UDKey.isFreeInterfaceOrientations] = true
         }
     }
     
     @objc func wifiLoadImagesSwitchValueChanged(_ sender: Any) {
-        UserStandard[USKey.isAllowShowImageInWLAN] = wifiLoadImagesSwitch.isOn ? nil : true
-        isOnlyShowImageInWLAN = UserStandard[USKey.isAllowShowImageInWLAN] == nil
+        Config.shared.isOnlyShowImageInWLAN = wifiLoadImagesSwitch.isOn
     }
     
     @objc func authenticateSwitchValueChanged(_ sender: Any) {
@@ -332,7 +331,7 @@ class SettingViewController: BaseViewController {
                 authenticate()
             }
         } else {
-            UserStandard[USKey.forbidAuthenticateToLogin] = true
+            UserStandard[UDKey.forbidAuthenticateToLogin] = true
         }
     }
     

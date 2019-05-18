@@ -9,8 +9,8 @@
 import UIKit
 
 open class SRTabItem: UIView {
-    public var selectedTextColor = UIColor.blue
-    public var unselectedTextColor = UIColor.gray {
+    public var selectedTextColor: UIColor = .blue
+    public var unselectedTextColor: UIColor = .gray {
         didSet {
             titleLabel.textColor = unselectedTextColor
         }

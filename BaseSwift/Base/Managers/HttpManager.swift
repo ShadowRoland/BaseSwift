@@ -10,11 +10,11 @@ import SRKit
 import SwiftyJSON
 
 public class HttpManager: SRHttpManager {
-    public class var shared: SRHttpManager {
+    public class var shared: HttpManager {
         return sharedInstance
     }
     
-    private static var sharedInstance = SRHttpManager()
+    private static var sharedInstance = HttpManager()
     
     private override init() {
         super.init()
@@ -48,7 +48,13 @@ public class HttpManager: SRHttpManager {
 
         result = super.analysis(method, data: data)
         if result!.isSuccess {
-
+            if method.originUrl == "user/login",
+                let json = result!.value as? JSON,
+                let dictionary = json.dictionary,
+                let profile = ProfileModel(JSON: dictionary) {
+                profile.isLogin = true
+                ProfileManager.currentProfile = profile
+            }
         }
 
         return result!

@@ -234,12 +234,14 @@ SWIFT_CLASS("_TtC5SRKit20SRBaseViewController")
 - (void)viewWillAppear:(BOOL)animated;
 - (void)viewDidAppear:(BOOL)animated;
 - (void)viewWillDisappear:(BOOL)animated;
+- (void)viewDidLayoutSubviews;
 - (void)didReceiveMemoryWarning;
 @property (nonatomic, readonly) BOOL prefersStatusBarHidden;
 @property (nonatomic, readonly) UIStatusBarStyle preferredStatusBarStyle;
 @property (nonatomic, readonly) BOOL shouldAutorotate;
 @property (nonatomic, readonly) UIInterfaceOrientationMask supportedInterfaceOrientations;
 @property (nonatomic, readonly) UIInterfaceOrientation preferredInterfaceOrientationForPresentation;
+@property (nonatomic, copy) NSString * _Nullable title;
 - (UIView * _Null_unspecified)attributedTextContentView:(DTAttributedTextContentView * _Null_unspecified)attributedTextContentView viewForAttributedString:(NSAttributedString * _Null_unspecified)string frame:(CGRect)frame SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)initWithNibName:(NSString * _Nullable)nibNameOrNil bundle:(NSBundle * _Nullable)nibBundleOrNil OBJC_DESIGNATED_INITIALIZER;
 - (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
@@ -290,13 +292,6 @@ SWIFT_CLASS("_TtC5SRKit17SRKeyboardManager")
 @end
 
 
-SWIFT_CLASS("_TtC5SRKit19SRLoadDataStateView")
-@interface SRLoadDataStateView : UIView
-- (nonnull instancetype)initWithFrame:(CGRect)frame SWIFT_UNAVAILABLE;
-- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
-@end
-
-
 SWIFT_CLASS("_TtC5SRKit17SRMJRefreshHeader")
 @interface SRMJRefreshHeader : MJRefreshStateHeader
 - (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
@@ -334,6 +329,44 @@ SWIFT_CLASS("_TtC5SRKit21SRModalViewController")
 - (nonnull instancetype)initWithNavigationBarClass:(Class _Nullable)navigationBarClass toolbarClass:(Class _Nullable)toolbarClass SWIFT_UNAVAILABLE;
 @end
 
+
+SWIFT_CLASS("_TtC5SRKit15SRNavigationBar")
+@interface SRNavigationBar : UIView
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
+- (void)layoutSubviews;
+- (nonnull instancetype)initWithFrame:(CGRect)frame SWIFT_UNAVAILABLE;
+@end
+
+
+@class UIBarButtonItem;
+@class UISearchController;
+
+SWIFT_CLASS("_TtC5SRKit16SRNavigationItem")
+@interface SRNavigationItem : UINavigationItem
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)initWithTitle:(NSString * _Nonnull)title SWIFT_UNAVAILABLE;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)coder OBJC_DESIGNATED_INITIALIZER;
+@property (nonatomic, copy) NSString * _Nullable title;
+@property (nonatomic, strong) UIView * _Nullable titleView;
+@property (nonatomic, copy) NSString * _Nullable prompt;
+@property (nonatomic, strong) UIBarButtonItem * _Nullable backBarButtonItem;
+@property (nonatomic) BOOL hidesBackButton;
+- (void)setHidesBackButton:(BOOL)hidesBackButton animated:(BOOL)animated;
+@property (nonatomic, copy) NSArray<UIBarButtonItem *> * _Nullable leftBarButtonItems SWIFT_AVAILABILITY(ios,introduced=5.0);
+@property (nonatomic, copy) NSArray<UIBarButtonItem *> * _Nullable rightBarButtonItems SWIFT_AVAILABILITY(ios,introduced=5.0);
+- (void)setLeftBarButtonItems:(NSArray<UIBarButtonItem *> * _Nullable)items animated:(BOOL)animated SWIFT_AVAILABILITY(ios,introduced=5.0);
+- (void)setRightBarButtonItems:(NSArray<UIBarButtonItem *> * _Nullable)items animated:(BOOL)animated SWIFT_AVAILABILITY(ios,introduced=5.0);
+@property (nonatomic) BOOL leftItemsSupplementBackButton SWIFT_AVAILABILITY(ios,introduced=5.0);
+@property (nonatomic, strong) UIBarButtonItem * _Nullable leftBarButtonItem;
+@property (nonatomic, strong) UIBarButtonItem * _Nullable rightBarButtonItem;
+- (void)setLeftBarButtonItem:(UIBarButtonItem * _Nullable)item animated:(BOOL)animated;
+- (void)setRightBarButtonItem:(UIBarButtonItem * _Nullable)item animated:(BOOL)animated;
+@property (nonatomic) UINavigationItemLargeTitleDisplayMode largeTitleDisplayMode SWIFT_AVAILABILITY(ios,introduced=11.0);
+@property (nonatomic, strong) UISearchController * _Nullable searchController SWIFT_AVAILABILITY(ios,introduced=11.0);
+@property (nonatomic) BOOL hidesSearchBarWhenScrolling SWIFT_AVAILABILITY(ios,introduced=11.0);
+@end
 
 
 
@@ -396,6 +429,15 @@ SWIFT_CLASS("_TtC5SRKit11SRShareTool")
 @end
 
 
+SWIFT_CLASS("_TtC5SRKit18SRSimplePromptView")
+@interface SRSimplePromptView : UIView
+- (nonnull instancetype)init;
+- (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
+- (void)layoutSubviews;
+@end
+
+
 
 @class UITouch;
 
@@ -411,6 +453,10 @@ SWIFT_CLASS("_TtCC5SRKit11SRIndexPath3Set")
 @interface Set : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
+
+
+
+
 
 
 
@@ -708,12 +754,14 @@ SWIFT_CLASS("_TtC5SRKit20SRBaseViewController")
 - (void)viewWillAppear:(BOOL)animated;
 - (void)viewDidAppear:(BOOL)animated;
 - (void)viewWillDisappear:(BOOL)animated;
+- (void)viewDidLayoutSubviews;
 - (void)didReceiveMemoryWarning;
 @property (nonatomic, readonly) BOOL prefersStatusBarHidden;
 @property (nonatomic, readonly) UIStatusBarStyle preferredStatusBarStyle;
 @property (nonatomic, readonly) BOOL shouldAutorotate;
 @property (nonatomic, readonly) UIInterfaceOrientationMask supportedInterfaceOrientations;
 @property (nonatomic, readonly) UIInterfaceOrientation preferredInterfaceOrientationForPresentation;
+@property (nonatomic, copy) NSString * _Nullable title;
 - (UIView * _Null_unspecified)attributedTextContentView:(DTAttributedTextContentView * _Null_unspecified)attributedTextContentView viewForAttributedString:(NSAttributedString * _Null_unspecified)string frame:(CGRect)frame SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)initWithNibName:(NSString * _Nullable)nibNameOrNil bundle:(NSBundle * _Nullable)nibBundleOrNil OBJC_DESIGNATED_INITIALIZER;
 - (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
@@ -764,13 +812,6 @@ SWIFT_CLASS("_TtC5SRKit17SRKeyboardManager")
 @end
 
 
-SWIFT_CLASS("_TtC5SRKit19SRLoadDataStateView")
-@interface SRLoadDataStateView : UIView
-- (nonnull instancetype)initWithFrame:(CGRect)frame SWIFT_UNAVAILABLE;
-- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
-@end
-
-
 SWIFT_CLASS("_TtC5SRKit17SRMJRefreshHeader")
 @interface SRMJRefreshHeader : MJRefreshStateHeader
 - (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
@@ -808,6 +849,44 @@ SWIFT_CLASS("_TtC5SRKit21SRModalViewController")
 - (nonnull instancetype)initWithNavigationBarClass:(Class _Nullable)navigationBarClass toolbarClass:(Class _Nullable)toolbarClass SWIFT_UNAVAILABLE;
 @end
 
+
+SWIFT_CLASS("_TtC5SRKit15SRNavigationBar")
+@interface SRNavigationBar : UIView
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
+- (void)layoutSubviews;
+- (nonnull instancetype)initWithFrame:(CGRect)frame SWIFT_UNAVAILABLE;
+@end
+
+
+@class UIBarButtonItem;
+@class UISearchController;
+
+SWIFT_CLASS("_TtC5SRKit16SRNavigationItem")
+@interface SRNavigationItem : UINavigationItem
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (nonnull instancetype)initWithTitle:(NSString * _Nonnull)title SWIFT_UNAVAILABLE;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)coder OBJC_DESIGNATED_INITIALIZER;
+@property (nonatomic, copy) NSString * _Nullable title;
+@property (nonatomic, strong) UIView * _Nullable titleView;
+@property (nonatomic, copy) NSString * _Nullable prompt;
+@property (nonatomic, strong) UIBarButtonItem * _Nullable backBarButtonItem;
+@property (nonatomic) BOOL hidesBackButton;
+- (void)setHidesBackButton:(BOOL)hidesBackButton animated:(BOOL)animated;
+@property (nonatomic, copy) NSArray<UIBarButtonItem *> * _Nullable leftBarButtonItems SWIFT_AVAILABILITY(ios,introduced=5.0);
+@property (nonatomic, copy) NSArray<UIBarButtonItem *> * _Nullable rightBarButtonItems SWIFT_AVAILABILITY(ios,introduced=5.0);
+- (void)setLeftBarButtonItems:(NSArray<UIBarButtonItem *> * _Nullable)items animated:(BOOL)animated SWIFT_AVAILABILITY(ios,introduced=5.0);
+- (void)setRightBarButtonItems:(NSArray<UIBarButtonItem *> * _Nullable)items animated:(BOOL)animated SWIFT_AVAILABILITY(ios,introduced=5.0);
+@property (nonatomic) BOOL leftItemsSupplementBackButton SWIFT_AVAILABILITY(ios,introduced=5.0);
+@property (nonatomic, strong) UIBarButtonItem * _Nullable leftBarButtonItem;
+@property (nonatomic, strong) UIBarButtonItem * _Nullable rightBarButtonItem;
+- (void)setLeftBarButtonItem:(UIBarButtonItem * _Nullable)item animated:(BOOL)animated;
+- (void)setRightBarButtonItem:(UIBarButtonItem * _Nullable)item animated:(BOOL)animated;
+@property (nonatomic) UINavigationItemLargeTitleDisplayMode largeTitleDisplayMode SWIFT_AVAILABILITY(ios,introduced=11.0);
+@property (nonatomic, strong) UISearchController * _Nullable searchController SWIFT_AVAILABILITY(ios,introduced=11.0);
+@property (nonatomic) BOOL hidesSearchBarWhenScrolling SWIFT_AVAILABILITY(ios,introduced=11.0);
+@end
 
 
 
@@ -870,6 +949,15 @@ SWIFT_CLASS("_TtC5SRKit11SRShareTool")
 @end
 
 
+SWIFT_CLASS("_TtC5SRKit18SRSimplePromptView")
+@interface SRSimplePromptView : UIView
+- (nonnull instancetype)init;
+- (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)aDecoder OBJC_DESIGNATED_INITIALIZER;
+- (void)layoutSubviews;
+@end
+
+
 
 @class UITouch;
 
@@ -885,6 +973,10 @@ SWIFT_CLASS("_TtCC5SRKit11SRIndexPath3Set")
 @interface Set : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
+
+
+
+
 
 
 

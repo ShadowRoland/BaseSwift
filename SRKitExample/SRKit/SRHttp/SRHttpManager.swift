@@ -217,12 +217,12 @@ open class SRHttpManager {
                             bfail: ((HTTP.Method, Any) -> Void)? = nil,
                             fail: ((HTTP.Method, BFError) -> Void)? = nil) {
         DispatchQueue.main.async {
-            if result.isSuccess, let success = success {
-                success(result.value!)
-            } else if result.isBFailure, let bfail = bfail {
-                bfail(method, result.value!)
-            } else if result.isFailure, let fail = fail {
-                fail(method, result.error as! BFError)
+            if result.isSuccess, let success = success, let value = result.value {
+                success(value)
+            } else if result.isBFailure, let bfail = bfail, let value = result.value {
+                bfail(method, value)
+            } else if result.isFailure, let fail = fail, let error = result.error as? BFError {
+                fail(method, error)
             }
         }
     }

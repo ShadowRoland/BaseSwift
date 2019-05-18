@@ -203,7 +203,7 @@ class LeftMenuViewController: BaseViewController {
                         backgroundColor: NavigationBar.backgroundColor,
                         action:
             {
-                UserStandard[USKey.enterAggregationEntrance] = nil
+                UserStandard[UDKey.enterAggregationEntrance] = nil
                 UserStandard.synchronize()
                 exit(0)
         })

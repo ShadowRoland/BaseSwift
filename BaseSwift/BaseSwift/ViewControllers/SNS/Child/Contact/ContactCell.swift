@@ -36,7 +36,7 @@ class ContactCell: UITableViewCell {
     }
     
     public func initFont() {
-        nameLabel.font = UIFont.Preferred.body
+        nameLabel.font = UIFont.preferred.body
     }
     
     //MARK: 视图尺寸参数
@@ -60,7 +60,7 @@ class ContactCell: UITableViewCell {
     
     //处理根据字体变化而变化的约束
     public class func updateCellHeight() {
-        nameHeight = UIFont.Preferred.body.lineHeight
+        nameHeight = UIFont.preferred.body.lineHeight
         singleHeadPortraitHeight = nameHeight + singleNameOffset
         officialAccountHeadPortraitHeight = nameHeight + officialAccountNameOffset
     }

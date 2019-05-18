@@ -44,8 +44,8 @@ class SRShareCellView: UIView {
         addSubview(button)
         addSubview(label)
         label.numberOfLines = 2
-        label.font = UIFont.systemFont(ofSize: 13.0)
-        label.textColor = UIColor.darkGray
+        label.font = .systemFont(ofSize: 13.0)
+        label.textColor = .darkGray
         label.textAlignment = .center
     }
     

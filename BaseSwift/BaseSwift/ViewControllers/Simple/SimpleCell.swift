@@ -40,7 +40,8 @@ class SimpleCell: UITableViewCell {
     public func update(_ dictionary: ParamDictionary) {
         let image = NonNull.string(dictionary[Param.Key.image])
         if isEmptyString(image)
-            || (isOnlyShowImageInWLAN && HttpManager.shared.networkStatus != .reachable(.ethernetOrWiFi)) { //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
+            || (Config.shared.isOnlyShowImageInWLAN
+                && HttpManager.shared.networkStatus != .reachable(.ethernetOrWiFi)) { //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
             headerImageWidthConstraint.constant = 0
         } else {
             headerImageWidthConstraint.constant = Const.headerImageWidthShowing

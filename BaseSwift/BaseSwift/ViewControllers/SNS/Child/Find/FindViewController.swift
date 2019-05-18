@@ -11,7 +11,7 @@ import SwiftyJSON
 import MJRefresh
 //import MWPhotoBrowser
 
-class FindViewController: BaseViewController, FindCellDelegate {
+class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDelegate {
     public weak var parentVC: SNSViewController?
     var isTouched = false //视图已经被父视图载入过
     @IBOutlet weak var tableView: UITableView!
@@ -56,11 +56,9 @@ class FindViewController: BaseViewController, FindCellDelegate {
                                                  refreshNewHeight)
     }
     
-    var loadDataState: SRLoadDataState?
-    var loadDataViewHeight = 0 as CGFloat
-    var loadingDataView = SRLoadDataStateView(.loading)
-    var noDataView = SRLoadDataStateView(.empty)
-    var loadDataFailView = SRLoadDataStateView(.fail)
+    var loadingDataView: SRSimplePromptView?
+    var noDataView: SRSimplePromptView?
+    var loadDataFailView: SRSimplePromptView?
     
     var dataArray: [MessageModel] = []
     
@@ -93,11 +91,6 @@ class FindViewController: BaseViewController, FindCellDelegate {
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
         
-        loadingDataView.backgroundColor = tableView.backgroundColor
-        noDataView.backgroundColor = tableView.backgroundColor
-        loadDataFailView.backgroundColor = tableView.backgroundColor
-        loadDataFailView.delegate = self
-        
         refreshNewImageView = UIImageView(frame: Const.refreshNewFrameHidden)
         refreshNewImageView.animationImages = SRProgressHUD.defaultGif?.images
         refreshNewImageView.animationDuration = SRProgressHUD.defaultGif!.duration
@@ -108,7 +101,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         FindCell.updateCellHeight()
         
         initTableHeaderView()
-        showLoadingDataView()
+        loadingDataView = loadPromptView("Loading ...".localized, image: UIImage("loading")!)
         reloadProfile()
     }
     
@@ -149,23 +142,10 @@ class FindViewController: BaseViewController, FindCellDelegate {
         headerImageView.frame =
             CGRect(0, -headerImageHeightOffset, ScreenWidth, headerImageHeight)
         
-        loadDataViewHeight = ScreenHeight - Const.tableHeaderHeight - TabBarHeight
-        if let loadDataState = loadDataState {
-            var resultView: SRLoadDataStateView?
-            switch loadDataState {
-            case .loading:
-                resultView = loadingDataView
-            case .empty:
-                resultView = noDataView
-            case .fail:
-                resultView = loadDataFailView
-            default:
-                break
-            }
-            resultView?.frame =
-                CGRect(0, 0, ScreenWidth, max(loadDataViewHeight, noDataView.minHeight()))
-            resultView?.layout()
-            tableView.tableFooterView = resultView
+        let height = ScreenHeight - Const.tableHeaderHeight - TabBarHeight
+        if let view = tableView.tableFooterView as? SRSimplePromptView {
+            view.frame = CGRect(0, 0, ScreenWidth, height)
+            tableView.tableFooterView = view
         }
         tableView.reloadData()
     }
@@ -280,7 +260,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         endRefreshNew()
         guard let json = json?[HTTP.Key.Response.data] else {
             if dataArray.count == 0 {
-                showLoadDataFailView(errMsg) //加载失败
+                loadDataFailView = loadPromptView(errMsg, image: UIImage("request_fail"))
                 tableView.reloadData()
             }
             return
@@ -289,12 +269,11 @@ class FindViewController: BaseViewController, FindCellDelegate {
         dataArray = messageModels(json[Param.Key.list])
         
         guard !dataArray.isEmpty else { //没有数据
-            showNoDataView()
+            noDataView = loadPromptView("No record".localized, image: UIImage("no_data"))
             tableView.reloadData()
             return
         }
         
-        loadDataState = .none
         tableView.tableFooterView = UIView()
         
         tableView.mj_footer.isHidden = false
@@ -318,7 +297,7 @@ class FindViewController: BaseViewController, FindCellDelegate {
         view.dismissProgress(true)
         guard let json = json?[HTTP.Key.Response.data] else {
             if dataArray.count == 0 {
-                showLoadDataFailView(errMsg) //加载失败
+                loadDataFailView = loadPromptView(errMsg, image: UIImage("request_fail"))
                 tableView.reloadData()
             } else {
                 tableView.mj_footer.endRefreshing()
@@ -334,7 +313,6 @@ class FindViewController: BaseViewController, FindCellDelegate {
             tableView.mj_footer.resetNoMoreData()
         }
         
-        loadDataState = .none
         tableView.mj_footer.isHidden = false
         
         //去重
@@ -367,35 +345,15 @@ class FindViewController: BaseViewController, FindCellDelegate {
         return []
     }
     
-    func showLoadingDataView() {
-        loadDataState = .loading
-        loadingDataView.frame =
-            CGRect(0, 0, ScreenWidth, max(loadDataViewHeight, noDataView.minHeight()))
-        loadingDataView.layout()
+    func loadPromptView(_ text: String?, image: UIImage?) -> SRSimplePromptView {
+        let view = SRSimplePromptView(text, image: UIImage("no_data"))
+        view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight - Const.tableHeaderHeight - TabBarHeight)
+        view.delegate = self
+        view.backgroundColor = tableView.backgroundColor
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
-        tableView.tableFooterView = loadingDataView
-    }
-    
-    func showNoDataView() {
-        loadDataState = .empty
-        noDataView.frame =
-            CGRect(0, 0, ScreenWidth, max(loadDataViewHeight, noDataView.minHeight()))
-        noDataView.layout()
-        tableView.mj_footer.endRefreshingWithNoMoreData()
-        tableView.mj_footer.isHidden = true
-        tableView.tableFooterView = noDataView
-    }
-    
-    override func showLoadDataFailView(_ text: String?) {
-        loadDataState = .fail
-        loadDataFailView.text = text
-        loadDataFailView.frame =
-            CGRect(0, 0, ScreenWidth, max(loadDataViewHeight, loadDataFailView.minHeight()))
-        loadDataFailView.layout()
-        tableView.mj_footer.endRefreshingWithNoMoreData()
-        tableView.mj_footer.isHidden = true
-        tableView.tableFooterView = loadDataFailView
+        tableView.tableFooterView = view
+        return view
     }
     
     //MARK: - 事件响应
@@ -524,11 +482,12 @@ class FindViewController: BaseViewController, FindCellDelegate {
         }
     }
     
-    //MARK: - SRLoadDataStateDelegate
+    //MARK: - SRSimplePromptDelegate
     
-    override func retryLoadData() {
-        //loadData()
-        startRefreshNew()
+    func didClickSimplePromptView(_ view: SRSimplePromptView) {
+        if view === loadDataFailView {
+            startRefreshNew()
+        }
     }
 }
 

@@ -234,9 +234,9 @@ extension UIImage {
 
 extension UIImage {
     class func srNamed(_ name: String) -> UIImage? {
-        if let image = UIImage(named: name, in: Bundle.srUser, compatibleWith: nil) {
-            return image
-        }
+        //if let image = UIImage(named: name, in: Bundle.srUser, compatibleWith: nil) {
+        //    return image
+        //}
         return UIImage(named: name, in: Bundle.sr, compatibleWith: nil)
     }
 }

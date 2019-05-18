@@ -45,8 +45,8 @@ class MainMenuViewController: BaseViewController {
         latestVC.backToTopButtonBottomConstraint.constant = 0
         latestVC.loadData(progressType: .clearMask)
         
-        if UserStandard[USKey.showAdvertisingGuide] != nil {
-            UserStandard[USKey.showAdvertisingGuide] = nil
+        if UserStandard[UDKey.showAdvertisingGuide] != nil {
+            UserStandard[UDKey.showAdvertisingGuide] = nil
             stateMachine.append(Event(.showAdvertisingGuard))
         }
         

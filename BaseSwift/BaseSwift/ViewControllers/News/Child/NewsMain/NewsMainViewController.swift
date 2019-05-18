@@ -189,7 +189,7 @@ SRTabHeaderDelegate {
     
     func initChannels() {
         let dictionary: [AnyHashable : Any]?
-        if let newsChannels = UserStandard[USKey.newsChannels] {
+        if let newsChannels = UserStandard[UDKey.newsChannels] {
             dictionary = newsChannels as? [AnyHashable : Any]
         } else {
             let filePath = ResourceDirectory.appending(pathComponent: "json/debug/channels.json")
@@ -416,7 +416,7 @@ SRTabHeaderDelegate {
             editingSelectedChannels.forEach { selected.append($0.toJSON()) }
             var unselected = [] as [ParamDictionary]
             editingUnselectedChannels.forEach { unselected.append($0.toJSON()) }
-            UserStandard[USKey.newsChannels] = ["selected" : selected, "unselected" : unselected]
+            UserStandard[UDKey.newsChannels] = ["selected" : selected, "unselected" : unselected]
             
             var selectedChannelId: String?
             if let vc = currentNewsListVC, let channelId = vc.channelId {

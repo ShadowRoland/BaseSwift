@@ -55,7 +55,7 @@ class LoginViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         isPageLongPressEnabled = true
-        navigartionBarAppear = .hidden
+        navigationBarAppear = .hidden
         initView()
         
         NotifyDefault.add(self,
@@ -268,16 +268,16 @@ class LoginViewController: BaseViewController {
     
     //查看业务上是否支持
     func checkAuthenticateBusiness() -> Bool {
-        guard UserStandard[USKey.forbidAuthenticateToLogin] == nil else {
+        guard UserStandard[UDKey.forbidAuthenticateToLogin] == nil else {
             return false
         }
         
-        guard let userName = UserStandard[USKey.lastLoginUserName],
+        guard let userName = UserStandard[UDKey.lastLoginUserName],
             !isEmptyString(userName) else {
                 return false
         }
         
-        guard let password = UserStandard[USKey.lastLoginPassword],
+        guard let password = UserStandard[UDKey.lastLoginPassword],
             !isEmptyString(password) else {
                 return false
         }
@@ -307,8 +307,8 @@ class LoginViewController: BaseViewController {
             if success {
                 DispatchQueue.main.async {
                     self.accountTextField.text =
-                        UserStandard[USKey.lastLoginUserName] as? String
-                    self.passwordTextField.text = UserStandard[USKey.lastLoginPassword] as? String
+                        UserStandard[UDKey.lastLoginUserName] as? String
+                    self.passwordTextField.text = UserStandard[UDKey.lastLoginPassword] as? String
                     self.showProgress()
                     self.login()
                 }
@@ -331,8 +331,8 @@ class LoginViewController: BaseViewController {
                 guard let strongSelf = self else { return }
                 strongSelf.isLogining = false
                 strongSelf.dismissProgress()
-                UserStandard[USKey.lastLoginUserName] = strongSelf.accountTextField.text!
-                UserStandard[USKey.lastLoginPassword] = strongSelf.passwordTextField.text!
+                UserStandard[UDKey.lastLoginUserName] = strongSelf.accountTextField.text!
+                UserStandard[UDKey.lastLoginPassword] = strongSelf.passwordTextField.text!
                 IMManager.login()
                 if Config.entrance == .sns {
                     strongSelf.show("SNSViewController", storyboard: "SNS")

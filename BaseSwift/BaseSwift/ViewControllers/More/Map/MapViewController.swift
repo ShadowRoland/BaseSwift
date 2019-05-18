@@ -504,7 +504,7 @@ extension MapViewController: CustomCalloutDelegate {
                     break
                 }
                 var query = ["sourceApplication" : applicationName ?? "",
-                             "backScheme" : Config.Scheme.base,
+                             "backScheme" : Config.Scheme.app,
                              "poiname" : calloutView.poi.name ?? "",
                              "poiid" : calloutView.poi.uid ?? "",
                              "lat" : calloutView.poi.location.latitude,

@@ -106,10 +106,10 @@ class ChatListCell: UITableViewCell {
     }
     
     public func initFont() {
-        badgeLabel.font = UIFont.Preferred.caption2
-        titleLabel.font = UIFont.Preferred.body
-        descriptionLabel.font = UIFont.Preferred.footnote
-        timeLabel.font = UIFont.Preferred.caption1
+        badgeLabel.font = UIFont.preferred.caption2
+        titleLabel.font = UIFont.preferred.body
+        descriptionLabel.font = UIFont.preferred.footnote
+        timeLabel.font = UIFont.preferred.caption1
     }
     
     public class func height() -> CGFloat {
@@ -119,11 +119,11 @@ class ChatListCell: UITableViewCell {
     
     //处理根据字体变化而变化的约束
     public class func updateCellHeight() {
-        Const.titleHeight = UIFont.Preferred.body.lineHeight
-        Const.descriptionHeight = UIFont.Preferred.footnote.lineHeight
-        Const.timeHeight = UIFont.Preferred.caption1.lineHeight
+        Const.titleHeight = UIFont.preferred.body.lineHeight
+        Const.descriptionHeight = UIFont.preferred.footnote.lineHeight
+        Const.timeHeight = UIFont.preferred.caption1.lineHeight
         Const.headerHeight = ChatListCell.height() - 2 * Const.headerMargin
-        Const.badgeHeight = UIFont.Preferred.caption2.lineHeight
+        Const.badgeHeight = UIFont.preferred.caption2.lineHeight
     }
     
     func initBadgeImage() {

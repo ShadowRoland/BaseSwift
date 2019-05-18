@@ -55,7 +55,7 @@ open class SRTabHeader: UIView {
     }
     fileprivate var _selectedIndex = 0
     public var selectedIndex: Int { return _selectedIndex }
-    public var titleFont = UIFont.boldSystemFont(ofSize: 17) {
+    public var titleFont: UIFont = .boldSystemFont(ofSize: 17) {
         didSet {
             tabItems.forEach { $0.titleLabel.font = titleFont }
         }
@@ -80,7 +80,7 @@ open class SRTabHeader: UIView {
             tabItems.forEach { $0.selectedTextColor = selectedTextColor }
         }
     }
-    open var unselectedTextColor = UIColor.gray {
+    open var unselectedTextColor: UIColor = .gray {
         didSet {
             tabItems.forEach { $0.unselectedTextColor = unselectedTextColor }
         }

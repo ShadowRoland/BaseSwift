@@ -57,15 +57,6 @@
 "[SRHttpServer]second" = "second";
 "[SRHttpServer]s" = "s";
 
-//MARK: - Load Data
-
-"[SR]Loading ..." = "Loading ...";
-"[SR]Load success" = "Load success";
-"[SR]Load fail" = "Load fail";
-"[SR]Reload" = "Reload";
-"[SR]No record" = "No record";
-"[SR]No more data" = "No more data";
-
 //MARK: - Framework
 
 "[SR]Business module (moduleId: %d)  does not exist" = "Business module (moduleId: %d)  does not exist";

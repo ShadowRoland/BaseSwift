@@ -15,7 +15,6 @@ import Cartography
 
 open class SRBaseViewController: UIViewController,
     UIScrollViewDelegate,
-    SRLoadDataStateDelegate,
     SRStateMachineDelegate,
 DTAttributedTextContentViewDelegate {
     lazy var eventTarget = EventTarget(self)
@@ -83,7 +82,7 @@ DTAttributedTextContentViewDelegate {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = .white
         stateMachine.delegate = self
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.contentSizeCategoryDidChange),
@@ -98,8 +97,8 @@ DTAttributedTextContentViewDelegate {
     
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let appear = navigartionBarAppear
-        navigartionBarAppear = appear
+        let appear = navigationBarAppear
+        navigationBarAppear = appear
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.contentSizeCategoryDidChange),
                           name: UIDevice.orientationDidChangeNotification,
@@ -115,12 +114,12 @@ DTAttributedTextContentViewDelegate {
         if let navigationController = navigationController,
             navigationController.viewControllers.contains(self) {
             if navigationBarType == .system {
-                if navigartionBarAppear == .visible {
+                if navigationBarAppear == .visible {
                     if navigationController.isNavigationBarHidden {
                         navigationController.setNavigationBarHidden(false, animated: false)
                     }
                     ensureNavigationBarHidden(false)
-                } else if navigartionBarAppear == .hidden {
+                } else if navigationBarAppear == .hidden {
                     if !navigationController.isNavigationBarHidden {
                         navigationController.setNavigationBarHidden(true, animated: false)
                     }
@@ -149,15 +148,15 @@ DTAttributedTextContentViewDelegate {
             resetLoadDataFailViewPosition()
         }
         
-        if component.navigationBarBackgroundView.superview == view
-            && component.navigationBarBackgroundView.constraints.isEmpty {
-            constrain(component.navigationBarBackgroundView, self.car_topLayoutGuide) { (view, topLayoutGuide) in
-                view.top == view.superview!.top
-                view.leading == view.superview!.leading
-                view.trailing == view.superview!.trailing
-                view.bottom == topLayoutGuide.bottom
-            }
-        }
+//        if component.navigationBarBackgroundView.superview == view
+//            && component.navigationBarBackgroundView.constraints.isEmpty {
+//            constrain(component.navigationBarBackgroundView, self.car_topLayoutGuide) { (view, topLayoutGuide) in
+//                view.top == view.superview!.top
+//                view.leading == view.superview!.leading
+//                view.trailing == view.superview!.trailing
+//                view.bottom == topLayoutGuide.bottom
+//            }
+//        }
         
         //广播“触发状态机的完成事件”的通知
         if let event = event {
@@ -274,12 +273,8 @@ DTAttributedTextContentViewDelegate {
         }
     }
     
-    open override var navigationItem: UINavigationItem {
-        if navigationBarType == .sr {
+    open var srNavigationItem: SRNavigationItem {
             return baseBusinessComponent.navigationItem
-        } else {
-            return super.navigationItem
-        }
     }
     
     open func setDefaultNavigationBar(_ title: String? = nil) {
@@ -287,29 +282,36 @@ DTAttributedTextContentViewDelegate {
     }
     
     open func setDefaultNavigationBar(title: String?, leftImage image: UIImage?) {
-        if let title = title {
-            self.title = title
-        }
-        
+        self.title = title
         setNavigationBar()
         if self !== navigationController?.viewControllers.first {
-            navBarLeftButtonSettings = [[.style : NavigationBar.ButtonItemStyle.image,
-                                         .image : UIImage.srNamed("sr_page_back")!]]
+            switch navigationBarType {
+            case .system:
+                navBarLeftButtonSettings = [[.style : NavigationBar.ButtonItemStyle.image,
+                                             .image : UIImage.srNamed("sr_page_back")!]]
+            case .sr:
+                navBarLeftButtonSettings =
+                    [[.style : NavigationBar.ButtonItemStyle.image,
+                      .image : UIImage.srNamed(navigationBar.barStyle == .black ? "sr_page_back_white" : "sr_page_back")!]]
+            }
         }
     }
     
     open func setNavigationBar() {
-        guard let navigationController = navigationController else { return }
-        
-        let navigationBar = navigationController.navigationBar
-        navigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
-        navigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
-        navigationBar.tintColor = UIColor.darkGray
-        navigationBar.shadowImage = UIImage()
-        navigationBar.layer.shadowColor = UIColor(white: 0, alpha: 0.1).cgColor
-        navigationBar.layer.shadowOpacity = 1.0
-        navigationBar.layer.shadowRadius = 2.0
-        navigationBar.layer.shadowOffset = CGSize(0, 2.0)
+        switch navigationBarType {
+        case .system:
+            guard let navigationController = navigationController else { return }
+            
+            let navigationBar = navigationController.navigationBar
+            navigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
+            navigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
+            navigationBar.tintColor = NavigationBar.tintColor
+            
+        case .sr:
+            navigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
+            navigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
+            navigationBar.tintColor = NavigationBar.tintColor
+        }
     }
     
     open var navBarLeftButtonSettings: [[NavigationBar.ButtonItemKey : Any]]? {
@@ -325,16 +327,22 @@ DTAttributedTextContentViewDelegate {
                 NavigationBar.buttonItem(settings[$0],
                                          target: eventTarget,
                                          action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
-                                         tag: $0)
-//                                         isCustomView: navigationBarType != .system)
+                                         tag: $0,
+                                         isCustomView: navigationBarType != .system)
             }
-            if items.isEmpty {
-                navigationItem.leftBarButtonItem = nil
-                navigationItem.leftBarButtonItems = nil
-            } else if items.count == 1 {
-                navigationItem.leftBarButtonItem = items.first
-            } else {
-                navigationItem.leftBarButtonItems = items
+            switch navigationBarType {
+            case .system:
+                if items.isEmpty {
+                    navigationItem.leftBarButtonItem = nil
+                    navigationItem.leftBarButtonItems = nil
+                } else if items.count == 1 {
+                    navigationItem.leftBarButtonItem = items.first
+                } else {
+                    navigationItem.leftBarButtonItems = items
+                }
+                
+            case .sr:
+                srNavigationItem.leftBarButtonItems = items
             }
         }
     }
@@ -351,16 +359,22 @@ DTAttributedTextContentViewDelegate {
                 NavigationBar.buttonItem(settings[$0],
                                          target: eventTarget,
                                          action: #selector(EventTarget.clickNavigationBarRightButton(_:)),
-                                         tag: $0)
-//                                         isCustomView: navigationBarType != .system)
+                                         tag: $0,
+                                         isCustomView: navigationBarType != .system)
             }
-            if items.isEmpty {
-                navigationItem.rightBarButtonItem = nil
-                navigationItem.rightBarButtonItems = nil
-            } else {
-                navigationItem.rightBarButtonItems = items
+            
+            switch navigationBarType {
+            case .system:
+                if items.isEmpty {
+                    navigationItem.rightBarButtonItem = nil
+                    navigationItem.rightBarButtonItems = nil
+                } else {
+                    navigationItem.rightBarButtonItems = items
+                }
+                
+            case .sr:
+                srNavigationItem.rightBarButtonItems = items
             }
-            navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "haha", style: .plain, target: nil, action: nil)]
         }
     }
     
@@ -456,7 +470,7 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: Load Data Fail
     
-    open func showLoadDataFailView(_ text: String?) {
+    open func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
         guard let view = view else { return }
         
         let component = baseBusinessComponent
@@ -474,8 +488,7 @@ DTAttributedTextContentViewDelegate {
                        view.bounds.size.width,
                        view.bounds.size.height - topLayoutGuide.length)
         }
-        component.showLoadDataFailView(component.loadDataFailContainerView, text: text)
-        component.loadDataFailView?.delegate = self
+        component.showLoadDataFailView(text, image: image ?? UIImage.srNamed("sr_load_data_fail")!)
     }
     
     open func dismissLoadDataFailView() {
@@ -499,7 +512,6 @@ DTAttributedTextContentViewDelegate {
                        view.bounds.size.width,
                        view.bounds.size.height - topLayoutGuide.length)
         }
-        baseBusinessComponent.resetLoadDataFailViewPosition()
     }
     
     open var isShowingLoadDataFailView: Bool {
@@ -615,13 +627,6 @@ DTAttributedTextContentViewDelegate {
             SRAlert.show(message: message, type: .error)
         }
         return message
-    }
-    
-    //MARK: SRLoadDataStateDelegate httpFailRetry
-    
-    open func retryLoadData() {
-        dismissLoadDataFailView()
-        baseBusinessComponent.loadDataFailRetryHandler?()
     }
     
     //MARK: - DTAttributedTextContentViewDelegate

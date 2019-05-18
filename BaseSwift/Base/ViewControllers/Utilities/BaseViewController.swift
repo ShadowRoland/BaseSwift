@@ -48,6 +48,12 @@ class BaseViewController: SRBaseViewController {
         show("WebpageViewController", storyboard: "Utility", params: dictionary, event: event)
     }
     
+    //MARK: -
+    
+    override func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
+        super.showLoadDataFailView(text, image: image ?? UIImage("request_fail")!)
+    }
+    
     //MARK: - Http Request
 
     public override func httpRequest(_ method: HTTP.Method,

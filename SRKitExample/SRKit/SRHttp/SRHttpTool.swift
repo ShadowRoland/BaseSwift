@@ -53,6 +53,19 @@ public class HTTP {
             }
         }
         
+        public var originUrl: String {
+            switch self {
+            case .get(let url, _):
+                return url
+                
+            case .post(let url, _):
+                return url
+                
+            case .upload(let url, _, _):
+                return url
+            }
+        }
+        
         public var params: ParamDictionary? {
             switch self {
             case .get(_, let params):

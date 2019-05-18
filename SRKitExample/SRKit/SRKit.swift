@@ -19,16 +19,16 @@ public class SRKit {
     }
     
     public static let newActionNotification = Notification.Name(rawValue: "SRKit.newAction")
-    public static let didEndStateMachinePageEventNotification = Notification.Name("SRKit.didEndStateMachinePageEvent") //跨页面的通知
+    public static let didEndStateMachinePageEventNotification = Notification.Name("SRKit.didEndStateMachinePageEvent") ///跨页面的通知
 }
 
 //MARK: Environment
 
 public var Environment: RunEnvironment = .develop
 public enum RunEnvironment {
-    case develop,  //开发环境，debug
-    test,  //测试环境，release
-    production  //生产环境，release
+    case develop,  ///开发环境，debug
+    test,  ///测试环境，release
+    production  ///生产环境，release
 }
 
 public var BaseHttpURL: String = ""
@@ -73,9 +73,9 @@ public var ResourceDirectory: String {
 
 //日志文件目录
 //let LogfilesDirectory      [kDocumentsDirectory stringByAppendingPathComponent:@"Log"]
-//所有用户目录
+
 fileprivate var userDirectory: String!
-public var UserDirectory: String {
+public var UserDirectory: String { ///所有用户目录
     get {
         if userDirectory == nil {
             userDirectory = DocumentsDirectory.appending(pathComponent: "User")
@@ -87,9 +87,8 @@ public var UserDirectory: String {
     }
 }
 
-//数据库文件路径
 fileprivate var databaseFilePath: String!
-public var DatabaseFilePath: String {
+public var DatabaseFilePath: String {///数据库文件路径
     get {
         if databaseFilePath == nil {
             databaseFilePath = DocumentsDirectory.appending(pathComponent: "app.db")
@@ -150,16 +149,16 @@ public var AppVersion: String {
     return appVersion
 }
 
-public enum ScreenScaleType: Int {
+public enum ScreenScaleType: Int {///设备屏幕种类
     case none
-    case iPad                   //iPad的屏幕
-    case iPhone4                //iPhone4，及iPhone4以前手机
-    case iPhone5                //iPhone5，5S的屏幕
-    case iPhone6                //iPhone6的屏幕
-    case iPhone6P               //iPhone6 plus的屏幕
-    case iPhoneX                //iPhoneX的屏幕
-    case iPhoneXR               //iPhoneX的屏幕
-    case iPhoneXMax             //iPhoneX的屏幕
+    case iPad                   ///iPad的屏幕
+    case iPhone4                ///iPhone4，及iPhone4以前手机
+    case iPhone5                ///iPhone5，5S的屏幕
+    case iPhone6                ///iPhone6的屏幕
+    case iPhone6P               ///iPhone6 plus的屏幕
+    case iPhoneX                ///iPhoneX的屏幕
+    case iPhoneXR               ///iPhoneX的屏幕
+    case iPhoneXMax             ///iPhoneX的屏幕
     case unknown
 }
 
@@ -226,71 +225,49 @@ public var ShouldAutorotate = false
 public var SupportedInterfaceOrientations: UIInterfaceOrientationMask = .portrait
 public var PreferredInterfaceOrientationForPresentation: UIInterfaceOrientation = .portrait
 
-//MARK: 是否只在WLAN下显示图片
-public var isOnlyShowImageInWLAN: Bool {
-    get {
-        return UserStandard[USKey.isAllowShowImageInWLAN] == nil
-    }
-    set {
-        UserStandard[USKey.isAllowShowImageInWLAN] = true
-    }
-}
+//MARK: -
 
-//MARK: 是否允许使用指纹登录，默认允许
-public var canAuthenticateToLogin: Bool {
-    get {
-        return UserStandard[USKey.forbidAuthenticateToLogin] == nil
-    }
-    set {
-        UserStandard[USKey.forbidAuthenticateToLogin] = true
-    }
-}
-
-//MARK: - 存储在UserDefault中的数据Key
-
-public struct USKey {
-    public static let appIsFirstRun                  = "SRKit.USKey.appIsFirstRun"
-    public static let baseHttpURL                    = "SRKit.USKey.baseHttpURL"
-    public static let currentUserInfo                = "SRKit.USKey.currentUserInfo"
-    public static let currentDeviceToken             = "SRKit.USKey.currentDeviceToken"
-    public static let currentToken                   = "SRKit.USKey.currentToken"
-    public static let currentUserId                  = "SRKit.USKey.currentUserId"
-    public static let currentLoginPassword           = "SRKit.USKey.currentLoginPassword"
-    public static let dbVersion                      = "SRKit.USKey.dbVersion"
-    public static let isFreeInterfaceOrientations    = "SRKit.USKey.isFreeInterfaceOrientations"
-    public static let isAllowShowImageInWLAN         = "SRKit.USKey.isAllowShowImageInWLAN"
-    public static let forbidAuthenticateToLogin      = "SRKit.USKey.forbidAuthenticateToLogin"
+public struct UDKey {///存储在UserDefault中的数据Key
+    public static let appIsFirstRun                  = "SRKit.UDKey.appIsFirstRun"
+    public static let baseHttpURL                    = "SRKit.UDKey.baseHttpURL"
+    public static let currentUserInfo                = "SRKit.UDKey.currentUserInfo"
+    public static let currentDeviceToken             = "SRKit.UDKey.currentDeviceToken"
+    public static let currentToken                   = "SRKit.UDKey.currentToken"
+    public static let currentUserId                  = "SRKit.UDKey.currentUserId"
+    public static let currentLoginPassword           = "SRKit.UDKey.currentLoginPassword"
+    public static let dbVersion                      = "SRKit.UDKey.dbVersion"
+    public static let isFreeInterfaceOrientations    = "SRKit.UDKey.isFreeInterfaceOrientations"
 }
 
 //MARK: - 常用的常量值
 
-public var PerformDelay = 0.1 as TimeInterval
-public var DelayPerformForOldDevice = 0.5 as TimeInterval
-public var ViewControllerTransitionInterval = 0.3 as TimeInterval //视图切换动画
-public var ReuseIdentifier = "SRKit.reuseIdentifier"
-public var AppCallUrlSchemeKey = "scheme"
+public var PerformDelay = 0.1 as TimeInterval ///0.1
+public var DelayPerformForOldDevice = 0.5 as TimeInterval ///0.5
+public var ViewControllerTransitionInterval = 0.3 as TimeInterval ///视图切换动画, 0.3
+public var ReuseIdentifier = "reuseIdentifier" ///reuseIdentifier
+public var AppCallUrlSchemeKey = "scheme" ///scheme
 //var Description = "description"
-public var HtmlTextFormat = "<span style=\"font-family: sans-serif;font-size: 15px;margin: 0;padding: 0\">%@</span>"
-public var HtmlTitleFormat = "<p style=\"text-align: center;line-height: 120%%;font-family: sans-serif;font-size: 15px;\">%@</p>"
+public var HtmlTextFormat = "<span style=\"font-family: sans-serif;font-size: 15px;margin: 0;padding: 0\">%@</span>" ///"<span style=\"font-family: sans-serif;font-size: 15px;margin: 0;padding: 0\">%@</span>"
+public var HtmlTitleFormat = "<p style=\"text-align: center;line-height: 120%%;font-family: sans-serif;font-size: 15px;\">%@</p>" ///"<p style=\"text-align: center;line-height: 120%%;font-family: sans-serif;font-size: 15px;\">%@</p>"
 
 //MARK: - 本地化语言
 
-public let isZhHans = NSLocale.preferredLanguages.first!.hasPrefix("zh-Hans")
+public let isZhHans = NSLocale.preferredLanguages.first!.hasPrefix("zh-Hans") ///是否是汉字
 
 //MARK: - 格式化
 
 public class DateFormat {
-    public static var date = date1
-    public static var date1 = "yyyy-MM-dd"
-    public static var date2 = "yyyy/MM/dd"
-    public static var localDate = "[SR]LocalDate".srLocalized
-    public static var time = time1
-    public static var time1 = "yyyy-MM-dd HH:mm:ss"
-    public static var time2 = "yyyy-MM-dd HH:mm:ss.SSS"
-    public static var time3 = "yyyy/MM/dd HH:mm:ss"
-    public static var time4 = "HH:mm:ss"
-    public static var time5 = "HH:mm:ss.SSS"
-    public static var full = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ"
+    public static var date = date1 ///date1
+    public static var date1 = "yyyy-MM-dd" ///yyyy-MM-dd
+    public static var date2 = "yyyy/MM/dd" ///yyyy/MM/dd
+    public static var localDate = "[SR]LocalDate".srLocalized ///"[SR]LocalDate".srLocalized
+    public static var time = time1 ///time1
+    public static var time1 = "yyyy-MM-dd HH:mm:ss" ///yyyy-MM-dd HH:mm:ss
+    public static var time2 = "yyyy-MM-dd HH:mm:ss.SSS" ///yyyy-MM-dd HH:mm:ss.SSS
+    public static var time3 = "yyyy/MM/dd HH:mm:ss" ///yyyy/MM/dd HH:mm:ss
+    public static var time4 = "HH:mm:ss" ///HH:mm:ss
+    public static var time5 = "HH:mm:ss.SSS" ///HH:mm:ss.SSS
+    public static var full = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ" ///yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ
 }
 
 //MARK: - 视图相关的常量和工具
@@ -299,39 +276,39 @@ public var ScreenWidth: CGFloat { return UIScreen.main.bounds.size.width }
 public var ScreenHeight: CGFloat { return UIScreen.main.bounds.size.height }
 
 public extension UIFont {
-    static var title = UIFont.medium(18.0)
-    static var heavyTitle = UIFont.bold(18.0)
-    static var text = UIFont.system(15.0)
-    static var detail = UIFont.system(14.0)
-    static var tip = UIFont.system(13.0)
+    static var title: UIFont = .medium(18.0) ///.medium(18.0)
+    static var heavyTitle: UIFont = .bold(18.0) ///.bold(18.0)
+    static var text: UIFont = .system(15.0) ///.system(15.0)
+    static var detail: UIFont = .system(14.0) ///.system(14.0)
+    static var tip: UIFont = .system(13.0) ///.system(13.0)
 }
 
 public extension NSObject.property {
-    static let text: NSObject.property = NSObject.property("text")
-    static let placeholder: NSObject.property = NSObject.property("placeholder")
-    static let font: NSObject.property = NSObject.property("font")
-    static let isEnabled: NSObject.property = NSObject.property("isEnabled")
+    static let text: NSObject.property = NSObject.property("text") ///NSObject.property("text")
+    static let placeholder: NSObject.property = NSObject.property("placeholder") ///NSObject.property("placeholder")
+    static let font: NSObject.property = NSObject.property("font") ///NSObject.property("font")
+    static let isEnabled: NSObject.property = NSObject.property("isEnabled") ///NSObject.property("isEnabled")
 }
 
-public var StatusBarHeight = 20.0 as CGFloat //状态栏默认高度
-public var NavigationBarHeight = 44.0 as CGFloat //导航栏默认高度（竖屏）
-public var NavigationHeaderHeight = StatusBarHeight + NavigationBarHeight //导航栏上部默认高度（竖屏）
-public var TabBarHeight = 49.0 as CGFloat //TabBar默认高度
-public var SafeInsetTop = 0 as CGFloat //iPhone X顶部预留的安全间距
-public var SafeInsetBottom = 0 as CGFloat //iPhone X底部部预留的安全
-public var TabBarImageHeight = 50.0 / 2.0 as CGFloat //TabBar图片的默认高度
-public var TableCellHeight = 44.0 as CGFloat //UITableViewCell的默认高度
-public var SectionHeaderTopHeight = 20.0 as CGFloat //列表的第一个Section的HeaderView的高度
-public var SectionHeaderHeight = 30.0 as CGFloat //列表的非第一个Section的HeaderView的高度
-public var SectionHeaderGroupNoHeight = 0.5 as CGFloat //列表Gourp模式下Section的HeaderView最小高度
-public var TableCellSeperatorColor = UIColor(white: 215.0) //UITableViewCell分割线的近似颜色
-public var ToastHeightAboveBottom = 100.0 as CGFloat //Toast底部栏高度
-public var MaskAlpha = 0.7 as CGFloat //默认灰底背景透明度
-public var MaskBackgroundColor = UIColor(white: 0.5, alpha: MaskAlpha) //默认灰底背景色
-public var LabelHeight = 21.0 as CGFloat //默认的UILabel控件的高度
-public var SeperatorLineThickness = 0.5 as CGFloat //分割线粗细
-public var SeperatorLineColor = UIColor(197.0, 197.0, 212.0) //分割线颜色
-public var SubviewMargin = 15.0 as CGFloat //子视图内的默认外间距，多用于水平方向
+public var StatusBarHeight = 20.0 as CGFloat ///状态栏默认高度, 20.0
+public var NavigationBarHeight = 44.0 as CGFloat ///导航栏默认高度（竖屏）, 44.0
+public var NavigationHeaderHeight = StatusBarHeight + NavigationBarHeight //导航栏上部默认高度（竖屏）, StatusBarHeight + NavigationBarHeight
+public var TabBarHeight = 49.0 as CGFloat ///TabBar默认高度, 49.0
+public var SafeInsetTop = 0 as CGFloat ///iPhone X顶部预留的安全间距, 0
+public var SafeInsetBottom = 0 as CGFloat ///iPhone X底部部预留的安全, 0
+public var TabBarImageHeight = 50.0 / 2.0 as CGFloat ///TabBar图片的默认高度, 50.0 / 2.0
+public var TableCellHeight = 44.0 as CGFloat ///UITableViewCell的默认高度, 44.0
+public var SectionHeaderTopHeight = 20.0 as CGFloat ///列表的第一个Section的HeaderView的高度, 20.0
+public var SectionHeaderHeight = 30.0 as CGFloat ///列表的非第一个Section的HeaderView的高度, 30.0
+public var SectionHeaderGroupNoHeight = 0.5 as CGFloat ///列表Gourp模式下Section的HeaderView最小高度, 0.5
+public var TableCellSeperatorColor = UIColor(white: 215.0) ///UITableViewCell分割线的近似颜色, UIColor(white: 215.0)
+public var ToastHeightAboveBottom = 100.0 as CGFloat ///Toast底部栏高度, 100.0
+public var MaskAlpha = 0.7 as CGFloat ///默认灰底背景透明度, 0.7
+public var MaskBackgroundColor = UIColor(white: 0.5, alpha: MaskAlpha) ///默认灰底背景色, UIColor(white: 0.5, alpha: MaskAlpha)
+public var LabelHeight = 21.0 as CGFloat ///默认的UILabel控件的高度, 21.0
+public var SeperatorLineThickness = 0.5 as CGFloat ///分割线粗细, 0.5
+public var SeperatorLineColor = UIColor(197.0, 197.0, 212.0) ///分割线颜色, UIColor(197.0, 197.0, 212.0)
+public var SubviewMargin = 15.0 as CGFloat ///子视图内的默认外间距，多用于水平方向, 15.0
 
 //MARK: - 在系统提供的Navigation Bar上做自定义
 
@@ -339,8 +316,8 @@ public class NavigationBar {
     static public var buttonItemHeight = NavigationBarHeight
     static public var titleTextAttributes: [NSAttributedString.Key : Any] =
         [.foregroundColor : UIColor.black, .font : UIFont.title]
-    static public var tintColor = UIColor.black
-    static public var backgroundColor = UIColor.white
+    static public var tintColor: UIColor = .black
+    static public var backgroundColor: UIColor = .white
     static  var _backgroundColor: UIColor?
     private static var _backgroundImage: UIImage?
     static var backgroundImage: UIImage {
@@ -451,6 +428,9 @@ public class NavigationBar {
                     }
                     
                     button.setTitle(title, for: .normal)
+                    if let action = action {
+                        button.addTarget(target, action: action, for: .touchUpInside)
+                    }
                 }
                 item = UIBarButtonItem(customView: button)
             }
@@ -510,12 +490,12 @@ public class SubmitButton {
     public static var frame                        = CGRect(0,
                                                             0,
                                                             ScreenWidth - SubviewMargin,
-                                                            TableCellHeight) //默认尺寸
-    public static var cornerRadius                 = 5.0 as CGFloat //圆角
-    public static var backgroundColorNormal        = UIColor(0, 191.0, 255.0) //提交按钮正常状态的颜色
-    public static var backgroundColorHighlighted   = UIColor(175.0, 238.0, 238.0) //提交按钮高亮状态的颜色
-    public static var titleColor                   = UIColor.white
-    public static var font                         = UIFont.Preferred.headline
+                                                            TableCellHeight) ///默认尺寸
+    public static var cornerRadius: CGFloat        = 5.0 ///圆角
+    public static var backgroundColorNormal        = UIColor(0, 191.0, 255.0) ///提交按钮正常状态的颜色
+    public static var backgroundColorHighlighted   = UIColor(175.0, 238.0, 238.0) ///提交按钮高亮状态的颜色
+    public static var titleColor: UIColor          = .white
+    public static var font                         = UIFont.preferred.headline
 }
 
 public class Param {
@@ -612,6 +592,7 @@ extension SRKit {
             public init(_ rawValue: String) {
                 self.rawValue = rawValue
             }
+            
             public init(rawValue: String) {
                 self.rawValue = rawValue
             }

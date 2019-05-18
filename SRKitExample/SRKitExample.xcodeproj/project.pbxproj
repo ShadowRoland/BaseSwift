@@ -12,7 +12,6 @@
 		4E1376142286A0C100330EBE /* SRAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B43A228698F200E98791 /* SRAlertController.swift */; };
 		4E1376152286A0C100330EBE /* UIView+SRProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B42E228698F200E98791 /* UIView+SRProgress.swift */; };
 		4E1376162286A0C100330EBE /* UIViewController+SRBaseBusiness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B430228698F200E98791 /* UIViewController+SRBaseBusiness.swift */; };
-		4E1376172286A0C100330EBE /* SRLoadDataStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B433228698F200E98791 /* SRLoadDataStateView.swift */; };
 		4E1376182286A0C100330EBE /* SRBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B434228698F200E98791 /* SRBaseViewController.swift */; };
 		4E1376192286A0C100330EBE /* SRBusinessResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B465228698F200E98791 /* SRBusinessResult.swift */; };
 		4E13761A2286A0C100330EBE /* SRBusinessListenerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B466228698F200E98791 /* SRBusinessListenerProtocol.swift */; };
@@ -75,7 +74,6 @@
 		4E1376532286A16900330EBE /* SRAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B43A228698F200E98791 /* SRAlertController.swift */; };
 		4E1376542286A16900330EBE /* UIView+SRProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B42E228698F200E98791 /* UIView+SRProgress.swift */; };
 		4E1376552286A16900330EBE /* UIViewController+SRBaseBusiness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B430228698F200E98791 /* UIViewController+SRBaseBusiness.swift */; };
-		4E1376562286A16900330EBE /* SRLoadDataStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B433228698F200E98791 /* SRLoadDataStateView.swift */; };
 		4E1376572286A16900330EBE /* SRBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B434228698F200E98791 /* SRBaseViewController.swift */; };
 		4E1376582286A16900330EBE /* SRBusinessResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B465228698F200E98791 /* SRBusinessResult.swift */; };
 		4E1376592286A16900330EBE /* SRBusinessListenerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B466228698F200E98791 /* SRBusinessListenerProtocol.swift */; };
@@ -138,6 +136,8 @@
 		4E1376CC228937C600330EBE /* SRNavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376CB228937C600330EBE /* SRNavigationItem.swift */; };
 		4E28DF6D228D30660026C78A /* SRNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376C92289374D00330EBE /* SRNavigationBar.swift */; };
 		4E28DF6E228D30670026C78A /* SRNavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376CB228937C600330EBE /* SRNavigationItem.swift */; };
+		4E28DF712292B3DB0026C78A /* SRSimplePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */; };
+		4E28DF722292B3FC0026C78A /* SRSimplePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */; };
 		4E34B391226EF64B00CC37C6 /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 4E34B390226EF64B00CC37C6 /* Resource */; };
 		4E5627012285424100C6CE1D /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 4E34B390226EF64B00CC37C6 /* Resource */; };
 		4E5627022285424A00C6CE1D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E7575622264510900394408 /* Assets.xcassets */; };
@@ -164,6 +164,7 @@
 		4E1376902286A20300330EBE /* SRKit.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SRKit.bundle; sourceTree = "<group>"; };
 		4E1376C92289374D00330EBE /* SRNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRNavigationBar.swift; sourceTree = "<group>"; };
 		4E1376CB228937C600330EBE /* SRNavigationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRNavigationItem.swift; sourceTree = "<group>"; };
+		4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRSimplePromptView.swift; sourceTree = "<group>"; };
 		4E34B390226EF64B00CC37C6 /* Resource */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resource; sourceTree = "<group>"; };
 		4E5626FB2285413400C6CE1D /* SRKitRes.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SRKitRes.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E5626FD2285413500C6CE1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -196,7 +197,6 @@
 		4E89B42E228698F200E98791 /* UIView+SRProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+SRProgress.swift"; sourceTree = "<group>"; };
 		4E89B430228698F200E98791 /* UIViewController+SRBaseBusiness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+SRBaseBusiness.swift"; sourceTree = "<group>"; };
 		4E89B432228698F200E98791 /* SRKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRKit.swift; sourceTree = "<group>"; };
-		4E89B433228698F200E98791 /* SRLoadDataStateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRLoadDataStateView.swift; sourceTree = "<group>"; };
 		4E89B434228698F200E98791 /* SRBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBaseViewController.swift; sourceTree = "<group>"; };
 		4E89B436228698F200E98791 /* SRDatePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRDatePicker.swift; sourceTree = "<group>"; };
 		4E89B437228698F200E98791 /* SRDivisionPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRDivisionPicker.swift; sourceTree = "<group>"; };
@@ -285,6 +285,14 @@
 			path = SRNavigationBar;
 			sourceTree = "<group>";
 		};
+		4E28DF6F2292B3DB0026C78A /* SRSimplePromptView */ = {
+			isa = PBXGroup;
+			children = (
+				4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */,
+			);
+			path = SRSimplePromptView;
+			sourceTree = "<group>";
+		};
 		4E5626FC2285413500C6CE1D /* SRKitRes */ = {
 			isa = PBXGroup;
 			children = (
@@ -354,6 +362,7 @@
 				4E89B462228698F200E98791 /* SRPopover */,
 				4E89B42B228698F100E98791 /* SRProgressHUD */,
 				4E89B416228698F100E98791 /* SRShareTool */,
+				4E28DF6F2292B3DB0026C78A /* SRSimplePromptView */,
 				4E89B444228698F200E98791 /* SRStateMachine */,
 				4E89B43B228698F200E98791 /* SRTabHeader */,
 				4E89B45A228698F200E98791 /* SRVideoPlayer */,
@@ -445,7 +454,6 @@
 			isa = PBXGroup;
 			children = (
 				4E89B434228698F200E98791 /* SRBaseViewController.swift */,
-				4E89B433228698F200E98791 /* SRLoadDataStateView.swift */,
 				4E89B42E228698F200E98791 /* UIView+SRProgress.swift */,
 				4E89B430228698F200E98791 /* UIViewController+SRBaseBusiness.swift */,
 			);
@@ -502,25 +510,25 @@
 		4E89B446228698F200E98791 /* SRExtension */ = {
 			isa = PBXGroup;
 			children = (
-				4E89B447228698F200E98791 /* UIImage+SRExtension.swift */,
-				4E89B448228698F200E98791 /* UIFont+SRExtension.swift */,
-				4E89B449228698F200E98791 /* NotificationCenter+SRExtension.swift */,
-				4E89B44A228698F200E98791 /* NonNull.swift */,
-				4E89B44B228698F200E98791 /* URL+SRExtension.swift */,
-				4E89B44C228698F200E98791 /* UserDefaults+SRExtension.swift */,
-				4E89B44D228698F200E98791 /* UIView+SRExtension.swift */,
-				4E89B44E228698F200E98791 /* UIColor+SRExtension.swift */,
-				4E89B44F228698F200E98791 /* Dictionary+SRExtension.swift */,
-				4E89B450228698F200E98791 /* NSObject+SRExtension.swift */,
-				4E89B451228698F200E98791 /* UIButton+SRExtension.swift */,
-				4E89B452228698F200E98791 /* Data+SRExtension.swift */,
 				4E89B453228698F200E98791 /* Bundle+SRExtension.swift */,
-				4E89B454228698F200E98791 /* String+SRExtension.swift */,
+				4E89B452228698F200E98791 /* Data+SRExtension.swift */,
+				4E89B458228698F200E98791 /* Date+SRExtension.swift */,
+				4E89B44F228698F200E98791 /* Dictionary+SRExtension.swift */,
+				4E89B459228698F200E98791 /* Geometry+SRExtension.swift */,
+				4E89B44A228698F200E98791 /* NonNull.swift */,
+				4E89B449228698F200E98791 /* NotificationCenter+SRExtension.swift */,
+				4E89B450228698F200E98791 /* NSObject+SRExtension.swift */,
 				4E89B455228698F200E98791 /* Numeric+SRExtension.swift */,
+				4E89B454228698F200E98791 /* String+SRExtension.swift */,
+				4E89B451228698F200E98791 /* UIButton+SRExtension.swift */,
+				4E89B44E228698F200E98791 /* UIColor+SRExtension.swift */,
+				4E89B448228698F200E98791 /* UIFont+SRExtension.swift */,
+				4E89B447228698F200E98791 /* UIImage+SRExtension.swift */,
 				4E89B456228698F200E98791 /* UINavigationBar+SRExtension.swift */,
 				4E89B457228698F200E98791 /* UITableView+SRExtension.swift */,
-				4E89B458228698F200E98791 /* Date+SRExtension.swift */,
-				4E89B459228698F200E98791 /* Geometry+SRExtension.swift */,
+				4E89B44D228698F200E98791 /* UIView+SRExtension.swift */,
+				4E89B44B228698F200E98791 /* URL+SRExtension.swift */,
+				4E89B44C228698F200E98791 /* UserDefaults+SRExtension.swift */,
 			);
 			path = SRExtension;
 			sourceTree = "<group>";
@@ -847,6 +855,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E28DF722292B3FC0026C78A /* SRSimplePromptView.swift in Sources */,
 				4E28DF6D228D30660026C78A /* SRNavigationBar.swift in Sources */,
 				4E28DF6E228D30670026C78A /* SRNavigationItem.swift in Sources */,
 				4E1376512286A16900330EBE /* NullSafe.m in Sources */,
@@ -854,7 +863,6 @@
 				4E1376532286A16900330EBE /* SRAlertController.swift in Sources */,
 				4E1376542286A16900330EBE /* UIView+SRProgress.swift in Sources */,
 				4E1376552286A16900330EBE /* UIViewController+SRBaseBusiness.swift in Sources */,
-				4E1376562286A16900330EBE /* SRLoadDataStateView.swift in Sources */,
 				4E1376572286A16900330EBE /* SRBaseViewController.swift in Sources */,
 				4E1376582286A16900330EBE /* SRBusinessResult.swift in Sources */,
 				4E1376592286A16900330EBE /* SRBusinessListenerProtocol.swift in Sources */,
@@ -928,7 +936,6 @@
 				4E1376142286A0C100330EBE /* SRAlertController.swift in Sources */,
 				4E1376152286A0C100330EBE /* UIView+SRProgress.swift in Sources */,
 				4E1376162286A0C100330EBE /* UIViewController+SRBaseBusiness.swift in Sources */,
-				4E1376172286A0C100330EBE /* SRLoadDataStateView.swift in Sources */,
 				4E1376182286A0C100330EBE /* SRBaseViewController.swift in Sources */,
 				4E1376192286A0C100330EBE /* SRBusinessResult.swift in Sources */,
 				4E13761A2286A0C100330EBE /* SRBusinessListenerProtocol.swift in Sources */,
@@ -968,6 +975,7 @@
 				4E13763C2286A0C100330EBE /* SRNavigationController.swift in Sources */,
 				4E13763D2286A0C100330EBE /* SRDatePicker.swift in Sources */,
 				4E13763E2286A0C100330EBE /* SRDivisionPicker.swift in Sources */,
+				4E28DF712292B3DB0026C78A /* SRSimplePromptView.swift in Sources */,
 				4E13763F2286A0C100330EBE /* SRPickerView.swift in Sources */,
 				4E1376402286A0C100330EBE /* SRPopover.swift in Sources */,
 				4E1376412286A0C100330EBE /* SRProgressHUD.swift in Sources */,

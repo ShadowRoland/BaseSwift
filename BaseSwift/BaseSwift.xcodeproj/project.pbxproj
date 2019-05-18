@@ -41,6 +41,7 @@
 		4E1376C32286C4CC00330EBE /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B407228671E500E98791 /* BaseModel.swift */; };
 		4E1376C42286C4CC00330EBE /* BaseBusinessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B408228671E500E98791 /* BaseBusinessModel.swift */; };
 		4E1376C62286C4CC00330EBE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376992286BD1C00330EBE /* BaseViewController.swift */; };
+		4E1376C72289188E00330EBE /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF29A652119411F008CFAD5 /* Env.swift */; };
 		4E3DDF85227835E700F6086A /* HttpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3DDF84227835E700F6086A /* HttpServer.swift */; };
 		4E89B3F62286717500E98791 /* Base.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E89B3F52286717500E98791 /* Base.xcassets */; };
 		4E89B40D228671E500E98791 /* SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E89B402228671E400E98791 /* SRKit.framework */; };
@@ -511,8 +512,9 @@
 		4E89B406228671E500E98791 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				4E89B407228671E500E98791 /* BaseModel.swift */,
 				4E89B408228671E500E98791 /* BaseBusinessModel.swift */,
+				4E89B407228671E500E98791 /* BaseModel.swift */,
+				4EF29A652119411F008CFAD5 /* Env.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -614,7 +616,6 @@
 				4EABAE9E1FF61EE60007CCA7 /* AddressModel.swift */,
 				4EABAEA01FF61EE60007CCA7 /* ChannelModel.swift */,
 				4EABAEA91FF61EE60007CCA7 /* CountryCodeModel.swift */,
-				4EF29A652119411F008CFAD5 /* Env.swift */,
 				4EABAEA31FF61EE60007CCA7 /* MessageModel.swift */,
 				4EABAE9F1FF61EE60007CCA7 /* ProfileDetailModel.swift */,
 				4EABAEA51FF61EE60007CCA7 /* ProfileModel.swift */,
@@ -1496,6 +1497,7 @@
 				4E89B411228671E500E98791 /* BaseBusinessModel.swift in Sources */,
 				4E89B40E228671E500E98791 /* Config.swift in Sources */,
 				4E13769A2286BD1C00330EBE /* BaseViewController.swift in Sources */,
+				4E1376C72289188E00330EBE /* Env.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1760,6 +1762,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
+					BASE_FRAMEWORK,
 				);
 				INFOPLIST_FILE = Base/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1799,6 +1802,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
+					BASE_FRAMEWORK,
 				);
 				INFOPLIST_FILE = Base/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

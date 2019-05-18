@@ -10,14 +10,12 @@ import SRKit
 import SwiftyJSON
 import MJRefresh
 
-class SimpleTableViewController: BaseViewController {
+class SimpleTableViewController: BaseViewController, SRSimplePromptDelegate {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var tableHeaderView: UIView!
     @IBOutlet weak var tableHeaderScrollView: UIScrollView!
     
     var currentOffset = 0
-    var noDataView = SRLoadDataStateView(.empty)
-    var loadDataFailView = SRLoadDataStateView(.fail)
     
     var images: [String] = []
     var dataArray: [ParamDictionary] = []
@@ -65,10 +63,6 @@ class SimpleTableViewController: BaseViewController {
         })
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
-        
-        noDataView.backgroundColor = tableView.backgroundColor
-        loadDataFailView.backgroundColor = tableView.backgroundColor
-        loadDataFailView.delegate = self
     }
     
     //MARK: - Autorotate Orientation
@@ -208,24 +202,29 @@ class SimpleTableViewController: BaseViewController {
     }
     
     func showNoDataView() {
-        let height =
-            tableView.height - (tableView.tableHeaderView == nil ? 0 : Const.headerImageHeight)
-        noDataView.frame =
-            CGRect(0, 0, ScreenWidth, max(height, noDataView.minHeight()))
-        noDataView.layout()
-        tableView.tableFooterView = noDataView
+        let view = SRSimplePromptView("No record".localized, image: UIImage("no_data"))
+        view.frame =
+            CGRect(0,
+                   0,
+                   ScreenWidth,
+                   tableView.height - (tableView.tableHeaderView == nil ? 0 : Const.headerImageHeight))
+        view.delegate = self
+        view.backgroundColor = tableView.backgroundColor
+        tableView.tableFooterView = view
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
     }
     
-    override func showLoadDataFailView(_ text: String?) {
-        loadDataFailView.text = text
-        let height =
-            tableView.height - (tableView.tableHeaderView == nil ? 0 : Const.headerImageHeight)
-        loadDataFailView.frame =
-            CGRect(0, 0, ScreenWidth, max(height, loadDataFailView.minHeight()))
-        loadDataFailView.layout()
-        tableView.tableFooterView = loadDataFailView
+    override func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
+        let view = SRSimplePromptView(text, image: UIImage("request_fail"))
+        view.frame =
+            CGRect(0,
+                   0,
+                   ScreenWidth,
+                   tableView.height - (tableView.tableHeaderView == nil ? 0 : Const.headerImageHeight))
+        view.delegate = self
+        view.backgroundColor = tableView.backgroundColor
+        tableView.tableFooterView = view
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
     }
@@ -298,9 +297,9 @@ class SimpleTableViewController: BaseViewController {
         show("SimpleSubmitViewController", storyboard: "Simple")
     }
     
-    //MARK: - SRLoadDataStateDelegate
+    //MARK: - SRSimplePromptDelegate
     
-    override func retryLoadData() {
+    func didClickSimplePromptView(_ view: SRSimplePromptView) {
         showProgress(.opaque)
         getSimpleList()
     }

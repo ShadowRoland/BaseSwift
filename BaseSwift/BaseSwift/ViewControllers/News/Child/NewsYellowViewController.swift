@@ -52,7 +52,7 @@ class NewsYellowViewController: UIViewController, UITableViewDelegate, UITableVi
             cell?.textLabel?.numberOfLines = 0
             cell?.textLabel?.textColor = UIColor.darkGray
         }
-        cell?.textLabel?.font = UIFont.Preferred.body
+        cell?.textLabel?.font = UIFont.preferred.body
         cell?.textLabel?.text =
             ((NonNull.array(dataArray[indexPath.section]["titles"]))[indexPath.row] as! String)
         return cell!

@@ -101,7 +101,7 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
         //为文字控件添加可以上下滑动的父视图
         let scrollView = UIScrollView()
         scrollView.bounces = false
-        scrollView.backgroundColor = UIColor.clear
+        scrollView.backgroundColor = .clear
         scrollView.alwaysBounceHorizontal = false
         scrollView.alwaysBounceVertical = false
         scrollView.frame = CGRect(0, 0, width, contentHeight - 2.0 * textMargin - arrowHeight)
@@ -109,7 +109,7 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
         scrollView.contentSize = CGSize(label.width, label.height)
         
         let contentView = UIView(frame: CGRect(0, 0, contentWidth , contentHeight - arrowHeight))
-        contentView.backgroundColor = UIColor.clear
+        contentView.backgroundColor = .clear
         contentView.isUserInteractionEnabled = true
         contentView.addSubview(scrollView)
         scrollView.frame = scrollView.frame.offsetBy(dx: textMargin, dy: textMargin)

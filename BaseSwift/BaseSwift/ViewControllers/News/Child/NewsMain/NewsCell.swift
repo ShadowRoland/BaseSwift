@@ -45,7 +45,7 @@ class NewsCell: UITableViewCell {
         let image = NonNull.string(model.image)
         //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
         if isEmptyString(image)
-            || (isOnlyShowImageInWLAN
+            || (Config.shared.isOnlyShowImageInWLAN
                 && HttpManager.shared.networkStatus != .reachable(.ethernetOrWiFi)) {
             headerImageWidthConstraint.constant = 0
             playImageView.isHidden = true

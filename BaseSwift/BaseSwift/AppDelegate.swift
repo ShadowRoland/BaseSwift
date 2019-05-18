@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         initShare()
         initMap()
         
-        if UserStandard[USKey.isFreeInterfaceOrientations] == nil {
+        if UserStandard[UDKey.isFreeInterfaceOrientations] == nil {
             ShouldAutorotate = false
             SupportedInterfaceOrientations = .portrait
         } else {
@@ -53,17 +53,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         createShortcutItems()
         
         //引导页与广告页交替
-        if UserStandard[USKey.showGuide] != nil { //本次显示引导页
-            UserStandard[USKey.showAdvertisingGuide] = nil //本次不显示广告页
-            UserStandard[USKey.showGuide] = nil //下次不显示广告页
+        if UserStandard[UDKey.showGuide] != nil { //本次显示引导页
+            UserStandard[UDKey.showAdvertisingGuide] = nil //本次不显示广告页
+            UserStandard[UDKey.showGuide] = nil //下次不显示广告页
             
             let vc = UIViewController.viewController("AppGuideViewController", storyboard: "Main")
             self.window?.rootViewController = SRNavigationController(rootViewController: vc!)
             self.window?.makeKeyAndVisible()
         } else {
-            UserStandard[USKey.showAdvertisingGuide] = true //本次显示广告页
-            UserStandard[USKey.showGuide] = true //下次显示广告页
-            if UserStandard[USKey.enterAggregationEntrance] != nil {
+            UserStandard[UDKey.showAdvertisingGuide] = true //本次显示广告页
+            UserStandard[UDKey.showGuide] = true //下次显示广告页
+            if UserStandard[UDKey.enterAggregationEntrance] != nil {
                 createSlideMenu()
             }
         }
@@ -184,7 +184,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         LogInfo("\(#function), url: \(url.absoluteString)")
         
         //调用本应用
-        if Config.Scheme.base == url.scheme || Config.Scheme.base2 == url.scheme {
+        if Config.Scheme.app == url.scheme || Config.Scheme.app2 == url.scheme {
             self.application(application, handleOptions: url.queryDictionary)
             return true
         }

@@ -288,7 +288,7 @@ class ServerConfigViewController: BaseViewController {
         var envs = local["envs"] as! [Any]
         local["current"] = index
         envs[index] = env as Any
-        UserStandard[USKey.env] = local
+        UserStandard[UDKey.env] = local
         Env.reload()
     }
     

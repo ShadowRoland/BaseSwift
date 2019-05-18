@@ -111,7 +111,7 @@ extension TitleChoicesViewController: UITableViewDelegate, UITableViewDataSource
             cell?.textLabel?.textColor = UIColor.darkGray
         }
         
-        cell?.textLabel?.font = UIFont.Preferred.body
+        cell?.textLabel?.font = UIFont.preferred.body
         
         let model = titleChoices[indexPath.row]
         cell?.textLabel?.text = model.title

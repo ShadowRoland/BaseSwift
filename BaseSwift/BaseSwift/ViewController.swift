@@ -24,8 +24,8 @@ class ViewController: BaseViewController {
         }
         Common.rootVC = self
         
-        if UserStandard[USKey.showAdvertisingGuide] != nil {
-            UserStandard[USKey.showAdvertisingGuide] = nil
+        if UserStandard[UDKey.showAdvertisingGuide] != nil {
+            UserStandard[UDKey.showAdvertisingGuide] = nil
             stateMachine.append(Event(.showAdvertisingGuard))
         }
         
@@ -133,7 +133,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                             backgroundColor: NavigationBar.backgroundColor,
                             action:
                 {
-                    UserStandard[USKey.enterAggregationEntrance] = true
+                    UserStandard[UDKey.enterAggregationEntrance] = true
                     UserStandard.synchronize()
                     exit(0)
             })

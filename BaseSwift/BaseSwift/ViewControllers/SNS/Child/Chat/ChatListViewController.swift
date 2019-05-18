@@ -10,7 +10,7 @@ import SRKit
 import Cartography
 import SwiftyJSON
 
-class ChatListViewController: BaseViewController {
+class ChatListViewController: BaseViewController, SRSimplePromptDelegate {
     public weak var parentVC: SNSViewController?
     var isTouched = false //视图已经被父视图载入过
     lazy var tableView: UITableView = {
@@ -27,18 +27,6 @@ class ChatListViewController: BaseViewController {
         tableView.contentInset = UIEdgeInsets(0, 0, TabBarHeight, 0)
         
         return tableView
-    }()
-    
-    lazy var noDataView: SRLoadDataStateView = {
-        let noDataView = SRLoadDataStateView(.empty)
-        noDataView.backgroundColor = tableView.backgroundColor
-        return noDataView
-    }()
-    lazy var loadDataFailView: SRLoadDataStateView = {
-        let loadDataFailView = SRLoadDataStateView(.fail)
-        loadDataFailView.backgroundColor = tableView.backgroundColor
-        loadDataFailView.delegate = self
-        return loadDataFailView
     }()
     
     lazy var dataArray: [MessageModel] = []
@@ -172,16 +160,19 @@ class ChatListViewController: BaseViewController {
      */
     
     func showNoDataView() {
-        noDataView.frame = tableView.bounds
-        noDataView.layout()
-        tableView.tableHeaderView = noDataView
+        let view = SRSimplePromptView("No record".localized, image: UIImage("no_data"))
+        view.frame = tableView.bounds
+        view.delegate = self
+        view.backgroundColor = tableView.backgroundColor
+        tableView.tableHeaderView = view
     }
     
-    override func showLoadDataFailView(_ text: String?) {
-        loadDataFailView.text = text
-        loadDataFailView.frame = tableView.bounds
-        loadDataFailView.layout()
-        tableView.tableHeaderView = loadDataFailView
+    override func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
+        let view = SRSimplePromptView(text, image: UIImage("request_fail"))
+        view.frame = tableView.bounds
+        view.delegate = self
+        view.backgroundColor = tableView.backgroundColor
+        tableView.tableHeaderView = view
     }
     
     //MARK: - 事件响应
@@ -191,9 +182,9 @@ class ChatListViewController: BaseViewController {
         tableView.reloadData()
     }
     
-    //MARK: - SRLoadDataStateDelegate
+    //MARK: - SRSimplePromptDelegate
     
-    override func retryLoadData() {
+    func didClickSimplePromptView(_ view: SRSimplePromptView) {
         loadData(.opaqueMask)
     }
 }

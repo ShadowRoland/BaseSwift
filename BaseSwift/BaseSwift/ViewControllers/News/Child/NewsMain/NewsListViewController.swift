@@ -18,7 +18,7 @@ extension NewsListDelegate {
     func newsListVC(_ newsListVC: NewsListViewController, didSelect model: SinaNewsModel) { }
 }
 
-class NewsListViewController: BaseViewController {
+class NewsListViewController: BaseViewController, SRSimplePromptDelegate {
     public weak var parentVC: UIViewController?
     public weak var delegate: NewsListDelegate?
     var isTouched = false //视图已经被父视图载入过
@@ -27,9 +27,6 @@ class NewsListViewController: BaseViewController {
     @IBOutlet public weak var backToTopButtonBottomConstraint: NSLayoutConstraint!
     var contentInset = UIEdgeInsets()
     private(set) var currentOffset = 0
-    
-    var noDataView = SRLoadDataStateView(.empty)
-    var loadDataFailView = SRLoadDataStateView(.fail)
     
     var channelId: String?
     var dataArray: [SinaNewsModel] = []
@@ -74,10 +71,6 @@ class NewsListViewController: BaseViewController {
         })
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
-        
-        noDataView.backgroundColor = tableView.backgroundColor
-        loadDataFailView.backgroundColor = tableView.backgroundColor
-        loadDataFailView.delegate = self
         
         backToTopButton.isHidden = true
     }
@@ -170,27 +163,29 @@ class NewsListViewController: BaseViewController {
     }
     
     func showNoDataView() {
-        noDataView.frame =
+        let view = SRSimplePromptView("No record".localized, image: UIImage("no_data"))
+        view.frame = //这里必须使用contentInset，而不能使用tableView.contentInset，原因在于MJRefresh在拉回之前会改变tableView.contentInset，导致不准
             CGRect(0,
-                    0,
-                    tableView.width,
-                    tableView.height - contentInset.top - contentInset.bottom)
-        noDataView.layout()
-        tableView.tableHeaderView = noDataView
+                   0,
+                   tableView.width,
+                   tableView.height - contentInset.top - contentInset.bottom)
+        view.delegate = self
+        view.backgroundColor = tableView.backgroundColor
+        tableView.tableHeaderView = view
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
     }
     
-    override func showLoadDataFailView(_ text: String?) {
-        loadDataFailView.text = text
-        //这里必须使用contentInset，而不能使用tableView.contentInset，原因在于MJRefresh在拉回之前会改变tableView.contentInset，导致不准
-        loadDataFailView.frame =
+    override func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
+        let view = SRSimplePromptView(text, image: UIImage("request_fail"))
+        view.frame =
             CGRect(0,
-                    0,
-                    tableView.width,
-                    tableView.height - contentInset.top - contentInset.bottom)
-        loadDataFailView.layout()
-        tableView.tableHeaderView = loadDataFailView
+                   0,
+                   tableView.width,
+                   tableView.height - contentInset.top - contentInset.bottom)
+        view.delegate = self
+        view.backgroundColor = tableView.backgroundColor
+        tableView.tableHeaderView = view
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
     }
@@ -201,9 +196,9 @@ class NewsListViewController: BaseViewController {
         tableView.setContentOffset(CGPoint(0, -tableView.contentInset.top), animated: true)
     }
     
-    //MARK: - SRLoadDataStateDelegate
+    //MARK: - SRSimplePromptDelegate
     
-    override func retryLoadData() {
+    func didClickSimplePromptView(_ view: SRSimplePromptView) {
         loadData()
     }
 }

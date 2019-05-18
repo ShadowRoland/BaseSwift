@@ -187,8 +187,8 @@ class MoreViewController: BaseViewController {
     }
     
     func updateCellHeight() {
-        Const.textFont = UIFont.Preferred.body
-        Const.detailFont = UIFont.Preferred.subheadline
+        Const.textFont = UIFont.preferred.body
+        Const.detailFont = UIFont.preferred.subheadline
         Const.cellHeight = max(TableCellHeight,
                                Const.textFont.lineHeight + 2.0 * Const.textLabelMarginVertical)
     }

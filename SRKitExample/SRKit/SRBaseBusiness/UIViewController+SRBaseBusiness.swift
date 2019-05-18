@@ -15,11 +15,11 @@ import DTCoreText
 import Cartography
 
 extension UIViewController {
-    public class SRBaseBusinessComponent: NSObject, UIGestureRecognizerDelegate {
+    public class SRBaseBusinessComponent: NSObject, UIGestureRecognizerDelegate, SRSimplePromptDelegate {
         public weak var decorator: UIViewController?
         
         public var navigationBarType: NavigationBarType = .system
-        public lazy var navigationBarBackgroundView: UIView = {
+        /*public*/ lazy var navigationBarBackgroundView: UIView = {
             let view = UIView()
             if let decorator = decorator {
                 decorator.view.addSubview(view)
@@ -35,8 +35,10 @@ extension UIViewController {
         }()
         public var navigationBackgroundAlpha = 0.5 as CGFloat
         
-        public lazy var navigationBar: UINavigationBar = {
-            let navigationBar = UINavigationBar()
+        public lazy var navigationBar: SRNavigationBar = {
+            let navigationBar = SRNavigationBar()
+            navigationBar.barStyle = .default
+            navigationBar.shadowImage = nil
             if let decorator = decorator {
                 decorator.view.addSubview(navigationBar)
                 constrain(navigationBar) {
@@ -51,7 +53,7 @@ extension UIViewController {
         
         public lazy var navigationItem: SRNavigationItem = {
             let navigationItem = SRNavigationItem()
-            navigationBar.pushItem(navigationItem, animated: false)
+            navigationBar.navigationItem = navigationItem
             return navigationItem
         }()
         
@@ -75,41 +77,48 @@ extension UIViewController {
         public var loadDataFailRetryMethod: HTTP.Method?//请求数据失败时显示点击重试的请求，一般是 页面刚进入发出的第一个http请求
         public var loadDataFailRetryHandler: (() -> Void)?  //请求数据失败时点击重试的操作
         public lazy var loadDataFailContainerView: UIView = UIView()
-        public var loadDataFailView: SRLoadDataStateView?
+        var loadDataFailView: SRSimplePromptView?
         
         public var isShowingLoadDataFailView: Bool {
             return loadDataFailView != nil && loadDataFailView!.superview != nil
         }
         
-        public func showLoadDataFailView(_ inView: UIView, text: String?) {
-            if loadDataFailView == nil {
-                loadDataFailView = SRLoadDataStateView(.fail)
-            }
+        public func showLoadDataFailView(_ text: String?, image: UIImage?) {
             dismissLoadDataFailView()
-            loadDataFailView?.show(inView, text: text)
-        }
-        
-        public func resetLoadDataFailViewPosition() {
-            loadDataFailView?.show(loadDataFailView!.superview!, text: loadDataFailView!.text)
+            loadDataFailView = SRSimplePromptView(text, image: image)
+            loadDataFailView?.removeFromSuperview()
+            loadDataFailContainerView.addSubview(loadDataFailView!)
+            constrain(loadDataFailView!) {
+                $0.edges == inset($0.superview!.edges, 0)
+            }
         }
         
         public func dismissLoadDataFailView() {
+            loadDataFailContainerView.removeFromSuperview()
             loadDataFailView?.removeFromSuperview()
+        }
+        
+        //MARK: SRSimplePromptDelegate httpFailRetry
+        
+        public func didClickSimplePromptView(_ view: SRSimplePromptView) {
+            dismissLoadDataFailView()
+            loadDataFailRetryHandler?()
         }
         
         //MARK: Navigation Bar Appear
         
-        var _navigartionBarAppear: NavigationBar.Appear = .visible
-        public var navigartionBarAppear: NavigationBar.Appear {
+        var _navigationBarAppear: NavigationBar.Appear = .visible
+        public var navigationBarAppear: NavigationBar.Appear {
             get {
-                return _navigartionBarAppear
+                return _navigationBarAppear
             }
             set {
-                setNavigartionBarAppear(newValue, animated: false)
+                _navigationBarAppear = newValue
+                setNavigationBarAppear(newValue, animated: false)
             }
         }
         
-        public func setNavigartionBarAppear(_ navigartionBarAppear: NavigationBar.Appear,
+        public func setNavigationBarAppear(_ navigationBarAppear: NavigationBar.Appear,
                                             animated: Bool) {
             guard let decorator = decorator else { return }
             
@@ -117,22 +126,22 @@ extension UIViewController {
             case .system:
                 navigationBar.isHidden = true
                 if let navigationController = decorator.navigationController, isViewDidAppear {
-                    switch navigartionBarAppear {
+                    switch navigationBarAppear {
                     case .visible:
                         navigationController.setNavigationBarHidden(false, animated: animated)
-                        navigationBarBackgroundView.isHidden = false
+                        //navigationBarBackgroundView.isHidden = false
                     case .hidden:
                         navigationController.setNavigationBarHidden(true, animated: animated)
-                        navigationBarBackgroundView.isHidden = true
+                        //navigationBarBackgroundView.isHidden = true
                     default: break
                     }
                 } else {
-                    navigationBarBackgroundView.isHidden = false
+                    //navigationBarBackgroundView.isHidden = true
                 }
                 
             case .sr:
                 decorator.navigationController?.isNavigationBarHidden = true
-                switch navigartionBarAppear {
+                switch navigationBarAppear {
                 case .visible:
                     navigationBar.isHidden = false
                 case .hidden:
@@ -229,6 +238,15 @@ public extension UIViewController {
         }
     }
     
+    var navigationBar: SRNavigationBar {
+        get {
+            return baseBusinessComponent.navigationBar
+        }
+        set {
+            baseBusinessComponent.navigationBar = newValue
+        }
+    }
+    
     enum NavigationBarType {
         case system
         case sr
@@ -243,16 +261,16 @@ public extension UIViewController {
         }
     }
     
-    var navigartionBarAppear: NavigationBar.Appear {
+    var navigationBarAppear: NavigationBar.Appear {
         get {
-            return baseBusinessComponent.navigartionBarAppear
+            return baseBusinessComponent.navigationBarAppear
         }
         set {
-            baseBusinessComponent.navigartionBarAppear = newValue
+            baseBusinessComponent.navigationBarAppear = newValue
         }
     }
-    
-    func setNavigartionBarAppear(_ navigartionBarAppear: NavigationBar.Appear, animated: Bool) {
+
+    func setNavigationBarAppear(_ navigationBarAppear: NavigationBar.Appear, animated: Bool) {
         
     }
     

@@ -12,6 +12,8 @@ typealias Event = SRKit.Event
 typealias TableLoadData = Config.TableLoadData
 
 class Config {
+    fileprivate init() { }
+    
     //MARK: DEBUG，入口类型
     static var entrance: EntranceStyle = .none
     public enum EntranceStyle {
@@ -34,14 +36,14 @@ class Config {
     
     struct Scheme {
         //MARK: Application，其他应用调用本应用，对应Info.plist中的"URL types"配置参数
-        static let base = "baseswift"
-        static let base2 = "shadowbaseswift" //可选
+        static let app = "baseswift"
+        static let app2 = "shadowbaseswift" //可选
         
         //MARK: Third application，本应用调用其他应用的scheme
-        static let baseSwift4QQ = "baseswift4qq" //QQ分享，需要注册后使用申请的appkey替换
-        static let baseSwift4Wechat = "baseswift4wechat" //微信分享，微信支付，需要注册后使用申请的appkey替换
-        static let baseSwift4Weibo = "baseswift4weibo" //微博分享，需要注册后使用申请的appkey替换
-        static let baseSwift4Alipay = "baseswift4alipay" //支付宝支付，可自定义
+        static let app4QQ = "baseswift4qq" //QQ分享，需要注册后使用申请的appkey替换
+        static let app4Wechat = "baseswift4wechat" //微信分享，微信支付，需要注册后使用申请的appkey替换
+        static let app4Weibo = "baseswift4weibo" //微博分享，需要注册后使用申请的appkey替换
+        static let app4Alipay = "baseswift4alipay" //支付宝支付，可自定义
         
         static let amap = "iosamap" //高德地图
         static let baiduMap = "baidumap" //百度地图
@@ -153,6 +155,40 @@ class Config {
     }
 }
 
+extension Config {
+    public class var shared: Config {
+        return sharedInstance
+    }
+    
+    private static var sharedInstance = Config()
+    
+    public var isOnlyShowImageInWLAN: Bool { //是否只在WLAN下显示图片
+        get {
+            return UserStandard[UDKey.isAllowShowImageInWLAN] == nil
+        }
+        set {
+            if newValue {
+                UserStandard[UDKey.isAllowShowImageInWLAN] = nil
+            } else {
+                UserStandard[UDKey.isAllowShowImageInWLAN] = true
+            }
+        }
+    }
+    
+    public var canAuthenticateToLogin: Bool {//是否允许使用指纹或面容登录，默认允许
+        get {
+            return UserStandard[UDKey.forbidAuthenticateToLogin] == nil
+        }
+        set {
+            if newValue {
+                UserStandard[UDKey.forbidAuthenticateToLogin] = nil
+            } else {
+                UserStandard[UDKey.forbidAuthenticateToLogin] = true
+            }
+        }
+    }
+}
+
 extension SRKit.Event {
     convenience init?(params: ParamDictionary) {
         let action = params[Param.Key.action] as? String
@@ -190,18 +226,20 @@ extension SRKit.Event.Action: Swift.CaseIterable {
 
 //MARK: 在UserDefault使用的KEY
 
-//格式为前缀"USKey" + 带语意的后缀
-extension USKey {
-    static let env = "env"
-    static let showGuide = "showGuide"
-    static let showAdvertisingGuide = "showAdvertisingGuide"
-    static let serverConfig = "serverConfig"
-    static let lastLoginUserName = "lastLoginUserName"
-    static let lastLoginPassword = "lastLoginPassword"
-    static let sinaCookie = "sinaCookie"
-    static let newsChannels = "newsChannels"
-    static let searchSuggestionHistory = "searchSuggestionHistory"
-    static let enterAggregationEntrance = "enterAggregationEntrance"
+//格式为前缀"UDKey" + 带语意的后缀
+extension UDKey {
+    static let env = "\(Config.Scheme.app)/.UDKey.env"
+    static let isAllowShowImageInWLAN = "\(Config.Scheme.app)/.UDKey.isAllowShowImageInWLAN"
+    static let forbidAuthenticateToLogin = "\(Config.Scheme.app)/.UDKey.forbidAuthenticateToLogin"
+    static let showGuide = "\(Config.Scheme.app)/.UDKey.showGuide"
+    static let showAdvertisingGuide = "\(Config.Scheme.app)/.UDKey.showAdvertisingGuide"
+    static let serverConfig = "\(Config.Scheme.app)/.UDKey.serverConfig"
+    static let lastLoginUserName = "\(Config.Scheme.app)/.UDKey.lastLoginUserName"
+    static let lastLoginPassword = "\(Config.Scheme.app)/.UDKey.lastLoginPassword"
+    static let sinaCookie = "\(Config.Scheme.app)/.UDKey.sinaCookie"
+    static let newsChannels = "\(Config.Scheme.app)/.UDKey.newsChannels"
+    static let searchSuggestionHistory = "\(Config.Scheme.app)/.UDKey.searchSuggestionHistory"
+    static let enterAggregationEntrance = "\(Config.Scheme.app)/.UDKey.enterAggregationEntrance"
 }
 
 //MARK: 参数名

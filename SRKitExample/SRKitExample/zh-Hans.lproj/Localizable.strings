@@ -57,15 +57,6 @@
 "[SRHttpServer]second" = "秒";
 "[SRHttpServer]s" = "";
 
-//MARK: - Load Data
-
-"[SR]Loading ..." = "加载中……";
-"[SR]Load success" = "加载失败";
-"[SR]Load fail" = "加载失败";
-"[SR]Reload" = "重新加载";
-"[SR]No record" = "无记录";
-"[SR]No more data" = "已经全部加载完毕";
-
 //MARK: - Framework
 
 "[SR]Business module (moduleId: %d)  does not exist" = "业务模块(Id: %d)不存在";

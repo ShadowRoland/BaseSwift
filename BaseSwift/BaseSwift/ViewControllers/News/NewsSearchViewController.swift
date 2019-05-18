@@ -29,7 +29,7 @@ class NewsSearchViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        if let array = UserStandard[USKey.searchSuggestionHistory] as? [String] {
+        if let array = UserStandard[UDKey.searchSuggestionHistory] as? [String] {
             history = array
         }
         initView()
@@ -152,7 +152,7 @@ class NewsSearchViewController: BaseViewController {
                                                                   upper: upper))
             history = Array(array[range])
         }
-        UserStandard[USKey.searchSuggestionHistory] = history
+        UserStandard[UDKey.searchSuggestionHistory] = history
     }
     
     func enableSearchBarCancelButton() {
@@ -170,7 +170,7 @@ class NewsSearchViewController: BaseViewController {
         guard MutexTouch else { return }
         if let button = sender as? UIButton, button.tag >= 0, button.tag < history.count {
             history.remove(at: button.tag)
-            UserStandard[USKey.searchSuggestionHistory] = history
+            UserStandard[UDKey.searchSuggestionHistory] = history
             updateTableHeaderView()
             tableView.reloadData()
         }
@@ -186,7 +186,7 @@ class NewsSearchViewController: BaseViewController {
             { [weak self] in
                 guard let strongSelf = self else { return }
                 strongSelf.history.removeAll()
-                UserStandard[USKey.searchSuggestionHistory] = nil
+                UserStandard[UDKey.searchSuggestionHistory] = nil
                 strongSelf.updateTableHeaderView()
                 strongSelf.tableView.reloadData()
         })

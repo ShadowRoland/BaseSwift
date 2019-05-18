@@ -129,8 +129,8 @@ extension SelectCountryCodeViewController: UITableViewDelegate, UITableViewDataS
             cell = UITableViewCell(style: .value1, reuseIdentifier: ReuseIdentifier)
             cell?.detailTextLabel?.textColor = UIColor.darkGray
         }
-        cell?.textLabel?.font = UIFont.Preferred.body
-        cell?.detailTextLabel?.font = UIFont.Preferred.footnote
+        cell?.textLabel?.font = UIFont.preferred.body
+        cell?.detailTextLabel?.font = UIFont.preferred.footnote
         
         let model = letters[indexPath.section][indexPath.row]
         cell?.textLabel?.text = model.name

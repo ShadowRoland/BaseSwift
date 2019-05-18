@@ -19,7 +19,7 @@ class Common {
     
     public static var currentDeviceToken: String {
         if deviceToken == "",
-            let token = UserStandard[USKey.currentDeviceToken] as? String {
+            let token = UserStandard[UDKey.currentDeviceToken] as? String {
             deviceToken = token
         }
         return deviceToken
@@ -27,7 +27,7 @@ class Common {
     
     public class func updateDeviceToken(_ deviceToken: String) {
         Common.deviceToken = deviceToken
-        UserStandard[USKey.currentDeviceToken] = deviceToken
+        UserStandard[UDKey.currentDeviceToken] = deviceToken
     }
     
     //MARK: - Event

@@ -79,14 +79,14 @@ public class SRPickerView: UIView {
     }
     
     private func initView() {
-        backgroundColor = UIColor.clear
+        backgroundColor = .clear
         let maskView = UIView()
         maskView.backgroundColor = MaskBackgroundColor
         addSubview(maskView)
         constrain(maskView) { $0.edges == inset($0.superview!.edges, 0) }
         
         let bottomView = UIView()
-        bottomView.backgroundColor = UIColor.groupTableViewBackground
+        bottomView.backgroundColor = .groupTableViewBackground
         bottomView.isUserInteractionEnabled = true
         addSubview(bottomView)
         constrain(bottomView) { (view) in
@@ -98,7 +98,7 @@ public class SRPickerView: UIView {
         
         cancelButton = UIButton(type: .custom)
         cancelButton.title = "[SR]Cancel".srLocalized
-        cancelButton.titleColor = UIColor.darkText
+        cancelButton.titleColor = .darkText
         cancelButton.contentEdgeInsets = UIEdgeInsets(0, SubviewMargin, 0, 0)
         cancelButton.clicked(self, action: #selector(clickCancelButton(_:)))
         bottomView.addSubview(cancelButton)
@@ -111,7 +111,7 @@ public class SRPickerView: UIView {
         
         confirmButton = UIButton(type: .custom)
         confirmButton.title = "[SR]OK".srLocalized
-        confirmButton.titleColor = UIColor.darkText
+        confirmButton.titleColor = .darkText
         confirmButton.contentEdgeInsets = UIEdgeInsets(0, 0, 0, SubviewMargin)
         confirmButton.clicked(self, action: #selector(clickConfirmButton(_:)))
         bottomView.addSubview(confirmButton)
@@ -123,7 +123,7 @@ public class SRPickerView: UIView {
         }
         
         titleLabel = UILabel()
-        titleLabel.font = UIFont.text
+        titleLabel.font = .text
         titleLabel.textColor = UIColor(hue: 224.0, saturation: 50.0, brightness: 63.0)
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
