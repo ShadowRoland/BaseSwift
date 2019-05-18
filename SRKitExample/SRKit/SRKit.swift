@@ -299,11 +299,11 @@ public var ScreenWidth: CGFloat { return UIScreen.main.bounds.size.width }
 public var ScreenHeight: CGFloat { return UIScreen.main.bounds.size.height }
 
 public extension UIFont {
-    static var title = UIFont.medium(18.0)
-    static var heavyTitle = UIFont.bold(18.0)
-    static var text = UIFont.system(15.0)
-    static var detail = UIFont.system(14.0)
-    static var tip = UIFont.system(13.0)
+    static var title: UIFont = .medium(18.0)
+    static var heavyTitle: UIFont = .bold(18.0)
+    static var text: UIFont = .system(15.0)
+    static var detail: UIFont = .system(14.0)
+    static var tip: UIFont = .system(13.0)
 }
 
 public extension NSObject.property {
@@ -339,8 +339,8 @@ public class NavigationBar {
     static public var buttonItemHeight = NavigationBarHeight
     static public var titleTextAttributes: [NSAttributedString.Key : Any] =
         [.foregroundColor : UIColor.black, .font : UIFont.title]
-    static public var tintColor = UIColor.black
-    static public var backgroundColor = UIColor.white
+    static public var tintColor: UIColor = .black
+    static public var backgroundColor: UIColor = .white
     static  var _backgroundColor: UIColor?
     private static var _backgroundImage: UIImage?
     static var backgroundImage: UIImage {
@@ -451,6 +451,9 @@ public class NavigationBar {
                     }
                     
                     button.setTitle(title, for: .normal)
+                    if let action = action {
+                        button.addTarget(target, action: action, for: .touchUpInside)
+                    }
                 }
                 item = UIBarButtonItem(customView: button)
             }
@@ -510,11 +513,11 @@ public class SubmitButton {
     public static var frame                        = CGRect(0,
                                                             0,
                                                             ScreenWidth - SubviewMargin,
-                                                            TableCellHeight) //默认尺寸
-    public static var cornerRadius                 = 5.0 as CGFloat //圆角
-    public static var backgroundColorNormal        = UIColor(0, 191.0, 255.0) //提交按钮正常状态的颜色
-    public static var backgroundColorHighlighted   = UIColor(175.0, 238.0, 238.0) //提交按钮高亮状态的颜色
-    public static var titleColor                   = UIColor.white
+                                                            TableCellHeight) ///默认尺寸
+    public static var cornerRadius: CGFloat        = 5.0 ///圆角
+    public static var backgroundColorNormal        = UIColor(0, 191.0, 255.0) ///提交按钮正常状态的颜色
+    public static var backgroundColorHighlighted   = UIColor(175.0, 238.0, 238.0) ///提交按钮高亮状态的颜色
+    public static var titleColor: UIColor          = .white
     public static var font                         = UIFont.Preferred.headline
 }
 
@@ -612,6 +615,7 @@ extension SRKit {
             public init(_ rawValue: String) {
                 self.rawValue = rawValue
             }
+            
             public init(rawValue: String) {
                 self.rawValue = rawValue
             }

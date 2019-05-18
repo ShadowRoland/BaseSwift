@@ -70,8 +70,8 @@ open class SRNavigationController: UINavigationController, UIGestureRecognizerDe
     
     lazy var debugMenu: REMenu = {
         let menu = REMenu()
-        menu.textColor = UIColor.white
-        menu.font = UIFont.title
+        menu.textColor = .white
+        menu.font = .title
         return menu
     }()
     

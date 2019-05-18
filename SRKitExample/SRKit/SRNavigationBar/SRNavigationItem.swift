@@ -9,8 +9,6 @@
 import UIKit
 
 open class SRNavigationItem: UINavigationItem {
-    //open weak var navigationBar: SRNavigationBar?
-    
     init() {
         super.init(title: "")
     }
@@ -23,7 +21,9 @@ open class SRNavigationItem: UINavigationItem {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: Override super properties and functions
+    //MARK: -
+    
+    open weak var navigationBar: SRNavigationBar?
     
     fileprivate var _title: String? = nil
     open override var title: String? { // Title when topmost on the stack. default is nil
@@ -32,7 +32,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _title = newValue
-            //navigationBar?.layoutIfNeeded()
+            navigationBar?.layout()
         }
     }
     
@@ -43,6 +43,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _titleView = newValue
+            navigationBar?.layout()
         }
     }
     
@@ -54,7 +55,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _prompt = newValue
-            //navigationBar?.layoutIfNeeded()
+            //navigationBar?.layout()
         }
     }
     
@@ -104,7 +105,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _leftBarButtonItems = newValue
-            //navigationBar?.layoutIfNeeded()
+            navigationBar?.layout()
         }
     }
     
@@ -116,7 +117,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _rightBarButtonItems = newValue
-            //navigationBar?.layoutIfNeeded()
+            navigationBar?.layout()
         }
     }
     
@@ -161,7 +162,7 @@ open class SRNavigationItem: UINavigationItem {
             } else {
                 _leftBarButtonItems = nil
             }
-            //navigationBar?.layoutIfNeeded()
+            //navigationBar?.layout()
         }
     }
     
@@ -176,7 +177,7 @@ open class SRNavigationItem: UINavigationItem {
             } else {
                 _rightBarButtonItems = nil
             }
-            //navigationBar?.layoutIfNeeded()
+            //navigationBar?.layout()
         }
     }
     

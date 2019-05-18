@@ -11,44 +11,44 @@ import Foundation
 
 public extension UIFont {
     class func light(_ size: CGFloat) -> UIFont {
-        return  UIFont.systemFont(ofSize: size, weight: .light)
+        return  .systemFont(ofSize: size, weight: .light)
     }
     
     class func system(_ size: CGFloat) -> UIFont {
-        return  UIFont.systemFont(ofSize: size)
+        return  .systemFont(ofSize: size)
     }
     
     class func medium(_ size: CGFloat) -> UIFont {
-        return  UIFont.systemFont(ofSize: size, weight: .medium)
+        return  .systemFont(ofSize: size, weight: .medium)
     }
     
     class func bold(_ size: CGFloat) -> UIFont {
-        return  UIFont.systemFont(ofSize: size, weight: .bold)
+        return  .systemFont(ofSize: size, weight: .bold)
     }
     
     struct Preferred {
         public static var headline: UIFont {
-            return UIFont.preferredFont(forTextStyle: .headline)
+            return .preferredFont(forTextStyle: .headline)
         }
         
         public static var subheadline: UIFont {
-            return UIFont.preferredFont(forTextStyle: .subheadline)
+            return .preferredFont(forTextStyle: .subheadline)
         }
         
         public static var body: UIFont {
-            return UIFont.preferredFont(forTextStyle: .body)
+            return .preferredFont(forTextStyle: .body)
         }
         
         public static var footnote: UIFont {
-            return UIFont.preferredFont(forTextStyle: .footnote)
+            return .preferredFont(forTextStyle: .footnote)
         }
         
         public static var caption1: UIFont {
-            return UIFont.preferredFont(forTextStyle: .caption1)
+            return .preferredFont(forTextStyle: .caption1)
         }
         
         public static var caption2: UIFont {
-            return UIFont.preferredFont(forTextStyle: .caption2)
+            return .preferredFont(forTextStyle: .caption2)
         }
     }
 }

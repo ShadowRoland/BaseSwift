@@ -127,6 +127,6 @@ public extension UIButton {
         setBackgroundImage(UIImage.rect(SubmitButton.backgroundColorHighlighted,
                                         size: bounds.size),
                            for: .highlighted)
-        backgroundColor = UIColor.clear
+        backgroundColor = .clear
     }
 }

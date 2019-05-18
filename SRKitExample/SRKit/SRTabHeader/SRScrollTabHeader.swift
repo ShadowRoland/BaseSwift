@@ -129,7 +129,7 @@ public class SRScrollTabHeader: SRTabHeader, UIScrollViewDelegate {
     }
     
     private func initView() {
-        titleFont = UIFont.systemFont(ofSize: 16)
+        titleFont = .systemFont(ofSize: 16)
         cursorHeight = 2.0
         cursorOffset = 2.0
         setSelectedTextColor(255.0 / 255.0, 50.0 / 255.0, 0)

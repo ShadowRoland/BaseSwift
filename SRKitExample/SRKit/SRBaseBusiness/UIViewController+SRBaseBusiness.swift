@@ -35,8 +35,10 @@ extension UIViewController {
         }()
         public var navigationBackgroundAlpha = 0.5 as CGFloat
         
-        public lazy var navigationBar: UINavigationBar = {
-            let navigationBar = UINavigationBar()
+        public lazy var navigationBar: SRNavigationBar = {
+            let navigationBar = SRNavigationBar()
+            navigationBar.barStyle = .default
+            navigationBar.shadowImage = nil
             if let decorator = decorator {
                 decorator.view.addSubview(navigationBar)
                 constrain(navigationBar) {
@@ -51,7 +53,7 @@ extension UIViewController {
         
         public lazy var navigationItem: SRNavigationItem = {
             let navigationItem = SRNavigationItem()
-            navigationBar.pushItem(navigationItem, animated: false)
+            navigationBar.navigationItem = navigationItem
             return navigationItem
         }()
         
@@ -99,17 +101,17 @@ extension UIViewController {
         
         //MARK: Navigation Bar Appear
         
-        var _navigartionBarAppear: NavigationBar.Appear = .visible
-        public var navigartionBarAppear: NavigationBar.Appear {
+        var _navigationBarAppear: NavigationBar.Appear = .visible
+        public var navigationBarAppear: NavigationBar.Appear {
             get {
-                return _navigartionBarAppear
+                return _navigationBarAppear
             }
             set {
-                setNavigartionBarAppear(newValue, animated: false)
+                setNavigationBarAppear(newValue, animated: false)
             }
         }
         
-        public func setNavigartionBarAppear(_ navigartionBarAppear: NavigationBar.Appear,
+        public func setNavigationBarAppear(_ navigationBarAppear: NavigationBar.Appear,
                                             animated: Bool) {
             guard let decorator = decorator else { return }
             
@@ -117,7 +119,7 @@ extension UIViewController {
             case .system:
                 navigationBar.isHidden = true
                 if let navigationController = decorator.navigationController, isViewDidAppear {
-                    switch navigartionBarAppear {
+                    switch navigationBarAppear {
                     case .visible:
                         navigationController.setNavigationBarHidden(false, animated: animated)
                         navigationBarBackgroundView.isHidden = false
@@ -132,7 +134,7 @@ extension UIViewController {
                 
             case .sr:
                 decorator.navigationController?.isNavigationBarHidden = true
-                switch navigartionBarAppear {
+                switch navigationBarAppear {
                 case .visible:
                     navigationBar.isHidden = false
                 case .hidden:
@@ -229,6 +231,15 @@ public extension UIViewController {
         }
     }
     
+    var navigationBar: SRNavigationBar {
+        get {
+            return baseBusinessComponent.navigationBar
+        }
+        set {
+            baseBusinessComponent.navigationBar = newValue
+        }
+    }
+    
     enum NavigationBarType {
         case system
         case sr
@@ -243,16 +254,16 @@ public extension UIViewController {
         }
     }
     
-    var navigartionBarAppear: NavigationBar.Appear {
+    var navigationBarAppear: NavigationBar.Appear {
         get {
-            return baseBusinessComponent.navigartionBarAppear
+            return baseBusinessComponent.navigationBarAppear
         }
         set {
-            baseBusinessComponent.navigartionBarAppear = newValue
+            baseBusinessComponent.navigationBarAppear = newValue
         }
     }
-    
-    func setNavigartionBarAppear(_ navigartionBarAppear: NavigationBar.Appear, animated: Bool) {
+
+    func setNavigationBarAppear(_ navigationBarAppear: NavigationBar.Appear, animated: Bool) {
         
     }
     

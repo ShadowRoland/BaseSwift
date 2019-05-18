@@ -283,8 +283,8 @@ public class SRShareTool: UIViewController {
         contentView.addSubview(blurView)
         constrain(blurView) { $0.edges == inset($0.superview!.edges, 0) }
         
-        cancelButton.titleFont = UIFont.system(14.0)
-        cancelButton.titleColor = UIColor.darkGray
+        cancelButton.titleFont = .system(14.0)
+        cancelButton.titleColor = .darkGray
         cancelButton.title = "[SR]Cancel".srLocalized
         cancelButton.clicked(self, action: #selector(clickCancelButton(_:)))
         contentView.addSubview(cancelButton)
@@ -307,7 +307,7 @@ public class SRShareTool: UIViewController {
         shareScrollView.contentInset =
             UIEdgeInsets(top: 0, left: Const.subviewMargin, bottom: 0, right: Const.subviewMargin)
         
-        shareSectionLabel.font = UIFont.system(13.0)
+        shareSectionLabel.font = .system(13.0)
         shareSectionLabel.text = "[SR]Share to".srLocalized
     }
     

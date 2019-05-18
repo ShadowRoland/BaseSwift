@@ -25,3 +25,33 @@ public extension UIColor {
         self.init(white: white, alpha: 1.0)
     }
 }
+
+public extension UIColor {
+    var rgba: [CGFloat] {
+        guard let space = cgColor.colorSpace else { return [0, 0, 0, 1.0] }
+        
+        let spaceModel = space.model
+        let count = cgColor.numberOfComponents
+        
+        switch (spaceModel) {
+        case .monochrome:
+            if count == 2, let components = cgColor.components {
+                return [components[0], components[0], components[0], components[1]]
+            }
+        
+        case .rgb:
+            if count == 4, let components = cgColor.components {
+                return [components[0], components[1], components[2], components[3]]
+            }
+        
+        default:
+            break
+        }
+        return [0, 0, 0, 1.0]
+    }
+    
+    //图片是否透明
+    var isTranslucent: Bool {
+        return rgba.last! < 1.0
+    }
+}

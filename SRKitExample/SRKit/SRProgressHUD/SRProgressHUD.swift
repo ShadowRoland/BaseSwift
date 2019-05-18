@@ -39,7 +39,7 @@ public final class SRProgressHUD {
     private(set) var progressType: ProgressType = .infinite
     
     var maskType: UIView.SRProgressComponent.MaskType = .clear
-    var opaqueMaskColor = UIColor.white
+    var opaqueMaskColor: UIColor = .white
     
     static let LoopedProgress = -1.0 as CGFloat
     var progress = LoopedProgress {
@@ -165,7 +165,7 @@ public final class SRProgressHUD {
         case .infinite:
             switch maskType {
             case .clear:
-                superview.backgroundColor = UIColor.clear
+                superview.backgroundColor = .clear
                 
             case .translucence:
                 superview.backgroundColor = MaskBackgroundColor
@@ -180,7 +180,7 @@ public final class SRProgressHUD {
         case .m13Ring:
             switch maskType {
             case .clear:
-                superview.backgroundColor = UIColor.clear
+                superview.backgroundColor = .clear
                 
             case .translucence:
                 superview.backgroundColor = MaskBackgroundColor
@@ -243,9 +243,9 @@ public final class SRProgressHUD {
         hud.mbProgressHUD.margin = 0
         hud.mbProgressHUD.mode = MBProgressHUDMode.customView
         hud.mbProgressHUD.removeFromSuperViewOnHide = false
-        hud.mbProgressHUD.bezelView.color = UIColor.clear
+        hud.mbProgressHUD.bezelView.color = .clear
         hud.mbProgressHUD.bezelView.style = .solidColor
-        hud.mbProgressHUD.backgroundView.color = UIColor.clear
+        hud.mbProgressHUD.backgroundView.color = .clear
         hud.mbProgressHUD.backgroundView.style = .solidColor
         
         hud.hudView = hud.mbProgressHUD

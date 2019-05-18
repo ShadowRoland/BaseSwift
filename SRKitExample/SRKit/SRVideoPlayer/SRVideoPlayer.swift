@@ -195,7 +195,7 @@ SRAssetResourceLoaderTaskDelegate {
         }
         
         playerView = SRPlayerView()
-        playerView.backgroundColor = UIColor.black
+        playerView.backgroundColor = .black
         playerView.isUserInteractionEnabled = true
         
         bottomView.isUserInteractionEnabled = true
@@ -229,8 +229,8 @@ SRAssetResourceLoaderTaskDelegate {
             view.height == 44.0
         }
         
-        currentTimeLabel.textColor = UIColor.white
-        currentTimeLabel.font = UIFont.systemFont(ofSize: 11.0)
+        currentTimeLabel.textColor = .white
+        currentTimeLabel.font = .systemFont(ofSize: 11.0)
         currentTimeLabel.textAlignment = .center
         currentTimeLabel.adjustsFontSizeToFitWidth = true
         bottomView.addSubview(currentTimeLabel)
@@ -241,8 +241,8 @@ SRAssetResourceLoaderTaskDelegate {
             view1.height == 44.0
         }
         
-        totalTimeLabel.textColor = UIColor.white
-        totalTimeLabel.font = UIFont.systemFont(ofSize: 11.0)
+        totalTimeLabel.textColor = .white
+        totalTimeLabel.font = .systemFont(ofSize: 11.0)
         totalTimeLabel.textAlignment = .center
         totalTimeLabel.adjustsFontSizeToFitWidth = true
         bottomView.addSubview(totalTimeLabel)
@@ -255,8 +255,8 @@ SRAssetResourceLoaderTaskDelegate {
         
         //progressSlider
         progressSlider.setThumbImage(UIImage.srNamed("sr_player_progress"), for: .normal)
-        progressSlider.minimumTrackTintColor = UIColor.white
-        progressSlider.maximumTrackTintColor = UIColor.clear
+        progressSlider.minimumTrackTintColor = .white
+        progressSlider.maximumTrackTintColor = .clear
         progressSlider.addTarget(self,
                                  action: #selector(progressSliderChanged(_:)),
                                  for: .valueChanged)
@@ -286,7 +286,7 @@ SRAssetResourceLoaderTaskDelegate {
         }
         
         loadedProgressView.progressTintColor = UIColor(white: 1.0, alpha: 0.5)
-        loadedProgressView.trackTintColor = UIColor.clear
+        loadedProgressView.trackTintColor = .clear
         loadedProgressView.layer.cornerRadius = 0.5
         loadedProgressView.layer.masksToBounds = true
         loadedProgressView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
@@ -356,8 +356,8 @@ SRAssetResourceLoaderTaskDelegate {
             view.height == 20.0
         }
         
-        fastSeekLabel.textColor = UIColor.white
-        fastSeekLabel.font = UIFont.systemFont(ofSize: 12.0)
+        fastSeekLabel.textColor = .white
+        fastSeekLabel.font = .systemFont(ofSize: 12.0)
         fastSeekLabel.textAlignment = .center
         fastSeekView.addSubview(fastSeekLabel)
         constrain(fastSeekLabel, fastSeekImageVIew) { (view1, view2) in
@@ -398,14 +398,14 @@ SRAssetResourceLoaderTaskDelegate {
         playerView.addSubview(alertView)
         constrain(alertView) { $0.edges == inset($0.superview!.edges, 0) }
         
-        alertContentView.backgroundColor = UIColor.white
+        alertContentView.backgroundColor = .white
         alertContentView.layer.cornerRadius = 10.0
         alertContentView.layer.masksToBounds = true
         alertView.addSubview(alertContentView)
         
         let titleLabel = UILabel()
-        titleLabel.textColor = UIColor.black
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 16.0)
+        titleLabel.textColor = .black
+        titleLabel.font = .boldSystemFont(ofSize: 16.0)
         titleLabel.textAlignment = .center
         titleLabel.text = "[SR]Alert".srLocalized
         alertContentView.addSubview(titleLabel)
@@ -416,18 +416,18 @@ SRAssetResourceLoaderTaskDelegate {
             view.right == view.superview!.right
         }
         
-        alertMessageLabel.textColor = UIColor.darkGray
-        alertMessageLabel.font = UIFont.systemFont(ofSize: 14.0)
+        alertMessageLabel.textColor = .darkGray
+        alertMessageLabel.font = .systemFont(ofSize: 14.0)
         alertMessageLabel.textAlignment = .center
         alertContentView.addSubview(alertMessageLabel)
         
-        alertConfirmButton.titleColor = UIColor.blue
-        alertConfirmButton.titleFont = UIFont.systemFont(ofSize: 16.0)
+        alertConfirmButton.titleColor = .blue
+        alertConfirmButton.titleFont = .systemFont(ofSize: 16.0)
         alertConfirmButton.clicked(self, action: #selector(clickAlertConfirmButton(_:)))
         alertContentView.addSubview(alertConfirmButton)
         
         var topLineView = UIView()
-        topLineView.backgroundColor = UIColor.lightGray
+        topLineView.backgroundColor = .lightGray
         alertConfirmButton.addSubview(topLineView)
         constrain(topLineView) { (view) in
             view.top == view.superview!.top
@@ -437,13 +437,13 @@ SRAssetResourceLoaderTaskDelegate {
         }
         
         alertCancelButton.title = "[SR]Cancel".srLocalized
-        alertCancelButton.titleColor = UIColor.black
-        alertCancelButton.titleFont = UIFont.systemFont(ofSize: 16.0)
+        alertCancelButton.titleColor = .black
+        alertCancelButton.titleFont = .systemFont(ofSize: 16.0)
         alertCancelButton.clicked(self, action: #selector(clickAlertCancelButton(_:)))
         alertContentView.addSubview(alertCancelButton)
         
         topLineView = UIView()
-        topLineView.backgroundColor = UIColor.lightGray
+        topLineView.backgroundColor = .lightGray
         alertCancelButton.addSubview(topLineView)
         constrain(topLineView) { (view) in
             view.top == view.superview!.top
@@ -452,7 +452,7 @@ SRAssetResourceLoaderTaskDelegate {
             view.right == view.superview!.right
         }
         
-        alertSeperatorLineView.backgroundColor = UIColor.lightGray
+        alertSeperatorLineView.backgroundColor = .lightGray
         alertContentView.addSubview(alertSeperatorLineView)
         constrain(alertSeperatorLineView) { (view) in
             view.bottom == view.superview!.top

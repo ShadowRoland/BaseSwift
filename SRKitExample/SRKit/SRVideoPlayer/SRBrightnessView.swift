@@ -70,7 +70,7 @@ class SRBrightnessView: UIView {
                            width: levelWidth,
                            height: levelHeight)
             }
-            levelView.backgroundColor = UIColor.white
+            levelView.backgroundColor = .white
             levelSuperview.addSubview(levelView)
             levelViews.append(levelView)
         }
