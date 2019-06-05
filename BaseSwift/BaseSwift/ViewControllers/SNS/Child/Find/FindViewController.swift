@@ -69,11 +69,6 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
         initView()
     }
     
-    deinit {
-        LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
-        NotifyDefault.remove(self)
-    }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -82,8 +77,11 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
     //MARK: - 视图初始化
     
     func initView() {
+        initTableHeaderView()
+        layoutHeaderImage()
         tableView.tableFooterView = UIView()
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        tableView.separatorInset = UIEdgeInsets(0)
+        tableView.contentInset = UIEdgeInsets(NavigationBarHeight, 0, TabBarHeight, 0)
         view.progressMaskColor = tableView.backgroundColor!
         tableView.mj_footer = MJRefreshBackNormalFooter(refreshingBlock: { [weak self] in
             self?.loadData(true, progressType: .none)
@@ -100,9 +98,14 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
         
         FindCell.updateCellHeight()
         
-        initTableHeaderView()
-        loadingDataView = loadPromptView("Loading ...".localized, image: UIImage("loading")!)
         reloadProfile()
+    }
+    
+    func layoutHeaderImage() {
+        headerImageHeight = ScreenWidth * headerImageSize.height / headerImageSize.width
+        headerImageHeightOffset = headerImageHeight - Const.tableHeaderHeight
+        headerImageView.frame =
+            CGRect(0, -headerImageHeightOffset, ScreenWidth, headerImageHeight)
     }
     
     //MARK: tableHeaderView
@@ -137,20 +140,23 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
     override func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
         super.deviceOrientationDidChange(sender)
         
-        headerImageHeight = ScreenWidth * headerImageSize.height / headerImageSize.width
-        headerImageHeightOffset = headerImageHeight - Const.tableHeaderHeight
-        headerImageView.frame =
-            CGRect(0, -headerImageHeightOffset, ScreenWidth, headerImageHeight)
-        
-        let height = ScreenHeight - Const.tableHeaderHeight - TabBarHeight
+        layoutHeaderImage()
         if let view = tableView.tableFooterView as? SRSimplePromptView {
-            view.frame = CGRect(0, 0, ScreenWidth, height)
+            view.frame =
+                CGRect(0,
+                       0,
+                       ScreenWidth,
+                       ScreenHeight - NavigationBarHeight - Const.tableHeaderHeight - TabBarHeight)
             tableView.tableFooterView = view
         }
         tableView.reloadData()
     }
     
     //MARK: - 业务处理
+    
+    override func performViewDidLoad() {
+        loadingDataView = loadPromptView("Loading ...".localized, image: UIImage("loading"))
+    }
     
     func reloadProfile() {
         let url = URL(string: NonNull.string(ProfileManager.currentProfile?.headPortrait))
@@ -194,7 +200,7 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
         case .clearMask:
             view.showProgress()
         case .opaqueMask:
-            view.showProgress(.opaque)
+            view.showProgress(maskType: .opaque)
         default:
             break
         }
@@ -346,8 +352,8 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
     }
     
     func loadPromptView(_ text: String?, image: UIImage?) -> SRSimplePromptView {
-        let view = SRSimplePromptView(text, image: UIImage("no_data"))
-        view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight - Const.tableHeaderHeight - TabBarHeight)
+        let view = SRSimplePromptView(text, image: image)
+        view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight - NavigationBarHeight - Const.tableHeaderHeight - TabBarHeight)
         view.delegate = self
         view.backgroundColor = tableView.backgroundColor
         tableView.mj_footer.endRefreshingWithNoMoreData()
@@ -450,7 +456,7 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
             }
             
             //确保导航栏背景透明
-            //            if navigationBar?.overlay.alpha !ikolp[';uiiol;= 0 {
+            //            if navigationBar?.overlay.alpha {
             //                navigationBar?.overlay.alpha = 0
             //                overlayAlpha = (navigationBar?.overlay.alpha)!
             //            }

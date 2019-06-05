@@ -25,7 +25,7 @@ class SimpleTableViewController: BaseViewController, SRSimplePromptDelegate {
         
         // Do any additional setup after loading the view.
         setDefaultNavigationBar("List".localized)
-        navBarRightButtonSettings = [[.title : "Submit".localized]]
+        navBarRightButtonOptions = [.text([.title("Submit".localized)])]
         pageBackGestureStyle = .edge
         initView()
         baseBusinessComponent.progressContainerView.progressMaskColor =
@@ -101,10 +101,7 @@ class SimpleTableViewController: BaseViewController, SRSimplePromptDelegate {
                                                       Const.headerImageHeight))
            //imageView.sd_setImage(with: URL(string: url),
             //                      placeholderImage: Config.Resource.defaultImage(.normal))
-            imageView.showProgress(.clear,
-                                   progressType: .infinite,
-                                   progress: nil,
-                                   options: [.imageProgressSize : SRProgressHUD.ImageProgressSize.normal])
+            imageView.showProgress([.imageProgressSize(.normal)])
             imageView.sd_setImage(with: URL(string: url),
                                   placeholderImage: Config.Resource.defaultImage(.normal),
                                   options: [],

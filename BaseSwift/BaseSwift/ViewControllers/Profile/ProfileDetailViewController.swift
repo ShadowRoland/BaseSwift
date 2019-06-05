@@ -174,17 +174,7 @@ class ProfileDetailViewController: BaseViewController {
     }
     
     func setNavigationBarRightButtonItems() {
-        if !isEditingProfile {
-            var setting = NavigationBar.buttonFullSetting
-            setting[.style] = NavigationBar.ButtonItemStyle.text
-            setting[.title] = "Edit".localized
-            navBarRightButtonSettings = [setting]
-        } else {
-            var setting = NavigationBar.buttonFullSetting
-            setting[.style] = NavigationBar.ButtonItemStyle.text
-            setting[.title] = "Submit".localized
-            navBarRightButtonSettings = [setting]
-        }
+        navBarRightButtonOptions = [.text([.title((!isEditingProfile ? "Edit" : "Submit").localized)])]
     }
     
     func initSections() {
@@ -1158,8 +1148,8 @@ class ProfileDetailViewController: BaseViewController {
         httpRequest(.upload("http://kan.msxiaobing.com/Api/Image/UploadBase64",
                             nil,
                             [["" : data.base64EncodedString()]]),
-                          encoding: CustomEncoding.default,
-                          success:
+                    options: [.encoding(CustomEncoding.default)],
+                    success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
                 strongSelf.dismissProgress()
@@ -1218,12 +1208,12 @@ class ProfileDetailViewController: BaseViewController {
     
     func faceImageAnalyze() {
         httpRequest(.post("http://kan.msxiaobing.com/Api/ImageAnalyze/Process?service=yanzhi",
-                    ["MsgId" : String(long: CLong(Date().timeIntervalSince1970)) + "063",
-                     "CreateTime" : String(long: CLong(Date().timeIntervalSince1970)),
-                     "Content[imageUrl]" : faceImageUrl as Any]),
-                    encoding: URLEncoding.default,
-                    headers: ["Referer" : "https://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi",
-                              "Cookie" : faceImageCookie],
+                          ["MsgId" : String(long: CLong(Date().timeIntervalSince1970)) + "063",
+                           "CreateTime" : String(long: CLong(Date().timeIntervalSince1970)),
+                           "Content[imageUrl]" : faceImageUrl as Any]),
+                    options: [.encoding(URLEncoding.default),
+                              .headers(["Referer" : "https://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi",
+                                        "Cookie" : faceImageCookie])],
                     success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
@@ -1239,14 +1229,14 @@ class ProfileDetailViewController: BaseViewController {
                             strongSelf.currentItem?.value = NSDecimalNumber(string: string)
                             strongSelf.currentItem?.showText = string
                             strongSelf.currentItem?.showTextView?.setProperty(.text,
-                                                                        value: strongSelf.currentItem?.showText)
+                                                                              value: strongSelf.currentItem?.showText)
                         }
                     }
                     if let imageUrl = json["content"]["imageUrl"].string {
                         strongSelf.faceImageView.sd_setImage(with: URL(string: imageUrl),
-                                                       placeholderImage: strongSelf.faceImageView.image!,
-                                                       options: [],
-                                                       completed:
+                                                             placeholderImage: strongSelf.faceImageView.image!,
+                                                             options: [],
+                                                             completed:
                             { (_, error, _, _) in
                                 if error == nil {
                                     DispatchQueue.main.async {

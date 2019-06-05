@@ -15,10 +15,7 @@ class ChatViewController: RCConversationViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        var setting = NavigationBar.buttonFullSetting //获取带全属性的按钮字典
-        setting[.style] = NavigationBar.ButtonItemStyle.image //设置按钮的风格为纯图片
-        setting[.image] = UIImage("page_back")
-        navBarLeftButtonSettings = [setting]
+        navBarLeftButtonOptions = [.image(UIImage("page_back")!)]
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -33,27 +30,36 @@ class ChatViewController: RCConversationViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    public var navBarLeftButtonSettings: [[NavigationBar.ButtonItemKey : Any]]? {
+    open var navBarLeftButtonOptions: [NavigationBar.ButtonItemOption]? {
         didSet {
-            guard let settings = navBarLeftButtonSettings, !settings.isEmpty else {
+            guard let options = navBarLeftButtonOptions, !options.isEmpty else { //左边完全无按钮
+                navigationItem.leftBarButtonItem =
+                    UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
                 return
             }
             
-            let items = (0 ..< settings.count).compactMap {
-                NavigationBar.buttonItem(settings[$0],
+            //再添加新的按钮
+            let items = (0 ..< options.count).compactMap {
+                NavigationBar.buttonItem(options[$0],
                                          target: self,
                                          action: #selector(pageBack),
-                                         tag: $0)
+                                         tag: $0,
+                                         useCustomView: navigationBarType != .system)
             }
-            
-            navigationItem.backBarButtonItem = nil
-            if items.count == 0 {
-                navigationItem.leftBarButtonItem = nil
-                navigationItem.leftBarButtonItems = nil
-            } else if items.count == 1 {
-                navigationItem.leftBarButtonItem = items.first
-            } else {
-                navigationItem.leftBarButtonItems = items
+            switch navigationBarType {
+            case .system:
+                if items.isEmpty {
+                    navigationItem.leftBarButtonItem = nil
+                    navigationItem.leftBarButtonItems = nil
+                } else if items.count == 1 {
+                    navigationItem.leftBarButtonItem = items.first
+                } else {
+                    navigationItem.leftBarButtonItems = items
+                }
+                
+            case .sr:
+                //srNavigationItem.leftBarButtonItems = items
+                break
             }
         }
     }

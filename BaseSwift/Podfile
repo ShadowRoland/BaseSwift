@@ -139,6 +139,9 @@ pod 'BarrageRenderer', '~> 2.1.0' # Optional
 ## IM通讯协议
 # pod 'Protobuf', '~> 3.7.0' # Optional
 
+## Promise
+pod 'PromiseKit', '~> 6.8.4'
+
 target 'BaseSwift' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!

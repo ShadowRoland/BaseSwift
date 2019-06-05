@@ -148,7 +148,7 @@ class ProfileViewController: BaseViewController {
         super.viewDidLoad()
         
         setDefaultNavigationBar("Profile".localized)
-        setNavigationBarRightButtonItems()
+        navBarRightButtonOptions = [.text([.title("More".localized)])]
         
         tableView.tableFooterView = UIView()
         initSections()
@@ -160,13 +160,6 @@ class ProfileViewController: BaseViewController {
     }
     
     // MARK: - 视图初始化
-    
-    func setNavigationBarRightButtonItems() {
-        var setting = NavigationBar.buttonFullSetting
-        setting[.style] = NavigationBar.ButtonItemStyle.text
-        setting[.title] = "More".localized
-        navBarRightButtonSettings = [setting]
-    }
     
     func initSections() {
         indexPathSet.removeAll()
@@ -492,7 +485,7 @@ class ProfileViewController: BaseViewController {
                 return
         }
         
-        let height = (item.showText ?? "").textSize(label.font, maxWidth: label.width).height
+        let height = item.showText.textSize(label.font, maxWidth: label.width).height
         item.height = max(TableCellHeight, ceil(height) + 2.0 * Const.signatureMargin)
     }
     

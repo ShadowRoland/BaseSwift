@@ -94,21 +94,16 @@ public class HTTP {
         }
     }
     
+    public enum Option {
+        case sender(String)
+        case encoding(ParamEncoding)
+        case headers(ParamHeaders)
+        case timeout(TimeInterval)
+        case retryCount(Int)
+    }
+    
     public struct Key {
         public struct Request: RawRepresentable, Hashable {
-            public typealias RawValue = String
-            public var rawValue: String
-            
-            public init(_ rawValue: String) {
-                self.rawValue = rawValue
-            }
-            
-            public init(rawValue: String) {
-                self.rawValue = rawValue
-            }
-        }
-        
-        public struct Option: RawRepresentable, Hashable {
             public typealias RawValue = String
             public var rawValue: String
             
@@ -133,17 +128,12 @@ public class HTTP {
     }
 }
 
-extension HTTP.Key.Request {
-    public static let url = HTTP.Key.Request("request.url")
-    public static let files = HTTP.Key.Request("request.files")
-    public static let sender = HTTP.Key.Request("request.sender")
-    public static let retryLeft = HTTP.Key.Request("request.retryLeft")
-}
-
-extension HTTP.Key.Option {
-    public static let timeout = HTTP.Key.Option("option.timeout")
-    public static let retryCount = HTTP.Key.Option("option.retryCount")
-}
+//extension HTTP.Key.Request {
+//    public static let url = HTTP.Key.Request("request.url")
+//    public static let files = HTTP.Key.Request("request.files")
+//    public static let sender = HTTP.Key.Request("request.sender")
+//    public static let retryLeft = HTTP.Key.Request("request.retryLeft")
+//}
 
 public extension DataRequest {
     fileprivate struct AssociatedKeys {

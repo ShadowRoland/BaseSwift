@@ -16,25 +16,21 @@ import Cartography
 
 extension UIView {
     public class SRProgressComponent {
+        public enum Option {
+            case progressType(SRProgressHUD.ProgressType)
+            case maskType(MaskType)
+            case progress(CGFloat)
+            case showPercentage(Bool)
+            case shouldAutorotate(Bool)
+            case opaqueMaskColor(UIColor)
+            case imageProgressSize(SRProgressHUD.ImageProgressSize)
+            case gif(UIImage.SRGif)
+        }
+        
         public enum MaskType: Int {
             case clear = 0, //背景透明
             translucence, //背景半透明
             opaque //完全不透明的背景，默认白色
-        }
-        
-        public class AttributedString {
-            public struct Key: RawRepresentable, Hashable  {
-                public typealias RawValue = String
-                public var rawValue: String
-                
-                public init(_ rawValue: String) {
-                    self.rawValue = rawValue
-                }
-                
-                public init(rawValue: String) {
-                    self.rawValue = rawValue
-                }
-            }
         }
         
         public weak var decorator: UIView?
@@ -46,7 +42,7 @@ extension UIView {
         fileprivate struct AssociatedKeys {
             static var progress = "UIView.SRProgressComponent.progress"
         }
-        
+
         fileprivate var maskView: UIView!
         fileprivate var progressHUD: SRProgressHUD!
         
@@ -64,45 +60,84 @@ extension UIView {
             return maskView != nil && maskView.superview != nil
         }
         
-        public func show(_ maskType: MaskType,
-                         progressType: SRProgressHUD.ProgressType,
-                         progress: CGFloat,
-                         options: [SRProgressComponent.AttributedString.Key : Any]?) {
-            guard !isShowing else { return }
+        public func show(_ options: [Option]?) {
+            guard !isShowing, let options = options else { return }
             
-            if maskView == nil {
-                maskView = UIView()
-                progressHUD = SRProgressHUD.hud(progressType)
+            var progressType: SRProgressHUD.ProgressType?
+            var maskType: MaskType?
+            var progress: CGFloat?
+            var showPercentage: Bool?
+            var shouldAutorotate: Bool?
+            var opaqueMaskColor: UIColor?
+            var imageProgressSize: SRProgressHUD.ImageProgressSize?
+            var gif: UIImage.SRGif?
+            
+            options.forEach {
+                switch ($0) {
+                case .progressType(let p):
+                    progressType = p
+                    
+                case .maskType(let m):
+                    maskType = m
+                    
+                case .progress(let p):
+                    progress = p
+                    
+                case .showPercentage(let s):
+                    showPercentage = s
+                    
+                case .shouldAutorotate(let s):
+                    shouldAutorotate = s
+                    
+                case .opaqueMaskColor(let o):
+                    opaqueMaskColor = o
+                    
+                case .imageProgressSize(let i):
+                    imageProgressSize = i
+                    
+                case .gif(let g):
+                    gif = g
+                }
             }
             
-            if progressType != progressHUD.progressType {
+            if maskView == nil {
+                if let progressType = progressType {
+                    maskView = UIView()
+                    progressHUD = SRProgressHUD.hud(progressType)
+                } else {
+                    return
+                }
+            }
+            
+            if let progressType = progressType, progressType != progressHUD.progressType {
                 progressHUD.dismiss(false)
                 progressHUD = SRProgressHUD.hud(progressType)
             }
             
-            if progressHUD.maskType != maskType {
+            if let maskType = maskType, maskType != progressHUD.maskType {
                 progressHUD.maskType = maskType
             }
             
-            progressHUD.progress = progress
-            if let options = options {
-                if let showPercentage = options[.showPercentage] as? Bool {
-                    progressHUD.showPercentage = showPercentage
-                }
-                if let shouldAutorotate = options[.shouldAutorotate] as? Bool {
-                    progressHUD.shouldAutorotate = shouldAutorotate
-                }
-                if let opaqueMaskColor = options[.opaqueMaskColor] as? UIColor {
-                    self.opaqueMaskColor = opaqueMaskColor
-                }
-                if let imageProgressSize = options[.imageProgressSize] as? SRProgressHUD.ImageProgressSize {
-                    progressHUD.imageProgressSize = imageProgressSize
-                }
-                if let gif = options[.gif] as? UIImage.SRGif {
-                    progressHUD.gif = gif
-                }
+            if let progress = progress {
+                progressHUD.progress = progress
             }
             
+            if let showPercentage = showPercentage {
+                progressHUD.showPercentage = showPercentage
+            }
+            if let shouldAutorotate = shouldAutorotate {
+                progressHUD.shouldAutorotate = shouldAutorotate
+            }
+            if let opaqueMaskColor = opaqueMaskColor {
+                self.opaqueMaskColor = opaqueMaskColor
+            }
+            if let imageProgressSize = imageProgressSize {
+                progressHUD.imageProgressSize = imageProgressSize
+            }
+            if let gif = gif {
+                progressHUD.gif = gif
+            }
+
             decorator?.addSubview(maskView)
             constraintGroup = constrain(maskView, replace: constraintGroup) {
                 $0.edges == inset($0.superview!.edges, 0)
@@ -139,10 +174,7 @@ extension UIView {
 }
 
 public protocol SRProgressProtocol: class {
-    func showProgress(_ maskType: UIView.SRProgressComponent.MaskType?,
-                      progressType: SRProgressHUD.ProgressType?,
-                      progress: CGFloat?,
-                      options: [UIView.SRProgressComponent.AttributedString.Key : Any]?)
+    func showProgress(_ options: [UIView.SRProgressComponent.Option]?)
     func dismissProgress(_ animated: Bool)
     var isShowingProgress: Bool { get }
     func resetProgressPosition()
@@ -150,27 +182,15 @@ public protocol SRProgressProtocol: class {
 
 extension SRProgressProtocol where Self: UIView {
     public func showProgress() {
-        showProgress(nil, progressType: nil, progress: nil, options: nil)
+        showProgress([.progressType(.infinite)])
     }
     
-    public func showProgress(_ maskType: SRProgressComponent.MaskType) {
-        showProgress(maskType, progressType: nil, progress: nil, options: nil)
+    public func showProgress(maskType: SRProgressComponent.MaskType) {
+        showProgress([.progressType(.infinite), .maskType(maskType)])
     }
     
-    public func showProgress(_ maskType: SRProgressComponent.MaskType?,
-                             progressType: SRProgressHUD.ProgressType?,
-                             progress: CGFloat?,
-                             options: [SRProgressComponent.AttributedString.Key : Any]?) {
-        var type: SRProgressHUD.ProgressType = .infinite
-        if let progressType = progressType {
-            type = progressType
-        } else if progressComponent.progressHUD != nil {
-            type = progressComponent.progressHUD.progressType
-        }
-        progressComponent.show(maskType ?? .clear,
-                               progressType: type,
-                               progress: progress ?? progressComponent.progress,
-                               options: options)
+    public func showProgress(_ options: [UIView.SRProgressComponent.Option]?) {
+        progressComponent.show(options)
     }
     
     public func dismissProgress() {
@@ -213,12 +233,4 @@ extension UIView: SRProgressProtocol {
             progressComponent.opaqueMaskColor = newValue
         }
     }
-}
-
-public extension UIView.SRProgressComponent.AttributedString.Key {
-    static let showPercentage: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("showPercentage")
-    static let shouldAutorotate: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("shouldAutorotate")
-    static let opaqueMaskColor: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("opaqueMaskColor")
-    static let imageProgressSize: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("imageProgressSize")
-    static let gif: UIView.SRProgressComponent.AttributedString.Key =  UIView.SRProgressComponent.AttributedString.Key("gif")
 }

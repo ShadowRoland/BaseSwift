@@ -182,12 +182,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ln8-H9-py3" userLabel="First view, making tableView not be the first subview">
-                                <rect key="frame" x="0.0" y="64" width="375" height="0.0"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" id="Tmk-n8-bQ7"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" id="Wxo-Rc-zY1"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" id="lBG-ab-wGy"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Kb0-gF-JNG">
@@ -260,10 +258,10 @@
                             <constraint firstAttribute="bottom" secondItem="Kb0-gF-JNG" secondAttribute="bottom" id="1ZF-ST-gUK"/>
                             <constraint firstItem="Kb0-gF-JNG" firstAttribute="top" secondItem="nYF-yy-4WX" secondAttribute="topMargin" id="9Qh-hh-YuC"/>
                             <constraint firstAttribute="trailing" secondItem="Ln8-H9-py3" secondAttribute="trailing" id="FJT-Sg-dQE"/>
-                            <constraint firstItem="Ln8-H9-py3" firstAttribute="top" secondItem="b0H-Y0-LKQ" secondAttribute="bottom" id="NHn-zd-mes"/>
                             <constraint firstItem="Ln8-H9-py3" firstAttribute="leading" secondItem="nYF-yy-4WX" secondAttribute="leading" id="Pw3-Tk-HYH"/>
                             <constraint firstAttribute="trailing" secondItem="Kb0-gF-JNG" secondAttribute="trailing" id="U2n-CK-5Xt"/>
                             <constraint firstItem="Kb0-gF-JNG" firstAttribute="leading" secondItem="nYF-yy-4WX" secondAttribute="leading" id="Wb0-Pt-xJ6"/>
+                            <constraint firstItem="Ln8-H9-py3" firstAttribute="top" secondItem="nYF-yy-4WX" secondAttribute="top" id="usC-Gy-298"/>
                         </constraints>
                     </view>
                     <connections>

@@ -77,7 +77,8 @@ class MainMenuViewController: BaseViewController {
     }
     
     func initView() {
-        setNavigationBarButtonItems()
+        navBarLeftButtonOptions = [.image(UIImage("list")!)]
+        navBarRightButtonOptions = [.image(UIImage("search_white")!)]
         
         latestVC =
             NewsMainViewController.createNewsListVC(ChannelModel(id: String(int: 0)))
@@ -108,17 +109,6 @@ class MainMenuViewController: BaseViewController {
             NewsMainViewController.createNewsListVC(ChannelModel(id: String(int: 4)))
         favoritesVC.parentVC = self
         favoritesVC.delegate = self
-    }
-    
-    func setNavigationBarButtonItems() {
-        var setting = NavigationBar.buttonFullSetting
-        setting[.style] = NavigationBar.ButtonItemStyle.image
-        setting[.image] = UIImage(named: "list")
-        navBarLeftButtonSettings = [setting]
-        
-        setting[.style] = NavigationBar.ButtonItemStyle.image
-        setting[.image] = UIImage(named: "search_white")
-        navBarRightButtonSettings = [setting]
     }
     
     //添加约束，可以比较方便地进行横竖屏的屏幕适配

@@ -1,4 +1,0 @@
-framework module SRKit {
-  header "SRKit-Swift.h"
-  requires objc
-}

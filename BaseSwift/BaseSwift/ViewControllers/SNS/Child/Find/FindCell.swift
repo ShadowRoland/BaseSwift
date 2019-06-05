@@ -417,10 +417,7 @@ class FindCell: UITableViewCell {
             let url = URL(string: model.images![i])
             let imageButton = images[i]
             imageButton.imageView?.contentMode = .scaleToFill
-            imageButton.showProgress(.clear,
-                                     progressType: .infinite,
-                                     progress: nil,
-                                     options: [.imageProgressSize : SRProgressHUD.ImageProgressSize.normal])
+            imageButton.showProgress([.imageProgressSize(.normal)])
             weak var weakSelf = self
             imageButton.sd_setImage(with: url,
                                     for: .normal,

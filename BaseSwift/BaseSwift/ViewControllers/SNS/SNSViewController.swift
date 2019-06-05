@@ -56,7 +56,7 @@ class SNSViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         setNavigationBar()
-        navBarLeftButtonSettings = [[.title : ""]]
+        navBarLeftButtonOptions = [.text([.title("".localized)])]
         pageBackGestureStyle = .none
         tabBarHeightConstraint.constant = TabBarHeight
         tabBar.backgroundColor = UIColor.clear
@@ -126,15 +126,6 @@ class SNSViewController: BaseViewController {
         }
     }
     
-    func setNavigationBarRightButtonItems() {
-        if currentChildVC === chatListVC {
-            navBarRightButtonSettings = [[.style : NavigationBar.ButtonItemStyle.image,
-                                          .image : UIImage("qr")!]]
-        } else {
-            navigationItem.rightBarButtonItems = nil
-        }
-    }
-    
     //MARK: - 业务处理
     
     override func performViewDidLoad() {
@@ -175,7 +166,7 @@ class SNSViewController: BaseViewController {
             navigationItem.titleView = nil
             moreVC.deviceOrientationDidChange()
         }
-        setNavigationBarRightButtonItems()
+        navBarRightButtonOptions = currentChildVC === chatListVC ? [.image(UIImage("qr")!)] : nil
     }
         
     //MARK: - 事件响应

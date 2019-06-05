@@ -57,10 +57,7 @@ class BaseViewController: SRBaseViewController {
     //MARK: - Http Request
 
     public override func httpRequest(_ method: HTTP.Method,
-                                     anonymous: Bool = false,
-                                     encoding: ParamEncoding? = nil,
-                                     headers: ParamHeaders? = nil,
-                                     options: [HTTP.Key.Option : Any]? = nil,
+                                     options: [HTTP.Option]? = nil,
                                      success: ((Any) -> Void)? = nil,
                                      bfail: ((HTTP.Method, Any) -> Void)? = nil,
                                      fail: ((HTTP.Method, BFError) -> Void)? = nil) {
@@ -91,11 +88,16 @@ class BaseViewController: SRBaseViewController {
             }
         }
         
+        var array: [HTTP.Option]?
+        if let options = options {
+            array = options
+            array!.append(.sender(String(pointer: self)))
+        } else {
+            array = [.sender(String(pointer: self))]
+        }
+        
         HttpManager.shared.request(method,
-                                   sender: anonymous ? nil : String(pointer: self),
-                                   encoding: encoding,
-                                   headers: headers,
-                                   options: options,
+                                   options: array,
                                    success: successHandler,
                                    bfail: bfailHandler,
                                    fail: failHandler)

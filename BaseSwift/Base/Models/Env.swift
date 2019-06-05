@@ -32,6 +32,10 @@ public class Env: BaseModel {
         #else
         Environment = .develop
         #endif
+        
+        #if DEBUG
+        SRKit.mainThreadGuardSwizzle()
+        #endif
     }
     
     required public init?(map: ObjectMapper.Map) { super.init() }

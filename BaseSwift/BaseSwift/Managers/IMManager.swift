@@ -60,11 +60,8 @@ public class IMManager {
              Param.Key.name : NonNull.string(ProfileManager.currentProfile?.name?.fullName),
              Param.Key.portraitUri : NonNull.string(ProfileManager.currentProfile?.headPortrait)]
         HttpManager.shared.request(.post("http://api.cn.ronghub.com/user/getToken.json", current),
-                                    sender: String(pointer: self),
-                                    encoding: nil,
-                                    headers: nil,
-                                    options: nil,
-                                    success:
+                                   options: [.sender(String(pointer: self))],
+                                   success:
             { response in
                 if let json = response as? JSON {
                     login(json[Param.Key.token].stringValue)

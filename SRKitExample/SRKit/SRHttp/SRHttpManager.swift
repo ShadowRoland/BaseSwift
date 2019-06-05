@@ -68,13 +68,10 @@ open class SRHttpManager {
     public static var lastRequstUrl = ""
     
     open func request(_ method: HTTP.Method,
-                        sender: String?,
-                        encoding: ParamEncoding?,
-                        headers: ParamHeaders?,
-                        options: [HTTP.Key.Option : Any]?,
-                        success: ((Any) -> Void)?,
-                        bfail: ((HTTP.Method, Any) -> Void)?,
-                        fail: ((HTTP.Method, BFError) -> Void)?) {
+                      options: [HTTP.Option]? = nil,
+                      success: ((Any) -> Void)?,
+                      bfail: ((HTTP.Method, Any) -> Void)?,
+                      fail: ((HTTP.Method, BFError) -> Void)?) {
         let url = method.url
         guard let requestUrl = URL(string: url) else {
             let error =
@@ -109,7 +106,33 @@ open class SRHttpManager {
                          fail: fail)
         }
         
-        let manager = self.manager(option: options)
+        var sender: String?
+        var encoding: ParamEncoding?
+        var headers: ParamHeaders?
+        var timeout: TimeInterval?
+        var retryCount: Int?
+        if let options = options {
+            for option in options {
+                switch option {
+                case .sender(let s):
+                    sender = s
+                    
+                case .encoding(let e):
+                    encoding = e
+                    
+                case .headers(let h):
+                    headers = h
+                    
+                case .timeout(let t):
+                    timeout = t
+                    
+                case .retryCount(let r):
+                    retryCount = r
+                }
+            }
+        }
+        
+        let manager = self.manager(timeout, retryCount: retryCount)
         switch method {
         case .post:
             SRHttpManager.queue.async {
@@ -155,13 +178,12 @@ open class SRHttpManager {
         }
     }
     
-    open func manager(option: [HTTP.Key.Option : Any]?) -> SRHttpTool {
-        let timeout = option?[.timeout] as? TimeInterval ?? HTTP.defaultTimeout
-        let retryCount = option?[.retryCount] as? Int ?? HTTP.defaultRetryCount
-        let key = "\(timeout)/,\(retryCount)/"
+    open func manager(_ timeout: TimeInterval?, retryCount: Int?) -> SRHttpTool {
+        let key = "\(timeout ?? HTTP.defaultTimeout)/,\(retryCount ?? HTTP.defaultRetryCount)/"
         var manager = managers[key]
         if manager == nil {
-            manager = SRHttpTool(timeout, retryCount: retryCount)
+            manager = SRHttpTool(timeout ?? HTTP.defaultTimeout,
+                                 retryCount: retryCount ?? HTTP.defaultRetryCount)
             managers[key] = manager
         }
         return manager!

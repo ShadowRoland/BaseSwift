@@ -277,3 +277,39 @@ extension UIView {
                              repeats: false)
     }
 }
+
+//MARK: Main thread guard
+
+extension UIView {
+    static var isMainThreadGuarded = false
+    
+    public static func mainThreadGuardSwizzleMethods() {
+        guard !isMainThreadGuarded else { return }
+        SRKit.methodSwizzling(UIView.self,
+                              originalSelector: #selector(UIView.setNeedsLayout),
+                              swizzledSelector: Selector(("mainThreadGuardSetNeedsLayout")))
+        SRKit.methodSwizzling(UIView.self,
+                              originalSelector: #selector(UIView.setNeedsDisplay as (UIView) -> () -> Void),
+                              swizzledSelector: Selector(("mainThreadGuardSetNeedsDisplay")))
+        SRKit.methodSwizzling(UIView.self,
+                              originalSelector: #selector(UIView.setNeedsDisplay(_:)),
+                              swizzledSelector: Selector(("mainThreadGuardSetNeedsDisplay:")))
+        isMainThreadGuarded = true
+    }
+    
+    func mainThreadGuardSetNeedsLayout() {
+        assert(Thread.isMainThread, "call UIView.setNeedsLayout() not in main thread")
+        self.mainThreadGuardSetNeedsLayout()
+    }
+    
+    func mainThreadGuardSetNeedsDisplay() {
+        assert(Thread.isMainThread, "call UIView.setNeedsDisplay() not in main thread")
+        self.mainThreadGuardSetNeedsDisplay()
+    }
+    
+    func mainThreadGuardSetNeedsDisplay(_ rect: CGRect) {
+        assert(Thread.isMainThread, "call UIView.setNeedsDisplay(_:) not in main thread")
+        self.mainThreadGuardSetNeedsDisplay(rect)
+    }
+}
+

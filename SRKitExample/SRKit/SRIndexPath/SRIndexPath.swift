@@ -16,7 +16,7 @@ open class SRIndexPath {
             return set.enumerated()
         }
         
-        //将所有的items根据indexPath的大小顺序输出为数组
+        /// 将所有的items根据indexPath的大小顺序输出为数组
         open var sorted: [SRIndexPath.Item] {
             return enumerated.sorted { $0.element.indexPath < $1.element.indexPath }.map { $0.element }
         }
@@ -68,30 +68,36 @@ open class SRIndexPath {
             return indexPaths.count
         }
         
-        //MARK: - 通过下标获取和设置
+        //MARK: -
         
+        /// 通过下标获取和设置
+        /// 方括号内支持的输入参数有：
+        /// IndexPath -> SRIndexPath.Item.indexPath
+        /// UITableViewCell -> SRIndexPath.Table.cell
+        /// String -> SRIndexPath.Table.paramKey
+        /// UIView -> SRIndexPath.Form.inputTextView
         open subscript(key: Any) -> SRIndexPath.Item? {
             get {
-                if key is IndexPath {
-                    return item(indexPath: key as! IndexPath)
-                } else if key is UITableViewCell {
-                    return item(cell: key as! UITableViewCell)
-                } else if key is String {
-                    return item(paramKey: key as! String)
-                } else if key is UIView {
-                    return item(inputTextView: key as! UIView)
+                if let indexPath = key as? IndexPath {
+                    return item(indexPath: indexPath)
+                } else if let cell = key as? UITableViewCell {
+                    return item(cell: cell)
+                } else if let paramKey = key as? String {
+                    return item(paramKey: paramKey)
+                } else if let view = key as? UIView {
+                    return item(inputTextView: view)
                 }
                 return nil
             }
             set (newValue) {
-                if key is IndexPath {
-                    update(indexPath: key as! IndexPath, item: newValue)
-                } else if key is UITableViewCell {
-                    update(cell: key as! UITableViewCell, item: newValue)
-                } else if key is String {
-                    update(paramKey: key as! String, item: newValue)
-                } else if key is UIView {
-                    update(inputTextView: key as! UIView, item: newValue)
+                if let indexPath = key as? IndexPath {
+                    update(indexPath: indexPath, item: newValue)
+                } else if let cell = key as? UITableViewCell {
+                    update(cell: cell, item: newValue)
+                } else if let paramKey = key as? String {
+                    update(paramKey: paramKey, item: newValue)
+                } else if let view = key as? UIView {
+                    update(inputTextView: view, item: newValue)
                 }
             }
         }

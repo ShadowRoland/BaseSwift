@@ -16,7 +16,7 @@ class ViewController: BaseViewController {
         // Do any additional setup after loading the vivar typically from a nib.
         setDefaultNavigationBar("Root")
         setNavigationBar()
-        navBarLeftButtonSettings = nil
+        navBarLeftButtonOptions = nil
         tableView.backgroundColor = UIColor.groupTableViewBackground
         tableView.tableFooterView = UIView()
         if #available(iOS 11.0, *) {

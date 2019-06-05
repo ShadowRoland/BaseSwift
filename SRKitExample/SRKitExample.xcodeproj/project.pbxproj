@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E0EAD5922A255E9001CD195 /* UIApplication+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */; };
 		4E1376122286A0C100330EBE /* NullSafe.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B41E228698F100E98791 /* NullSafe.m */; };
 		4E1376132286A0C100330EBE /* SRAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B41C228698F100E98791 /* SRAlert.swift */; };
 		4E1376142286A0C100330EBE /* SRAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B43A228698F200E98791 /* SRAlertController.swift */; };
@@ -138,6 +139,7 @@
 		4E28DF6E228D30670026C78A /* SRNavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376CB228937C600330EBE /* SRNavigationItem.swift */; };
 		4E28DF712292B3DB0026C78A /* SRSimplePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */; };
 		4E28DF722292B3FC0026C78A /* SRSimplePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */; };
+		4E2D4AD822A520D900736722 /* UIApplication+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */; };
 		4E34B391226EF64B00CC37C6 /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 4E34B390226EF64B00CC37C6 /* Resource */; };
 		4E5627012285424100C6CE1D /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 4E34B390226EF64B00CC37C6 /* Resource */; };
 		4E5627022285424A00C6CE1D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E7575622264510900394408 /* Assets.xcassets */; };
@@ -160,6 +162,7 @@
 		33357D879170AD5317BB11D2 /* Pods-abstract_pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKit/Pods-abstract_pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
 		3DA932185FB8547E0BCF3D00 /* Pods_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+SRExtension.swift"; sourceTree = "<group>"; };
 		4E13761022869ADB00330EBE /* SRKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRKeyboard.swift; sourceTree = "<group>"; };
 		4E1376902286A20300330EBE /* SRKit.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SRKit.bundle; sourceTree = "<group>"; };
 		4E1376C92289374D00330EBE /* SRNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRNavigationBar.swift; sourceTree = "<group>"; };
@@ -520,6 +523,7 @@
 				4E89B450228698F200E98791 /* NSObject+SRExtension.swift */,
 				4E89B455228698F200E98791 /* Numeric+SRExtension.swift */,
 				4E89B454228698F200E98791 /* String+SRExtension.swift */,
+				4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */,
 				4E89B451228698F200E98791 /* UIButton+SRExtension.swift */,
 				4E89B44E228698F200E98791 /* UIColor+SRExtension.swift */,
 				4E89B448228698F200E98791 /* UIFont+SRExtension.swift */,
@@ -855,6 +859,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E2D4AD822A520D900736722 /* UIApplication+SRExtension.swift in Sources */,
 				4E28DF722292B3FC0026C78A /* SRSimplePromptView.swift in Sources */,
 				4E28DF6D228D30660026C78A /* SRNavigationBar.swift in Sources */,
 				4E28DF6E228D30670026C78A /* SRNavigationItem.swift in Sources */,
@@ -949,6 +954,7 @@
 				4E1376222286A0C100330EBE /* URL+SRExtension.swift in Sources */,
 				4E1376232286A0C100330EBE /* UserDefaults+SRExtension.swift in Sources */,
 				4E1376242286A0C100330EBE /* UIView+SRExtension.swift in Sources */,
+				4E0EAD5922A255E9001CD195 /* UIApplication+SRExtension.swift in Sources */,
 				4E1376252286A0C100330EBE /* UIColor+SRExtension.swift in Sources */,
 				4E1376262286A0C100330EBE /* Dictionary+SRExtension.swift in Sources */,
 				4E1376272286A0C100330EBE /* NSObject+SRExtension.swift in Sources */,
@@ -1192,6 +1198,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6NH38MACH2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					EXAMPLE,
+				);
 				INFOPLIST_FILE = SRKitExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1199,6 +1210,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadow.development.SRKitExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG EXAMPLE";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1211,6 +1223,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6NH38MACH2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					EXAMPLE,
+				);
 				INFOPLIST_FILE = SRKitExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1218,6 +1235,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadow.development.SRKitExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXAMPLE;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

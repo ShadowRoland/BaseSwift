@@ -12,9 +12,9 @@ import Cartography
 
 public enum SRSimplePromptViewStyle {
     case `default`
-    case vertically ///图片文字垂直分离
-    case horizontal ///图片文字水平分离
-    case allCenter ///图片文字均居中，文字覆盖在图片上面
+    case vertically /// 图片文字垂直分离
+    case horizontal /// 图片文字水平分离
+    case allCenter /// 图片文字均居中，文字覆盖在图片上面
 }
 
 public protocol SRSimplePromptDelegate: class {
@@ -36,6 +36,19 @@ public class SRSimplePromptView: UIView {
         }
     }
     
+    lazy var contentView: UIView = {
+        let contentView = UIView()
+        addSubview(contentView)
+        constrain(contentView) {
+            $0.center == $0.superview!.center
+            $0.top >= $0.superview!.top + margin  ~ .defaultLow
+            $0.bottom <= $0.superview!.bottom - margin ~ .defaultLow
+            $0.left >= $0.superview!.left + margin ~ .defaultLow
+            $0.right <= $0.superview!.right - margin ~ .defaultLow
+        }
+        return contentView
+    }()
+    
     var _isTextLabelHidden: Bool = false
     var isTextLabelHidden: Bool {
         if textLabel.isHidden {
@@ -45,6 +58,7 @@ public class SRSimplePromptView: UIView {
             return size.width == 0 || size.height == 0
         }
     }
+    
     lazy public var textLabel: UILabel = {
         let textLabel = UILabel()
         textLabel.numberOfLines = 0
@@ -68,17 +82,26 @@ public class SRSimplePromptView: UIView {
         return imageView
     }()
     
+    var margin: CGFloat = 15.0
+    var padding: CGFloat = 20.0
+    
     lazy var button: UIButton =  {
         let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(clickButton(_:)), for: .touchUpInside)
         addSubview(button)
+        constrain(button) { $0.edges == inset($0.superview!.edges, 0) }
         return button
     }()
     
-    public convenience init(_ text: String?, image: UIImage? = nil) {
+    public convenience init(_ text: String?,
+                            image: UIImage? = nil,
+                            margin: CGFloat = 15.0,
+                            padding: CGFloat = 20.0) {
         self.init(frame: CGRect())
         textLabel.text = text
         imageView.image = image
+        self.margin = max(0, margin)
+        self.padding = max(0, padding)
         layout()
     }
     
@@ -119,12 +142,12 @@ public class SRSimplePromptView: UIView {
             if !imageView.isHidden {
                 if !textLabel.isHidden {
                     imageView.removeFromSuperview()
-                    insertSubview(imageView, at: 0)
+                    contentView.insertSubview(imageView, at: 0)
                     constrain(imageView) {
-                        $0.superview!.centerY == $0.bottom + 5.0
-                        $0.top <= $0.superview!.top ~ .defaultLow
-                        $0.left <= $0.superview!.left ~ .defaultLow
-                        $0.right <= $0.superview!.right ~ .defaultLow
+                        $0.centerX == $0.superview!.centerX
+                        $0.top == $0.superview!.top
+                        $0.left <= $0.superview!.left //~ .defaultLow
+                        $0.right <= $0.superview!.right //~ .defaultLow
                     }
                 } else {
                     centerViews.append(imageView)
@@ -134,12 +157,13 @@ public class SRSimplePromptView: UIView {
             if !textLabel.isHidden {
                 if !imageView.isHidden {
                     textLabel.removeFromSuperview()
-                    addSubview(textLabel)
-                    constrain(textLabel) {
-                        $0.superview!.centerY == $0.top + 5.0
-                        $0.bottom <= $0.superview!.top ~ .defaultLow
-                        $0.left <= $0.superview!.left ~ .defaultLow
-                        $0.right <= $0.superview!.right ~ .defaultLow
+                    contentView.addSubview(textLabel)
+                    constrain(textLabel, imageView) {
+                        $0.centerX == $0.superview!.centerX
+                        $0.top == $1.bottom + padding
+                        $0.bottom == $0.superview!.bottom
+                        $0.left <= $0.superview!.left //~ .defaultLow
+                        $0.right <= $0.superview!.right //~ .defaultLow
                     }
                 } else {
                     centerViews.append(textLabel)
@@ -150,12 +174,12 @@ public class SRSimplePromptView: UIView {
             if !imageView.isHidden {
                 if !textLabel.isHidden {
                     imageView.removeFromSuperview()
-                    insertSubview(imageView, at: 0)
+                    contentView.insertSubview(imageView, at: 0)
                     constrain(imageView) {
-                        $0.superview!.centerX == $0.right + 5.0
-                        $0.top <= $0.superview!.top ~ .defaultLow
-                        $0.bottom <= $0.superview!.bottom ~ .defaultLow
-                        $0.left <= $0.superview!.left ~ .defaultLow
+                        $0.centerY == $0.superview!.centerY
+                        $0.left == $0.superview!.left
+                        $0.top <= $0.superview!.top //~ .defaultLow
+                        $0.bottom <= $0.superview!.bottom //~ .defaultLow
                     }
                 } else {
                     centerViews.append(imageView)
@@ -165,12 +189,13 @@ public class SRSimplePromptView: UIView {
             if !textLabel.isHidden {
                 if !imageView.isHidden {
                     textLabel.removeFromSuperview()
-                    addSubview(textLabel)
-                    constrain(textLabel) {
-                        $0.superview!.centerY == $0.top + 5.0
-                        $0.bottom <= $0.superview!.top ~ .defaultLow
-                        $0.left <= $0.superview!.left ~ .defaultLow
-                        $0.right <= $0.superview!.right ~ .defaultLow
+                    contentView.addSubview(textLabel)
+                    constrain(textLabel, imageView) {
+                        $0.centerY == $0.superview!.centerY
+                        $0.left == $1.right + padding
+                        $0.top <= $0.superview!.top //~ .defaultLow
+                        $0.bottom <= $0.superview!.bottom //~ .defaultLow
+                        $0.right <= $0.superview!.right //~ .defaultLow
                     }
                 } else {
                     centerViews.append(textLabel)
@@ -189,12 +214,12 @@ public class SRSimplePromptView: UIView {
         centerViews.forEach { view in
             view.removeFromSuperview()
             if view === imageView {
-                insertSubview(view, at: 0)
+                contentView.insertSubview(view, at: 0)
             } else {
-                addSubview(view)
+                contentView.addSubview(view)
             }
             constrain(view) {
-                $0.superview!.center == $0.center
+                $0.center == $0.superview!.center
                 $0.top <= $0.superview!.top ~ .defaultLow
                 $0.bottom <= $0.superview!.bottom ~ .defaultLow
                 $0.left <= $0.superview!.left ~ .defaultLow

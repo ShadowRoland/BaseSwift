@@ -84,7 +84,7 @@ class NewsListViewController: BaseViewController, SRSimplePromptDelegate {
         case .clearMask:
             view.showProgress()
         case .opaqueMask:
-            view.showProgress(.opaque)
+            view.showProgress(maskType: .opaque)
         default:
             break
         }

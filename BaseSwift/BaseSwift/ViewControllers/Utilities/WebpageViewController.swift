@@ -26,8 +26,8 @@ SRShareToolDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        setDefaultNavigationBar(title: "Loading ...".localized,
-                             leftImage: UIImage(named: "close_left"))
+        setDefaultNavigationBar("Loading ...".localized)
+        setNavigationBarLeftButtonItems()
         setNavigationBarRightButtonItems()
         initView()
         reload()
@@ -65,26 +65,17 @@ SRShareToolDelegate {
     }
     
     func setNavigationBarLeftButtonItems() {
-        var backSetting = NavigationBar.buttonFullSetting //获取带全属性的按钮字典
-        backSetting[.style] = NavigationBar.ButtonItemStyle.image //设置按钮的风格为纯图片
-        backSetting[.image] =
-            canGoBack ? UIImage(named: "page_back") : UIImage(named: "close_left")
-        
+        let back = canGoBack ? "page_back" : "close_left"
         if webView.canGoForward {
-            var forwardSetting = NavigationBar.buttonFullSetting
-            forwardSetting[.style] = NavigationBar.ButtonItemStyle.image //设置按钮的风格为纯图片
-            forwardSetting[.image] = UIImage(named: "page_forward_left")
-            navBarLeftButtonSettings = [backSetting, forwardSetting]
+            navBarLeftButtonOptions = [.image(UIImage(back)!),
+                                       .image(UIImage("page_forward_left")!)]
         } else {
-            navBarLeftButtonSettings = [backSetting]
+            navBarLeftButtonOptions = [.image(UIImage(back)!)]
         }
     }
     
     func setNavigationBarRightButtonItems() {
-        var setting = NavigationBar.buttonFullSetting
-        setting[.style] = NavigationBar.ButtonItemStyle.image
-        setting[.image] = UIImage(named: "more")
-        navBarRightButtonSettings = [setting]
+        navBarRightButtonOptions = [.image(UIImage("more")!)]
     }
 
     func reload() {

@@ -12,6 +12,12 @@ import REMenu
 import SwiftyJSON
 
 open class SRNavigationController: UINavigationController, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+    public struct DebugMenuItem {
+        public var title: String
+        public var description: String?
+        public var action: () -> Void
+    }
+    
     open var isPageSwipeEnabled = false {
         didSet {
             if isPageSwipeEnabled != oldValue {
@@ -68,27 +74,38 @@ open class SRNavigationController: UINavigationController, UIGestureRecognizerDe
         return gr
     }()
     
-    lazy var debugMenu: REMenu = {
-        let menu = REMenu()
-        menu.textColor = .white
-        menu.font = .title
-        return menu
-    }()
-    
-    open func appendMenuItem(title: String,
-                               description: String?,
-                               action: @escaping (() -> Void)) {
-        let item = REMenuItem(title: title,
-                              subtitle: description,
-                              image: nil,
-                              highlightedImage: nil,
-                              action: { _ in
-                action()
-        })
-        var items = debugMenu.items
-        items?.append(item!)
-        debugMenu.items = items
+    var _debugMenu: REMenu?
+    var debugMenu: REMenu {
+        if _debugMenu == nil {
+            _debugMenu = REMenu()
+            _debugMenu!.textColor = .white
+            _debugMenu!.font = .title
+        }
+        
+        var items = [] as [DebugMenuItem]
+        if let debugMenuItems = debugMenuItems, !debugMenuItems.isEmpty {
+            items = debugMenuItems
+        } else if let defaultMenuItems = SRNavigationController.defaultMenuItems,
+            !defaultMenuItems.isEmpty {
+            items = defaultMenuItems
+        }
+        
+        _debugMenu!.items = items.compactMap { item in
+            REMenuItem(title: item.title,
+                       subtitle: item.description,
+                       image: nil,
+                       highlightedImage: nil,
+                       action: { _ in
+                        item.action()
+            })
+        }
+        
+        return _debugMenu!
     }
+    
+    open var debugMenuItems: [DebugMenuItem]?
+    
+    public static var defaultMenuItems: [DebugMenuItem]?
     
     @objc func handleLongPressed() {
         guard !debugMenu.isOpen && !debugMenu.isAnimating else { return }

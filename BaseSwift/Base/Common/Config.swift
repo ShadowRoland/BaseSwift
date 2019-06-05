@@ -228,6 +228,15 @@ extension SRKit.Event.Action: Swift.CaseIterable {
 
 //格式为前缀"UDKey" + 带语意的后缀
 extension UDKey {
+    static let appIsFirstRun = "\(Config.Scheme.app)/.UDKey.appIsFirstRun"
+    static let baseHttpURL = "\(Config.Scheme.app)/.UDKey.baseHttpURL"
+    static let currentUserInfo = "\(Config.Scheme.app)/.UDKey.currentUserInfo"
+    static let currentDeviceToken = "\(Config.Scheme.app)/.UDKey.currentDeviceToken"
+    static let currentToken = "\(Config.Scheme.app)/.UDKey.currentToken"
+    static let currentUserId = "\(Config.Scheme.app)/.UDKey.currentUserId"
+    static let currentLoginPassword = "\(Config.Scheme.app)/.UDKey.currentLoginPassword"
+    static let isFreeInterfaceOrientations = "\(Config.Scheme.app)/.UDKey.isFreeInterfaceOrientations"
+    
     static let env = "\(Config.Scheme.app)/.UDKey.env"
     static let isAllowShowImageInWLAN = "\(Config.Scheme.app)/.UDKey.isAllowShowImageInWLAN"
     static let forbidAuthenticateToLogin = "\(Config.Scheme.app)/.UDKey.forbidAuthenticateToLogin"
@@ -244,40 +253,10 @@ extension UDKey {
 
 //MARK: 参数名
 
-extension Param.Key {
-    //Common
-    static let status = "status"
-    static let type = "type"
-    static let image = "image"
+public extension Param.Key {
     static let img = "img"
-    static let width = "width"
-    static let height = "height"
-    static let video = "video"
-    static let title = "title"
-    static let text = "text"
-    static let alert = "alert"
-    static let url = "url"
-    static let link = "link"
-    static let message = "message"
-    static let description = "description"
-    static let timestamp = "timestamp"
-    static let date = "date"
-    static let version = "version"
-    
-    //MARK: Device
-    static let os = "os"
-    static let deviceModel = "deviceModel"
-    static let deviceId = "deviceId"
-    static let deviceToken = "deviceToken"
-    
-    //MARK: Action
-    static let action = "action"
-    static let sender = "sender"
-    static let recipient = "recipient"
-    static let event = "event"
     
     //MARK: Table
-    static let id = "id"
     static let limit = "limit"
     static let offset = "offset"
     static let total = "total"
@@ -286,10 +265,10 @@ extension Param.Key {
     static let selected = "selected"
     
     //MARK: Profile
+    static let userId = "userId"
     static let user = "user"
     static let token = "token"
     static let session = "session"
-    static let userId = "userId"
     static let userName = "userName"
     static let name = "name"
     static let first = "first"

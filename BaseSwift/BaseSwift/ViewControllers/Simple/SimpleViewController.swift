@@ -17,7 +17,7 @@ class SimpleViewController: BaseViewController {
 
         // Do any additional setup after loading the view.
         setDefaultNavigationBar("Single initialization request page".localized)
-        navBarRightButtonSettings = [[.title : "List".localized]]
+        navBarRightButtonOptions = [.text([.title("List".localized)])]
         getSimpleData()
         setLoadDataFail(.get("data/getSimpleData", nil)) { [weak self] in
             self?.getSimpleData()

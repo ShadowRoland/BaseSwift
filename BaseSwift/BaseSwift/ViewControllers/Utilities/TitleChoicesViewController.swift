@@ -25,7 +25,8 @@ class TitleChoicesViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         setDefaultNavigationBar()
-        setNavigationBarRightButtonItems()
+        navBarLeftButtonOptions =
+            isEditable && isMultiple ? [.text([.title(("OK").localized)])] : nil
         tableView.tableFooterView = UIView()
         initChoices()
         initSelectedAll()
@@ -38,19 +39,8 @@ class TitleChoicesViewController: BaseViewController {
     
     //MARK: - 视图初始化
     
-    func setNavigationBarRightButtonItems() {
-        if isEditable && isMultiple {
-            var setting = NavigationBar.buttonFullSetting
-            setting[.style] = NavigationBar.ButtonItemStyle.text
-            setting[.title] = "OK".localized
-            navBarRightButtonSettings = [setting]
-        } else {
-            navigationItem.rightBarButtonItems = nil
-        }
-    }
-    
     func initChoices() {
-        guard isMultiple, isShowSelectAll else { return}
+        guard isMultiple, isShowSelectAll else { return }
         
         let model = TitleChoiceModel()
         model.id = String(int: -1)

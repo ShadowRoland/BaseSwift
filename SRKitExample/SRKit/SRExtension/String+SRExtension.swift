@@ -475,10 +475,10 @@ extension String {
             }
             String.srBundle = Bundle(path: Bundle.sr.path(forResource: language, ofType: "lproj")!)
         }
-        return Bundle.srUser.localizedString(forKey: self,
-                                             value: String.srBundle.localizedString(forKey: self,
-                                                                                    value: nil,
-                                                                                    table: ""),
-                                             table: "")
+        return Bundle.main.localizedString(forKey: self,
+                                           value: String.srBundle.localizedString(forKey: self,
+                                                                                  value: nil,
+                                                                                  table: ""),
+                                           table: "")
     }
 }

@@ -54,7 +54,6 @@ class LoginViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        isPageLongPressEnabled = true
         navigationBarAppear = .hidden
         initView()
         

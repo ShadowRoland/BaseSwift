@@ -8,9 +8,7 @@
 
 import UIKit
 
-extension Bundle {
-    public static var srUser: Bundle = Bundle.main
-    
+extension Bundle {    
     static var srBundle: Bundle!
     class var sr: Bundle {
         if Bundle.srBundle == nil {

@@ -86,7 +86,6 @@ extension UIViewController {
         public func showLoadDataFailView(_ text: String?, image: UIImage?) {
             dismissLoadDataFailView()
             loadDataFailView = SRSimplePromptView(text, image: image)
-            loadDataFailView?.removeFromSuperview()
             loadDataFailContainerView.addSubview(loadDataFailView!)
             constrain(loadDataFailView!) {
                 $0.edges == inset($0.superview!.edges, 0)
@@ -94,7 +93,6 @@ extension UIViewController {
         }
         
         public func dismissLoadDataFailView() {
-            loadDataFailContainerView.removeFromSuperview()
             loadDataFailView?.removeFromSuperview()
         }
         
@@ -184,7 +182,7 @@ extension UIViewController {
             }
         }
         
-        public var isPageLongPressEnabled = false {
+        public var isPageLongPressEnabled = true {
             didSet {
                 guard Environment != .production else { return }
                 if let decorator = decorator,
@@ -357,8 +355,9 @@ public extension UIViewController {
 extension UIViewController {
     //MARK: - Autorotate Orientation
     
+    /// 判断设备屏幕方向是否真的发生旋转，传入参数为nil时会强制通过，一般用于初始化或者强制刷新页面布局
     public func guardDeviceOrientationDidChange(_ sender: AnyObject?) -> Bool {
-        if sender == nil { return true } //强制调用，一般用于初始化或者强制重新布局
+        if sender == nil { return true }
         
         if !self.shouldAutorotate { //当前视图控制器不支持屏幕切换，不需要重新布局
             return false
