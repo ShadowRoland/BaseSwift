@@ -8,6 +8,7 @@
 
 import SRKit
 import LocalAuthentication
+import SwiftyJSON
 
 class LoginViewController: BaseViewController {
     @IBOutlet var closeButton: UIButton!
@@ -54,6 +55,7 @@ class LoginViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        pageBackGestureStyle = .none
         navigationBarAppear = .hidden
         initView()
         
@@ -110,7 +112,7 @@ class LoginViewController: BaseViewController {
     //MARK: - Autorotate Orientation
     
     //强制竖屏
-    override public var shouldAutorotate: Bool { return ShouldAutorotate && true }
+    override public var shouldAutorotate: Bool { return C.shouldAutorotate && true }
     
     //只支持一个正面竖屏方向
     override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -160,7 +162,7 @@ class LoginViewController: BaseViewController {
         loginView.layer.borderColor = UIColor.gray.cgColor
         
         //屏幕适配
-        switch ScreenScale {
+        switch C.screenScale {
         case .iPad:
             headTopConstraint.constant = 200.0
         case .iPhone6P:
@@ -323,9 +325,9 @@ class LoginViewController: BaseViewController {
     func login() {
         isLogining = true
         httpRequest(.post("user/login",
-                          [Param.Key.userName : accountTextField.text!,
-                           Param.Key.password : passwordTextField.text!.md5(),
-                           Param.Key.type : 0]), success:
+                          params: [Param.Key.userName : accountTextField.text!,
+                                   Param.Key.password : passwordTextField.text!.md5(),
+                                   Param.Key.type : 0]), success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
                 strongSelf.isLogining = false
@@ -339,17 +341,12 @@ class LoginViewController: BaseViewController {
                     NotifyDefault.post(name:Config.reloadProfileNotification, object: nil)
                     strongSelf.popBack()
                 }
-            }, bfail: { [weak self] (method, response) in
+            }) { [weak self] failure in
                 guard let strongSelf = self else { return }
                 strongSelf.isLogining = false
                 strongSelf.submitButton.set(submit: strongSelf.checkSubmitButtonEnabled())
-                strongSelf.httpRespondBfail(method, response: response)
-            }, fail: { [weak self] (method, error) in
-                guard let strongSelf = self else { return }
-                strongSelf.isLogining = false
-                strongSelf.submitButton.set(submit: strongSelf.checkSubmitButtonEnabled())
-                strongSelf.httpRespondFail(method, error: error)
-        })
+                strongSelf.httpRespond(failure: failure)
+            }
     }
     
     //MARK: - 事件响应

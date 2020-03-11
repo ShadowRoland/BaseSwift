@@ -9,16 +9,90 @@
 import SRKit
 import SwiftyJSON
 import MJRefresh
+import Cartography
+import IDMPhotoBrowser
 
-class SimpleTableViewController: BaseViewController, SRSimplePromptDelegate {
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet var tableHeaderView: UIView!
-    @IBOutlet weak var tableHeaderScrollView: UIScrollView!
+class SimpleTableViewController: BaseTableViewController {
+    lazy var tableHeaderView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        
+        let scrollView = UIScrollView()
+        view.addSubview(scrollView)
+        constrain(scrollView) { $0.edges == inset($0.superview!.edges, 0) }
+        scrollView.backgroundColor = .white
+        scrollView.isPagingEnabled = true
+        scrollView.delegate = self
+        scrollView.tag = 100
+        
+        return view
+    }()
     
-    var currentOffset = 0
+    lazy var tableHeaderScrollView: UIScrollView = {
+        return tableHeaderView.viewWithTag(100) as! UIScrollView
+    }()
     
-    var images: [String] = []
-    var dataArray: [ParamDictionary] = []
+    var headerImages: [String]? = [] {
+        didSet {
+            headerImageViews.forEach { $0.removeFromSuperview() }
+            headerImageViews.removeAll()
+            guard let headerImages = headerImages, !headerImages.isEmpty else {
+                tableView.tableHeaderView = nil
+                return
+            }
+            
+            tableView.tableHeaderView = tableHeaderView
+            for i in 0 ..< headerImages.count {
+                let imageView = UIImageView()
+                imageView.tag = i
+                headerImageViews.append(imageView)
+                imageView.showProgress([.imageProgressSize(.normal)])
+                imageView.sd_setImage(with: URL(string: headerImages[i]),
+                                      placeholderImage: Config.Resource.defaultImage(.normal),
+                                      options: [],
+                                      progress:
+                    { [weak imageView] (current, total, url) in
+                        if let imageView = imageView, current > 0 && total > 0 {
+                            imageView.progressComponent.setProgress(CGFloat(current / total),
+                                                                    animated: true)
+                        }
+                }, completed: { [weak imageView]  (image, error, cacheType, url) in
+                    if let imageView = imageView {
+                        imageView.progressComponent.dismiss(true)
+                    }
+                })
+                tableHeaderScrollView.addSubview(imageView)
+                
+                let button = UIButton(type: .custom)
+                tableHeaderScrollView.addSubview(button)
+                constrain(button, imageView) { (view1, view2) in
+                    view1.top == view2.top
+                    view1.bottom == view2.bottom
+                    view1.leading == view2.leading
+                    view1.trailing == view2.trailing
+                }
+                button.tag = 10000 + i
+                button.addTarget(self, action: #selector(clickHeadImageView(_:)), for: .touchUpInside)
+            }
+            layoutHeaderImages()
+            tableHeaderScrollView.setContentOffset(CGPoint(), animated: false)
+        }
+    }
+    
+    var headerImageViews: [UIView] = []
+    
+    func layoutHeaderImages() {
+        let count = headerImageViews.count
+        for i in 0 ..< count {
+            headerImageViews[i].frame =
+                CGRect(ScreenWidth * CGFloat(i), 0, ScreenWidth, headerImageHeight)
+        }
+        tableHeaderScrollView.contentSize = CGSize(ScreenWidth * CGFloat(count), headerImageHeight)
+    }
+    
+    var headerImageHeight: CGFloat {
+        return ScreenWidth * 548.0 / 1080.0 as CGFloat
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,10 +102,8 @@ class SimpleTableViewController: BaseViewController, SRSimplePromptDelegate {
         navBarRightButtonOptions = [.text([.title("Submit".localized)])]
         pageBackGestureStyle = .edge
         initView()
-        baseBusinessComponent.progressContainerView.progressMaskColor =
-            UIColor.groupTableViewBackground
         showProgress(.opaque)
-        getSimpleList()
+        getDataArray()
     }
     
     override func didReceiveMemoryWarning() {
@@ -41,250 +113,83 @@ class SimpleTableViewController: BaseViewController, SRSimplePromptDelegate {
     
     //MARK: - 视图初始化
     
-    struct Const {
-        static let headerImageHeight = screenSize().width * 548.0 / 1080.0 as CGFloat
-    }
-    
     func initView() {
         tableView.backgroundColor = UIColor.groupTableViewBackground
-        tableView.tableHeaderView = nil
-        tableHeaderView.frame = CGRect(0, 0, screenSize().width, Const.headerImageHeight)
-        tableView.tableFooterView = UIView()
+        tableHeaderView.frame = CGRect(0, 0, ScreenWidth, headerImageHeight)
         tableView.separatorStyle = .singleLine
         tableView.separatorInset = UIEdgeInsets()
+    }
+    
+    override func deviceOrientationDidChange(_ sender: AnyObject?) {
+        super.deviceOrientationDidChange(sender)
+        guard guardDeviceOrientationDidChange(sender) else { return }
         
-        //Refresh header & footer
-        tableView.mj_header = MJRefreshNormalHeader(refreshingBlock: { [weak self] in
-            self?.getSimpleList()
-        })
-        tableView.mj_header.endRefreshing()
-        tableView.mj_footer = MJRefreshBackNormalFooter(refreshingBlock: { [weak self] in
-            self?.getSimpleList(true)
-        })
-        tableView.mj_footer.endRefreshingWithNoMoreData()
-        tableView.mj_footer.isHidden = true
-    }
-    
-    //MARK: - Autorotate Orientation
-    
-    override var shouldAutorotate: Bool { return false }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
-    }
-    
-    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return .portrait
+        if !headerImageViews.isEmpty {
+            tableHeaderView.frame = CGRect(0, 0, ScreenWidth, headerImageHeight)
+            layoutHeaderImages()
+            tableView.tableHeaderView = tableHeaderView
+        }
+//        layoutViews()
+        tableView.reloadData()
     }
     
     //MARK: - 业务处理
     
-    func updateHeaderImages(_ images: [String]? = []) {
-        guard images! != self.images else {
-            return
-        }
-        
-        self.images = images!
-        tableHeaderScrollView.subviews.forEach { $0.removeFromSuperview() }
-        if self.images.isEmpty {
-            tableView.tableHeaderView = nil
-            return
-        }
-        
-        tableView.tableHeaderView = tableHeaderView
-        let count = self.images.count
-        for i in 0 ..< count {
-            let url = self.images[i]
-            let imageView = UIImageView(frame: CGRect(screenSize().width * CGFloat(i),
-                                                      0,
-                                                      screenSize().width,
-                                                      Const.headerImageHeight))
-           //imageView.sd_setImage(with: URL(string: url),
-            //                      placeholderImage: Config.Resource.defaultImage(.normal))
-            imageView.showProgress([.imageProgressSize(.normal)])
-            imageView.sd_setImage(with: URL(string: url),
-                                  placeholderImage: Config.Resource.defaultImage(.normal),
-                                  options: [],
-                                  progress:
-                { (current, total, url) in
-                    //print("current: \(current), total: \(total), progress: \(Double(current)/Double(total))")
-                    if current > 0 && total > 0 {
-                        imageView.progressComponent.setProgress(CGFloat(current / total),
-                                                                animated: true)
-                    }
-            }, completed: { (image, error, cacheType, url) in
-                imageView.progressComponent.dismiss(true)
-            })
-            tableHeaderScrollView.addSubview(imageView)
-        }
-        tableHeaderScrollView.setContentOffset(CGPoint(), animated: false)
-        tableHeaderScrollView.contentSize =
-            CGSize(screenSize().width * CGFloat(count), Const.headerImageHeight)
-    }
-    
-    func updateNew(_ dictionary: [AnyHashable : Any]?, errMsg: String? = nil) {
-        dismissProgress(true)
-        tableView.mj_header.endRefreshing()
-        guard let dictionary = dictionary else {
-            if dataArray.isEmpty {
-                showLoadDataFailView(errMsg) //加载失败
-                tableView.reloadData()
-            }
-            return
-        }
-        
-        updateHeaderImages(NonNull.array(dictionary[Param.Key.images]) as? [String])
-        dataArray = NonNull.array(dictionary[Param.Key.list]) as! [ParamDictionary]
-        guard !dataArray.isEmpty else { //没有数据
-            showNoDataView()
-            tableView.reloadData()
-            return
-        }
-        
-        tableView.tableFooterView = UIView()
-        tableView.mj_footer.isHidden = false
-        
-        currentOffset = 0 //页数重置
-        tableView.reloadData()
-        DispatchQueue.main.async { [weak self] in //tableView更新完数据后再设置contentOffset
-            if let strongSelf = self {
-                strongSelf.tableView.setContentOffset(CGPoint(0, -strongSelf.tableView.contentInset.top),
-                                                      animated: true)
-            }
-        }
-    }
-    
-    func updateMore(_ dictionary: [AnyHashable : Any]?, errMsg: String? = nil) {
-        dismissProgress(true)
-        guard let dictionary = dictionary else {
-            if dataArray.isEmpty {
-                showLoadDataFailView(errMsg) //加载失败
-                tableView.reloadData()
-            } else {
-                tableView.mj_footer.endRefreshing()
-            }
-            return
-        }
-        
-        let list = NonNull.array(dictionary[Param.Key.list]) as! [ParamDictionary]
-        if list.isEmpty { //已无数据
-            tableView.mj_footer.endRefreshingWithNoMoreData()
-        } else {
-            tableView.mj_footer.endRefreshing()
-            tableView.mj_footer.resetNoMoreData()
-        }
-        
-        tableView.tableFooterView = UIView()
-        tableView.mj_footer.isHidden = false
-        
-        //去重
-        var array = [] as [ParamDictionary]
-        list.forEach { dictionary in
-            if let index = (0 ..< dataArray.count).first(where: {
-                if let id = dictionary[Param.Key.id] as? String,
-                    id == dataArray[$0][Param.Key.id] as? String {
-                    return true
-                } else {
-                    return false
-                }
-            }) {
-                dataArray[index] = dictionary //如果已经存在该数据，更新之
-            } else { //否则添加到新的数据中
-                array.append(dictionary)
-            }
-        }
-        currentOffset += 1 //自动增加页面
-        dataArray += array //拼接数组
-        tableView.reloadData()
-    }
-    
-    func showNoDataView() {
-        let view = SRSimplePromptView("No record".localized, image: UIImage("no_data"))
-        view.frame =
-            CGRect(0,
-                   0,
-                   ScreenWidth,
-                   tableView.height - (tableView.tableHeaderView == nil ? 0 : Const.headerImageHeight))
-        view.delegate = self
-        view.backgroundColor = tableView.backgroundColor
-        tableView.tableFooterView = view
-        tableView.mj_footer.endRefreshingWithNoMoreData()
-        tableView.mj_footer.isHidden = true
-    }
-    
-    override func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
-        let view = SRSimplePromptView(text, image: UIImage("request_fail"))
-        view.frame =
-            CGRect(0,
-                   0,
-                   ScreenWidth,
-                   tableView.height - (tableView.tableHeaderView == nil ? 0 : Const.headerImageHeight))
-        view.delegate = self
-        view.backgroundColor = tableView.backgroundColor
-        tableView.tableFooterView = view
-        tableView.mj_footer.endRefreshingWithNoMoreData()
-        tableView.mj_footer.isHidden = true
-    }
-    
-    //MARK: Http request
-    
-    func getSimpleList(_ isNextPage: Bool = false) {
+    func getDataArray(_ addMore: Bool = false) {
         var params = [:] as ParamDictionary
         params[Param.Key.limit] = TableLoadData.row
-        params[Param.Key.offset] = isNextPage ? currentOffset + 1 : 0
-        httpRequest(.get("data/getSimpleList", params), success: { [weak self] response in
+        let offset = addMore ? currentOffset + 1 : 0
+        params[Param.Key.offset] = offset
+        httpRequest(.get("data/getSimpleList", params: params), success: { [weak self] response in
             guard let strongSelf = self else { return }
-            let responseData = NonNull.dictionary((response as! JSON)[HTTP.Key.Response.data].rawValue)
-            if isNextPage {
-                let offset = params[Param.Key.offset] as! Int
+            let dictionary = NonNull.dictionary((response as! JSON)[HTTP.Key.Response.data].object)
+            if addMore {
                 if offset == strongSelf.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
-                    strongSelf.updateMore(responseData)
+                    strongSelf.dismissProgress()
+                    strongSelf.addMore(NonNull.array(dictionary[Param.Key.list]))
                 }
             } else {
-                strongSelf.updateNew(responseData)
+                strongSelf.headerImages = NonNull.array(dictionary[Param.Key.images]) as? [String]
+                strongSelf.dismissProgress()
+                strongSelf.refreshNew(NonNull.array(dictionary[Param.Key.list]))
             }
-            }, bfail: { [weak self] (method, response) in
-                guard let strongSelf = self else { return }
-                if isNextPage {
-                    let offset = params[Param.Key.offset] as! Int
-                    if offset == strongSelf.currentOffset + 1 {
-                        if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
-                            strongSelf.updateMore(nil)
-                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                            strongSelf.updateMore(nil,
-                                                  errMsg: strongSelf.logBFail(method,
-                                                                              response:response,
-                                                                              show: false))
-                        }
-                    }
-                } else {
-                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
-                        strongSelf.updateNew(nil)
-                    } else { //当前为空的话则交给列表展示错误信息
-                        strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(method,
-                                                                              response: response,
-                                                                              show: false))
-                    }
+        }) { [weak self] failure in
+            guard let strongSelf = self else { return }
+            if addMore {
+                if offset == strongSelf.currentOffset + 1 {
+                    strongSelf.dismissProgress()
+                    strongSelf.addMore(nil, errorMessage: failure.errorMessage)
                 }
-            }, fail: { [weak self] (_, error) in
-                guard let strongSelf = self else { return }
-                if isNextPage {
-                    let offset = params[Param.Key.offset] as! Int
-                    if offset == strongSelf.currentOffset + 1 {
-                        if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
-                            strongSelf.updateMore(nil)
-                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                            strongSelf.updateMore(nil, errMsg: error.errorDescription)
-                        }
-                    }
-                } else {
-                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
-                        strongSelf.updateNew(nil)
-                    } else { //当前为空的话则交给列表展示错误信息
-                        strongSelf.updateNew(nil, errMsg: error.errorDescription)
-                    }
-                }
-        })
+            } else {
+                strongSelf.dismissProgress()
+                strongSelf.addMore(nil, errorMessage: failure.errorMessage)
+            }
+        }
+    }
+    
+    
+    @objc func clickHeadImageView(_ sender: UIButton) {
+        let urls = headerImages?.compactMap { URL(string: $0)}
+        let index = sender.tag - 10000
+        guard MutexTouch,
+            let photoURLs = urls,
+            !photoURLs.isEmpty,
+            let headerImages = headerImages,
+            let view = sender.superview?.viewWithTag(index),
+            let browser = IDMPhotoBrowser(photoURLs: photoURLs, animatedFrom: view) else {
+                return
+        }
+        
+        browser.displayActionButton = false
+        browser.displayArrowButton = !photoURLs.isEmpty
+        browser.displayCounterLabel = !photoURLs.isEmpty
+        browser.displayDoneButton = false
+        browser.disableVerticalSwipe = true
+        browser.dismissOnTouch = true
+        if index < headerImages.count {
+            browser.setInitialPageIndex(UInt(index))
+        }
+        navigationController?.present(browser, animated: true, completion: nil)
     }
     
     //MARK: - 事件响应
@@ -294,37 +199,28 @@ class SimpleTableViewController: BaseViewController, SRSimplePromptDelegate {
         show("SimpleSubmitViewController", storyboard: "Simple")
     }
     
-    //MARK: - SRSimplePromptDelegate
+    //MARK: - UITableViewDelegate, UITableViewDataSource
     
-    func didClickSimplePromptView(_ view: SRSimplePromptView) {
-        showProgress(.opaque)
-        getSimpleList()
-    }
-}
-
-//MARK: - UITableViewDelegate, UITableViewDataSource
-
-extension SimpleTableViewController: UITableViewDelegate, UITableViewDataSource {    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataArray.count
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return SimpleCell.Const.height
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell =
-            tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier) as! SimpleCell
-        cell.update(dataArray[indexPath.row])
-        return cell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell =
+            tableView.dequeueReusableCell(withIdentifier: C.reuseIdentifier) as? SimpleCell
+        if cell == nil {
+            cell = Bundle.main.loadNibNamed("SimpleCell", owner: nil, options: nil)?.first as? SimpleCell
+        }
+        cell!.update(dataArray[indexPath.row] as! ParamDictionary)
+        return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard MutexTouch else { return }
         
-        if let url = dataArray[indexPath.row][Param.Key.url] as? String {
+        if let dictionary = dataArray[indexPath.row] as? ParamDictionary,
+            let url = dictionary[Param.Key.url] as? String {
             showWebpage(URL(string: url)!)
         }
     }

@@ -53,7 +53,7 @@ public class ProfileModel: UserModel {
             return nil
         }
         
-        let root = UserDirectory.appending(pathComponent: userId)
+        let root = C.userDirectory.appending(pathComponent: userId)
         switch type {
         case .root:
             return root

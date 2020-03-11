@@ -97,8 +97,8 @@ open class SRTabHeader: UIView {
             return
         }
         
-        let tabWidth = frame.size.width / CGFloat(titles.count)
-        let tabHeight = max(frame.size.height - cursorHeight, 0)
+        let tabWidth = frame.width / CGFloat(titles.count)
+        let tabHeight = max(frame.height - cursorHeight, 0)
         let labelHeight = max(tabHeight, titleFont.lineHeight)
         var cursorFrames = [] as [CGRect]
         for i in 0 ..< titles.count {
@@ -118,7 +118,7 @@ open class SRTabHeader: UIView {
             label.frame =
                 CGRect(x: (tabWidth - labelWidth) / 2.0, y: 0, width: labelWidth, height: tabHeight)
             let cursorWidth = min(labelWidth + 2.0 * cursorOffset, tabWidth)
-            let cursorFrame = CGRect(x: tabItem.frame.origin.x + ((tabWidth - cursorWidth) / 2.0),
+            let cursorFrame = CGRect(x: tabItem.frame.minX + ((tabWidth - cursorWidth) / 2.0),
                                      y: tabHeight,
                                      width: cursorWidth,
                                      height: cursorHeight)
@@ -126,7 +126,7 @@ open class SRTabHeader: UIView {
         }
         self.cursorFrames = cursorFrames
         bottomLineView.frame =
-            CGRect(x: 0, y: frame.size.height - 0.5, width: frame.size.width, height: 0.5)
+            CGRect(x: 0, y: frame.height - 0.5, width: frame.width, height: 0.5)
         activeTab(selectedIndex, animated: false)
     }
     
@@ -155,8 +155,8 @@ open class SRTabHeader: UIView {
             }
             let cursorFrame = cursorFrames[i]
             let rightCursorFrame = cursorFrames[i + 1]
-            updateCursor(cursorFrame.origin.x
-                + (rightCursorFrame.origin.x - cursorFrame.origin.x) * offsetRate,
+            updateCursor(cursorFrame.minX
+                + (rightCursorFrame.minX - cursorFrame.minX) * offsetRate,
                          width: cursorFrame.size.width
                             + (rightCursorFrame.size.width - cursorFrame.size.width) * offsetRate)
         }
@@ -164,7 +164,7 @@ open class SRTabHeader: UIView {
     
     public func updateCursor(_ x: CGFloat, width: CGFloat) {
         var frame = cursorView.frame
-        if x != frame.origin.x || width != frame.size.width {
+        if x != frame.minX || width != frame.width {
             frame.origin.x = x
             frame.size.width = width
             cursorView.frame = frame

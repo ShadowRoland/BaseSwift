@@ -74,8 +74,8 @@ class QRCodeReaderViewController: BaseViewController {
     }
     
     struct Const {
-        static let scanSize = CGSize(screenSize().width * 2.0 / 3.0,
-                                     screenSize().width * 2.0 / 3.0)
+        static let scanSize = CGSize(C.screenSize().width * 2.0 / 3.0,
+                                     C.screenSize().width * 2.0 / 3.0)
         static let maskBackgroundColor = UIColor(white: 0, alpha: 0.7)
         static let edgeLineLength = scanSize.width / 8.0
         static let edgeLineThickness = 5.0 as CGFloat
@@ -262,7 +262,7 @@ class QRCodeReaderViewController: BaseViewController {
             output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             
             session = AVCaptureSession()
-            if screenSize().width < 500.0 {
+            if C.screenSize().width < 500.0 {
                 session?.sessionPreset = .vga640x480
             } else {
                 session?.sessionPreset = .high
@@ -399,7 +399,7 @@ class QRCodeReaderViewController: BaseViewController {
 extension QRCodeReaderViewController: AVCaptureMetadataOutputObjectsDelegate {
     //摄像头捕获
     func captureOutput(_ captureOutput: AVCaptureOutput!,
-                       didOutputMetadataObjects metadataObjects: [Any]!,
+                       didOutputMetadataObjects metadataObjects: AnyArray!,
                        from connection: AVCaptureConnection!) {
         metadataObjects.forEach {
             if let codeObject = $0 as? AVMetadataMachineReadableCodeObject,

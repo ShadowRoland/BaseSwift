@@ -30,11 +30,11 @@ class FindCell: UITableViewCell {
                                               placeholderImage: Config.Resource.defaultHeadPortrait(.min),
                                               options: [],
                                               completed:
-                { [weak headPortraitImageView] (image, error, cacheType, url) in
+                { [weak self] (image, error, cacheType, url) in
                     if error != nil {
                         return
                     }
-                    headPortraitImageView?.contentMode = .scaleAspectFit
+                    self?.headPortraitImageView.contentMode = .scaleAspectFit
             })
             nameLabel.text = model?.userName
             messageLabel.text = model?.text
@@ -42,12 +42,12 @@ class FindCell: UITableViewCell {
                 model?.timestamp != nil ? String(timestamp: TimeInterval((model?.timestamp)!),
                                                    format: "MM-dd HH:mm") : nil
             if let like = model?.like {
-                likeLabel.text = isZhHans ? like.tenThousands(2) : like.thousands(2)
+                likeLabel.text = C.isZhHans ? like.tenThousands(2) : like.thousands(2)
             } else {
                 likeLabel.text = "0"
             }
             if let comment = model?.comment {
-                commentLabel.text = isZhHans ? comment.tenThousands(2) : comment.thousands(2)
+                commentLabel.text = C.isZhHans ? comment.tenThousands(2) : comment.thousands(2)
             } else {
                 commentLabel.text = "0"
             }
@@ -98,7 +98,7 @@ class FindCell: UITableViewCell {
     struct Const {
         static let headPortraitSide = 60.0 as CGFloat
         public static let headPortraitMargin = 10.0 as CGFloat
-        static let nameHeight = LabelHeight
+        static let nameHeight = C.labelHeight
         static let nameMarginTop = 15.0 as CGFloat
         static let nameMarginBottom = 10.0 as CGFloat
         static let nameMarginRight = 10.0 as CGFloat
@@ -106,7 +106,7 @@ class FindCell: UITableViewCell {
         static let nameTextColor = UIColor(hue: 6.0, saturation: 74.0, brightness: 91.0)
         static let messageTopOringY = nameHeight + nameMarginTop + nameMarginBottom
         static let messageMarginBottom = nameMarginBottom
-        static let messageFont = UIFont.text
+        static let messageFont = C.Font.text
         
         static var signalImageSide = 0 as CGFloat
         static let groupImageMaxCount = 9 //图片最大数目为9
@@ -137,7 +137,7 @@ class FindCell: UITableViewCell {
     }
     
     class func updateCellHeight() {
-        let width = screenSize().width
+        let width = C.screenSize().width
         Const.signalImageSide = width * 2.0 / 3.0 //单个图片的最长边长
         Const.groupImageSide = (width
             - (2.0 * Const.headPortraitMargin + Const.headPortraitSide)
@@ -145,16 +145,15 @@ class FindCell: UITableViewCell {
             - 2 * Const.groupImageMargin) / 3.0
         if Const.shareMaskImage == nil {
             Const.shareMaskImage =
-                UIImage.rect(MaskBackgroundColor,
+                UIImage.rect(C.maskBackgroundColor,
                              size: CGSize(width - Const.headPortraitSide - 2.0 * Const.headPortraitMargin,
                                           Const.shareThumbnailSide + 2.0 * Const.shareThumbnailSide))
         }
     }
     
     //根据数据模型以计算所需要的单元高度
-    class func cellHeight(_ model: MessageModel,
-                          interfaceOrientation: UIInterfaceOrientationMask = .portrait) -> CGFloat {
-        let width = screenSize(interfaceOrientation).width - Const.headPortraitSide - 2.0 * Const.headPortraitMargin
+    class func cellHeight(_ model: MessageModel, isLandscape: Bool = false) -> CGFloat {
+        let width = C.screenSize(isLandscape).width - Const.headPortraitSide - 2.0 * Const.headPortraitMargin
             - Const.nameMarginRight
         var cellHeight = Const.messageTopOringY //初始高度从文字上方开始算
         
@@ -425,28 +424,30 @@ class FindCell: UITableViewCell {
                                     options: [],
                                     completed:
                 { [weak imageButton] (image, error, cacheType, url) in
-                    imageButton?.progressComponent.dismiss(true)
-                    if error != nil {
+                    guard let imageButton = imageButton,
+                        let strongSelf = weakSelf,
+                        error == nil else {
                         return
                     }
-                    if let model = weakSelf?.model,
+                    imageButton.progressComponent.dismiss(true)
+                    if let model = strongSelf.model,
                         let images = model.images,
                         images.count == 1,
                         model.singleImageHeight == 0,
                         url?.absoluteString == images.first {
                         if let size = image?.size.fitSize(maxSize: CGSize(Const.signalImageSide,
                                                                           Const.signalImageSide)) {
-                            weakSelf?.model?.singleImageWidth = size.width
-                            weakSelf?.model?.singleImageHeight = size.height
-                            weakSelf?.model?.cellHeight = FindCell.cellHeight(model)
-                            weakSelf?.model?.cellHeightLandscape =
-                                FindCell.cellHeight(model, interfaceOrientation: .landscape)
+                            strongSelf.model?.singleImageWidth = size.width
+                            strongSelf.model?.singleImageHeight = size.height
+                            strongSelf.model?.cellHeight = FindCell.cellHeight(model)
+                            strongSelf.model?.cellHeightLandscape =
+                                FindCell.cellHeight(model, isLandscape: true)
                             DispatchQueue.main.async {
-                                weakSelf?.delegate?.reloadTableView()
+                                strongSelf.delegate?.reloadTableView()
                             }
                         }
                     }
-                    imageButton?.imageView?.contentMode = .scaleAspectFill
+                    imageButton.imageView?.contentMode = .scaleAspectFill
             })
             imagesView.addSubview(imageButton)
         }

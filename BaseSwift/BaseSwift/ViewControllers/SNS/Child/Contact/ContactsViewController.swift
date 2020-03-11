@@ -8,7 +8,7 @@
 
 import SRKit
 
-class ContactsViewController: BaseViewController {
+class ContactsViewController: BaseViewController, UIScrollViewDelegate {
     public weak var parentVC: SNSViewController?
     public weak var currentChildVC: UIViewController!
     @IBOutlet weak var scrollView: UIScrollView!
@@ -28,10 +28,11 @@ class ContactsViewController: BaseViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        scrollView.contentSize = CGSize(2.0 * ScreenWidth, scrollView.height)
-        singleVC.view.frame = CGRect(0, 0, ScreenWidth, scrollView.height)
-        officialAccountVC.view.frame =
-            CGRect(ScreenWidth, 0, ScreenWidth, scrollView.height)
+        let width = scrollView.width
+        let height = scrollView.height
+        scrollView.contentSize = CGSize(2.0 * width, height)
+        singleVC.view.frame = CGRect(0, 0, width, height)
+        officialAccountVC.view.frame = CGRect(width, 0, width, height)
     }
     
     deinit {
@@ -47,7 +48,7 @@ class ContactsViewController: BaseViewController {
     //MARK: - 视图初始化
     
     func initView() {
-        //let height = ScreenHeight - NavigationHeaderHeight - TabBarHeight
+        //let height = ScreenHeight - C.navigationHeaderHeight() - C.tabBarHeight()
         scrollView.isPagingEnabled = true
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
@@ -91,23 +92,27 @@ class ContactsViewController: BaseViewController {
     
     //MARK: - UIScrollViewDelegate
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let index = floor(scrollView.contentOffset.x  / ScreenWidth)
-        if index == 0 {
-            currentChildVC = singleVC
-        } else if index == 1 {
-            currentChildVC = officialAccountVC
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView,
+                                  willDecelerate decelerate: Bool) {
+        if !decelerate {
+            resetAfterScrollViewDidEndScroll(scrollView)
         }
-        parentVC?.contactsSC.selectedSegmentIndex = Int(index)
     }
     
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        let index = floor(scrollView.contentOffset.x  / ScreenWidth)
-        if index == 0 {
-            currentChildVC = singleVC
-        } else if index == 1 {
-            currentChildVC = officialAccountVC
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        resetAfterScrollViewDidEndScroll(scrollView)
+    }
+    
+    func resetAfterScrollViewDidEndScroll(_ scrollView: UIScrollView) {
+        let width = scrollView.width
+        if width > 0 {
+            let index = floor(scrollView.contentOffset.x / width)
+            if index == 0 {
+                currentChildVC = singleVC
+            } else if index == 1 {
+                currentChildVC = officialAccountVC
+            }
+            parentVC?.contactsSC.selectedSegmentIndex = Int(index)
         }
-        parentVC?.contactsSC.selectedSegmentIndex = Int(index)
     }
 }

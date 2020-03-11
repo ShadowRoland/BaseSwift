@@ -242,11 +242,11 @@ extension MapViewController: MAMapViewDelegate {
             return annotationView
         } else if !(annotation is MAUserLocation) {
             var annotationView =
-                mapView.dequeueReusableAnnotationView(withIdentifier: ReuseIdentifier)
+                mapView.dequeueReusableAnnotationView(withIdentifier: C.reuseIdentifier)
                     as? MAPinAnnotationView
             if annotationView == nil {
                 annotationView =
-                    CustomAnnotationView(annotation: annotation, reuseIdentifier: ReuseIdentifier)
+                    CustomAnnotationView(annotation: annotation, reuseIdentifier: C.reuseIdentifier)
                 (annotationView as! CustomAnnotationView).delegate = self
             }
             (annotationView as! CustomAnnotationView).poi = nil
@@ -283,7 +283,7 @@ extension MapViewController: MAMapViewDelegate {
         }
     }
     
-    func mapView(_ mapView: MAMapView!, didAddAnnotationViews views: [Any]!) {
+    func mapView(_ mapView: MAMapView!, didAddAnnotationViews views: AnyArray!) {
         guard let view = views.first as? MAAnnotationView, view.annotation is MAUserLocation else {
             return
         }

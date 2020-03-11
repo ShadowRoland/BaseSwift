@@ -9,7 +9,7 @@
 import SRKit
 import SlideMenuControllerSwift
 
-class AppGuideViewController: BaseViewController {
+class AppGuideViewController: BaseViewController, UIScrollViewDelegate {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var scrollViewWidthConstraint: NSLayoutConstraint!
@@ -39,8 +39,8 @@ class AppGuideViewController: BaseViewController {
         scrollViewWidthConstraint.constant = ScreenWidth
         
         //引导图片文件存储目录
-        var dir = ResourceDirectory.appending(pathComponent: "image/guide")
-        if ScreenScale == .iPhone4 {
+        var dir = C.resourceDirectory.appending(pathComponent: "image/guide")
+        if C.screenScale == .iPhone4 {
             dir = dir.appending(pathComponent: "640x960")
         } else {
             dir = dir.appending(pathComponent: "640x1136")
@@ -55,10 +55,10 @@ class AppGuideViewController: BaseViewController {
             
             if i == 4 {
                 let button = UIButton(frame: CGRect(imageView.right - 80.0 - 20.0,
-                                                    ScreenWidth - TableCellHeight - 20.0,
+                                                    ScreenWidth - C.tableCellHeight - 20.0,
                                                     80.0,
-                                                    TableCellHeight))
-                let image = UIImage.rect(MaskBackgroundColor, size: CGSize(80.0, TableCellHeight))
+                                                    C.tableCellHeight))
+                let image = UIImage.rect(C.maskBackgroundColor, size: CGSize(80.0, C.tableCellHeight))
                 button.backgroundImage = image
                 button.title = "Enter".localized
                 button.clicked(self, action: #selector(clickEnterButton(_:)))
@@ -72,7 +72,7 @@ class AppGuideViewController: BaseViewController {
         }
         scrollView.contentSize = CGSize(width: 4 * ScreenWidth, height: ScreenHeight)
         
-        pageControl.backgroundColor = MaskBackgroundColor
+        pageControl.backgroundColor = C.maskBackgroundColor
     }
     
     //MARK: - 业务处理
@@ -143,15 +143,13 @@ class AppGuideViewController: BaseViewController {
     
     //MARK: - UIScrollViewDelegate
     
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        changePageControl()
-    }
-    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         changePageControl()
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        changePageControl()
+        if !decelerate {
+            changePageControl()
+        }
     }
 }

@@ -16,6 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        initDebugMenu()
         return true
     }
 
@@ -42,5 +43,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+    func initDebugMenu() {
+        SRNavigationController.defaultMenuItems =
+            [.init("Server Configurations".localized,
+                   description: "Display or modify the current server configurations".localized) {
+                }
+        ]
+    }
 }
 

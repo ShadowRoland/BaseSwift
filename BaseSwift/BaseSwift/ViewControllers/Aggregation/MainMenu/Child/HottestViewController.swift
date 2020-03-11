@@ -142,19 +142,14 @@ class HottestViewController: BaseViewController {
         }
     }
     
-    //列表停止滑动后恢复图片下载
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate {
-            resetAfterScrollViewDidEndScroll(scrollView)
-        }
-    }
-    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         resetAfterScrollViewDidEndScroll(scrollView)
     }
     
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        resetAfterScrollViewDidEndScroll(scrollView)
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            resetAfterScrollViewDidEndScroll(scrollView)
+        }
     }
     
     func resetAfterScrollViewDidEndScroll(_ scrollView: UIScrollView) {
@@ -163,7 +158,7 @@ class HottestViewController: BaseViewController {
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
             currentNewsListVC?.backToTopButtonBottomConstraint.constant = 0
-            currentNewsListVC?.loadData(progressType: .clearMask)
+            currentNewsListVC?.getDataArray(progressType: .clearMask)
         }
         isSilent = false
     }
@@ -177,7 +172,7 @@ extension HottestViewController: SRTabHeaderDelegate {
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
-                currentNewsListVC?.loadData(progressType: .clearMask)
+                currentNewsListVC?.getDataArray(progressType: .clearMask)
             }
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
@@ -187,7 +182,7 @@ extension HottestViewController: SRTabHeaderDelegate {
             if !animated {
                 currentNewsListVC = newsListVCs[index]
                 if !(currentNewsListVC?.isTouched)! {
-                    currentNewsListVC?.loadData(progressType: .clearMask)
+                    currentNewsListVC?.getDataArray(progressType: .clearMask)
                 }
             }
         }

@@ -14,45 +14,55 @@ import Foundation
 public extension UIView {
     var left: CGFloat {
         get {
-            return frame.origin.x
+            return frame.minX
         }
         set {
-            frame = CGRect(newValue, top, width, height)
+            frame = CGRect(newValue, frame.minY, frame.width, frame.height)
         }
     }
     
     var right: CGFloat {
-        return frame.origin.x + frame.size.width
+        get {
+            return frame.maxX
+        }
+        set {
+            frame = CGRect(newValue - frame.width, frame.minY, frame.width, frame.height)
+        }
     }
     
     var top: CGFloat {
         get {
-            return frame.origin.x
+            return frame.minY
         }
         set {
-            frame = CGRect(left, newValue, width, height)
+            frame = CGRect(frame.minX, newValue, frame.width, frame.height)
         }
     }
     
     var bottom: CGFloat {
-        return frame.origin.y + frame.size.height
+        get {
+            return frame.maxY
+        }
+        set {
+            frame = CGRect(frame.minX, newValue - frame.height, frame.width, frame.height)
+        }
     }
     
     var width: CGFloat {
         get {
-            return frame.size.width
+            return frame.width
         }
         set {
-            frame = CGRect(left, top, newValue, height)
+            frame = CGRect(frame.minX, frame.minY, newValue, frame.height)
         }
     }
     
     var height: CGFloat {
         get {
-            return frame.size.height
+            return frame.height
         }
         set {
-            frame = CGRect(left, top, width, newValue)
+            frame = CGRect(frame.minX, frame.minY, frame.width, newValue)
         }
     }
 }
@@ -129,7 +139,7 @@ extension UIView: CAAnimationDelegate {
             animation.duration = 0.2;
             animation.isRemovedOnCompletion = false
             animation.fillMode = .forwards
-            var values = Array<Any>()
+            var values = AnyArray()
             values.append(CATransform3DMakeScale(0.1, 0.1, 1.0))
             values.append(CATransform3DMakeScale(1.1, 1.1, 1.0))
             values.append(CATransform3DMakeScale(0.9, 0.9, 0.9))
@@ -144,7 +154,7 @@ extension UIView: CAAnimationDelegate {
             animation.duration = 0.2;
             animation.isRemovedOnCompletion = false
             animation.fillMode = .forwards
-            var values = Array<Any>()
+            var values = AnyArray()
             values.append(CATransform3DMakeScale(1.0, 1.0, 1.0))
             values.append(CATransform3DMakeScale(0.9, 0.9, 0.9))
             values.append(CATransform3DMakeScale(1.1, 1.1, 1.0))

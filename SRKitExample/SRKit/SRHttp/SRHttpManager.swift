@@ -19,233 +19,355 @@ open class SRHttpManager {
     public static var queue = DispatchQueue(label: "com.srhttp.manager",
                                             qos: .utility,
                                             attributes: .concurrent)
-    public var requests: [DataRequest] = []
-    public var defaultRequestHeaders: ParamHeaders = [:]
-    public var defaultRequestParams: ParamDictionary  {
+    public var requests: [SRHTTP.Request] = []
+    
+    open var defaultRequestHeaders: ParamHeaders {
+        return Alamofire.SessionManager.defaultHTTPHeaders
+    }
+    
+    open var defaultRequestParams: ParamDictionary  {
         var params = [:] as ParamDictionary
-        params[Param.Key.os] = OSVersion
-        params[Param.Key.deviceModel] = DevieModel
-        params[Param.Key.version] = AppVersion
-        params[Param.Key.deviceId] = DeviceId
+        params[Param.Key.os] = C.osVersion
+        params[Param.Key.deviceModel] = C.deviceModel
+        params[Param.Key.version] = C.appVersion
+        params[Param.Key.deviceId] = C.deviceId
         return params
     }
     
+    open var sessionDelegate = SessionDelegate()
+    
+    ///打印http请求日志的环境，默认为不再非生产环境的所有环境
+    open var logRequestEnvironment: Const.RunEnvironment = .nonProduction
+    ///打印http返回日志的环境，默认为不再非生产环境的所有环境
+    open var logResponseEnvironment: Const.RunEnvironment = .nonProduction
+
     open func cancel(sender: String?) {
         guard let sender = sender else { return }
         objc_sync_enter(requests)
-        requests = requests.filter {
-            let result = sender != $0.sender
-            if !result {
-                $0.cancel()
+        requests = requests.filter { request in
+            if let options = request.options, nil != options.first(where: {
+                switch $0 {
+                case .sender(let s):
+                    return sender == s
+                    
+                default:
+                    return false
+                }
+            }) {
+                SRHttpManager.queue.async { request.request?.cancel() }
+                return false
+            } else {
+                return true
             }
-            return result
         }
         objc_sync_exit(requests)
     }
     
-    open func cancel(_ requst: URLRequest?) {
-        guard let requst = requst else { return }
+    open func cancel(_ request: SRHTTP.Request?) {
+        guard let request = request else { return }
         objc_sync_enter(requests)
         requests = requests.filter {
-            let result = requst != $0.request
-            if !result {
-                $0.cancel()
+            if request === $0 {
+                SRHttpManager.queue.async { request.request?.cancel() }
+                return false
+            } else {
+                return true
             }
-            return result
         }
         objc_sync_exit(requests)
     }
     
-    open func remove(_ requst: URLRequest?) {
-        guard let requst = requst else { return }
+    open func remove(_ request: SRHTTP.Request?) {
+        guard let request = request else { return }
         objc_sync_enter(requests)
-        requests = requests.filter { requst != $0.request }
+        requests = requests.filter { request !== $0 }
         objc_sync_exit(requests)
     }
     
     //MARK: - Request
     
-    public static var lastRequstUrl = ""
+    public static var lastRequestUrl = ""
     
-    open func request(_ method: HTTP.Method,
-                      options: [HTTP.Option]? = nil,
+    open func request(_ request: SRHTTP.Request,
                       success: ((Any) -> Void)?,
-                      bfail: ((HTTP.Method, Any) -> Void)?,
-                      fail: ((HTTP.Method, BFError) -> Void)?) {
-        let url = method.url
+                      failure: ((SRHTTP.Result<Any>.Failure<Any>) -> Void)?) {
+        let url = request.url
         guard let requestUrl = URL(string: url) else {
-            let error =
-                NSError(domain: NSCocoaErrorDomain,
-                        code: -9999,
-                        userInfo: [NSLocalizedDescriptionKey : "Invalid http request url"])
-            respond(.failure(BFError.http(.afResponse(error))),
-                    method: method,
-                    fail: fail)
+            respond(.failure(.http(.init("Invalid http request url"))), failure: failure)
             return
         }
         
-        var requestParams = method.params ?? [:]
-        requestParams += defaultRequestParams
-        let successHandler: (URLRequest?, Any?) -> Void = { request, data in
-            self.remove(request)
-            if Environment != .production {
-                LogInfo(String(format: "http response %@ url: %@", method.type, url))
-            }
-            self.respond(self.analysis(method, data: data),
-                         method: method,
-                         success: success,
-                         bfail: bfail)
-        }
-        let failureHandler: (URLRequest?, Error) -> Void = { request, error in
-            self.remove(request)
-            if Environment != .production {
-                LogInfo(String(format: "http response %@ url: %@", method.type, url))
-            }
-            self.respond(.failure(BFError.http(.afResponse(error))),
-                         method: method,
-                         fail: fail)
+        var params = request.params ?? [:]
+        params += defaultRequestParams
+        request.params = params
+        
+        if request.headers == nil {
+            request.headers = self.defaultRequestHeaders
         }
         
-        var sender: String?
-        var encoding: ParamEncoding?
-        var headers: ParamHeaders?
-        var timeout: TimeInterval?
-        var retryCount: Int?
-        if let options = options {
-            for option in options {
-                switch option {
-                case .sender(let s):
-                    sender = s
-                    
-                case .encoding(let e):
-                    encoding = e
-                    
-                case .headers(let h):
-                    headers = h
-                    
-                case .timeout(let t):
-                    timeout = t
-                    
-                case .retryCount(let r):
-                    retryCount = r
-                }
-            }
-        }
-        
-        let manager = self.manager(timeout, retryCount: retryCount)
-        switch method {
+        let manager = self.manager(request.timeout, retryCount: request.retryCount)
+        switch request.method {
         case .post:
             SRHttpManager.queue.async {
-                self.logRequest(method, params: requestParams)
-                let request = manager.post(requestUrl,
-                                           params: requestParams,
-                                           encoding: encoding ?? JSONEncoding.default,
-                                           headers: headers ?? self.defaultRequestHeaders,
-                                           success: successHandler,
-                                           failure: failureHandler)
-                if let sender = sender {
-                    request.sender = sender
+                if request.encoding == nil {
+                    request.encoding = JSONEncoding.default
+                }
+                self.logRequest(request)
+                request.request = manager.post(requestUrl,
+                                           params: request.params!,
+                                           encoding: request.encoding!,
+                                           headers: request.headers!)
+                { response in
+                    request.response = response
+                    self.complete(request, success: success, failure: failure)
                 }
                 self.requests.append(request)
             }
             
         case .get:
             SRHttpManager.queue.async {
-                self.logRequest(method, params: requestParams)
-                let request = manager.get(requestUrl,
-                                          params: requestParams,
-                                          encoding: encoding ?? URLEncoding.default,
-                                          headers: headers ?? self.defaultRequestHeaders,
-                                          success: successHandler,
-                                          failure: failureHandler)
-                if let sender = sender {
-                    request.sender = sender
+                if request.encoding == nil {
+                    request.encoding = URLEncoding.default
+                }
+                self.logRequest(request)
+                request.request = manager.get(requestUrl,
+                                              params: request.params!,
+                                              encoding: request.encoding!,
+                                              headers: request.headers!)
+                { response in
+                    request.response = response
+                    self.complete(request, success: success, failure: failure)
                 }
                 self.requests.append(request)
             }
             
         case .upload:
             SRHttpManager.queue.async {
-                self.logRequest(method, params: requestParams)
+                if request.encoding == nil {
+                    request.encoding = URLEncoding.httpBody
+                }
+                if request.files == nil {
+                    request.files = []
+                }
+                self.logRequest(request)
+                request.request = nil
                 manager.upload(requestUrl,
-                               files: method.files,
-                               params: requestParams,
-                               encoding: encoding ?? URLEncoding.httpBody,
-                               headers: headers ?? self.defaultRequestHeaders,
-                               success: successHandler,
-                               failure: failureHandler)
+                               files: request.files!,
+                               params: request.params!,
+                               encoding: request.encoding!,
+                               headers: request.headers!)
+                { response in
+                    request.response = .init(request: response.request,
+                                             response: response.response,
+                                             data: response.data,
+                                             error: response.error,
+                                             timeline: response.timeline,
+                                             metrics: nil)
+                    self.complete(request, success: success, failure: failure)
+                }
+                self.requests.append(request)
             }
         }
     }
     
     open func manager(_ timeout: TimeInterval?, retryCount: Int?) -> SRHttpTool {
-        let key = "\(timeout ?? HTTP.defaultTimeout)/,\(retryCount ?? HTTP.defaultRetryCount)/"
+        let key = "\(timeout ?? SRHTTP.defaultTimeout)/,\(retryCount ?? SRHTTP.defaultRetryCount)/"
         var manager = managers[key]
         if manager == nil {
-            manager = SRHttpTool(timeout ?? HTTP.defaultTimeout,
-                                 retryCount: retryCount ?? HTTP.defaultRetryCount)
+            manager = SRHttpTool(timeout ?? SRHTTP.defaultTimeout,
+                                 retryCount: retryCount ?? SRHTTP.defaultRetryCount,
+                                 sessionDelegate: sessionDelegate)
             managers[key] = manager
         }
         return manager!
     }
     
-    open func logRequest(_ method: HTTP.Method, params: ParamDictionary) {
-        let url = method.url
-        LogInfo(String(format: "New http request: %@, url: %@\nparameters:\n%@",
-                       method.type,
-                       url,
-                       String(jsonObject: params)))
-        
-        if Environment == .production { return }
-        let urlQuery = params.urlQuery
-        SRHttpManager.lastRequstUrl = urlQuery.isEmpty ? url : url + "?" + urlQuery
-        LogInfo("url:\n\(SRHttpManager.lastRequstUrl)")
-    }
-    
     //MARK: Analysis response data
     
-    open func analysis(_ method: HTTP.Method, data: Any?) -> BFResult<Any> {
-        guard let data = data as? Data else {
-            return .failure(BFError.http(.responseSerialization(nil)))
+    open func analysis(_ request: SRHTTP.Request) -> SRHTTP.Result<Any> {
+        let response = request.response
+        guard let jsonData = response?.data else {
+            logResponse(request)
+            return .failure(.http(.responseSerialization))
         }
         
         var json: JSON!
         do {
-            json = try JSON(data: data, options: .mutableContainers)
+            json = try JSON(data: jsonData, options: .mutableContainers)
         } catch {
-            return .failure(BFError.http(.responseSerialization(error)))
+            logResponse(request, data: jsonData)
+            return .failure(.http(.responseSerialization(error)))
         }
         
-        if Environment != .production {
-            LogInfo("json response string:\n\(json.rawString()!)")
+        logResponse(request, data: json)
+        
+        guard let code = json[SRHTTP.Key.Response.code].number else {
+            return .failure(.http(.responseSerialization("can not find integer \(SRHTTP.Key.Response.code) in JSON object")))
         }
         
-        guard let errCode = json[HTTP.Key.Response.errorCode].number else {
-            let nsError =
-                NSError(domain: NSCocoaErrorDomain,
-                        code: -9999,
-                        userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format"])
-            return .failure(BFError.http(.responseSerialization(nsError)))
-        }
-        
-        return errCode.intValue == HTTP.ErrorCode.success ? .success(json) : .bfailure(json)
+        return code.intValue == SRHTTP.Code.Response.success ? .success(json) : .failure(.business(json))
     }
     
     //MARK: Respond
     
-    open func respond(_ result: BFResult<Any>,
-                            method: HTTP.Method,
-                            success: ((Any) -> Void)? = nil,
-                            bfail: ((HTTP.Method, Any) -> Void)? = nil,
-                            fail: ((HTTP.Method, BFError) -> Void)? = nil) {
-        DispatchQueue.main.async {
-            if result.isSuccess, let success = success, let value = result.value {
-                success(value)
-            } else if result.isBFailure, let bfail = bfail, let value = result.value {
-                bfail(method, value)
-            } else if result.isFailure, let fail = fail, let error = result.error as? BFError {
-                fail(method, error)
+    open func complete(_ request: SRHTTP.Request,
+                       success: ((Any) -> Void)?,
+                       failure: ((SRHTTP.Result<Any>.Failure<Any>) -> Void)?) {
+        remove(request)
+        let response = request.response
+        if response?.error == nil {
+            respond(analysis(request), success: success, failure: failure)
+            return
+        }
+        
+        logResponse(request)
+        if let retryCount = request.retryCount, retryCount > 0 {
+            request.retryCount = retryCount - 1
+            SRHttpManager.queue.async {
+                self.request(request, success: success, failure: failure)
             }
+        } else {
+            respond(.failure(.http(.init(response?.error?.localizedDescription ?? "[SR]Network request exception".localized,
+                                         code: response?.response?.statusCode ?? SRHTTP.Code.Response.unknown))),
+                    failure: failure)
+        }
+    }
+    
+    open func respond(_ result: SRHTTP.Result<Any>,
+                      success: ((Any) -> Void)? = nil,
+                      failure: ((SRHTTP.Result<Any>.Failure<Any>) -> Void)? = nil) {
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+                success?(response ?? [:] as AnyDictionary)
+                
+            case .failure(let failureResponse):
+                failure?(failureResponse)
+            }
+        }
+    }
+    
+    //MARK: Log request body and response data
+    
+    open func logRequest(_ request: SRHTTP.Request) {
+        guard logRequestEnvironment.contains(C.environment) else { return }
+        
+        var headers = request.headers
+        if headers != nil,
+            let parameterReplace = request.parameterReplace,
+            let keyValues = parameterReplace.keyValues?.headers {
+            headers = (headers!.replacingOccurrences(keyValues: keyValues) as! ParamHeaders)
+        }
+        
+        var params = request.params!
+        if let parameterReplace = request.parameterReplace {
+            if let postion = parameterReplace.postion?.request {
+                params = params.replacingOccurrences(positions: postion)
+            }
+            if let keyValues = parameterReplace.keyValues?.request {
+                params = params.replacingOccurrences(keyValues: keyValues)
+            }
+        }
+        
+        if let headers = headers, !headers.isEmpty {
+            LogInfo(String(format: "New http request: %@, url: %@\nheader:%@\nbody:\n%@",
+                           request.method.description,
+                           request.url,
+                           String(jsonObject: headers),
+                           String(jsonObject: params)))
+        } else {
+            LogInfo(String(format: "New http request: %@, url: %@\nbody:\n%@",
+                           request.method.description,
+                           request.url,
+                           String(jsonObject: params)))
+        }
+        let urlQuery = params.urlQuery
+        SRHttpManager.lastRequestUrl = urlQuery.isEmpty ? request.url : request.url + "?" + urlQuery
+        LogInfo("url:\n\(SRHttpManager.lastRequestUrl)")
+    }
+    
+    open func logResponse(_ request: SRHTTP.Request, data: Any? = nil) {
+        guard logResponseEnvironment.contains(C.environment) else { return }
+        
+        func replace(_ dictionary: ParamDictionary,
+                     postion: ParamDictionary?,
+                     keyValues: [String : String]?) -> ParamDictionary {
+            var targetDictionary = dictionary
+            if let postion = postion {
+                targetDictionary = targetDictionary.replacingOccurrences(positions: postion)
+            }
+            if let keyValues = keyValues {
+                targetDictionary = targetDictionary.replacingOccurrences(keyValues: keyValues)
+            }
+            return targetDictionary
+        }
+        
+        let response = request.response!
+        LogInfo(String(format: "http response %@ url: %@, request duration: %.4fs, total duration: %.4fs",
+                       request.method.description,
+                       request.url,
+                       response.timeline.requestDuration,
+                       response.timeline.totalDuration))
+        if let error = response.error {
+            if let statusCode = response.response?.statusCode {
+                LogError("status code: \(statusCode), description: \(error.localizedDescription)")
+            } else {
+                LogError(error.localizedDescription)
+            }
+        } else if let json = data as? JSON {
+            if let parameterReplace = request.parameterReplace,
+                parameterReplace.postion?.response != nil || parameterReplace.keyValues?.response != nil {
+                let object = json.object
+                if let dictionary = object as? ParamDictionary {
+                    let jsonObject = replace(dictionary,
+                                             postion: parameterReplace.postion?.response,
+                                             keyValues: parameterReplace.keyValues?.response)
+                    LogInfo("response body json string:\n\(String(jsonObject: jsonObject))")
+                } else if let array = object as? [ParamDictionary] {
+                    let jsonObject = array.compactMap {
+                        replace($0,
+                                postion: parameterReplace.postion?.response,
+                                keyValues: parameterReplace.keyValues?.response)
+                    }
+                    LogInfo("response body json string:\n\(String(jsonObject: jsonObject))")
+                } else {
+                    LogInfo("response body json string:\n\(json.rawString() ?? "")")
+                }
+            } else {
+                LogInfo("response body json string:\n\(json.rawString() ?? "")")
+            }
+        } else if let dictionary = data as? ParamDictionary {
+            var targetDictionary = dictionary
+            if let parameterReplace = request.parameterReplace,
+                parameterReplace.postion?.response != nil || parameterReplace.keyValues?.response != nil {
+                targetDictionary = replace(dictionary,
+                                           postion: parameterReplace.postion?.response,
+                                           keyValues: parameterReplace.keyValues?.response)
+            }
+            let jsonString = String(jsonObject: targetDictionary)
+            if !jsonString.isEmpty {
+                LogInfo("response body json string:\n\(jsonString)")
+            } else {
+                LogInfo("response body:\n\(String(describing: targetDictionary))")
+            }
+        } else if let array = data as? [ParamDictionary] {
+            var targetArray = array
+            if let parameterReplace = request.parameterReplace,
+                parameterReplace.postion?.response != nil || parameterReplace.keyValues?.response != nil {
+                targetArray = array.compactMap {
+                    replace($0,
+                            postion: parameterReplace.postion?.response,
+                            keyValues: parameterReplace.keyValues?.response)
+                }
+            }
+            let jsonString = String(jsonObject: targetArray)
+            if !jsonString.isEmpty {
+                LogInfo("response body json string:\n\(jsonString)")
+            } else {
+                LogInfo("response body:\n\(String(describing: targetArray))")
+            }
+        } else if let data = data {
+            LogInfo("response body:\n\(String(describing: data))")
         }
     }
     

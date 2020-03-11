@@ -18,7 +18,7 @@ class ViewController: SRBaseViewController {
 //        navigationBarAppear = .hidden
         setDefaultNavigationBar("Root")
 //        navigationItem.backBarButtonItem = nil
-        navBarRightButtonOptions = [[.title : "Base"]]
+        navBarRightButtonOptions = [.text([.title("Base".localized)])]
         showLoadDataFailView("加载中……")
     }
 
@@ -33,7 +33,10 @@ class ViewController: SRBaseViewController {
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
-        show(SRViewController())
+//        show(SRViewController())
+        let vc = UIViewController()
+        vc.view.backgroundColor = .white
+        navigationController?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
     }
 }
 

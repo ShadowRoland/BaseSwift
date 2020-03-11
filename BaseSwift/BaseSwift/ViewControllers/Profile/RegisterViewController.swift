@@ -47,7 +47,7 @@ class RegisterViewController: BaseViewController {
         let againTitle = String(format: "Get again (%d)".localized, Const.verifyInterval)
         let title = getTitle.count > againTitle.count ? getTitle : againTitle
         let width = title.textSize(verifyButton.titleLabel!.font,
-                                   maxWidth: ScreenWidth - SubviewMargin).width
+                                   maxWidth: ScreenWidth - C.subviewMargin).width
         verifyWidthConstraint.constant = ceil(width) + 2.0 * Const.verifyButtonMargin
         return cell
     }()
@@ -103,7 +103,7 @@ class RegisterViewController: BaseViewController {
     struct Const {
         static let verifyButtonMargin = 5.0 as CGFloat
         static let verifyInterval = 60
-        static let agreementMargin = 10.0 + 30.0 + TableCellHeight + 10.0 as CGFloat // as storyboard
+        static let agreementMargin = 10.0 + 30.0 + C.tableCellHeight + 10.0 as CGFloat // as storyboard
     }
     
     func initView() {
@@ -122,7 +122,7 @@ class RegisterViewController: BaseViewController {
     override func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
         super.deviceOrientationDidChange(sender)
         var height = agreementLabel.intrinsicContentSize().height
-        height = max(LabelHeight, height)
+        height = max(C.labelHeight, height)
         agreementHeightConstraint.constant = height
         tableFooterView.frame = CGRect(0, 0, ScreenWidth, height + Const.agreementMargin)
         tableView.tableFooterView = tableFooterView
@@ -237,14 +237,10 @@ class RegisterViewController: BaseViewController {
         guard MutexTouch else { return }
         isGettingVerifyCode = true
         changeVerifyButton(checkVerifyButtonEnabled())
-        //        httpReq(.get(.getVerificationCode),
-        //                [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
-        //                 Param.Key.phone : phoneTextField.text!,
-        //                 Param.Key.type : VerificationCodeType.login.rawValue])
         httpRequest(.get("getVerificationCode",
-                    [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
-                     Param.Key.phone : phoneTextField.text!,
-                     Param.Key.type : VerificationCodeType.login.rawValue]),
+                         params: [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
+                                  Param.Key.phone : phoneTextField.text!,
+                                  Param.Key.type : VerificationCodeType.login.rawValue]),
                     success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
@@ -255,16 +251,12 @@ class RegisterViewController: BaseViewController {
                     strongSelf.verifyTextField.text = String(object: code.rawValue as AnyObject)
                     strongSelf.submitButton.set(submit: strongSelf.checkSubmitButtonEnabled())
                 }
-        }, bfail: { [weak self] (method, response) in
+        }) { [weak self] failure in
             guard let strongSelf = self else { return }
             strongSelf.isGettingVerifyCode = false
             strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
-            SRAlert.showToast(strongSelf.logBFail(method, response: response, show: false))
-        }, fail: { [weak self] (method, error) in
-            guard let strongSelf = self else { return }
-            strongSelf.isGettingVerifyCode = false
-            strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
-        })
+            SRAlert.showToast(failure.errorMessage)
+        }
     }
     
     @IBAction func clickSubmitButton(_ sender: Any) {
@@ -277,11 +269,12 @@ class RegisterViewController: BaseViewController {
             guard let strongSelf = self else { return }
             strongSelf.showProgress()
             strongSelf.httpRequest(.post("user/register",
-                                   [Param.Key.countryCode : Int(strongSelf.countryCodeLabel.text!)!,
-                                    Param.Key.phone : (strongSelf.phoneTextField.text)!,
-                                    Param.Key.code : (strongSelf.verifyTextField.text)!,
-                                    Param.Key.password : (strongSelf.passwordTextField.text)!]), success:
-            { [weak self] response in
+                                         params: [Param.Key.countryCode : Int(strongSelf.countryCodeLabel.text!)!,
+                                                  Param.Key.phone : (strongSelf.phoneTextField.text)!,
+                                                  Param.Key.code : (strongSelf.verifyTextField.text)!,
+                                                  Param.Key.password : (strongSelf.passwordTextField.text)!]),
+                                   success:
+                { [weak self] response in
                 let alert = SRAlert()
                 //alert.appearance.showCloseButton = false
                 alert.addButton("OK".localized,

@@ -61,7 +61,7 @@ public class SRPickerView: UIView {
     struct Const {
         static let pickerViewHeight = 160.0 as CGFloat
         static let titleLabelMargin = 10.0 as CGFloat
-        static let buttonWidth = SubviewMargin + 50.0 as CGFloat
+        static let buttonWidth = C.subviewMargin + 50.0 as CGFloat
     }
     
     override init(frame: CGRect) {
@@ -81,7 +81,7 @@ public class SRPickerView: UIView {
     private func initView() {
         backgroundColor = .clear
         let maskView = UIView()
-        maskView.backgroundColor = MaskBackgroundColor
+        maskView.backgroundColor = C.maskBackgroundColor
         addSubview(maskView)
         constrain(maskView) { $0.edges == inset($0.superview!.edges, 0) }
         
@@ -93,37 +93,37 @@ public class SRPickerView: UIView {
             view.bottom == view.superview!.bottom
             view.leading == view.superview!.leading
             view.trailing == view.superview!.trailing
-            view.height == TableCellHeight + Const.pickerViewHeight
+            view.height == C.tableCellHeight + Const.pickerViewHeight
         }
         
         cancelButton = UIButton(type: .custom)
         cancelButton.title = "[SR]Cancel".srLocalized
         cancelButton.titleColor = .darkText
-        cancelButton.contentEdgeInsets = UIEdgeInsets(0, SubviewMargin, 0, 0)
+        cancelButton.contentEdgeInsets = UIEdgeInsets(0, C.subviewMargin, 0, 0)
         cancelButton.clicked(self, action: #selector(clickCancelButton(_:)))
         bottomView.addSubview(cancelButton)
         constrain(cancelButton) { (view) in
             view.top == view.superview!.top
             view.leading == view.superview!.leading
             view.width == Const.buttonWidth
-            view.height == TableCellHeight
+            view.height == C.tableCellHeight
         }
         
         confirmButton = UIButton(type: .custom)
         confirmButton.title = "[SR]OK".srLocalized
         confirmButton.titleColor = .darkText
-        confirmButton.contentEdgeInsets = UIEdgeInsets(0, 0, 0, SubviewMargin)
+        confirmButton.contentEdgeInsets = UIEdgeInsets(0, 0, 0, C.subviewMargin)
         confirmButton.clicked(self, action: #selector(clickConfirmButton(_:)))
         bottomView.addSubview(confirmButton)
         constrain(confirmButton) { (view) in
             view.top == view.superview!.top
             view.trailing == view.superview!.trailing
             view.width == Const.buttonWidth
-            view.height == TableCellHeight
+            view.height == C.tableCellHeight
         }
         
         titleLabel = UILabel()
-        titleLabel.font = .text
+        titleLabel.font = C.Font.text
         titleLabel.textColor = UIColor(hue: 224.0, saturation: 50.0, brightness: 63.0)
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
@@ -131,7 +131,7 @@ public class SRPickerView: UIView {
         bottomView.addSubview(titleLabel)
         constrain(titleLabel) { (view) in
             view.top == view.superview!.top
-            view.height == TableCellHeight
+            view.height == C.tableCellHeight
         }
         constrain(titleLabel, cancelButton) { (view1, view2) in
             view1.leading == view2.trailing + Const.titleLabelMargin

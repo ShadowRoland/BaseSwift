@@ -41,7 +41,7 @@ class SNSViewController: BaseViewController {
     
     lazy var contactsSC: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Friends".localized, "Official Accounts".localized])
-        sc.setTitleTextAttributes([.font : UIFont.title],
+        sc.setTitleTextAttributes([.font : C.Font.title],
                                   for: .normal)
         sc.sizeToFit()
         sc.selectedSegmentIndex = 0
@@ -58,7 +58,7 @@ class SNSViewController: BaseViewController {
         setNavigationBar()
         navBarLeftButtonOptions = [.text([.title("".localized)])]
         pageBackGestureStyle = .none
-        tabBarHeightConstraint.constant = TabBarHeight
+        tabBarHeightConstraint.constant = C.tabBarHeight()
         tabBar.backgroundColor = UIColor.clear
         tabBar.isTranslucent = true
         
@@ -109,20 +109,20 @@ class SNSViewController: BaseViewController {
     
     //直接计算和更新frame，可以更有效的进行屏幕适配 添加约束，可以比较方便地进行横竖屏的屏幕适配
     func updateChildViewFrame() {
-        let height = ScreenHeight - NavigationHeaderHeight
-        let frame = CGRect(0, 0, ScreenWidth, height) //正常带导航栏的子视图frame
+        let height = view.height - C.navigationHeaderHeight()
+        let frame = CGRect(0, 0, view.width, height) //正常带导航栏的子视图frame
         
         if currentChildVC === chatListVC || currentChildVC === contactsVC {
             currentChildVC?.view.frame = frame
         } else if currentChildVC === findVC {
-            currentChildVC?.view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight - TabBarHeight)
+            currentChildVC?.view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight - C.tabBarHeight())
         } else if currentChildVC === moreVC {
             //为了实现更多列表的tableHeaderView的背景色和导航栏完全一致，需要往上移一点点
             //因为在group模式下的UITableView中tableHeaderView边缘会自带一条分隔线
             currentChildVC?.view.frame = CGRect(0,
-                                                frame.origin.y - SectionHeaderGroupNoHeight,
+                                                frame.origin.y - C.sectionHeaderGroupNoHeight,
                                                 ScreenWidth,
-                                                height + SectionHeaderGroupNoHeight)
+                                                height + C.sectionHeaderGroupNoHeight)
         }
     }
     
@@ -148,7 +148,7 @@ class SNSViewController: BaseViewController {
             navigationItem.titleView = nil
             if !(chatListVC.isTouched) {
                 chatListVC.isTouched = true
-                chatListVC.loadData(.opaqueMask)
+                chatListVC.getDataArray(progressType: .opaqueMask)
             }
         } else if currentChildVC === contactsVC {
             navigationItem.titleView = contactsSC
@@ -215,9 +215,10 @@ extension SNSViewController: UIViewControllerPreviewingDelegate {
                                   viewControllerForLocation location: CGPoint) -> UIViewController? {
         let index = previewingContext.sourceView.tag
         if index < chatListVC.dataArray.count {
+            let message = chatListVC.dataArray[index] as! MessageModel
             let vc = ChatViewController()
-            vc.targetId = chatListVC.dataArray[index].userId
-            vc.nickname = chatListVC.dataArray[index].userName
+            vc.targetId = message.userId
+            vc.nickname = message.userName
             vc.conversationType = .ConversationType_PRIVATE
             vc.previewedIndex = index
             return vc
@@ -250,7 +251,7 @@ extension SNSViewController: UITabBarDelegate {
         
         if newVC === currentChildVC { //重复点击下方，会重新加载列表或发送请求
             if newVC === chatListVC {
-                chatListVC.loadData()
+                chatListVC.getDataArray()
             } else if newVC === findVC {
                 //findVC.loadData(progressType: .clearMask)
                 findVC.startRefreshNew()

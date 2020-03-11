@@ -10,7 +10,7 @@ import SRKit
 import Alamofire
 import SwiftyJSON
 import SDWebImage
-//import MWPhotoBrowser
+import IDMPhotoBrowser
 
 class ProfileDetailForm: ProfileForm {
     var isMultiple = false //是否可以多选
@@ -102,15 +102,12 @@ class ProfileDetailViewController: BaseViewController {
     }
     
     var headPortraitURL: URL?
-    //weak var photoBrowser: MWPhotoBrowser?
-    //var photoBrowserGR: UITapGestureRecognizer?
-    //var photos: [MWPhoto] = []
     
     weak var popover: SRPopover?
     var pickerView: SRPickerView!
     lazy var divisionPicker: SRDivisionPicker = {
         let picker = SRDivisionPicker()
-        //        let filePath = ResourceDirectory.appending(pathComponent: "china_locations.json.zip")
+        //        let filePath = C.resourceDirectory.appending(pathComponent: "china_locations.json.zip")
         //        do {
         //            let data = try Data(contentsOf: URL(fileURLWithPath: filePath)).gunzipped()
         //            picker.chinaLocations = try JSON(data: data).rawValue as? [String : String] ?? [:]
@@ -159,7 +156,7 @@ class ProfileDetailViewController: BaseViewController {
         static let imageViewTag = 103
         static let clearButtonTag = 104
         
-        static let titleViewFont = UIFont.text
+        static let titleViewFont = C.Font.text
         static let inputTextViewFont = UIFont.system(13)
         static let showTextViewFont = inputTextViewFont
         
@@ -202,13 +199,13 @@ class ProfileDetailViewController: BaseViewController {
                 let constraint = cell.contentView.constraints.first (where: {
                     $0.firstAttribute == .trailing && inputTextView === $0.secondItem as? UIView
                 }) {
-                constraint.constant = isEditingProfile ? 0 : SubviewMargin
+                constraint.constant = isEditingProfile ? 0 : C.subviewMargin
             }
             if let showTextView = item.showTextView,
                 let constraint = cell.contentView.constraints.first (where: {
                     $0.firstAttribute == .trailing && showTextView === $0.secondItem as? UIView
                 }) {
-                constraint.constant = isEditingProfile ? 0 : SubviewMargin
+                constraint.constant = isEditingProfile ? 0 : C.subviewMargin
             }
         }
     }
@@ -296,8 +293,8 @@ class ProfileDetailViewController: BaseViewController {
                                     .isRequired : true,
                                     .isIgnoreParamValue : true]) {
             var showText = ""
-            if let string = item.value as? String, let date = string.date(DateFormat.full) {
-                showText = String(date: date, format: DateFormat.localDate)
+            if let string = item.value as? String, let date = string.date(C.DateFormat.full) {
+                showText = String(date: date, format: C.DateFormat.localDate)
             }
             item.showText = showText
             item.showTextView?.setProperty(.text, value: item.showText)
@@ -620,7 +617,7 @@ class ProfileDetailViewController: BaseViewController {
                     isJsonValueValid = (value as! NSNumber).doubleValue != 0
                     
                 case .array:
-                    isJsonValueValid = !(value as! [Any]).isEmpty
+                    isJsonValueValid = !(value as! AnyArray).isEmpty
                     
                 default:
                     break
@@ -796,7 +793,7 @@ class ProfileDetailViewController: BaseViewController {
         }
         
         let height = item.showText.textSize(label.font, maxWidth: label.width).height
-        item.height = max(TableCellHeight, ceil(height) + 2.0 * Const.signatureMargin)
+        item.height = max(C.tableCellHeight, ceil(height) + 2.0 * Const.signatureMargin)
     }
     
     //MARK: Autorotate Orientation
@@ -836,7 +833,7 @@ class ProfileDetailViewController: BaseViewController {
     }
     
     func getProfileDetail() {
-        httpRequest(.get("user/profileDetail", nil), success: { [weak self] response in
+        httpRequest(.get("user/profileDetail"), success: { [weak self] response in
             guard let strongSelf = self else { return }
             strongSelf.isFirstDidLoadSuccess = true
             strongSelf.dismissProgress()
@@ -845,12 +842,6 @@ class ProfileDetailViewController: BaseViewController {
                 strongSelf.profile = dictionary
                 strongSelf.initSections()
                 strongSelf.tableView.reloadData()
-            }
-        }, bfail: { [weak self] (method, response) in
-            guard let strongSelf = self else { return }
-            let message = strongSelf.logBFail(method, response: response, show: false)
-            if !isEmptyString(message) {
-                SRAlert.showToast(message)
             }
         })
     }
@@ -870,7 +861,7 @@ class ProfileDetailViewController: BaseViewController {
                     isEmpty = (item.value as! String).isEmpty
                     
                 case .array:
-                    isEmpty = (item.value as! [Any]).isEmpty
+                    isEmpty = (item.value as! AnyArray).isEmpty
                     
                 default:
                     break
@@ -967,7 +958,7 @@ class ProfileDetailViewController: BaseViewController {
         }
         
         //httpReq(.post(.profileDetail), profile, nil)
-        httpRequest(.post("user/profileDetail", profile), success: { [weak self] response in
+        httpRequest(.post("user/profileDetail", params: profile), success: { [weak self] response in
             guard let strongSelf = self else { return }
             SRAlert.showToast("Submit successfully".localized)
             strongSelf.dismissProgress()
@@ -1078,7 +1069,7 @@ class ProfileDetailViewController: BaseViewController {
             let datePicker = SRDatePicker()
             datePicker.delegate = self
             if let string = strongSelf.currentItem?.value as? String,
-                let date = string.date(DateFormat.full) {
+                let date = string.date(C.DateFormat.full) {
                 datePicker.currentDate = date
             }
             strongSelf.pickerView = datePicker
@@ -1146,9 +1137,8 @@ class ProfileDetailViewController: BaseViewController {
         }
         
         httpRequest(.upload("http://kan.msxiaobing.com/Api/Image/UploadBase64",
-                            nil,
-                            [["" : data.base64EncodedString()]]),
-                    options: [.encoding(CustomEncoding.default)],
+                            files: [["" : data.base64EncodedString()]],
+                            options: [.encoding(CustomEncoding.default)]),
                     success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
@@ -1208,12 +1198,12 @@ class ProfileDetailViewController: BaseViewController {
     
     func faceImageAnalyze() {
         httpRequest(.post("http://kan.msxiaobing.com/Api/ImageAnalyze/Process?service=yanzhi",
-                          ["MsgId" : String(long: CLong(Date().timeIntervalSince1970)) + "063",
-                           "CreateTime" : String(long: CLong(Date().timeIntervalSince1970)),
-                           "Content[imageUrl]" : faceImageUrl as Any]),
-                    options: [.encoding(URLEncoding.default),
-                              .headers(["Referer" : "https://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi",
-                                        "Cookie" : faceImageCookie])],
+                          params: ["MsgId" : String(long: CLong(Date().timeIntervalSince1970)) + "063",
+                                   "CreateTime" : String(long: CLong(Date().timeIntervalSince1970)),
+                                   "Content[imageUrl]" : faceImageUrl as Any],
+                          options: [.encoding(URLEncoding.default),
+                                    .headers(["Referer" : "https://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi",
+                                              "Cookie" : faceImageCookie])]),
                     success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
@@ -1237,7 +1227,8 @@ class ProfileDetailViewController: BaseViewController {
                                                              placeholderImage: strongSelf.faceImageView.image!,
                                                              options: [],
                                                              completed:
-                            { (_, error, _, _) in
+                            { [weak self] (_, error, _, _) in
+                                guard let strongSelf = self else { return }
                                 if error == nil {
                                     DispatchQueue.main.async {
                                         strongSelf.layoutFaceImage()
@@ -1260,7 +1251,7 @@ class ProfileDetailViewController: BaseViewController {
         
         if faceImageContainerView == nil {
             faceImageContainerView = UIView()
-            faceImageContainerView.backgroundColor = UIColor(white: 0, alpha: MaskAlpha)
+            faceImageContainerView.backgroundColor = UIColor(white: 0, alpha: C.maskAlpha)
             faceImageContainerView.isUserInteractionEnabled = true
             let gr = UITapGestureRecognizer(target: self, action: #selector(hideFaceImage))
             faceImageContainerView.addGestureRecognizer(gr)
@@ -1303,13 +1294,13 @@ class ProfileDetailViewController: BaseViewController {
         faceImageContainerView.frame = tableView.visibleContentRect
         var size = faceImageContainerView.frame.size
         if !isEmptyString(faceImageLabel.text) {
-            size.height = faceImageContainerView.height - LabelHeight
+            size.height = faceImageContainerView.height - C.labelHeight
         }
         var imageSize: CGSize!
         if let image = faceImageView.image {
             imageSize = image.size
         } else {
-            imageSize = CGSize(screenSize().width, screenSize().width)
+            imageSize = CGSize(C.screenSize().width, C.screenSize().width)
         }
         faceImageView.frame = CGRect(0, 0, imageSize.fitSize(maxSize: size))
         faceImageView.center = CGPoint(size.width / 2.0, size.height / 2.0)
@@ -1317,7 +1308,7 @@ class ProfileDetailViewController: BaseViewController {
             faceImageLabel.isHidden = true
         } else {
             faceImageLabel.isHidden = false
-            faceImageLabel.frame = CGRect(0, faceImageView.bottom, size.width, LabelHeight)
+            faceImageLabel.frame = CGRect(0, faceImageView.bottom, size.width, C.labelHeight)
         }
     }
     
@@ -1328,22 +1319,22 @@ class ProfileDetailViewController: BaseViewController {
             gender = item.value as! EnumInt == UserModel.Gender.male.rawValue ? .male : .female
         }
         if let item = indexPathSet[dickLengthCell] as? ProfileDetailForm {
-            item.height = gender == .male ? TableCellHeight : 0
+            item.height = gender == .male ? C.tableCellHeight : 0
         }
         if let item = indexPathSet[fuckDurationCell] as? ProfileDetailForm {
-            item.height = gender == .male ? TableCellHeight : 0
+            item.height = gender == .male ? C.tableCellHeight : 0
         }
         if let item = indexPathSet[houseAreaCell] as? ProfileDetailForm {
-            item.height = gender == .male ? TableCellHeight : 0
+            item.height = gender == .male ? C.tableCellHeight : 0
         }
         if let item = indexPathSet[bustCell] as? ProfileDetailForm {
-            item.height = gender == .female ? TableCellHeight : 0
+            item.height = gender == .female ? C.tableCellHeight : 0
         }
         if let item = indexPathSet[waistlineCell] as? ProfileDetailForm {
-            item.height = gender == .female ? TableCellHeight : 0
+            item.height = gender == .female ? C.tableCellHeight : 0
         }
         if let item = indexPathSet[hiplineCell] as? ProfileDetailForm {
-            item.height = gender == .female ? TableCellHeight : 0
+            item.height = gender == .female ? C.tableCellHeight : 0
         }
     }
     
@@ -1436,40 +1427,19 @@ class ProfileDetailViewController: BaseViewController {
     }
     
     @IBAction func clickHeadPortraitImageView(_ sender: Any) {
-        /*
-         let photoBrowser: MWPhotoBrowser = MWPhotoBrowser(delegate: self)
-         photoBrowser.displayActionButton = false
-         photoBrowser.displayNavArrows = false
-         photoBrowser.displaySelectionButtons = false
-         photoBrowser.alwaysShowControls = false
-         photoBrowser.zoomPhotosToFill = true
-         photoBrowser.enableGrid = false
-         photoBrowser.startOnGrid = false
-         photoBrowser.enableSwipeToDismiss = true
-         photoBrowser.modalTransitionStyle = .crossDissolve
-         photoBrowser.modalPresentationStyle = .popover
-         photos = [MWPhoto(url: headPortraitURL)]
-         self.photoBrowser = photoBrowser
-         navigationController?.present(photoBrowser, animated: true, completion: { [weak self] in
-         var pagingScrollView: UIScrollView?
-         for view in (self?.photoBrowser?.view.subviews)! {
-         if view is UIScrollView {
-         pagingScrollView = view as? UIScrollView
-         break
-         }
-         }
-         
-         if pagingScrollView != nil {
-         //添加消失的手势
-         if self?.photoBrowserGR == nil {
-         self?.photoBrowserGR =
-         UITapGestureRecognizer(target: self,
-         action: #selector(self?.clickPhotoBrowser))
-         }
-         pagingScrollView?.addGestureRecognizer((self?.photoBrowserGR!)!)
-         }
-         })
-         */
+        guard MutexTouch,
+            let url = headPortraitURL,
+            let browser = IDMPhotoBrowser(photoURLs: [url]) else {
+                return
+        }
+        
+        browser.displayActionButton = false
+        browser.displayArrowButton = false
+        browser.displayCounterLabel = false
+        browser.displayDoneButton = false
+        browser.disableVerticalSwipe = true
+        browser.dismissOnTouch = true
+        navigationController?.present(browser, animated: true, completion: nil)
     }
     
     @IBAction func cleanHeadPortrait(_ sender: Any) {
@@ -1481,31 +1451,7 @@ class ProfileDetailViewController: BaseViewController {
         headPortraitTrailingConstraint.constant = 0
         cleanHeadPortraitButton.isHidden = true
     }
-    
-    func clickPhotoBrowser() {
-        //guard MutexTouch else { return }
-        //photoBrowser?.dismiss(animated: true) { [weak self] in
-        //    self?.photoBrowser = nil
-        //}
-    }
 }
-
-/*
- //MARK: - MWPhotoBrowserDelegate
- 
- extension ProfileDetailViewController: MWPhotoBrowserDelegate {
- func numberOfPhotos(in photoBrowser: MWPhotoBrowser!) -> UInt {
- return UInt((photos.count))
- }
- 
- func photoBrowser(_ photoBrowser: MWPhotoBrowser!, photoAt index: UInt) -> MWPhotoProtocol! {
- if Int(index) < photos.count {
- return photos[Int(index)]
- }
- return nil
- }
- }
- */
 
 //MARK: - UIImagePickerControllerDelegate
 
@@ -1681,9 +1627,9 @@ extension ProfileDetailViewController: SRPickerViewDelegate {
         
         if currentItem.cell === birthDateCell {
             let datePicker = pickerView as! SRDatePicker
-            currentItem.value = String(date: datePicker.currentDate, format: DateFormat.full)
+            currentItem.value = String(date: datePicker.currentDate, format: C.DateFormat.full)
             currentItem.showText = String(date: datePicker.currentDate,
-                                          format: DateFormat.localDate)
+                                          format: C.DateFormat.localDate)
             currentItem.showTextView?.setProperty(.text, value: currentItem.showText)
         } else if currentItem.cell === nativePlaceCell
             || currentItem.cell === locationCell {
@@ -1719,7 +1665,7 @@ extension ProfileDetailViewController: SRPickerViewDelegate {
 extension ProfileDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? SectionHeaderTopHeight : SectionHeaderHeight / 2.0
+        return section == 0 ? C.sectionHeaderTopHeight : C.sectionHeaderHeight / 2.0
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -1729,7 +1675,7 @@ extension ProfileDetailViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView,
                    heightForFooterInSection section: Int) -> CGFloat {
-        return section == lastSection ? SectionHeaderHeight : SectionHeaderHeight / 2.0
+        return section == lastSection ? C.sectionHeaderHeight : C.sectionHeaderHeight / 2.0
     }
     
     func tableView(_ tableView: UITableView,

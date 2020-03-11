@@ -101,7 +101,7 @@ class NewsSecondaryViewController: BaseViewController {
         }
         
         newsListVCs = array
-        let index = tabHeader != nil ? tabHeader.selectedIndex : 0
+        let index = tabHeader.selectedIndex
         let selectedChannelId =
             0 < index && index < newsListVCs.count ? newsListVCs[index].channelId : nil
         layoutNewsListVCs(selectedChannelId)
@@ -117,7 +117,7 @@ class NewsSecondaryViewController: BaseViewController {
                                    ScreenWidth,
                                    scrollView.height)
             vc.tableView.contentInset =
-                UIEdgeInsets(Const.tabHeaderHeight, 0, TabBarHeight, 0)
+                UIEdgeInsets(Const.tabHeaderHeight, 0, C.tabBarHeight(), 0)
             vc.contentInset = vc.tableView.contentInset
             if let channelId = vc.channelId, channelId == selectedChannelId {
                 selectedIndex = i
@@ -150,7 +150,6 @@ class NewsSecondaryViewController: BaseViewController {
         }
     }
     
-    //列表停止滑动后恢复图片下载
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             resetAfterScrollViewDidEndScroll(scrollView)
@@ -161,16 +160,12 @@ class NewsSecondaryViewController: BaseViewController {
         resetAfterScrollViewDidEndScroll(scrollView)
     }
     
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        resetAfterScrollViewDidEndScroll(scrollView)
-    }
-    
     func resetAfterScrollViewDidEndScroll(_ scrollView: UIScrollView) {
         let index = Int(scrollView.contentOffset.x / ScreenWidth)
         tabHeader.activeTab(index, animated: true)
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
-            currentNewsListVC?.loadData(progressType: .clearMask)
+            currentNewsListVC?.getDataArray(progressType: .clearMask)
         }
         isSilent = false
     }
@@ -184,7 +179,7 @@ extension NewsSecondaryViewController: SRTabHeaderDelegate {
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
-                currentNewsListVC?.loadData(progressType: .clearMask)
+                currentNewsListVC?.getDataArray(progressType: .clearMask)
             }
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
@@ -194,7 +189,7 @@ extension NewsSecondaryViewController: SRTabHeaderDelegate {
             if !animated {
                 currentNewsListVC = newsListVCs[index]
                 if !(currentNewsListVC?.isTouched)! {
-                    currentNewsListVC?.loadData(progressType: .clearMask)
+                    currentNewsListVC?.getDataArray(progressType: .clearMask)
                 }
             }
         }

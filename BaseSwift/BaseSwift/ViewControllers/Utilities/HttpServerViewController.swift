@@ -62,24 +62,24 @@ class HttpServerViewController: UITableViewController {
     //MARK: - 视图初始化
     
     func initView() {
-        stopToExitButton.titleColor = UIColor.white
-        stopToExitButton.backgroundImage = UIImage.rect(NavigationBar.backgroundColor,
-                                                        size: stopToExitButton.bounds.size)
+        stopToExitButton.titleColor = .white
+        stopToExitButton.backgroundImage =
+            .gradient("CFD8DC".color,
+                      toColor: "546E7A".color,
+                      size: stopToExitButton.sizeThatFits(CGSize(.greatestFiniteMagnitude,
+                                                                 .greatestFiniteMagnitude)))
         stopToExitButton.layer.cornerRadius = SubmitButton.cornerRadius
-        holdToExitButton.titleColor = UIColor.white
-        holdToExitButton.backgroundImage = UIImage.rect(SubmitButton.backgroundColorNormal,
-                                                        size: stopToExitButton.bounds.size)
+        
+        holdToExitButton.titleColor = .white
+        holdToExitButton.backgroundImage =
+            .gradient("5581f1".color,
+                      toColor: "1153FC".color,
+                      size: holdToExitButton.sizeThatFits(CGSize(.greatestFiniteMagnitude,
+                                                                 .greatestFiniteMagnitude)))
         holdToExitButton.layer.cornerRadius = SubmitButton.cornerRadius
-        tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         
-        responseSuccessCell.detailTextLabel?.text = HttpServer.shared.responseResult?.description
-        if let responseResult = HttpServer.shared.responseResult {
-            responseSuccessCell.detailTextLabel?.text = responseResult.description
-        } else {
-            responseTimeCell.detailTextLabel?.text = "如实返回"
-        }
-        
-        responseTimeCell.detailTextLabel?.text = HttpServer.shared.responseTimeInterval.description
+        responseSuccessCell.detailTextLabel?.text = HttpServer.shared.responseResult?.description ?? "如实返回"
+        responseTimeCell.detailTextLabel?.text = HttpServer.shared.responseSpeed.description
         
         updateNetworkStatus()
     }
@@ -97,7 +97,7 @@ class HttpServerViewController: UITableViewController {
         
         let wifiStatus = String(format: format, "blue", "正常")
         format = "<p style=\"font-family: sans-serif; font-size: 16px; color: #333333\">手机内置的Http Server地址为<br><a href=\"www\" color: #06c>http://%@:%d</a><br>在同一局域网内的电脑上浏览该网址可访问程序日志文件</p>"
-        let url = String(format: format, GCDWebServerGetPrimaryIPAddress(false)!, 9999)
+        let url = String(format: format, GCDWebServerGetPrimaryIPAddress(false) ?? "127.0.0.1", 9999)
         DispatchQueue.main.async {
             self.networkStatusLabel.attributedString = (wifiStatus + url).attributedString
             self.tableView.reloadData()
@@ -130,7 +130,7 @@ class HttpServerViewController: UITableViewController {
         } else if indexPath.section == 1 && indexPath.row == 0 {
             return 60.0
         }
-        return TableCellHeight
+        return C.tableCellHeight
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -139,75 +139,46 @@ class HttpServerViewController: UITableViewController {
             let alert = SRAlertController(title: "成功与否",
                                           message: "若处理的结果与设置的成功与否不一致，将强制返回所设置的成功类型",
                                           preferredStyle: .actionSheet)
-            alert.addAction(UIAlertAction(title: "如实返回",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    self?.responseSuccessCell.detailTextLabel?.text = "如实返回"
-                    //HttpServer.shared.responseResult = nil
-            }))
-            alert.addAction(UIAlertAction(title: "返回成功",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    //self?.responseSuccessCell.detailTextLabel?.text = "返回成功"
-                    //HttpServer.shared.responseResult = .success(nil)
-            }))
-            alert.addAction(UIAlertAction(title: "返回业务失败",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    self?.responseSuccessCell.detailTextLabel?.text = "返回业务失败"
-                    //HttpServer.shared.responseResult = .bfailure(nil)
-            }))
-            alert.addAction(UIAlertAction(title: "返回失败",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    self?.responseSuccessCell.detailTextLabel?.text = "返回失败"
-                    //HttpServer.shared.responseResult = .failure(NSError())
-            }))
+            
+            func addResponseResultAction(_ result: SRHttpServer.GCDWebServerResponseResult?) {
+                alert.addAction(UIAlertAction(title: result?.description ?? "如实返回",
+                                              style: .default,
+                                              handler:
+                    { [weak self] (action) in
+                        self?.responseSuccessCell.detailTextLabel?.text = result?.description ?? "如实返回"
+                        HttpServer.shared.responseResult = result
+                }))
+            }
+            
+            addResponseResultAction(nil)
+            addResponseResultAction(.success)
+            addResponseResultAction(.failure)
+            addResponseResultAction(.error)
+            
             alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler:nil))
             present(alert, animated: true, completion: nil)
         } else if indexPath.section == 2 && indexPath.row == 1 {
             let alert = SRAlertController(title: "响应速度",
                                           message: nil,
                                           preferredStyle: .actionSheet)
-            alert.addAction(UIAlertAction(title: "立即返回",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    self?.responseTimeCell.detailTextLabel?.text = "立即返回"
-                    //HttpServer.shared.responseTime = .immediately
-            }))
-            alert.addAction(UIAlertAction(title: "快(0.3秒)",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    self?.responseTimeCell.detailTextLabel?.text = "快(0.3秒)"
-                    //HttpServer.shared.responseTime = .speediness
-            }))
-            alert.addAction(UIAlertAction(title: "一般(1秒)",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    self?.responseTimeCell.detailTextLabel?.text = "一般(1秒)"
-                    //HttpServer.shared.responseTime = .normal
-            }))
-            alert.addAction(UIAlertAction(title: "长(10秒)",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    self?.responseTimeCell.detailTextLabel?.text = "长(10秒)"
-                    //HttpServer.shared.responseTime = .long
-            }))
-            alert.addAction(UIAlertAction(title: "超时(100秒)",
-                                          style: .default,
-                                          handler:
-                { [weak self] (action) in
-                    self?.responseTimeCell.detailTextLabel?.text = "超时(100秒)"
-                    //HttpServer.shared.responseTime = .timeout
-            }))
+            
+            func addResponseTimeIntervalAction(_ responseSpeed: SRHttpServer.GCDWebServerResponseSpeed) {
+                alert.addAction(UIAlertAction(title: responseSpeed.description,
+                                              style: .default,
+                                              handler:
+                    { [weak self] (action) in
+                        self?.responseTimeCell.detailTextLabel?.text =
+                            responseSpeed.description
+                        HttpServer.shared.responseSpeed = responseSpeed
+                }))
+            }
+            
+            addResponseTimeIntervalAction(.immediately)
+            addResponseTimeIntervalAction(.rapid)
+            addResponseTimeIntervalAction(.normal)
+            addResponseTimeIntervalAction(.long)
+            addResponseTimeIntervalAction(.timeout)
+            
             alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler:nil))
             present(alert, animated: true, completion: nil)
         } else if indexPath.section == 2 && indexPath.row == 2 {
@@ -219,7 +190,7 @@ class HttpServerViewController: UITableViewController {
                                           handler:
                 { [weak self] (action) in
                     self?.clearTokenCell.detailTextLabel?.text = "已失效"
-                    //HttpServer.shared.token = "Expired"
+                    HttpServer.token = "Expired"
             }))
             alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler:nil))
             present(alert, animated: true, completion: nil)

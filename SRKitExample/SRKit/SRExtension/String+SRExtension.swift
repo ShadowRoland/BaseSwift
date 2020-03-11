@@ -149,7 +149,11 @@ public extension String {
     init(jsonObject: Any?) {
         self.init()
         if let jsonObject = jsonObject {
-            append(JSON(jsonObject).rawString() ?? "")
+            if let rawString = JSON(jsonObject).rawString() {
+                self.append(rawString)
+            } else {
+                self.append(String(describing: jsonObject))
+            }
         }
     }
     
@@ -195,7 +199,7 @@ public extension String {
         }
         
         let totalSize = FileManager.default.subpaths(atPath: self)?.reduce(0, {
-            $0 + self.appending(pathComponent: $1).fileSize
+            $0 + appending(pathComponent: $1).fileSize
         })
         return totalSize ?? 0
     }
@@ -211,8 +215,8 @@ public extension String {
                   options: NSStringDrawingOptions? = nil,
                   maxWidth: CGFloat? = nil,
                   maxHeight: CGFloat? = nil) -> CGSize {
-        return (self as NSString).boundingRect(with: CGSize(width: maxWidth ?? CGFloat.greatestFiniteMagnitude,
-                                                            height: maxHeight ?? CGFloat.greatestFiniteMagnitude),
+        return (self as NSString).boundingRect(with: CGSize(width: maxWidth ?? .greatestFiniteMagnitude,
+                                                            height: maxHeight ?? .greatestFiniteMagnitude),
                                                options: options ?? .calculateTextSize,
                                                attributes: attibutes,
                                                context: nil).size
@@ -302,7 +306,7 @@ public extension String {
     }
     
     var htmlText: String {
-        return String(format: HtmlTextFormat,
+        return String(format: C.htmlTextFormat,
                       (self as NSString).replacingOccurrences(of: "\n", with: "<br>"))
     }
     

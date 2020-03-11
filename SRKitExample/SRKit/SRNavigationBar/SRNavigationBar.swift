@@ -18,6 +18,8 @@ open class SRNavigationBar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public static var height: CGFloat = 44.0
+    
     //MARK: Customize
     
     public struct Const {
@@ -211,7 +213,7 @@ open class SRNavigationBar: UIView {
                         }
                     }
                     
-                    customView.frame = CGRect(0, 0, width, NavigationBarHeight)
+                    customView.frame = CGRect(0, 0, width, SRNavigationBar.height)
                     
                     rightWidth += width
                     rightPrevious = customView

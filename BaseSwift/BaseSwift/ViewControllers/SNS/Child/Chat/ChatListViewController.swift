@@ -10,32 +10,17 @@ import SRKit
 import Cartography
 import SwiftyJSON
 
-class ChatListViewController: BaseViewController, SRSimplePromptDelegate {
+class ChatListViewController: BaseTableViewController {
     public weak var parentVC: SNSViewController?
     var isTouched = false //视图已经被父视图载入过
-    lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        view.addSubview(tableView)
-        constrain(tableView) { $0.edges == inset($0.superview!.edges, 0) }
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = UIColor.groupTableViewBackground
-        tableView.tableFooterView = UIView()
-        tableView.separatorStyle = .singleLine
-        tableView.separatorInset = UIEdgeInsets(0, ChatListCell.Const.headerMargin, 0, 0)
-        view.progressMaskColor = tableView.backgroundColor!
-        tableView.contentInset = UIEdgeInsets(0, 0, TabBarHeight, 0)
-        
-        return tableView
-    }()
-    
-    lazy var dataArray: [MessageModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
         ChatListCell.updateCellHeight()
+        needRefreshNewHeader = false
+        needAddMoreFooter = false
     }
     
     deinit {
@@ -43,86 +28,12 @@ class ChatListViewController: BaseViewController, SRSimplePromptDelegate {
         NotifyDefault.remove(self)
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    //MARK: - 业务处理
-    
-    func loadData(_ progressType: TableLoadData.ProgressType = .none) {
-        switch progressType {
-        case .clearMask:
-            view.showProgress()
-        case .opaqueMask:
-            view.showProgress(maskType: .opaque)
-        default:
-            break
+    override func layoutSubviews() {
+        if parentVC != nil {
+            
+        } else {
+            super.layoutSubviews()
         }
-        
-        var params = [:] as ParamDictionary
-        params[Param.Key.limit] = TableLoadData.row
-        params[Param.Key.offset] = 0
-        httpRequest(.get("data/getMessages", params), success:
-            { [weak self] response in
-                self?.update(response as? JSON)
-            }, bfail: { [weak self] (method, response) in
-                guard let strongSelf = self else { return }
-                if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
-                    strongSelf.update(nil)
-                    strongSelf.showToast(strongSelf.logBFail(method,
-                                                             response: response,
-                                                             show: false))
-                } else { //当前为空的话则交给列表展示错误信息
-                    strongSelf.update(nil, errMsg: strongSelf.logBFail(method,
-                                                                       response: response,
-                                                                       show: false))
-                }
-            }, fail: { [weak self] (_, error) in
-                guard let strongSelf = self else { return }
-                if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
-                    strongSelf.update(nil)
-                    strongSelf.showToast(error.errorDescription)
-                } else { //当前为空的话则交给列表展示错误信息
-                    strongSelf.update(nil, errMsg: error.errorDescription)
-                }
-        })
-    }
-    
-    public func update(_ json: JSON?, errMsg: String? = nil) {
-        view.dismissProgress(true)
-        guard let json = json?[HTTP.Key.Response.data] else {
-            if dataArray.count == 0 {
-                showLoadDataFailView(errMsg) //加载失败
-            }
-            return
-        }
-        
-        dataArray = messageModels(json[Param.Key.list])
-        guard !dataArray.isEmpty else { //没有数据
-            showNoDataView()
-            return
-        }
-        
-        tableView.tableHeaderView = nil
-        tableView.reloadData()
-        DispatchQueue.main.async { [weak self] in //tableView更新完数据后再设置contentOffset
-            guard let strongSelf = self else { return }
-            strongSelf.tableView.setContentOffset(CGPoint(0, -strongSelf.tableView.contentInset.top),
-                                                  animated: true)
-        }
-    }
-    
-    func messageModels(_ list: JSON?) -> [MessageModel] {
-        if let list = list, let models = list.array?.compactMap({ (JSON) -> MessageModel? in
-            if let dictionary = JSON.dictionaryObject {
-                return MessageModel(JSON: dictionary)
-            }
-            return nil
-        }) {
-            return models
-        }
-        return []
     }
     
     /*
@@ -159,22 +70,6 @@ class ChatListViewController: BaseViewController, SRSimplePromptDelegate {
      }
      */
     
-    func showNoDataView() {
-        let view = SRSimplePromptView("No record".localized, image: UIImage("no_data"))
-        view.frame = tableView.bounds
-        view.delegate = self
-        view.backgroundColor = tableView.backgroundColor
-        tableView.tableHeaderView = view
-    }
-    
-    override func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
-        let view = SRSimplePromptView(text, image: UIImage("request_fail"))
-        view.frame = tableView.bounds
-        view.delegate = self
-        view.backgroundColor = tableView.backgroundColor
-        tableView.tableHeaderView = view
-    }
-    
     //MARK: - 事件响应
     
     override func contentSizeCategoryDidChange() {
@@ -182,32 +77,58 @@ class ChatListViewController: BaseViewController, SRSimplePromptDelegate {
         tableView.reloadData()
     }
     
-    //MARK: - SRSimplePromptDelegate
+    //MARK: - BaseTableLoadData
     
-    func didClickSimplePromptView(_ view: SRSimplePromptView) {
-        loadData(.opaqueMask)
+    func getDataArray(_ addMore: Bool) {
+        getDataArray(addMore, progressType: .none)
     }
-}
-
-//MARK: - UITableViewDelegate, UITableViewDataSource
-
-extension ChatListViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    
+    func getDataArray(_ addMore: Bool = false,
+                      progressType: TableLoadData.ProgressType = .none) {
+        switch progressType {
+        case .clearMask:
+            showProgress()
+        case .opaqueMask:
+            showProgress(.opaque)
+        default:
+            break
+        }
+        
+        var params = [:] as ParamDictionary
+        params[Param.Key.limit] = TableLoadData.row
+        params[Param.Key.offset] = 0
+        httpRequest(.get("data/getMessages", params: params), success:{ [weak self] response in
+            guard let strongSelf = self else { return }
+            if let json = response as? JSON,
+                let array = json[HTTP.Key.Response.data][Param.Key.list].array {
+                let models = array.compactMap({ (element) -> MessageModel? in
+                    if let dictionary = element.dictionaryObject {
+                        return MessageModel(JSON: dictionary)
+                    } else {
+                        return nil
+                    }
+                })
+                strongSelf.httpRespond(success: models, offset: 0)
+            } else {
+                strongSelf.httpRespond(success: [], offset: 0)
+            }
+        })
+    }
+    
+    //MARK: - UITableViewDelegate, UITableViewDataSource
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return ChatListCell.height()
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataArray.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell =
-            tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier) as? ChatListCell
+            tableView.dequeueReusableCell(withIdentifier: C.reuseIdentifier) as? ChatListCell
         if cell == nil {
-            cell = ChatListCell(style: .default, reuseIdentifier: ReuseIdentifier)
+            cell = ChatListCell(style: .default, reuseIdentifier: C.reuseIdentifier)
             cell?.initView()
         }
-        cell?.message = dataArray[indexPath.row]
+        cell?.message = dataArray[indexPath.row] as? MessageModel
         
         //添加3d touch功能
         if !cell!.isPreviewRegistered && traitCollection.forceTouchCapability == .available,
@@ -236,9 +157,10 @@ extension ChatListViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         guard MutexTouch else { return }
         
+        let message = dataArray[indexPath.row] as? MessageModel
         let vc = ChatViewController()
-        vc.targetId = dataArray[indexPath.row].userId
-        vc.nickname = dataArray[indexPath.row].userName
+        vc.targetId = message?.userId
+        vc.nickname = message?.userName
         vc.conversationType = .ConversationType_PRIVATE
         show(vc)
     }

@@ -41,23 +41,52 @@ public class SRModalViewController: SRNavigationController {
         super.init(coder: aDecoder)
     }
     
+    #if DEBUG
     deinit {
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
     }
+    #endif
+    
+    fileprivate class SRModalViewControllerAnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
+        private weak var modalViewController: SRModalViewController?
+        fileprivate var animated = true
+        
+        init(_ modalViewController: SRModalViewController) {
+            super.init()
+            self.modalViewController = modalViewController
+        }
+        
+        func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+            DispatchQueue.main.async {
+                transitionContext?.completeTransition(true)
+            }
+            return 0
+        }
+        
+        func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+            
+        }
+        
+        func animationEnded(_ transitionCompleted: Bool) {
+            modalViewController?.dismiss(animated)
+        }
+    }
+    
+    fileprivate lazy var rootAnimatedTransitioning: SRModalViewControllerAnimatedTransitioning = .init(self)
     
     //MARK: - UINavigationBarDelegate
     
-    //拦截导航栏默认提供的返回按钮的点击
-    public func navigationBar(_ navigationBar: UINavigationBar,
-                              shouldPop item: UINavigationItem) -> Bool {
-        if viewControllers.count == 2 {
-            DispatchQueue.main.async {
-                self.topViewController?.popBack(true)
-            }
-            return false
-        }
-        return true
-    }
+//    //拦截导航栏默认提供的返回按钮的点击
+//    public func navigationBar(_ navigationBar: UINavigationBar,
+//                              shouldPop item: UINavigationItem) -> Bool {
+//        if viewControllers.count == 2 {
+//            DispatchQueue.main.async {
+//                self.topViewController?.popBack(false)
+//            }
+//            return false
+//        }
+//        return true
+//    }
     
     //MARK: - UIGestureRecognizerDelegate
     
@@ -72,16 +101,33 @@ public class SRModalViewController: SRNavigationController {
     
     //MARK: - UINavigationControllerDelegate
     
+    public func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        if viewController === rootVC {
+            rootAnimatedTransitioning.animated = animated
+        }
+    }
+    
     public override func navigationController(_ navigationController: UINavigationController,
                                               didShow viewController: UIViewController,
                                               animated: Bool) {
-        if viewController.isModalRootViewController {
+        if viewController === rootVC {
             isPageSwipeEnabled = false
             isPageLongPressEnabled = viewController.isPageLongPressEnabled
         } else {
             super.navigationController(navigationController,
                                        didShow: viewController,
                                        animated: animated)
+        }
+    }
+    
+    public func navigationController(_ navigationController: UINavigationController,
+                                     animationControllerFor operation: UINavigationController.Operation,
+                                     from fromVC: UIViewController,
+                                     to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if toVC === rootVC, operation == .pop {
+            return rootAnimatedTransitioning
+        } else {
+            return .none
         }
     }
 }

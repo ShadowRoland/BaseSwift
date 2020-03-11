@@ -19,20 +19,6 @@ extension UIViewController {
         public weak var decorator: UIViewController?
         
         public var navigationBarType: NavigationBarType = .system
-        /*public*/ lazy var navigationBarBackgroundView: UIView = {
-            let view = UIView()
-            if let decorator = decorator {
-                decorator.view.addSubview(view)
-                view.backgroundColor = NavigationBar.backgroundColor
-                constrain(view) {
-                    $0.leading == $0.superview!.leading
-                    $0.trailing == $0.superview!.trailing
-                    $0.top == $0.superview!.top
-                    $0.height == NavigationBarHeight
-                }
-            }
-            return view
-        }()
         public var navigationBackgroundAlpha = 0.5 as CGFloat
         
         public lazy var navigationBar: SRNavigationBar = {
@@ -44,9 +30,21 @@ extension UIViewController {
                 constrain(navigationBar) {
                     $0.leading == $0.superview!.leading
                     $0.trailing == $0.superview!.trailing
-                    $0.top == $0.superview!.top + StatusBarHeight
-                    $0.height == NavigationBarHeight
+                    //$0.top == $0.superview!.top + C.statusBarHeight()
+                    $0.height == SRNavigationBar.height
                 }
+                //let group = constrain(navigationBar) {
+                //    $0.top == $0.superview!.top + C.statusBarHeight()
+                //}
+                var constraint =
+                    NSLayoutConstraint(item: navigationBar,
+                                       attribute: .top,
+                                       relatedBy: .equal,
+                                       toItem: decorator.view,
+                                       attribute: .top,
+                                       multiplier: 1.0,
+                                       constant: C.statusBarHeight())
+                navigationBar.addConstraint(constraint)
             }
             return navigationBar
         }()
@@ -61,23 +59,24 @@ extension UIViewController {
             static var baseBusiness = "UIViewController.SRBaseBusinessComponent.baseBusiness"
         }
         
+        #if DEBUG
         deinit {
             LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
         }
+        #endif
         
         public var isViewDidAppear = false   //进入页面时初始的操作是否已被执行
         public var isNavigationBarButtonsActive = false   //decorator的导航栏按钮是否有效
         
-        public var needShowProgress = false   //延迟显示progress的判断依据
         public var progressMaskType: UIView.SRProgressComponent.MaskType! //延迟显示progress的maskType
         public lazy var progressContainerView: UIView = UIView()
         
         //MARK: Load Data Fail
         
-        public var loadDataFailRetryMethod: HTTP.Method?//请求数据失败时显示点击重试的请求，一般是 页面刚进入发出的第一个http请求
+        public var loadDataFailRetryRequest: SRHTTP.Request?//请求数据失败时显示点击重试的请求，一般是 页面刚进入发出的第一个http请求
         public var loadDataFailRetryHandler: (() -> Void)?  //请求数据失败时点击重试的操作
         public lazy var loadDataFailContainerView: UIView = UIView()
-        var loadDataFailView: SRSimplePromptView?
+        public var loadDataFailView: SRSimplePromptView?
         
         public var isShowingLoadDataFailView: Bool {
             return loadDataFailView != nil && loadDataFailView!.superview != nil
@@ -85,7 +84,7 @@ extension UIViewController {
         
         public func showLoadDataFailView(_ text: String?, image: UIImage?) {
             dismissLoadDataFailView()
-            loadDataFailView = SRSimplePromptView(text, image: image)
+            loadDataFailView = SRSimplePromptView(text, image: image, width: loadDataFailContainerView.width)
             loadDataFailContainerView.addSubview(loadDataFailView!)
             constrain(loadDataFailView!) {
                 $0.edges == inset($0.superview!.edges, 0)
@@ -117,27 +116,26 @@ extension UIViewController {
         }
         
         public func setNavigationBarAppear(_ navigationBarAppear: NavigationBar.Appear,
-                                            animated: Bool) {
+                                           animated: Bool) {
             guard let decorator = decorator else { return }
             
-            switch decorator.navigationBarType {
-            case .system:
+            let navigationBarType = decorator.navigationBarType
+            if navigationBarType ==  .system {
                 navigationBar.isHidden = true
                 if let navigationController = decorator.navigationController, isViewDidAppear {
                     switch navigationBarAppear {
                     case .visible:
                         navigationController.setNavigationBarHidden(false, animated: animated)
-                        //navigationBarBackgroundView.isHidden = false
+                    //navigationBarBackgroundView.isHidden = false
                     case .hidden:
                         navigationController.setNavigationBarHidden(true, animated: animated)
-                        //navigationBarBackgroundView.isHidden = true
+                    //navigationBarBackgroundView.isHidden = true
                     default: break
                     }
                 } else {
                     //navigationBarBackgroundView.isHidden = true
                 }
-                
-            case .sr:
+            }  else if navigationBarType == .sr {
                 decorator.navigationController?.isNavigationBarHidden = true
                 switch navigationBarAppear {
                 case .visible:
@@ -152,15 +150,19 @@ extension UIViewController {
         //MARK: Gesture
         
         public struct PageBackGestureStyle : OptionSet {
+            /// Returns the raw bitmask value of the option and satisfies the `RawRepresentable` protocol.
             private(set) public var rawValue: UInt
             
             public init(rawValue: UInt) {
                 self.rawValue = rawValue
             }
             
-            public static var none = PageBackGestureStyle(rawValue: 0)
-            public static var page = PageBackGestureStyle(rawValue: 1)
-            public static var edge = PageBackGestureStyle(rawValue: 2)
+            ///页面不可右滑返回
+            public static let none = PageBackGestureStyle(rawValue: 1 << 0)
+            ///页面可按住左边缘右滑返回
+            public static let page = PageBackGestureStyle(rawValue: 1 << 1)
+            ///页面所有部分都可按住右滑返回
+            public static let edge = PageBackGestureStyle(rawValue: 1 << 2)
         }
         
         public var pageBackGestureStyle: PageBackGestureStyle = .page {
@@ -182,9 +184,9 @@ extension UIViewController {
             }
         }
         
-        public var isPageLongPressEnabled = true {
+        public var isPageLongPressEnabled = false {
             didSet {
-                guard Environment != .production else { return }
+                guard !C.environment.contains(.production) else { return }
                 if let decorator = decorator,
                     let vc = decorator.navigationController as? SRNavigationController {
                     vc.isNavPageLongPressEnabled = isPageLongPressEnabled
@@ -211,7 +213,7 @@ extension UIViewController {
 }
 
 public extension UIViewController {
-     var baseBusinessComponent: SRBaseBusinessComponent {
+    var baseBusinessComponent: SRBaseBusinessComponent {
         if let component =
             objc_getAssociatedObject(self, &SRBaseBusinessComponent.AssociatedKeys.baseBusiness)
                 as? SRBaseBusinessComponent {
@@ -236,6 +238,26 @@ public extension UIViewController {
         }
     }
     
+    var statusBarHeight: CGFloat {
+        return UIApplication.shared.statusBarFrame.size.height
+    }
+    
+    var navigationBarHeight: CGFloat {
+        var height = 0 as CGFloat
+        if navigationBarType == .system,
+            let navigationController = navigationController,
+            !navigationController.navigationBar.isHidden {
+            height += navigationBar.height
+        } else if navigationBarType == .sr, !navigationBar.isHidden {
+            height += navigationBar.height
+        }
+        return height
+    }
+    
+    var navigationHeaderHeight: CGFloat {
+        return statusBarHeight + navigationBarHeight
+    }
+    
     var navigationBar: SRNavigationBar {
         get {
             return baseBusinessComponent.navigationBar
@@ -245,9 +267,19 @@ public extension UIViewController {
         }
     }
     
-    enum NavigationBarType {
-        case system
-        case sr
+    struct NavigationBarType: RawRepresentable {
+        public let rawValue: Int
+        
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+        
+        public init(_ rawValue: Int) {
+            self.rawValue = rawValue
+        }
+        
+        public static let system = NavigationBarType(0)
+        public static let sr = NavigationBarType(1)
     }
     
     var navigationBarType: NavigationBarType {
@@ -267,9 +299,32 @@ public extension UIViewController {
             baseBusinessComponent.navigationBarAppear = newValue
         }
     }
-
+    
+    var isNavigationBarVisible: Bool {
+        switch navigationBarAppear {
+        case .visible:
+            return true
+            
+        case .hidden:
+            return false
+            
+        case .custom:
+            if navigationBarType == .system {
+                if let navigationController = navigationController {
+                    return !navigationController.isNavigationBarHidden
+                } else {
+                    return false
+                }
+            } else if navigationBarType == .sr {
+                return !navigationBar.isHidden
+            } else {
+                return false
+            }
+        }
+    }
+    
     func setNavigationBarAppear(_ navigationBarAppear: NavigationBar.Appear, animated: Bool) {
-        
+        baseBusinessComponent.setNavigationBarAppear(navigationBarAppear, animated: animated)
     }
     
     var stateMachine: SRStateMachine {
@@ -281,7 +336,7 @@ public extension UIViewController {
             return baseBusinessComponent.event
         }
         set {
-            baseBusinessComponent.event = event
+            baseBusinessComponent.event = newValue
         }
     }
     
@@ -319,7 +374,7 @@ public extension UIViewController {
                               bundle: Bundle? = nil) -> UIViewController? {
         return UIStoryboard(name: storyboard, bundle: bundle ?? Bundle.main).instantiateViewController(withIdentifier: identifier)
     }
-
+    
     class var currentWindow: UIWindow? {
         let window = UIApplication.shared.keyWindow
         if let window = window {
@@ -359,7 +414,7 @@ extension UIViewController {
     public func guardDeviceOrientationDidChange(_ sender: AnyObject?) -> Bool {
         if sender == nil { return true }
         
-        if !self.shouldAutorotate { //当前视图控制器不支持屏幕切换，不需要重新布局
+        if !shouldAutorotate { //当前视图控制器不支持屏幕切换，不需要重新布局
             return false
         }
         
@@ -545,9 +600,9 @@ extension UIViewController {
         if navigationBarType == .system,
             let navigationController = navigationController,
             navigationController.topViewController === self
-            && navigationController.navigationBar.topItem != navigationItem {
-                navigationController.setNavigationBarHidden(!isHidden, animated: false)
-                navigationController.setNavigationBarHidden(isHidden, animated: false)
+                && navigationController.navigationBar.topItem != navigationItem {
+            navigationController.setNavigationBarHidden(!isHidden, animated: false)
+            navigationController.setNavigationBarHidden(isHidden, animated: false)
         }
     }
     
@@ -559,4 +614,3 @@ extension UIViewController {
         }
     }
 }
-

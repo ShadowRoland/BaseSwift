@@ -51,17 +51,17 @@ class SRShareCellView: UIView {
     
     func layout(frame: CGRect!, image: UIImage?, title: String?) {
         self.frame = frame
-        let buttonSide = frame.size.width
+        let buttonSide = frame.width
         button.frame = CGRect(0, 0, buttonSide, buttonSide)
         button.image = image
         
-        let originY = button.frame.origin.y + button.frame.size.height + Const.labelMarginTop
-        label.frame = CGRect(0, originY, buttonSide, label.frame.size.height)
+        let originY = button.frame.minY + button.frame.height + Const.labelMarginTop
+        label.frame = CGRect(0, originY, buttonSide, label.frame.height)
         if label.text != title {
-            var height = frame.size.height - originY
+            var height = frame.height - originY
             label.text = title
             label.sizeToFit()
-            height = min(height, label.frame.size.height)
+            height = min(height, label.frame.height)
             label.frame = CGRect(CGFloat(0), originY, buttonSide, height)
         }
     }

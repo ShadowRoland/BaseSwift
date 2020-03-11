@@ -196,14 +196,14 @@ public class SRShareTool: UIViewController {
     
     //MARK: - Autorotate Orientation
     
-    override public var shouldAutorotate: Bool { return ShouldAutorotate }
+    override public var shouldAutorotate: Bool { return C.shouldAutorotate }
     
     override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return SupportedInterfaceOrientations
+        return C.supportedInterfaceOrientations
     }
     
     override public var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return PreferredInterfaceOrientationForPresentation
+        return C.preferredInterfaceOrientationForPresentation
     }
     
     @objc func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
@@ -273,7 +273,7 @@ public class SRShareTool: UIViewController {
         initConstVariable()
         
         view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        view.backgroundColor = MaskBackgroundColor
+        view.backgroundColor = C.maskBackgroundColor
         
         contentView.backgroundColor = UIColor(white: 1.0, alpha: 0.8)
         contentView.isUserInteractionEnabled = true

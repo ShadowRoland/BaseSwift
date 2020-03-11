@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftyJSON
 
 /*
  * addEntriesFromDictionary
@@ -20,7 +21,7 @@ public func += <KeyType, ValueType> ( left: inout Dictionary<KeyType, ValueType>
 }
 
 public extension Dictionary {
-    func extend(_ dictionary: Dictionary) ->Dictionary {
+    func extend(_ dictionary: Dictionary) -> Dictionary {
         var mutabledictionary = self
         mutabledictionary += dictionary
         return mutabledictionary
@@ -64,7 +65,7 @@ public extension Dictionary where Key : Hashable {
             }
             
         case .array:
-            if let array = value as? [Any] {
+            if let array = value as? AnyArray {
                 outValue.pointee = array
             } else {
                 return false
@@ -126,7 +127,7 @@ public extension Dictionary where Key == String {
             dictionary.forEach {
                 components += queryComponents(fromKey: "\(key)[\($0.key)]", value: $0.value)
             }
-        } else if let array = value as? [Any] {
+        } else if let array = value as? AnyArray {
             array.forEach { components += queryComponents(fromKey: "\(key)[]", value: $0) }
         } else if let value = value as? NSNumber {
             if value.isBool {
@@ -186,3 +187,94 @@ public extension Dictionary where Key == String {
     }
 }
 
+extension Dictionary where Key == String {
+    ///根据给定的位置做值的替换，如positions为：
+    ///{
+    ///    "body" :
+    ///    {
+    ///        "contact" :
+    ///        [
+    ///            {
+    ///                "phone" : "***",
+    ///                "idNo" : "3403*****"
+    ///            }
+    ///        ]
+    ///    }
+    ///}
+    ///在self的三层位置上的phone和idNo将会被替换为"***"和"3403*****"
+    ///无论self的同样位置同样key对应的值是什么类型（字符串，数值，对象），都会被替换为positions中同样位置同样key对应的value
+    ///PS: 数组的成员只能是字典或者数组，而且只遍历第一个成员
+    public func replacingOccurrences(positions: ParamDictionary) -> ParamDictionary {
+        return replacingOccurrences(dictionary: self, postion: positions)
+    }
+    
+    fileprivate func replacingOccurrences(dictionary target: ParamDictionary, postion: ParamDictionary) -> ParamDictionary {
+        var dictionary = [:] as ParamDictionary
+        target.forEach { (key, value) in
+            let valueInPostion = postion[key]
+            if let string = valueInPostion as? String {
+                dictionary[key] = string
+            } else if let dictionaryValue = value as? ParamDictionary,
+                let postion = valueInPostion as? ParamDictionary {
+                dictionary[key] = replacingOccurrences(dictionary: dictionaryValue, postion: postion)
+            } else if let arrayValue = value as? AnyArray,
+                let postion = valueInPostion as? [ParamDictionary] {
+                dictionary[key] = replacingOccurrences(array: arrayValue, postion: postion)
+            } else {
+                dictionary[key] = valueInPostion
+            }
+        }
+        return dictionary
+    }
+    
+    fileprivate func replacingOccurrences(array target: AnyArray, postion: [ParamDictionary]) -> AnyArray {
+        guard let postion = postion.first else {
+            return target
+        }
+        
+        return target.compactMap { (element) -> Any? in
+            if let dictionaryValue = element as? ParamDictionary {
+                return replacingOccurrences(dictionary: dictionaryValue, postion: postion)
+            } else {
+                return element
+            }
+        }
+    }
+    
+    ///根据给定的键值对数组做值的替换，如keyValues为：
+    ///{
+    ///    "phone" : "***",
+    ///    "idNo" : "3403*****"
+    ///}
+    ///在self的所有层次的位置上的phone和idNo将会被替换为"***"和"3403*****"
+    ///无论self的所有层次职位上key对应的值是什么类型（字符串，数值，对象），都会被替换为keyValues中key对应的value
+    public func replacingOccurrences(keyValues: [String : String]) -> ParamDictionary {
+        return replacingOccurrences(dictionary: self, keyValues: keyValues)
+    }
+    
+    fileprivate func replacingOccurrences(dictionary target: ParamDictionary, keyValues: [String : String]) -> ParamDictionary {
+        var dictionary = [:] as ParamDictionary
+        target.forEach { (key, value) in
+            if let valueInPostion = keyValues[key] {
+                dictionary[key] = valueInPostion
+            } else if let dictionaryValue = value as? ParamDictionary {
+                dictionary[key] = replacingOccurrences(dictionary: dictionaryValue, keyValues: keyValues)
+            } else if let arrayValue = value as? AnyArray {
+                dictionary[key] = replacingOccurrences(array: arrayValue, keyValues: keyValues)
+            } else {
+                dictionary[key] = value
+            }
+        }
+        return dictionary
+    }
+    
+    fileprivate func replacingOccurrences(array target: AnyArray, keyValues: [String : String]) -> AnyArray {
+        return target.compactMap { (element) -> Any? in
+            if let dictionaryValue = element as? ParamDictionary {
+                return replacingOccurrences(dictionary: dictionaryValue, keyValues: keyValues)
+            } else {
+                return element
+            }
+        }
+    }
+}

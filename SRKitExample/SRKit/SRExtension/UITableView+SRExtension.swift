@@ -12,7 +12,7 @@ public extension UITableView {
     var visibleContentRect: CGRect {
         return CGRect(0,
                       contentOffset.y + contentInset.top,
-                      self.width,
-                      self.height - contentInset.top - contentInset.bottom)
+                      width,
+                      height - contentInset.top - contentInset.bottom)
     }
 }

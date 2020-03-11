@@ -7,9 +7,10 @@
 //
 
 import SRKit
+import Cartography
 
 extension UIViewController {
-    public class PublicBusinessComponent {
+    public class PublicBusinessComponent: AdvertisingGuideDelegate {
         public weak var decorator: UIViewController?
         
         fileprivate struct AssociatedKeys {
@@ -20,22 +21,29 @@ extension UIViewController {
             LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
         }
         
-        weak var advertisingVC: AdvertisingGuideViewController?
+        fileprivate var _advertisingVC: String?
+        fileprivate weak var advertisingVC: AdvertisingGuideViewController? {
+            willSet {
+                if newValue == nil, let advertisingVC = advertisingVC { //意外被系统或者其他模块移除
+                    advertisingDisDimiss(advertisingVC)
+                }
+            }
+        }
 
         //MARK: - Advertising
         
         func showAdvertisingGuard() {
-            guard decorator != nil, advertisingVC != nil else {
+            guard decorator != nil, advertisingVC == nil else {
                 return
             }
             
             let vc = UIViewController.viewController("AdvertisingGuideViewController", storyboard: "Main")
                 as! AdvertisingGuideViewController
-            vc.advertisingButton.clicked(self, action: #selector(clickAdvertisingButton(_:)))
-            vc.skipButton.clicked(self, action: #selector(clickSkipButton(_:)))
+            vc.delegate = self
             let window = UIApplication.shared.keyWindow! as UIWindow
             window.addSubview(vc.view)
-            vc.view.frame = window.bounds
+            constrain(vc.view) { $0.edges == inset($0.superview!.edges, 0) }
+            advertisingVC = vc
         }
         
         func showAdvertising() {
@@ -43,22 +51,31 @@ extension UIViewController {
                 return
             }
             
-            vc.navigationController?.presentingViewController?.dismiss(animated: false,
-                                                                       completion: nil)
-            vc.presentingViewController?.dismiss(animated: false, completion: nil)
+            vc.dismissModals()
             vc.show("AdvertisingViewController", storyboard: "Main")
         }
         
-        @objc func clickAdvertisingButton(_ sender: Any) {
-            guard MutexTouch else { return }
-            advertisingVC?.dimiss()
+        //MARK: - AdvertisingGuideDelegate
+        
+        func advertisingGuideShowAdvertising(_ viewController: AdvertisingGuideViewController) {                viewController.dimiss()
+            decorator?.stateMachine.end(Event(.showAdvertisingGuard))
         }
         
-        @objc func clickSkipButton(_ sender: Any) {
-            guard MutexTouch else { return }
-            advertisingVC?.dimiss()
-            //decorator?.stateMachine.clearEvents()
-            //decorator?.stateMachine.append(Event.showAdvertising)
+        func advertisingGuideSkip(_ viewController: AdvertisingGuideViewController) {
+            viewController.dimiss()
+            decorator?.stateMachine.clearEvents()
+            decorator?.stateMachine.append(Event(.showAdvertising))
+        }
+        
+        func advertisingDisDimiss(_ viewController: AdvertisingGuideViewController) {
+            let pointer = String(pointer: viewController)
+            if pointer != _advertisingVC { //保证只触发一次事件的结束
+                _advertisingVC = pointer
+                decorator?.stateMachine.end(Event(.showAdvertisingGuard))
+                DispatchQueue.main.async { [weak self] in
+                    self?.advertisingVC = nil
+                }
+            }
         }
     }
     

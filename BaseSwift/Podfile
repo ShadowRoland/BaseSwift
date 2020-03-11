@@ -2,13 +2,13 @@
 platform :ios, '9.0'
 
 ## Keychain，一般用于获取唯一设备标识
-pod 'KeychainSwift', '~> 14.0.0' # Required
+pod 'KeychainSwift', '~> 14.0.2' # Required
 
 ## 键盘管理
 pod 'IQKeyboardManagerSwift', '~> 6.2.1' # Required
 
 ## 日志系统
-pod 'CocoaLumberjack/Swift', '~> 3.5.2' # Required
+pod 'CocoaLumberjack/Swift', '~> 3.5.3' # Required
 
 ## Swfit项目语言本地化支持框架
 pod 'Localize-Swift', '~> 2.0.0' # Required
@@ -17,13 +17,13 @@ pod 'Localize-Swift', '~> 2.0.0' # Required
 # pod 'FMDB', '~> 2.7.5' # Recommended
 
 ## 在iOS下搭建web服务器
-pod 'GCDWebServer', '~> 3.5.2' # Optional
+pod 'GCDWebServer', '~> 3.5.3' # Optional
 
 ## Http
 pod 'Alamofire', '~> 4.8.2' # Required
 
 ## 图片请求
-pod 'SDWebImage', '~> 5.0.0' # Optional 将会被其他的第三方库所依赖
+pod 'SDWebImage', '~> 5.0.6' # Optional 将会被其他的第三方库所依赖
 # pod 'UIActivityIndicator-for-SDWebImage', '~> 1.2'
 # pod 'UIActivityIndicator-for-SDWebImage+UIButton', '~> 1.2'
 # pod 'AlamofireImage', '~> 3.5.2'
@@ -48,7 +48,7 @@ pod 'Toast', '~> 4.0.0' # Required
 #pod 'Toast-Swift', '~> 5.0.0' # Required
 
 ## 富文本
-pod 'DTCoreText', '~> 1.6.21' # Required
+pod 'DTCoreText', '~> 1.6.22' # Required
 
 ## 进度控件
 pod 'MBProgressHUD', '~> 1.1.0' # Required
@@ -60,9 +60,10 @@ pod 'SVProgressHUD', '~> 2.2.5' # Optional
 # pod 'DACircularProgress', '~> 2.3.1'
 # pod 'PSTCollectionView', '~> 1.2.3'
 # pod 'HTProgressHUD', '~> 0.2.1'
+pod 'IDMPhotoBrowser'
 
 ## 上下拉刷新数据的列表控件
-pod 'MJRefresh', '~> 3.1.16' # Required
+pod 'MJRefresh', '~> 3.1.17' # Required
 
 ## 滚动文字
 # pod 'MarqueeLabel', '~> 4.0.0' # Recommended
@@ -85,7 +86,7 @@ pod 'TransitionKit', '~> 2.2.1' # Optional
 pod 'REMenu', '~> 1.10' # Optional
 
 ## 电话号码查询
-pod 'libPhoneNumber-iOS', '~> 0.9.13'
+pod 'libPhoneNumber-iOS', '~> 0.9.15'
 
 ## 定制弹出框
 pod 'SCLAlertView', '~> 0.8' # Required, added in project->"ThirdParty" 因SCLAlertView.appearance没有设置为public，已添加到项目工程中的ThirdParty
@@ -127,8 +128,8 @@ pod 'Cartography', '~> 3.1.0' # Required
 pod 'SlideMenuControllerSwift', :git => 'https://github.com/grizzly/SlideMenuControllerSwift.git'
 
 ## 第三方聊天工具
-pod 'RongCloudIM/IMLib', '~> 2.9.13' # Optional
-pod 'RongCloudIM/IMKit', '~> 2.9.13' # Optional
+pod 'RongCloudIM/IMLib', '~> 2.9.23' # Optional
+pod 'RongCloudIM/IMKit', '~> 2.9.23' # Optional
 
 ## 弹幕控件
 pod 'BarrageRenderer', '~> 2.1.0' # Optional
@@ -140,7 +141,7 @@ pod 'BarrageRenderer', '~> 2.1.0' # Optional
 # pod 'Protobuf', '~> 3.7.0' # Optional
 
 ## Promise
-pod 'PromiseKit', '~> 6.8.4'
+pod 'PromiseKit/CorePromise', '~> 6.11.0'
 
 target 'BaseSwift' do
   # Comment the next line if you don't want to use dynamic frameworks

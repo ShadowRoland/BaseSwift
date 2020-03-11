@@ -51,29 +51,31 @@ public class SRStateMachine {
             TKEvent(name: "currentEnd", transitioningFromStates: [busyState as Any], to: idleState)
         
         idleState.setDidEnter { [weak self] (state, transition) in
-            guard let strongSelf = self, !strongSelf.events.isEmpty else { return }
-            try! strongSelf.stateMachine.fireEvent(strongSelf.watingEvent, userInfo: nil)
+            guard let strongSelf = self else { return }
+            strongSelf._currentEvent = nil
+            
+            if !strongSelf.events.isEmpty {
+                try? strongSelf.stateMachine.fireEvent(strongSelf.watingEvent, userInfo: nil)
+            }
         }
         
         busyState.setDidEnter { [weak self] (state, transition) in
             guard let strongSelf = self else { return }
             
-            strongSelf._currentEvent = nil
             if let event = strongSelf.events.first {
                 strongSelf._currentEvent = event
                 strongSelf.events.remove(at: 0)
-            }
-            
-            if let currentEvent = strongSelf._currentEvent {
-                strongSelf.delegate?.stateMachine(strongSelf, didFire: currentEvent)
+                strongSelf.delegate?.stateMachine(strongSelf, didFire: event)
             } else {
-                try! strongSelf.stateMachine.fireEvent(strongSelf.currentEndEvent, userInfo: nil)
+                try? strongSelf.stateMachine.fireEvent(strongSelf.currentEndEvent, userInfo: nil)
             }
         }
         
         currentEndEvent.setDidFire { [weak self] (event, transition) in
-            guard let strongSelf = self, let currentEvent = strongSelf._currentEvent else { return }
-            strongSelf.delegate?.stateMachine(strongSelf, didEnd: currentEvent)
+            if let strongSelf = self,
+                let currentEvent = strongSelf._currentEvent {
+                strongSelf.delegate?.stateMachine(strongSelf, didEnd: currentEvent)
+            }
         }
         
         stateMachine.addState(idleState)
@@ -81,7 +83,7 @@ public class SRStateMachine {
         stateMachine.addEvent(watingEvent)
         stateMachine.addEvent(currentEndEvent)
         stateMachine.initialState = idleState
-        try! stateMachine.fireEvent(resetEvent, userInfo: nil)
+        try? stateMachine.fireEvent(resetEvent, userInfo: nil)
     }
     
     public func contains(_ event: SRKit.Event) -> Bool {
@@ -95,7 +97,7 @@ public class SRStateMachine {
         }
         objc_sync_exit(events)
         if stateMachine.currentState == idleState {
-            try! stateMachine.fireEvent(watingEvent, userInfo: nil)
+            try? stateMachine.fireEvent(watingEvent, userInfo: nil)
         }
     }
     
@@ -108,7 +110,7 @@ public class SRStateMachine {
         }
         objc_sync_exit(events)
         if stateMachine.currentState == idleState {
-            try! stateMachine.fireEvent(watingEvent, userInfo: nil)
+            try? stateMachine.fireEvent(watingEvent, userInfo: nil)
         }
     }
     
@@ -121,7 +123,7 @@ public class SRStateMachine {
     }
     
     public func endCurrentEvent() {
-        try! stateMachine.fireEvent(currentEndEvent, userInfo: nil)
+        try? stateMachine.fireEvent(currentEndEvent, userInfo: nil)
     }
     
     public func end(_ event: SRKit.Event) {

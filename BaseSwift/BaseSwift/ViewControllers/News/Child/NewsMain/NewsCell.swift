@@ -39,32 +39,32 @@ class NewsCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    //MARK: - 业务处理
-    
-    public func update(_ model: SinaNewsModel) {
-        let image = NonNull.string(model.image)
-        //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
-        if isEmptyString(image)
-            || (Config.shared.isOnlyShowImageInWLAN
-                && HttpManager.shared.networkStatus != .reachable(.ethernetOrWiFi)) {
-            headerImageWidthConstraint.constant = 0
-            playImageView.isHidden = true
-        } else {
-            headerImageWidthConstraint.constant = Const.headerImageWidthShowing
-            headerImageView.sd_setImage(with: URL(string: image),
-                                        placeholderImage: Config.Resource.defaultImage(.min))
-            playImageView.isHidden = model.mediaType != .video
+    var model: SinaNewsModel! {
+        didSet {
+            let image = NonNull.string(model.image)
+            //服务器没返回图片或者只在WILAN下显示图片设置已打开并且当前网络状态在非WILAN下
+            if isEmptyString(image)
+                || (Config.shared.isOnlyShowImageInWLAN
+                    && HttpManager.shared.networkStatus != .reachable(.ethernetOrWiFi)) {
+                headerImageWidthConstraint.constant = 0
+                playImageView.isHidden = true
+            } else {
+                headerImageWidthConstraint.constant = Const.headerImageWidthShowing
+                headerImageView.sd_setImage(with: URL(string: image),
+                                            placeholderImage: Config.Resource.defaultImage(.min))
+                playImageView.isHidden = model.mediaType != .video
+            }
+            titleLabel.attributedText = NSAttributedString(string: NonNull.string(model.title))
+            var source: String?
+            if !isEmptyString(model.date) {
+                source = model.date
+            }
+            if !isEmptyString(model.source) {
+                source = source != nil ? source! + " " + model.source! : model.source
+            }
+            sourceLabel.text = source
+            let comment = NonNull.number(model.comment).intValue
+            commentLabel.text = C.isZhHans ? comment.tenThousands(2) : comment.thousands(2)
         }
-        titleLabel.attributedText = NSAttributedString(string: NonNull.string(model.title))
-        var source: String?
-        if !isEmptyString(model.date) {
-            source = model.date
-        }
-        if !isEmptyString(model.source) {
-            source = source != nil ? source! + " " + model.source! : model.source
-        }
-        sourceLabel.text = source
-        let comment = NonNull.number(model.comment).intValue
-        commentLabel.text = isZhHans ? comment.tenThousands(2) : comment.thousands(2)
     }
 }

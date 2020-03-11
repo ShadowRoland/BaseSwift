@@ -103,11 +103,11 @@ class ContactCell: UITableViewCell {
                                           placeholderImage: headPortrait,
                                           options: [],
                                           completed:
-            { [weak headPortraitImageView] (image, error, cacheType, url) in
+            { [weak self] (image, error, cacheType, url) in
                 if error != nil {
                     return
                 }
-                headPortraitImageView?.contentMode = .scaleAspectFit
+                self?.headPortraitImageView.contentMode = .scaleAspectFit
         })
         
         if !isEmptyString(model.remarkName) {

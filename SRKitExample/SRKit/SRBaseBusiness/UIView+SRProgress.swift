@@ -35,10 +35,12 @@ extension UIView {
         
         public weak var decorator: UIView?
         
+        #if DEBUG
         deinit {
             LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
         }
-        
+        #endif
+
         fileprivate struct AssociatedKeys {
             static var progress = "UIView.SRProgressComponent.progress"
         }
@@ -177,7 +179,7 @@ public protocol SRProgressProtocol: class {
     func showProgress(_ options: [UIView.SRProgressComponent.Option]?)
     func dismissProgress(_ animated: Bool)
     var isShowingProgress: Bool { get }
-    func resetProgressPosition()
+    //func resetProgressPosition()
 }
 
 extension SRProgressProtocol where Self: UIView {
@@ -205,9 +207,9 @@ extension SRProgressProtocol where Self: UIView {
         return progressComponent.isShowing
     }
     
-    public func resetProgressPosition() {
-        progressComponent.resetPosition()
-    }
+    //public func resetProgressPosition() {
+    //    progressComponent.resetPosition()
+    //}
 }
 
 extension UIView: SRProgressProtocol {

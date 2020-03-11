@@ -216,6 +216,18 @@
 "Select %@" = "选择%@";
 "Profile items data cannot be saved!" = "个人资料无法被保存";
 
+//MARK: - Debug
+
+"Server Configurations" = "服务器配置";
+"Display or modify the current server configurations" = "展示或修改当前的服务器配置";
+"Built-in Http Service" = "内置HTTP服务";
+"Display the built-in HTTP service of the application, and you can configure relevant parameters" = "展示应用内置的HTTP服务，可进行配置相关参数";
+"Debug Tools" = "调试工具";
+"Customized debug tools" = "定制的调试工具";
+"User Information" = "用户信息";
+"Display the currently logged in user information and copy it to the system clipboard" = "展示当前已登录的用户信息，并复制到系统剪贴板";
+"Not logged in" = "未登录";
+
 //MARK: - Main
 
 "Simple" = "简易";
@@ -226,7 +238,6 @@
 "See Ad.(%d)" = "看看广告(%d)";
 "List" = "列表";
 "Find" = "发现";
-"Server Configuration" = "服务器配置";
 
 //MARK: - Simple
 

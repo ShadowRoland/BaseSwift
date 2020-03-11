@@ -43,7 +43,7 @@ class MainMenuViewController: BaseViewController {
         currentChildVC = latestVC
         title = "Latest".localized
         latestVC.backToTopButtonBottomConstraint.constant = 0
-        latestVC.loadData(progressType: .clearMask)
+        latestVC.getDataArray(progressType: .clearMask)
         
         if UserStandard[UDKey.showAdvertisingGuide] != nil {
             UserStandard[UDKey.showAdvertisingGuide] = nil
@@ -164,42 +164,42 @@ class MainMenuViewController: BaseViewController {
                     strongSelf.navigationController?.isNavigationBarHidden = true
                     if let vc = strongSelf.hottestVC.currentNewsListVC, !vc.isTouched {
                         vc.backToTopButtonBottomConstraint.constant = 0
-                        vc.loadData(progressType: .clearMask)
+                        vc.getDataArray(progressType: .clearMask)
                     }
                 } else if strongSelf.currentChildVC === strongSelf.latestVC {
                     strongSelf.navigationController?.isNavigationBarHidden = false
                     strongSelf.title = "Latest".localized
                     if !strongSelf.latestVC.isTouched {
                         strongSelf.latestVC.backToTopButtonBottomConstraint.constant = 0
-                        strongSelf.latestVC.loadData(progressType: .clearMask)
+                        strongSelf.latestVC.getDataArray(progressType: .clearMask)
                     }
                 } else if strongSelf.currentChildVC === strongSelf.jokersVC {
                     strongSelf.navigationController?.isNavigationBarHidden = false
                     strongSelf.title = "Jokers".localized
                     if !strongSelf.jokersVC.isTouched {
                         strongSelf.jokersVC.backToTopButtonBottomConstraint.constant = 0
-                        strongSelf.jokersVC.loadData(progressType: .clearMask)
+                        strongSelf.jokersVC.getDataArray(progressType: .clearMask)
                     }
                 } else  if strongSelf.currentChildVC === strongSelf.videosVC {
                     strongSelf.navigationController?.isNavigationBarHidden = false
                     strongSelf.title = "Videos".localized
                     if !strongSelf.videosVC.isTouched {
                         strongSelf.videosVC.backToTopButtonBottomConstraint.constant = 0
-                        strongSelf.videosVC.loadData(progressType: .clearMask)
+                        strongSelf.videosVC.getDataArray(progressType: .clearMask)
                     }
                 } else if strongSelf.currentChildVC === strongSelf.picturesVC {
                     strongSelf.navigationController?.isNavigationBarHidden = false
                     strongSelf.title = "Pictures".localized
                     if !strongSelf.picturesVC.isTouched {
                         strongSelf.picturesVC.backToTopButtonBottomConstraint.constant = 0
-                        strongSelf.picturesVC.loadData(progressType: .clearMask)
+                        strongSelf.picturesVC.getDataArray(progressType: .clearMask)
                     }
                 } else if strongSelf.currentChildVC === strongSelf.favoritesVC {
                     strongSelf.navigationController?.isNavigationBarHidden = false
                     strongSelf.title = "Favorites".localized
                     if !strongSelf.favoritesVC.isTouched {
                         strongSelf.favoritesVC.backToTopButtonBottomConstraint.constant = 0
-                        strongSelf.favoritesVC.loadData(progressType: .clearMask)
+                        strongSelf.favoritesVC.getDataArray(progressType: .clearMask)
                     }
                 }
         })
@@ -267,83 +267,6 @@ class MainMenuViewController: BaseViewController {
 //MARK: - NewsListDelegate
 
 extension MainMenuViewController: NewsListDelegate {
-    //使用第三方新闻客户端的请求参数
-    func getNewsList(_ isNextPage: Bool, sendVC: NewsListViewController) {
-        var params = sendVC.params
-        let time = CLongLong(Date().timeIntervalSince1970 * 1000)
-        params["t"] = String(longLong: time)
-        params["_"] = String(longLong: time + 2)
-        params["show_num"] = "10"
-        params["act"] = isNextPage ? "more" : "new"
-        let offset = isNextPage ? sendVC.currentOffset + 1 : 0
-        params["page"] = String(int: offset + 1)
-        var sendChildVC: String?
-        if let parentVC = sendVC.parentVC {
-            sendChildVC = String(pointer: parentVC)
-        }
-        let sendNewsListVC = String(pointer: sendVC)
-        httpRequest(.get("http://interface.sina.cn/ent/feed.d.json", params), success: { [weak self] response in
-            guard let strongSelf = self,
-                let vc = strongSelf.sendNewsListVC(sendChildVC,
-                                                   sendNewsListVC: sendNewsListVC) else {
-                                                    return
-            }
-            
-            if isNextPage {
-                let offset = params[Param.Key.offset] as! Int
-                if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
-                    vc.updateMore(NonNull.dictionary(response))
-                }
-            } else {
-                vc.updateNew(NonNull.dictionary(response))
-            }
-            }, bfail: { [weak self] (method, response) in
-                guard let strongSelf = self,
-                    let vc = strongSelf.sendNewsListVC(sendChildVC,
-                                                       sendNewsListVC: sendNewsListVC) else {
-                                                        return
-                }
-                
-                if isNextPage {
-                    let offset = params[Param.Key.offset] as! Int
-                    if offset == vc.currentOffset + 1 {
-                        return
-                    }
-                } else {
-                    if !vc.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
-                        vc.updateNew(nil)
-                    } else { //当前为空的话则交给列表展示错误信息
-                        vc.updateNew(nil, errMsg: strongSelf.logBFail(method,
-                                                                      response: response,
-                                                                      show: false))
-                    }
-                }
-            }, fail: { [weak self] (_, error) in
-                guard let strongSelf = self,
-                    let vc = strongSelf.sendNewsListVC(sendChildVC,
-                                                       sendNewsListVC: sendNewsListVC) else {
-                                                        return
-                }
-                
-                if isNextPage {
-                    let offset = params[Param.Key.offset] as! Int
-                    if offset == vc.currentOffset + 1 {
-                        if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
-                            vc.updateMore(nil)
-                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                            vc.updateMore(nil, errMsg: error.errorDescription)
-                        }
-                    }
-                } else {
-                    if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
-                        vc.updateNew(nil)
-                    } else { //当前为空的话则交给列表展示错误信息
-                        vc.updateNew(nil, errMsg: error.errorDescription)
-                    }
-                }
-        })
-    }
-    
     func newsListVC(_ newsListVC: NewsListViewController, didSelect model: SinaNewsModel) {
         showWebpage(URL(string: NonNull.string(model.link))!, title: "News".localized)
     }

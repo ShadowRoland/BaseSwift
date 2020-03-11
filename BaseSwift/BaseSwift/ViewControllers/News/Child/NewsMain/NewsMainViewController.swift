@@ -73,11 +73,15 @@ SRTabHeaderDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    //MARK: - Autorotate Orientation
+    fileprivate var lastLayoutSize: CGSize?
+    override func viewDidLayoutSubviews() {
+        if view.frame.size != lastLayoutSize {
+            lastLayoutSize = view.frame.size
+            layout()
+        }
+    }
     
-    override func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
-        super.deviceOrientationDidChange(sender)
-        
+    func layout() {
         tabScrollHeader.layout()
         if let vc = currentNewsListVC, let channelId = vc.channelId {
             layoutNewsListVCs(channelId)
@@ -99,11 +103,18 @@ SRTabHeaderDelegate {
         }
     }
     
+    //MARK: - Autorotate Orientation
+    
+    override func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
+        super.deviceOrientationDidChange(sender)
+        layout()
+    }
+    
     //MARK: - 视图初始化
     
     struct Const {
         static let tabScrollHeaderHeight = 40.0 as CGFloat
-        static let channelCollectionViewMarginHorizontal = SubviewMargin
+        static let channelCollectionViewMarginHorizontal = C.subviewMargin
         static let channelLabelMarginHorizontal = 12.0 as CGFloat
         static let channelLabelMarginVertical = 8.0 as CGFloat
         static let channelLabelFont = UIFont.system(15.0)
@@ -188,19 +199,19 @@ SRTabHeaderDelegate {
     }
     
     func initChannels() {
-        let dictionary: [AnyHashable : Any]?
+        let dictionary: AnyDictionary?
         if let newsChannels = UserStandard[UDKey.newsChannels] {
-            dictionary = newsChannels as? [AnyHashable : Any]
+            dictionary = newsChannels as? AnyDictionary
         } else {
-            let filePath = ResourceDirectory.appending(pathComponent: "json/debug/channels.json")
-            dictionary = filePath.fileJsonObject as! [AnyHashable : Any]?
+            let filePath = C.resourceDirectory.appending(pathComponent: "json/debug/channels.json")
+            dictionary = filePath.fileJsonObject as! AnyDictionary?
         }
         
         unselectedChannels = channelModels(NonNull.array(dictionary?["unselected"]))
         selectedChannels = channelModels(NonNull.array(dictionary?["selected"]))
     }
     
-    func channelModels(_ dictionarys: [Any]) -> [ChannelModel] {
+    func channelModels(_ dictionarys: AnyArray) -> [ChannelModel] {
         return dictionarys.compactMap {
             guard let dictionary = $0 as? ParamDictionary,
                 let channel = ChannelModel(JSON:dictionary) else {
@@ -210,7 +221,7 @@ SRTabHeaderDelegate {
             var width = (channel.name ?? "").textSize(Const.channelLabelFont,
                                                       maxHeight: Const.channelLabelFont.lineHeight).width
             width = max(Const.channelLabelFont.lineHeight, ceil(width))
-            width = min(screenSize().width - Const.channelLabelTotalMarginHorizontal, width)
+            width = min(C.screenSize().width - Const.channelLabelTotalMarginHorizontal, width)
             channel.cellWidth = width + 2.0 * Const.channelLabelMarginHorizontal
             return channel
         }
@@ -337,7 +348,7 @@ SRTabHeaderDelegate {
                                    ScreenWidth,
                                    scrollView.height)
             vc.tableView.contentInset =
-                UIEdgeInsets(top: Const.tabScrollHeaderHeight, left: 0, bottom: TabBarHeight, right: 0)
+                UIEdgeInsets(top: Const.tabScrollHeaderHeight, left: 0, bottom: C.tabBarHeight(), right: 0)
             vc.contentInset = vc.tableView.contentInset
             if let channelId = vc.channelId, channelId == selectedChannelId {
                 selectedIndex = i
@@ -399,7 +410,7 @@ SRTabHeaderDelegate {
         UIView.animate(withDuration: Const.channelAnimationDuration, animations: { [weak self] in
             guard let strongSelf = self else { return }
             
-            strongSelf.parentVC?.tabBarBottomConstraint.constant = -TabBarHeight
+            strongSelf.parentVC?.tabBarBottomConstraint.constant = -C.tabBarHeight(IsLandscape)
             strongSelf.parentVC?.view.layoutIfNeeded()
             
             strongSelf.isEditViewAnimating = false
@@ -563,7 +574,7 @@ SRTabHeaderDelegate {
         if page == index {
             currentNewsListVC = newsListVCs[index]
             if !(currentNewsListVC?.isTouched)! {
-                currentNewsListVC?.loadData(progressType: .clearMask)
+                currentNewsListVC?.getDataArray(progressType: .clearMask)
             }
         } else {
             let animated = abs(page - index) == 1 //页数差为1，添加切换动画
@@ -574,7 +585,7 @@ SRTabHeaderDelegate {
                 currentNewsListVC = newsListVCs[index]
                 if !(currentNewsListVC?.isTouched)! {
                     DispatchQueue.main.async { [weak self] in
-                        self?.currentNewsListVC?.loadData(progressType: .clearMask)
+                        self?.currentNewsListVC?.getDataArray(progressType: .clearMask)
                     }
                 }
             }
@@ -595,7 +606,6 @@ SRTabHeaderDelegate {
         }
     }
     
-    //列表停止滑动后恢复图片下载
     func scrollViewDidEndDragging(_ scrollView: UIScrollView,
                                            willDecelerate decelerate: Bool) {
         if !decelerate {
@@ -607,17 +617,13 @@ SRTabHeaderDelegate {
         resetAfterScrollViewDidEndScroll(scrollView)
     }
     
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        resetAfterScrollViewDidEndScroll(scrollView)
-    }
-    
     func resetAfterScrollViewDidEndScroll(_ scrollView: UIScrollView) {
         let index = Int(scrollView.contentOffset.x / ScreenWidth)
         tabScrollHeader.activeTab(index, animated: true)
         currentNewsListVC = newsListVCs[index]
         if !(currentNewsListVC?.isTouched)! {
             DispatchQueue.main.async { [weak self] in
-                self?.currentNewsListVC?.loadData(progressType: .clearMask)
+                self?.currentNewsListVC?.getDataArray(progressType: .clearMask)
             }
         }
         isSilent = false
@@ -634,7 +640,7 @@ SRTabHeaderDelegate {
                         at indexPath: IndexPath) -> UICollectionReusableView {
         let header =
             collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                            withReuseIdentifier: ReuseIdentifier,
+                                                            withReuseIdentifier: C.reuseIdentifier,
                                                             for: indexPath) as! CollectionHeader
         if indexPath.section == 0 {
             header.titleLabel.text = "Current Channels".localized
@@ -659,7 +665,7 @@ SRTabHeaderDelegate {
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifier,
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: C.reuseIdentifier,
                                                       for: indexPath) as! ChannelCell
         if !cell.closeButton.allTargets.contains(self) {
             cell.closeButton.clicked(self, action: #selector(clickChannelCloseButton(_:)))
@@ -739,7 +745,7 @@ SRTabHeaderDelegate {
         if indexPath.row < channels.count {
             return CGSize(channels[indexPath.row].cellWidth, channels[indexPath.row].cellHeight)
         }
-        return CGSize(TableCellHeight, TableCellHeight) //必须提供一个默认值，不然若从不同section中拖拽一个cell，会crash
+        return CGSize(C.tableCellHeight, C.tableCellHeight) //必须提供一个默认值，不然若从不同section中拖拽一个cell，会crash
     }
     
     func collectionView(_ collectionView: UICollectionView,

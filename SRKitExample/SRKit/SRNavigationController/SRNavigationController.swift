@@ -13,9 +13,15 @@ import SwiftyJSON
 
 open class SRNavigationController: UINavigationController, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
     public struct DebugMenuItem {
-        public var title: String
-        public var description: String?
-        public var action: () -> Void
+        fileprivate var title: String
+        fileprivate var description: String?
+        fileprivate var action: () -> Void
+        
+        public init(_ title: String, description: String?, action: @escaping () -> Void) {
+            self.title = title
+            self.description = description
+            self.action = action
+        }
     }
     
     open var isPageSwipeEnabled = false {
@@ -74,12 +80,13 @@ open class SRNavigationController: UINavigationController, UIGestureRecognizerDe
         return gr
     }()
     
-    var _debugMenu: REMenu?
+    private var _debugMenu: REMenu?
     var debugMenu: REMenu {
         if _debugMenu == nil {
             _debugMenu = REMenu()
             _debugMenu!.textColor = .white
-            _debugMenu!.font = .title
+            _debugMenu!.subtitleTextColor = UIColor(white: 0.8)
+            _debugMenu!.font = C.Font.title
         }
         
         var items = [] as [DebugMenuItem]
@@ -108,9 +115,22 @@ open class SRNavigationController: UINavigationController, UIGestureRecognizerDe
     public static var defaultMenuItems: [DebugMenuItem]?
     
     @objc func handleLongPressed() {
-        guard !debugMenu.isOpen && !debugMenu.isAnimating else { return }
-        debugMenu.show(from: UIApplication.shared.keyWindow!.bounds,
-                       in: UIApplication.shared.keyWindow)
+        guard !debugMenu.isOpen && !debugMenu.isAnimating,
+            let viewController = topViewController else { return }
+        var y = 0 as CGFloat
+        if navigationBarType == .system {
+            if #available(iOS 11.0, *) {
+                y = viewController.view.safeAreaInsets.top
+            } else {
+                y = viewController.topLayoutGuide.length
+            }
+        } else if navigationBarType == .sr {
+            y = viewController.navigationBar.isHidden ? 0 : viewController.navigationBar.bottom
+        }
+        var rect = view.bounds
+        rect.origin.y = y
+        rect.size.height = rect.height - y
+        debugMenu.show(from: rect, in: view)
     }
     
     override open func viewDidLoad() {

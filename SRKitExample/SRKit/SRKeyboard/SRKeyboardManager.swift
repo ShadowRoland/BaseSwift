@@ -60,11 +60,11 @@ public final class SRKeyboardManager: NSObject {
                                                  from: aboveKeyboardView.superview).y)!
             viewHeight = min(viewHeight, aboveViewHeight)
         }
-        let offset = originViewFrame.origin.y - (viewController?.view.frame.origin.y)!  //计算viewController?.view的已偏移量
+        let offset = originViewFrame.minY - (viewController?.view.frame.minY)!  //计算viewController?.view的已偏移量
         viewHeight -= offset //计算出原先的高度
         let riseHeight = Keyboard.keyboardHeight - (viewHeight - 2.0)
         if riseHeight > 0
-            && viewController?.view.frame.origin.y != originViewFrame.origin.y - riseHeight {
+            && viewController?.view.frame.minY != originViewFrame.minY - riseHeight {
             isAnimating = true
             UIView.animate(withDuration: duration!, animations: { [weak self] in
                 self?.viewController?.view.frame =
@@ -74,7 +74,7 @@ public final class SRKeyboardManager: NSObject {
                     self?.riseView(duration)
             })
         } else if riseHeight <= 0
-            && viewController?.view.frame.origin.y != originViewFrame.origin.y {
+            && viewController?.view.frame.minY != originViewFrame.minY {
             isAnimating = true
             UIView.animate(withDuration: duration!, animations: { [weak self] in
                 self?.viewController?.view.frame = (self?.originViewFrame)!
@@ -87,7 +87,7 @@ public final class SRKeyboardManager: NSObject {
     
     public func fallView(_ duration: TimeInterval? = 0.5) {
         guard !isAnimating
-            && viewController?.view.frame.origin.y != originViewFrame.origin.y else {
+            && viewController?.view.frame.minY != originViewFrame.minY else {
                 return
         }
         

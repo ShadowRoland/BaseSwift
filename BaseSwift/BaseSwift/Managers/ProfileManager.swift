@@ -41,7 +41,7 @@ public class ProfileManager {
         if type == .officialAccount {
             pathComponent = "json/debug/official_accounts_contacts.json"
         }
-        let jsonFile = ResourceDirectory.appending(pathComponent: pathComponent)
+        let jsonFile = C.resourceDirectory.appending(pathComponent: pathComponent)
         return NonNull.array(jsonFile.fileJsonObject).compactMap {
             if let json = $0 as? ParamDictionary, let model = UserModel(JSON: json) {
                 return model

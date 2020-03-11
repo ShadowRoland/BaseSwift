@@ -105,7 +105,7 @@ class SettingViewController: BaseViewController {
         static let detailLabelTag = 101
         static var detailFont: UIFont!
         static let textLabelMarginVertical = 5.0 as CGFloat
-        static var cellHeight = TableCellHeight
+        static var cellHeight = C.tableCellHeight
     }
     
     //MARK: - 视图初始化
@@ -181,7 +181,7 @@ class SettingViewController: BaseViewController {
     func updateCellHeight() {
         Const.textFont = UIFont.preferred.body
         Const.detailFont = UIFont.preferred.subheadline
-        Const.cellHeight = max(TableCellHeight,
+        Const.cellHeight = max(C.tableCellHeight,
                                Const.textFont.lineHeight + 2.0 * Const.textLabelMarginVertical)
     }
     
@@ -311,12 +311,12 @@ class SettingViewController: BaseViewController {
     
     @objc func lockScreenSwitchValueChanged(_ sender: Any) {
         if lockScreenSwitch.isOn {
-            ShouldAutorotate = false
-            SupportedInterfaceOrientations = .portrait
+            C.shouldAutorotate = false
+            C.supportedInterfaceOrientations = .portrait
             UserStandard[UDKey.isFreeInterfaceOrientations] = nil
         } else {
-            ShouldAutorotate = true
-            SupportedInterfaceOrientations = .allButUpsideDown
+            C.shouldAutorotate = true
+            C.supportedInterfaceOrientations = .allButUpsideDown
             UserStandard[UDKey.isFreeInterfaceOrientations] = true
         }
     }
@@ -374,7 +374,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    heightForFooterInSection section: Int) -> CGFloat {
-        return section == 2 ? SectionHeaderGroupNoHeight : SectionHeaderHeight / 2.0
+        return section == 2 ? C.sectionHeaderGroupNoHeight : C.sectionHeaderHeight / 2.0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -410,10 +410,10 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         if clearCacheCell == tableView.cellForRow(at: indexPath) {
             clearCache()
         } else if helpCell == tableView.cellForRow(at: indexPath) {
-            let filePath = ResourceDirectory.appending(pathComponent: "html/help.html")
+            let filePath = C.resourceDirectory.appending(pathComponent: "html/help.html")
             showWebpage(URL(fileURLWithPath: filePath))
         } else if aboutCell == tableView.cellForRow(at: indexPath) {
-            let filePath = ResourceDirectory.appending(pathComponent: "html/about.html")
+            let filePath = C.resourceDirectory.appending(pathComponent: "html/about.html")
             showWebpage(URL(fileURLWithPath: filePath))
         }
     }

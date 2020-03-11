@@ -33,7 +33,7 @@ class ServerConfigViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         pageBackGestureStyle = .none
-        setDefaultNavigationBar("Server Configuration".localized)
+        setDefaultNavigationBar("Server Configurations".localized)
         initView()
     }
     
@@ -56,7 +56,7 @@ class ServerConfigViewController: BaseViewController {
         tableView.tableFooterView = UIView()
         
         let local = Env.local!
-        let envs = local["envs"] as! [Any]
+        let envs = local["envs"] as! AnyArray
         var current = min(local["current"] as! Int, envs.count)
         current = min(current, runEnvSC.numberOfSegments - 2)
         env = current >= 0 ? envs[current] as! ParamDictionary : Env.shared.toJSON()
@@ -115,7 +115,7 @@ class ServerConfigViewController: BaseViewController {
                     isJsonValueValid = (value as! NSNumber).doubleValue != 0
                     
                 case .array:
-                    isJsonValueValid = !(value as! [Any]).isEmpty
+                    isJsonValueValid = !(value as! AnyArray).isEmpty
                     
                 default:
                     break
@@ -261,7 +261,7 @@ class ServerConfigViewController: BaseViewController {
                     isEmpty = (item.value as! String).isEmpty
                     
                 case .array:
-                    isEmpty = (item.value as! [Any]).isEmpty
+                    isEmpty = (item.value as! AnyArray).isEmpty
                     
                 default:
                     break
@@ -285,7 +285,7 @@ class ServerConfigViewController: BaseViewController {
         
         let index = runEnvSC.selectedSegmentIndex
         var local = Env.local!
-        var envs = local["envs"] as! [Any]
+        var envs = local["envs"] as! AnyArray
         local["current"] = index
         envs[index] = env as Any
         UserStandard[UDKey.env] = local
@@ -300,7 +300,7 @@ class ServerConfigViewController: BaseViewController {
     
     @IBAction func runEnvChanged(_ sender: Any) {
         env = !isProduction
-            ? (Env.local!["envs"] as! [Any])[runEnvSC.selectedSegmentIndex] as! ParamDictionary
+            ? (Env.local!["envs"] as! AnyArray)[runEnvSC.selectedSegmentIndex] as! ParamDictionary
             : Env.shared.toJSON()
         initCells()
         tableView.reloadData()

@@ -2,35 +2,35 @@
 platform :ios, '9.0'
 
 ## Keychain，一般用于获取唯一设备标识
-pod 'KeychainSwift', '~> 14.0.0' # Required
+pod 'KeychainSwift', '~> 16.0.1' # Required
 
 ## Http
-pod 'Alamofire', '~> 4.8.2' # Required
+pod 'Alamofire', '~> 4.9.0' # Required
 
 ## 图片请求
-pod 'SDWebImage', '~> 5.0.0' # Optional 将会被其他的第三方库所依赖
+pod 'SDWebImage', '~> 5.1.1' # Optional 将会被其他的第三方库所依赖
 
 ## 日志系统
-pod 'CocoaLumberjack/Swift', '~> 3.5.2' # Required
+pod 'CocoaLumberjack/Swift', '~> 3.5.3' # Required
 
 ## 富文本
-pod 'DTCoreText', '~> 1.6.21' # Required
+pod 'DTCoreText', '~> 1.6.22' # Required
 
 ## 进度控件
 pod 'MBProgressHUD', '~> 1.1.0' # Required
 pod 'M13ProgressSuite', '~> 1.2.9' # Required
 
 ## 键盘管理
-pod 'IQKeyboardManagerSwift', '~> 6.2.1' # Required
+pod 'IQKeyboardManagerSwift', '~> 6.4.1' # Required
 
 ## 约束布局
-pod 'Cartography', '~> 3.1.0' # Required
+pod 'Cartography', '~> 4.0.0' # Required
 
 ## Json解析与封装
-pod 'SwiftyJSON', '~> 4.3.0' # Required
+pod 'SwiftyJSON', '~> 5.0.0' # Required
 
 ## Json与数据模型
-pod 'ObjectMapper', '~> 3.4.2'
+pod 'ObjectMapper', '~> 3.5.1'
 
 ## gzip压缩和解压缩
 pod 'GzipSwift', '~> 5.0.0' # Recommended, 可以精简http请求和返回的数据量
@@ -43,10 +43,10 @@ pod 'Toast', '~> 4.0.0' # Required
 #pod 'Toast-Swift', '~> 5.0.0' # Required
 
 ## 上下拉刷新数据的列表控件
-pod 'MJRefresh', '~> 3.1.16' # Required
+pod 'MJRefresh', '~> 3.2.0' # Required
 
 ## 在iOS下搭建web服务器
-pod 'GCDWebServer', '~> 3.5.2' # Optional
+pod 'GCDWebServer', '~> 3.5.3' # Optional
 
 ## 状态机
 pod 'TransitionKit', '~> 2.2.1' # Optional
@@ -59,7 +59,7 @@ pod 'Popover', '~> 1.2.2' # Optional
 pod 'REMenu', '~> 1.10' # Optional
 
 ## 电话号码查询
-pod 'libPhoneNumber-iOS', '~> 0.9.13'
+pod 'libPhoneNumber-iOS', '~> 0.9.15'
 
 target 'SRKitExample' do
   # Comment the next line if you don't want to use dynamic frameworks

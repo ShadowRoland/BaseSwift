@@ -61,7 +61,7 @@ class ForgetPasswordViewController: BaseViewController {
         let againTitle = String(format: "Get again (%d)".localized, Const.verifyInterval)
         let title = getTitle.count > againTitle.count ? getTitle : againTitle
         let width = title.textSize(verifyButton.titleLabel!.font,
-                                   maxWidth: ScreenWidth - SubviewMargin).width
+                                   maxWidth: ScreenWidth - C.subviewMargin).width
         verifyWidthConstraint.constant = ceil(width) + 2.0 * Const.verifyButtonMargin
         return cell
     }()
@@ -201,9 +201,9 @@ class ForgetPasswordViewController: BaseViewController {
         isGettingVerifyCode = true
         changeVerifyButton(checkVerifyButtonEnabled())
         httpRequest(.get("getVerificationCode",
-                         [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
-                          Param.Key.phone : phoneTextField.text!,
-                          Param.Key.type : VerificationCodeType.login.rawValue]),
+                         params: [Param.Key.countryCode : Int(countryCodeLabel.text!)!,
+                                  Param.Key.phone : phoneTextField.text!,
+                                  Param.Key.type : VerificationCodeType.login.rawValue]),
                     success:
             { [weak self] response in
                 guard let strongSelf = self else { return }
@@ -214,18 +214,12 @@ class ForgetPasswordViewController: BaseViewController {
                     strongSelf.verifyTextField.text = String(object: code.rawValue as AnyObject)
                     strongSelf.submitButton.set(submit: strongSelf.checkSubmitButtonEnabled())
                 }
-            }, bfail: { [weak self] (url, response) in
+            }) { [weak self] failure in
                 guard let strongSelf = self else { return }
                 strongSelf.isGettingVerifyCode = false
                 strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
-                SRAlert.showToast(strongSelf.logBFail(url,
-                                                     response: response,
-                                                     show: false))
-            }, fail: { [weak self] (_, error) in
-                guard let strongSelf = self else { return }
-                strongSelf.isGettingVerifyCode = false
-                strongSelf.changeVerifyButton(strongSelf.checkVerifyButtonEnabled())
-        })
+                SRAlert.showToast(failure.errorMessage)
+            }
     }
     
     func clickSubmitButton(_ sender: Any) {

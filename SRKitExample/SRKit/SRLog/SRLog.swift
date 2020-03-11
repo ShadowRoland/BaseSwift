@@ -49,7 +49,7 @@ public class SRLog {
     public var directory: String {
         get {
             if !_directory.isEmpty {
-                return DocumentsDirectory.appending(pathComponent: _directory)
+                return C.documentsDirectory.appending(pathComponent: _directory)
             } else {
                 return logger.logFileManager.logsDirectory
             }

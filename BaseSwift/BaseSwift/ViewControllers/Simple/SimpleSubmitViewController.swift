@@ -27,7 +27,7 @@ class SimpleSubmitViewController: BaseViewController {
         setDefaultNavigationBar("Submit".localized)
         pageBackGestureStyle = .none
         initView()
-        setLoadDataFail(.get("data/getSimpleData", nil)) { [weak self] in
+        setLoadDataFail(.get("data/getSimpleData")) { [weak self] in
             self?.showProgress()
             self?.getSimpleData()
         }
@@ -42,7 +42,8 @@ class SimpleSubmitViewController: BaseViewController {
     //MARK: - 视图初始化
     
     func initView() {
-        cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier)
+        tableView.isHidden = true
+        cell = tableView.dequeueReusableCell(withIdentifier: C.reuseIdentifier)
         textField = cell.contentView.viewWithTag(101) as? UITextField
         placeholderTextField = cell.contentView.viewWithTag(100) as? UITextField
         textField.delegate = self
@@ -59,8 +60,9 @@ class SimpleSubmitViewController: BaseViewController {
     
     func getSimpleData() {
         showProgress()
-        httpRequest(.get("data/getSimpleData", nil), success: { [weak self] response in
+        httpRequest(.get("data/getSimpleData"), success: { [weak self] response in
             guard let strongSelf = self else { return }
+            strongSelf.tableView.isHidden = false
             strongSelf.dismissProgress()
             strongSelf.placeholderTextField.text =
                 (response as! JSON)[HTTP.Key.Response.data][Param.Key.title].string
@@ -71,7 +73,7 @@ class SimpleSubmitViewController: BaseViewController {
     
     func simpleSubmit() {
         showProgress(.translucence)
-        httpRequest(.post("data/simpleSubmit", nil), success: { [weak self] response in
+        httpRequest(.post("data/simpleSubmit"), success: { [weak self] response in
             guard let strongSelf = self else { return }
             strongSelf.dismissProgress()
             SRAlert.show(message: "Winner Winner, Chicken Dinner!".localized)

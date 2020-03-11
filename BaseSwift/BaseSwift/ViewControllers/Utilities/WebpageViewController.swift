@@ -18,9 +18,24 @@ SRShareToolDelegate {
     private(set) var url: URL?
     private(set) var currentUrl: URL?
     
-    private var webView: WKWebView!
-    private var progressView: M13ProgressViewBar!
-    private var canGoBack = false
+    lazy var webView: WKWebView = {
+        let webView = WKWebView()
+        view.addSubview(webView)
+        constrain(webView) { $0.edges == inset($0.superview!.edges, 0) }
+        webView.navigationDelegate = self
+        webView.uiDelegate = self
+        webView.addObserver(self, forKeyPath:"estimatedProgress", options:.new, context: nil)
+        webView.addObserver(self, forKeyPath:"title", options:.new, context:nil)
+        return webView
+    }()
+    lazy var progressView: M13ProgressViewBar = {
+        let progressView = M13ProgressViewBar()
+        progressView.showPercentage = false
+        progressView.progressBarThickness = 3.0
+        view.addSubview(progressView)
+        return progressView
+    }()
+    var canGoBack = false
     
     override public func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +44,6 @@ SRShareToolDelegate {
         setDefaultNavigationBar("Loading ...".localized)
         setNavigationBarLeftButtonItems()
         setNavigationBarRightButtonItems()
-        initView()
         reload()
     }
     
@@ -48,21 +62,6 @@ SRShareToolDelegate {
     }
     
     //MARK: - 视图初始化
-    
-    func initView() {
-        webView = WKWebView()
-        view.addSubview(webView)
-        constrain(webView) { $0.edges == inset($0.superview!.edges, 0) }
-        webView.navigationDelegate = self
-        webView.uiDelegate = self
-        webView.addObserver(self, forKeyPath:"estimatedProgress", options:.new, context: nil)
-        webView.addObserver(self, forKeyPath:"title", options:.new, context:nil)
-        
-        progressView = M13ProgressViewBar()
-        progressView.showPercentage = false
-        progressView.progressBarThickness = 3.0
-        view.addSubview(progressView)
-    }
     
     func setNavigationBarLeftButtonItems() {
         let back = canGoBack ? "page_back" : "close_left"

@@ -19,7 +19,7 @@ class SingleContactViewController: BaseViewController {
         
         tableView.separatorInset =
             UIEdgeInsets(top: 0, left: ContactCell.headPortraitMargin, bottom: 0, right: 0)
-        tableView.contentInset = UIEdgeInsets(0, 0, TabBarHeight, 0)
+        tableView.contentInset = UIEdgeInsets(0, 0, C.tabBarHeight(), 0)
         tableView.tableFooterView = UIView()
         ContactCell.updateCellHeight()
     }
@@ -188,9 +188,9 @@ extension SingleContactViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell =
-            tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier) as? ContactCell
+            tableView.dequeueReusableCell(withIdentifier: C.reuseIdentifier) as? ContactCell
         if cell == nil {
-            cell = ContactCell(style: .default, reuseIdentifier: ReuseIdentifier)
+            cell = ContactCell(style: .default, reuseIdentifier: C.reuseIdentifier)
             cell?.contactType = .single
             cell?.initView()
         }

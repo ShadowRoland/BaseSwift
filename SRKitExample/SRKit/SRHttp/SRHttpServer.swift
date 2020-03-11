@@ -61,45 +61,45 @@ open class SRHttpServer {
     open var responseResult: GCDWebServerResponseResult? //为nil时按正常流程返回，否则强制设置网络返回的结果
     
     public struct GCDWebServerResponseResult: RawRepresentable {
-        public typealias RawValue = BFResult<Any>
-        public var rawValue: BFResult<Any>
+        public typealias RawValue = SRHTTP.Result<Any>
+        public var rawValue: SRHTTP.Result<Any>
         public var description: String?
-        public var result: BFResult<Any> { return rawValue }
+        public var result: SRHTTP.Result<Any> { return rawValue }
         
-        public init(rawValue: BFResult<Any>) {
+        public init(rawValue: SRHTTP.Result<Any>) {
             self.rawValue = rawValue
         }
         
-        public init(_ rawValue: BFResult<Any>, description: String?) {
+        public init(_ rawValue: SRHTTP.Result<Any>, description: String?) {
             self.init(rawValue: rawValue)
             self.description = description
         }
         
         public static let success =
             GCDWebServerResponseResult(.success(nil), description: "[SRHttpServer]Allways success".srLocalized)
-        public static var bfail =
-            GCDWebServerResponseResult(.bfailure([HTTP.Key.Response.errorCode : -1,
-                                                  HTTP.Key.Response.errorMessage : "[SRHttpServer]Business fail"]),
+        public static var failure =
+            GCDWebServerResponseResult(.failure(.business([SRHTTP.Key.Response.code : -1,
+                                                           SRHTTP.Key.Response.message : "[SRHttpServer]Business fail".srLocalized])),
                                        description: "[SRHttpServer]Allways business fail".srLocalized)
-        public static var fail =
-            GCDWebServerResponseResult(.failure(BFError.http(.other("Server boom shakalaka".srLocalized))),
+        public static let error =
+            GCDWebServerResponseResult(.failure(.http(.init("Server boom shakalaka".srLocalized, code: GCDWebServerServerErrorHTTPStatusCode.httpStatusCode_InternalServerError.rawValue))),
                                        description: "[SRHttpServer]Allways http fail".srLocalized)
     }
     
-    open var responseTimeInterval: GCDWebServerResponseTimeInterval = .normal
+    open var responseSpeed: GCDWebServerResponseSpeed = .normal
     
-    public struct GCDWebServerResponseTimeInterval: RawRepresentable {
+    public struct GCDWebServerResponseSpeed: RawRepresentable {
         public typealias RawValue = TimeInterval
         public var rawValue: TimeInterval
-        public var _description: String?
+        private var _description: String?
         public var description: String {
-            var string = "\(interval)" + "[SRHttpServer]second".srLocalized + "\(interval > 1 ? "[SRHttpServer]s".srLocalized : "")".srLocalized
+            var string = "\(timeInterval)" + "[SRHttpServer]second".srLocalized + "\(timeInterval > 1 ? "[SRHttpServer]s".srLocalized : "")"
             if !isEmptyString(_description) {
-                string = _description!.srLocalized + " (\(string))"
+                string = _description! + " (\(string))"
             }
             return string
         }
-        public var interval: TimeInterval { return rawValue }
+        public var timeInterval: TimeInterval { return rawValue }
         
         public init(rawValue: TimeInterval) {
             self.rawValue = rawValue
@@ -110,11 +110,11 @@ open class SRHttpServer {
             _description = description
         }
         
-        public static let immediately = GCDWebServerResponseTimeInterval(0, description: "[SRHttpServer]No delay")
-        public static var speediness = GCDWebServerResponseTimeInterval(0.3, description: "[SRHttpServer]Fast")
-        public static var normal = GCDWebServerResponseTimeInterval(1, description: "[SRHttpServer]Normal")
-        public static var long = GCDWebServerResponseTimeInterval(10, description: "[SRHttpServer]Long")
-        public static var timeout = GCDWebServerResponseTimeInterval(10, description: "[SRHttpServer]Timeout")
+        public static let immediately = GCDWebServerResponseSpeed(0, description: "[SRHttpServer]No delay".srLocalized)
+        public static var rapid = GCDWebServerResponseSpeed(0.3, description: "[SRHttpServer]Fast".srLocalized)
+        public static var normal = GCDWebServerResponseSpeed(1, description: "[SRHttpServer]Normal".srLocalized)
+        public static var long = GCDWebServerResponseSpeed(10, description: "[SRHttpServer]Long".srLocalized)
+        public static var timeout = GCDWebServerResponseSpeed(10, description: "[SRHttpServer]Timeout".srLocalized)
     }
     
     public struct Const {
@@ -123,27 +123,100 @@ open class SRHttpServer {
     }
     
     open func response(_ result: BFResult<Any>) -> GCDWebServerResponse? {
-        if responseTimeInterval.interval > 0 {
-            usleep(useconds_t(responseTimeInterval.interval * 1000000))
+        if responseSpeed.timeInterval > 0 {
+            usleep(useconds_t(responseSpeed.timeInterval * 1000000))
         }
         
         if let responseResult = responseResult {
-            if responseResult.result.isSuccess {
-                let r = result.isSuccess ? result : responseResult.result
-                return GCDWebServerDataResponse(jsonObject: r.gcdWebServerResponse)
-            } else if responseResult.result.isBFailure {
-                let r = result.isBFailure ? result : responseResult.result
-                return GCDWebServerDataResponse(jsonObject: r.gcdWebServerResponse)
-            } else if responseResult.result.isFailure {
-                let r = result.isFailure ? result : responseResult.result
-                let message = r.error?.localizedDescription ?? "Invalid request"
-                return
-                    GCDWebServerErrorResponse.responseWithServerError(.httpStatusCode_InternalServerError,
-                                                                      message)
+            switch responseResult.result {
+            case .success:
+                return GCDWebServerDataResponse(jsonObject: result.isSuccess ? jsonObjectWithBFResult(result) : jsonObjectWithHTTPResult(responseResult.result))
+                
+            case .failure(let failure):
+                switch failure {
+                case .business:
+                    return GCDWebServerDataResponse(jsonObject: !result.isSuccess ? jsonObjectWithBFResult(result) : jsonObjectWithHTTPResult(responseResult.result))
+                    
+                case .http:
+                    let statusCode = GCDWebServerServerErrorHTTPStatusCode.httpStatusCode_InternalServerError.rawValue
+                    let title = "HTTP Error \(statusCode)/"
+                    let message = "Server booooooooooom!"
+                    let response = GCDWebServerErrorResponse(html: "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>\(title)/</title></head><body><h1>\(message)/</h1><h3></h3></body></html>")
+                    response?.statusCode = statusCode
+                    return response!
+                }
             }
         }
         
-        return GCDWebServerDataResponse(jsonObject: result.gcdWebServerResponse)
+        return GCDWebServerDataResponse(jsonObject: jsonObjectWithBFResult(result))
+    }
+    
+    open func jsonObjectWithBFResult(_ result: BFResult<Any>) -> ParamDictionary {
+        var dictionary: ParamDictionary = [Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
+        switch result {
+        case .success(let value):
+            dictionary[SRHTTP.Key.Response.code] = SRHTTP.Code.Response.success
+            dictionary[SRHTTP.Key.Response.message] = "[SRHttpServer]The request completed successfully".srLocalized
+            if let code = value as? Int {
+                dictionary[SRHTTP.Key.Response.code] = code
+            } else if let message = value as? String {
+                dictionary[SRHTTP.Key.Response.message] = message
+            } else if let respondDictionary = value as? ParamDictionary {
+                if let code = respondDictionary[SRHTTP.Key.Response.code] as? Int {
+                    dictionary[SRHTTP.Key.Response.code] = code
+                }
+                if let message = respondDictionary[SRHTTP.Key.Response.message] as? String {
+                    dictionary[SRHTTP.Key.Response.message] = message
+                }
+            }
+            dictionary[SRHTTP.Key.Response.data] = NonNull.dictionary(value)
+            
+        case .failure(let error):
+            dictionary[SRHTTP.Key.Response.code] = error.errorCode
+            if let errorDescription = error.errorDescription {
+                dictionary[SRHTTP.Key.Response.message] = errorDescription
+            } else {
+                dictionary[SRHTTP.Key.Response.message] = "[SRHttpServer]The request failed with business".srLocalized
+            }
+        }
+        
+        return dictionary
+    }
+    
+    open func jsonObjectWithHTTPResult(_ result: SRHTTP.Result<Any>) -> ParamDictionary {
+        var dictionary: ParamDictionary = [Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
+        dictionary[SRHTTP.Key.Response.code] = SRHTTP.Code.Response.success
+        switch result {
+        case .success(let value):
+            dictionary[SRHTTP.Key.Response.message] = "[SRHttpServer]The request completed successfully".srLocalized
+            if let code = value as? Int {
+                dictionary[SRHTTP.Key.Response.code] = code
+            } else if let message = value as? String {
+                dictionary[SRHTTP.Key.Response.message] = message
+            } else if let respondDictionary = value as? ParamDictionary {
+                dictionary += respondDictionary
+            }
+            dictionary[SRHTTP.Key.Response.data] = NonNull.dictionary(value)
+            
+        case .failure(let failure):
+            switch failure {
+            case .business(let value):
+                dictionary[SRHTTP.Key.Response.code] = SRHTTP.Code.Response.success + 1
+                dictionary[SRHTTP.Key.Response.message] = "[SRHttpServer]The request failed with business".srLocalized
+                if let errorCode = value as? Int {
+                    dictionary[SRHTTP.Key.Response.code] = errorCode
+                } else if let errorMessage = value as? String {
+                    dictionary[SRHTTP.Key.Response.message] = errorMessage
+                } else if let respondDictionary = value as? ParamDictionary {
+                    dictionary += respondDictionary
+                }
+                dictionary[SRHTTP.Key.Response.data] = NonNull.dictionary(value)
+                
+            default: break
+            }
+            
+        }
+        return dictionary
     }
     
     //MARK: - Request Handler
@@ -155,7 +228,7 @@ open class SRHttpServer {
             if isEmptyString(path) {
                 var body = ""
                 if 0 == request.query?.count {//默认是访问手机的日志文件列表
-                    body = self.logFiles()
+                    body = logFiles()
                 } else {
                     if let index = request.query!["index"] {
                         if let length = request.query!["length"] {
@@ -172,7 +245,7 @@ open class SRHttpServer {
                 return getLocalHtml(request, path: path)
             }
         }
-        return  response(.failure(BFError.http(.other(nil))))
+        return nil
     }
     
     open func format(_ path: String?) -> String {
@@ -190,7 +263,7 @@ open class SRHttpServer {
         LogInfo("接收请求：获取所有的日志文件列表")
         
         var body = ""
-        var contents: [Any]?
+        var contents: AnyArray?
         do {
             try contents = FileManager.default.contentsOfDirectory(atPath: logsDirectory)
         } catch {
@@ -203,13 +276,13 @@ open class SRHttpServer {
         
         body.append("<h2>日志文件列表</h2>")
         body.append("<ul>")
-        var sortedContents: [Any]? = contents?.sorted(by: { (obj1, obj2) -> Bool in
+        let sortedContents: AnyArray? = contents?.sorted(by: { (obj1, obj2) -> Bool in
             let path1 = logsDirectory.appending(pathComponent: obj1 as? String)
-            var properties1 = try! FileManager.default.attributesOfItem(atPath: path1)
+            let properties1 = try! FileManager.default.attributesOfItem(atPath: path1)
             let date1 = properties1[FileAttributeKey.modificationDate] as! Date
             
             let path2 = logsDirectory.appending(pathComponent: obj2 as? String)
-            var properties2 = try! FileManager.default.attributesOfItem(atPath: path2)
+            let properties2 = try! FileManager.default.attributesOfItem(atPath: path2)
             let date2 = properties2[FileAttributeKey.modificationDate] as! Date
             
             return date2.compare(date1) == .orderedAscending
@@ -233,7 +306,7 @@ open class SRHttpServer {
         }
         
         var body = ""
-        var contents: [Any]?
+        var contents: AnyArray?
         do {
             try contents = FileManager.default.contentsOfDirectory(atPath: logsDirectory)
         } catch {
@@ -244,13 +317,13 @@ open class SRHttpServer {
             return body.appending("<h2>无法获取日志文件，请刷新日志文件列表</h2>")
         }
         
-        var sortedContents: [Any]? = contents?.sorted(by: { (obj1, obj2) -> Bool in
+        let sortedContents: AnyArray? = contents?.sorted(by: { (obj1, obj2) -> Bool in
             let path1 = logsDirectory.appending(pathComponent: obj1 as? String)
-            var properties1 = try! FileManager.default.attributesOfItem(atPath: path1)
+            let properties1 = try! FileManager.default.attributesOfItem(atPath: path1)
             let date1 = properties1[FileAttributeKey.modificationDate] as! Date
             
             let path2 = logsDirectory.appending(pathComponent: obj2 as? String)
-            var properties2 = try! FileManager.default.attributesOfItem(atPath: path2)
+            let properties2 = try! FileManager.default.attributesOfItem(atPath: path2)
             let date2 = properties2[FileAttributeKey.modificationDate] as! Date
             
             return date2.compare(date1) == .orderedAscending
@@ -277,7 +350,7 @@ open class SRHttpServer {
     var logsDirectory: String { return SRLog.shared.directory }
     
     func getLocalHtml(_ request: GCDWebServerRequest, path: String) -> GCDWebServerDataResponse? {
-        let dir = ResourceDirectory.appending(pathComponent: "html")
+        let dir = C.resourceDirectory.appending(pathComponent: "html")
         let filePath = dir.appending(pathComponent: path)
         var fileContents: String?
         do {
@@ -289,46 +362,5 @@ open class SRHttpServer {
         }
         
         return GCDWebServerDataResponse(html: fileContents!)
-    }
-}
-
-extension BFResult where Value : Any {
-    public var gcdWebServerResponse: [AnyHashable : Any] {
-        switch self {
-        case .success(let value):
-            var dictionary: ParamDictionary = [Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
-            dictionary[HTTP.Key.Response.errorCode] = 0
-            dictionary[HTTP.Key.Response.errorMessage] = "[SRHttpServer]The request completed successfully".srLocalized
-            dictionary[HTTP.Key.Response.data] = NonNull.dictionary(value)
-            return dictionary
-            
-        case .bfailure(let value):
-            var dictionary: ParamDictionary = [Param.Key.timestamp : CLong(Date().timeIntervalSince1970)]
-            dictionary[HTTP.Key.Response.errorCode] = 1
-            dictionary[HTTP.Key.Response.errorMessage] = "[SRHttpServer]The request failed with business".srLocalized
-            if let errorCode = value as? Int {
-                dictionary[HTTP.Key.Response.errorCode] = errorCode
-            } else if let errorMessage = value as? String {
-                dictionary[HTTP.Key.Response.errorMessage] = errorMessage
-            } else if let respondDictionary = value as? ParamDictionary {
-                dictionary += respondDictionary
-            }
-            return dictionary
-            
-        default:
-            break
-        }
-        return [:] as [AnyHashable : Any]
-    }
-}
-
-extension GCDWebServerErrorResponse {
-    public class func responseWithServerError(_ errorCode: GCDWebServerServerErrorHTTPStatusCode,
-                                              _ message: String) -> GCDWebServerErrorResponse {
-        let title = String(format:"HTTP Error %i", errorCode.rawValue)
-        let html = String.init(format: "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>%@</title></head><body><h1>%@</h1><h3>%@</h3></body></html>", title, message, "")
-        let response = GCDWebServerErrorResponse(html: html)
-        response?.statusCode = errorCode.rawValue
-        return response!
     }
 }

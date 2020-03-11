@@ -40,8 +40,8 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
         }
         
         //文字控件的尺寸
-        let minTextHeight = LabelHeight
-        let popViewMargin = SubviewMargin
+        let minTextHeight = C.labelHeight
+        let popViewMargin = C.subviewMargin
         let textMargin = 8.0 as CGFloat
         let labelMarginHorizontal = 2.0 * (popViewMargin + textMargin)
         let arrowHeight = 10.0 as CGFloat //default value of Popover.arrowSize.height
@@ -70,10 +70,10 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
                                       ScreenHeight)
             let intersection = displayRect.intersection(rectInWindow)
             if !intersection.isEmpty { //视图当前窗口显示全部或部分
-                let spaceTop: CGFloat = intersection.origin.y
+                let spaceTop: CGFloat = intersection.minY
                 let spaceBottom: CGFloat =
-                    displayRect.size.height - intersection.origin.y - intersection.size.height
-                let minContentHeight = LabelHeight + popViewMargin + 2.0 * textMargin + arrowHeight
+                    displayRect.size.height - intersection.minY - intersection.size.height
+                let minContentHeight = C.labelHeight + popViewMargin + 2.0 * textMargin + arrowHeight
                 if spaceTop >= minContentHeight || spaceBottom >= minContentHeight { //上下预留的间距满足显示弹出框的尺寸
                     //判断弹出框显示在上面下面
                     if spaceTop >= spaceBottom {
@@ -82,10 +82,10 @@ public class SRPopover: Popover, DTAttributedTextContentViewDelegate {
                     let space = type == .up ? spaceTop : spaceBottom
                     contentHeight = min(contentHeight, space - popViewMargin - arrowHeight)
                     startPoint =
-                        CGPoint(intersection.origin.x + intersection.size.width / 2.0,
+                        CGPoint(intersection.minX + intersection.size.width / 2.0,
                                  type == .up
-                                    ? intersection.origin.y
-                                    : intersection.origin.y + intersection.size.height)
+                                    ? intersection.minY
+                                    : intersection.minY + intersection.size.height)
                 }
             }
         }

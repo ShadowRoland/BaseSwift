@@ -150,7 +150,7 @@ public class SRScrollTabHeader: SRTabHeader, UIScrollViewDelegate {
             return
         }
         
-        let tabHeight = max(scrollView.frame.size.height, 0)
+        let tabHeight = max(scrollView.frame.height, 0)
         let labelHeight = max(tabHeight, titleFont.lineHeight)
         var lastRight = firstItemMarginLeft
         var cursorFrames = [] as [CGRect]
@@ -176,19 +176,19 @@ public class SRScrollTabHeader: SRTabHeader, UIScrollViewDelegate {
             label.frame =
                 CGRect(x: labelMarginHorizontal, y: 0, width: labelWidth, height: tabHeight)
             let cursorWidth = labelWidth + 2.0 * cursorOffset
-            let cursorFrame = CGRect(x: tabItem.frame.origin.x + ((tabWidth - cursorWidth) / 2.0),
-                                     y: frame.size.height - cursorHeight,
+            let cursorFrame = CGRect(x: tabItem.frame.minX + ((tabWidth - cursorWidth) / 2.0),
+                                     y: frame.height - cursorHeight,
                                      width: cursorWidth,
                                      height: cursorHeight)
             cursorFrames.append(cursorFrame)
-            lastRight = tabItem.frame.origin.x + tabItem.frame.size.width
+            lastRight = tabItem.frame.maxX
         }
         self.cursorFrames = cursorFrames
         //scrollView.frame = bounds
         scrollView.contentSize =
-            CGSize(width: tabItems.last!.frame.origin.x + tabItems.last!.frame.size.width
+            CGSize(width: tabItems.last!.frame.minX + tabItems.last!.frame.width
                 + lastItemMarginRight,
-                   height: frame.size.height)
+                   height: frame.height)
         
         DispatchQueue.main.async { [weak self] in
             self?.activeTab(self?.selectedIndex ?? 0, animated: false)
@@ -210,10 +210,10 @@ public class SRScrollTabHeader: SRTabHeader, UIScrollViewDelegate {
         }
         
         //将选中的Item移动到中间
-        var x = (selectedTabItem?.frame.origin.x)!
-            - scrollView.frame.size.width / 2.0 + selectedTabItem!.frame.size.width / 2.0
+        var x = (selectedTabItem?.frame.minX)!
+            - scrollView.frame.width / 2.0 + selectedTabItem!.frame.width / 2.0
         x = max(0, x)
-        var offsetWidth = scrollView.contentSize.width - scrollView.frame.size.width
+        var offsetWidth = scrollView.contentSize.width - scrollView.frame.width
         offsetWidth = max(0, offsetWidth)
         x = min(offsetWidth, x)
         if animated {
@@ -258,7 +258,7 @@ public class SRScrollTabHeader: SRTabHeader, UIScrollViewDelegate {
                 if i < titles.count - 1 {
                     let cursorFrame = cursorFrames[i]
                     let rightCursorFrame = cursorFrames[i + 1]
-                    updateCursor(cursorFrame.origin.x + (rightCursorFrame.origin.x - cursorFrame.origin.x) * offsetRate,
+                    updateCursor(cursorFrame.minX + (rightCursorFrame.minX - cursorFrame.minX) * offsetRate,
                                  width: cursorFrame.size.width + (rightCursorFrame.size.width - cursorFrame.size.width) * offsetRate)
                 }
             } else if i == index + 1 {
@@ -308,9 +308,9 @@ public class SRScrollTabHeader: SRTabHeader, UIScrollViewDelegate {
         
         let cursorFrame = originCursorFrame
         let rightCursorFrame = cursorFrames[destinationIndex]
-        if !(cursorFrame.origin.x == rightCursorFrame.origin.x
+        if !(cursorFrame.minX == rightCursorFrame.minX
             && cursorFrame.size.width == rightCursorFrame.size.width) {
-            updateCursor(cursorFrame.origin.x + (rightCursorFrame.origin.x - cursorFrame.origin.x) * offsetRate,
+            updateCursor(cursorFrame.minX + (rightCursorFrame.minX - cursorFrame.minX) * offsetRate,
                          width: cursorFrame.size.width + (rightCursorFrame.size.width - cursorFrame.size.width) * offsetRate)
         }
     }

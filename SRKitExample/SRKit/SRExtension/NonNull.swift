@@ -31,15 +31,15 @@ public struct NonNull {
         return string
     }
     
-    public static func array(_ array: Any?) -> [Any] {
-        guard let array = array as? [Any] else {
+    public static func array(_ array: Any?) -> AnyArray {
+        guard let array = array as? AnyArray else {
             return []
         }
         return array
     }
     
-    public static func dictionary(_ dictionary: Any?) -> [AnyHashable : Any] {
-        guard let dictionary = dictionary as? [AnyHashable : Any] else {
+    public static func dictionary(_ dictionary: Any?) -> AnyDictionary {
+        guard let dictionary = dictionary as? AnyDictionary else {
             return [:]
         }
         return dictionary

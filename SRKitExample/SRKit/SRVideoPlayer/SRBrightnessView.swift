@@ -56,8 +56,8 @@ class SRBrightnessView: UIView {
         addSubview(levelSuperview)
         
         let levelMagin = 1.0 as CGFloat
-        let levelWidth = (levelSuperview.frame.size.width - CGFloat(Const.levelMax - 1) * levelMagin) / CGFloat(Const.levelMax)
-        let levelHeight = levelSuperview.frame.size.height - 2.0 * levelMagin
+        let levelWidth = (levelSuperview.frame.width - CGFloat(Const.levelMax - 1) * levelMagin) / CGFloat(Const.levelMax)
+        let levelHeight = levelSuperview.frame.height - 2.0 * levelMagin
         for i in 0 ..< Const.levelMax {
             let levelView = UIView()
             if i == 0 {

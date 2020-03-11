@@ -366,7 +366,7 @@ class SRQQDelegate: NSObject, QQApiInterfaceDelegate {
         
     }
     
-    func isOnlineResponse(_ response: [AnyHashable : Any]!) {
+    func isOnlineResponse(_ response: AnyDictionary!) {
         
     }
 }

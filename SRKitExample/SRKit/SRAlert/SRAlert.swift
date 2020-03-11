@@ -21,10 +21,12 @@ public enum AlertType {
 }
 
 open class SRAlert: SCLAlertView {
+    #if DEBUG
     deinit {
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
     }
-    
+    #endif
+
     static var allAlerts: [SRAlert] = []
     
     class func append(_ alert: SRAlert) {
@@ -125,11 +127,11 @@ open class SRAlert: SCLAlertView {
                 positionInWindow = CGPoint(x: ScreenWidth / 2.0, y: ScreenHeight / 2.0)
             } else {
                 positionInWindow = CGPoint(x: ScreenWidth / 2.0,
-                                           y: ScreenHeight - ToastHeightAboveBottom)
+                                           y: ScreenHeight - C.toastHeightAboveBottom)
             }
         } else {
             positionInWindow = CGPoint(x: ScreenWidth / 2.0,
-                                       y: ScreenHeight - ToastHeightAboveBottom)
+                                       y: ScreenHeight - C.toastHeightAboveBottom)
         }
         view.makeToast(message!,
                        duration: duration,

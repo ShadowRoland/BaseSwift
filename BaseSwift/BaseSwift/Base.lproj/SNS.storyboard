@@ -265,12 +265,12 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="_tableView" destination="Kb0-gF-JNG" id="YKC-v8-wzd"/>
                         <outlet property="headPortraitBackgroundView" destination="lwP-U1-NAU" id="K3f-oj-mze"/>
                         <outlet property="headPortraitImageView" destination="8v1-Fg-2vR" id="WB1-bS-elk"/>
                         <outlet property="headerImageView" destination="sMw-Fe-elx" id="rno-Kj-Ey5"/>
                         <outlet property="nameLabel" destination="Xph-ja-LoO" id="NHh-L4-qgX"/>
                         <outlet property="tableHeaderView" destination="bJh-Pi-0M8" id="Add-ee-skm"/>
-                        <outlet property="tableView" destination="Kb0-gF-JNG" id="Fxr-pF-Wci"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lk5-Q8-5Ut" userLabel="First Responder" sceneMemberID="firstResponder"/>

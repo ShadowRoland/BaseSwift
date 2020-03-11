@@ -28,90 +28,114 @@ extension SRSimplePromptDelegate {
 public class SRSimplePromptView: UIView {
     public weak var delegate: SRSimplePromptDelegate?
     
+    private var needRelayout = true
+    private var lastLayoutSize = CGSize()
+
     public var style: SRSimplePromptViewStyle = .default {
         didSet {
             if style != oldValue {
-                layout()
+                needRelayout = true
+                setNeedsLayout()
             }
         }
     }
     
-    lazy var contentView: UIView = {
-        let contentView = UIView()
-        addSubview(contentView)
-        constrain(contentView) {
-            $0.center == $0.superview!.center
-            $0.top >= $0.superview!.top + margin  ~ .defaultLow
-            $0.bottom <= $0.superview!.bottom - margin ~ .defaultLow
-            $0.left >= $0.superview!.left + margin ~ .defaultLow
-            $0.right <= $0.superview!.right - margin ~ .defaultLow
-        }
-        return contentView
-    }()
+    public var text: String? {
+        return textLabel.text
+    }
     
-    var _isTextLabelHidden: Bool = false
-    var isTextLabelHidden: Bool {
-        if textLabel.isHidden {
-            return true
-        } else {
-            let size = textLabel.intrinsicContentSize
-            return size.width == 0 || size.height == 0
+    public var font: UIFont! {
+        get {
+            return textLabel.font
+        }
+        set {
+            textLabel.font = newValue
+            needRelayout = true
+            setNeedsLayout()
         }
     }
     
-    lazy public var textLabel: UILabel = {
+    public var textColor: UIColor! {
+        get {
+            return textLabel.textColor
+        }
+        set {
+            textLabel.textColor = newValue
+            setNeedsLayout()
+        }
+    }
+    
+    public var image: UIImage? {
+        return imageView.image
+    }
+    
+    public var insets: UIEdgeInsets = UIEdgeInsets(20.0, 15.0) {
+        didSet {
+            needRelayout = true
+            setNeedsLayout()
+        }
+    }
+    
+    public var padding: CGFloat = 20.0 {
+        didSet {
+            needRelayout = true
+            setNeedsLayout()
+        }
+    }
+    
+    private var isTextLabelHidden: Bool {
+        if let text = textLabel.text, text.count > 0 {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    lazy private var textLabel: UILabel = {
         let textLabel = UILabel()
+        addSubview(textLabel)
         textLabel.numberOfLines = 0
-        textLabel.textAlignment = NSTextAlignment.center
-        textLabel.textColor = UIColor.darkText
+        textLabel.textAlignment = .center
+        textLabel.textColor = .darkText
         textLabel.font = UIFont.preferred.body
         return textLabel
     }()
     
-    var _isImageViewHidden: Bool = false
-    var isImageViewHidden: Bool {
-        if imageView.isHidden {
-            return true
+    private var isImageViewHidden: Bool {
+        if let image = imageView.image, image.size.width > 0 && image.size.height > 0 {
+            return false
         } else {
-            let size = imageView.intrinsicContentSize
-            return size.width == 0 || size.height == 0
+            return true
         }
     }
-    lazy public var imageView: UIImageView = {
+    
+    lazy private var imageView: UIImageView = {
         let imageView = UIImageView()
+        addSubview(imageView)
         return imageView
-    }()
-    
-    var margin: CGFloat = 15.0
-    var padding: CGFloat = 20.0
-    
-    lazy var button: UIButton =  {
-        let button = UIButton(type: .custom)
-        button.addTarget(self, action: #selector(clickButton(_:)), for: .touchUpInside)
-        addSubview(button)
-        constrain(button) { $0.edges == inset($0.superview!.edges, 0) }
-        return button
     }()
     
     public convenience init(_ text: String?,
                             image: UIImage? = nil,
-                            margin: CGFloat = 15.0,
+                            width: CGFloat? = nil,
+                            insets: UIEdgeInsets = UIEdgeInsets(20.0, 15.0),
                             padding: CGFloat = 20.0) {
-        self.init(frame: CGRect())
+        self.init(frame: CGRect(0, 0, width ?? 0, 0))
         textLabel.text = text
         imageView.image = image
-        self.margin = max(0, margin)
+        self.insets = insets
         self.padding = max(0, padding)
-        layout()
     }
     
     public convenience init() {
         self.init(frame: CGRect())
-        layout()
+        contentMode = .redraw
     }
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
+        isUserInteractionEnabled = true
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clickSelf(_:))))
         NotifyDefault.add(self,
                           selector: #selector(contentSizeCategoryDidChange),
                           name: UIContentSizeCategory.didChangeNotification)
@@ -122,122 +146,193 @@ public class SRSimplePromptView: UIView {
     }
     
     deinit {
+        #if DEBUG
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
+        #endif
         NotifyDefault.remove(self)
     }
     
-    func layout() {
-        _isImageViewHidden = isImageViewHidden
-        if _isImageViewHidden {
-            imageView.isHidden = true
-        }
-        _isTextLabelHidden = isTextLabelHidden
-        if _isTextLabelHidden {
-            textLabel.isHidden = true
+    public override func layoutSubviews() {
+        guard needRelayout || frame.size != lastLayoutSize else {
+            return
         }
         
-        var centerViews: [UIView] = []
+        needRelayout = false
+        lastLayoutSize = frame.size
+        
+        imageView.isHidden = isImageViewHidden
+        textLabel.isHidden = isTextLabelHidden
+        
+        if imageView.isHidden && textLabel.isHidden {
+            return
+        }
+        
+        let contentSize = sizeThatFits(frame.size)
+        
         switch style {
         case .default, .vertically:
             if !imageView.isHidden {
+                let imageSize = imageView.image!.size
                 if !textLabel.isHidden {
-                    imageView.removeFromSuperview()
-                    contentView.insertSubview(imageView, at: 0)
-                    constrain(imageView) {
-                        $0.centerX == $0.superview!.centerX
-                        $0.top == $0.superview!.top
-                        $0.left <= $0.superview!.left //~ .defaultLow
-                        $0.right <= $0.superview!.right //~ .defaultLow
-                    }
+                    textLabel.textAlignment = .center
+                    imageView.frame = CGRect((frame.width - imageSize.width) / 2.0,
+                                             (frame.height - contentSize.height) / 2.0 + insets.top,
+                                             imageSize.width,
+                                             imageSize.height)
+                    textLabel.frame = CGRect((frame.width - textSize.width) / 2.0,
+                                             imageView.frame.maxY + padding,
+                                             textSize.width,
+                                             textSize.height)
+                    insertSubview(textLabel, aboveSubview: imageView)
                 } else {
-                    centerViews.append(imageView)
+                    imageView.frame = CGRect((frame.width - imageSize.width) / 2.0,
+                                             (frame.height - imageSize.height) / 2.0,
+                                             imageSize.width,
+                                             imageSize.height)
                 }
-            }
-            
-            if !textLabel.isHidden {
-                if !imageView.isHidden {
-                    textLabel.removeFromSuperview()
-                    contentView.addSubview(textLabel)
-                    constrain(textLabel, imageView) {
-                        $0.centerX == $0.superview!.centerX
-                        $0.top == $1.bottom + padding
-                        $0.bottom == $0.superview!.bottom
-                        $0.left <= $0.superview!.left //~ .defaultLow
-                        $0.right <= $0.superview!.right //~ .defaultLow
-                    }
-                } else {
-                    centerViews.append(textLabel)
-                }
+            } else {
+                textLabel.textAlignment = .center
+                textLabel.frame = CGRect((frame.width - textSize.width) / 2.0,
+                                         (frame.height - textSize.height) / 2.0,
+                                         textSize.width,
+                                         textSize.height)
             }
             
         case .horizontal:
             if !imageView.isHidden {
+                let imageSize = imageView.image!.size
                 if !textLabel.isHidden {
-                    imageView.removeFromSuperview()
-                    contentView.insertSubview(imageView, at: 0)
-                    constrain(imageView) {
-                        $0.centerY == $0.superview!.centerY
-                        $0.left == $0.superview!.left
-                        $0.top <= $0.superview!.top //~ .defaultLow
-                        $0.bottom <= $0.superview!.bottom //~ .defaultLow
-                    }
+                    textLabel.textAlignment = .left
+                    imageView.frame = CGRect((frame.width - contentSize.width) / 2.0 + insets.left,
+                                             (frame.height - imageSize.height) / 2.0,
+                                             imageSize.width,
+                                             imageSize.height)
+                    textLabel.frame = CGRect(imageView.frame.maxX + padding,
+                                             (frame.height - textSize.height) / 2.0,
+                                             textSize.width,
+                                             textSize.height)
+                    insertSubview(textLabel, aboveSubview: imageView)
                 } else {
-                    centerViews.append(imageView)
+                    imageView.frame = CGRect((frame.width - imageSize.width) / 2.0,
+                                             (frame.height - imageSize.height) / 2.0,
+                                             imageSize.width,
+                                             imageSize.height)
                 }
-            }
-            
-            if !textLabel.isHidden {
-                if !imageView.isHidden {
-                    textLabel.removeFromSuperview()
-                    contentView.addSubview(textLabel)
-                    constrain(textLabel, imageView) {
-                        $0.centerY == $0.superview!.centerY
-                        $0.left == $1.right + padding
-                        $0.top <= $0.superview!.top //~ .defaultLow
-                        $0.bottom <= $0.superview!.bottom //~ .defaultLow
-                        $0.right <= $0.superview!.right //~ .defaultLow
-                    }
-                } else {
-                    centerViews.append(textLabel)
-                }
+            } else {
+                textLabel.textAlignment = .center
+                textLabel.frame = CGRect((frame.width - textSize.width) / 2.0,
+                                         (frame.height - textSize.height) / 2.0,
+                                         textSize.width,
+                                         textSize.height)
             }
             
         case .allCenter:
             if !imageView.isHidden {
-                centerViews.append(imageView)
+                let imageSize = imageView.image!.size
+                imageView.frame = CGRect((frame.width - imageSize.width) / 2.0,
+                                         (frame.height - imageSize.height) / 2.0,
+                                         imageSize.width,
+                                         imageSize.height)
             }
             if !textLabel.isHidden {
-                centerViews.append(textLabel)
+                textLabel.textAlignment = .center
+                textLabel.frame = CGRect((frame.width - textSize.width) / 2.0,
+                                         (frame.height - textSize.height) / 2.0,
+                                         textSize.width,
+                                         textSize.height)
+                insertSubview(textLabel, aboveSubview: imageView)
             }
         }
+    }
+    
+    public override var intrinsicContentSize: CGSize {
+        return sizeThatFits(frame.size)
+    }
+    
+    private var textSize = CGSize()
+    
+    public override func sizeThatFits(_ size: CGSize) -> CGSize {
+        let willWidth = size.width
+        let imageViewHidden = isImageViewHidden
+        let textLabelHidden = isTextLabelHidden
+        if imageViewHidden && textLabelHidden {
+            return CGSize()
+        }
         
-        centerViews.forEach { view in
-            view.removeFromSuperview()
-            if view === imageView {
-                contentView.insertSubview(view, at: 0)
+        switch style {
+        case .default, .vertically:
+            if !imageViewHidden {
+                let imageSize = imageView.image!.size
+                if !textLabelHidden {
+                    var width = max(willWidth - insets.left - insets.right, imageSize.width)
+                    let textSize = textLabel.text!.textSize(textLabel.font, maxWidth: width)
+                    let textWidth = ceil(textSize.width)
+                    let textHeight = ceil(textSize.height)
+                    self.textSize = CGSize(textWidth, textHeight)
+                    width = textWidth < imageSize.width ? imageSize.width : width
+                    return CGSize(width + insets.left + insets.right,
+                                  imageSize.height + textHeight + insets.top + insets.bottom + padding)
+                } else {
+                    return CGSize(imageSize.width + insets.left + insets.right,
+                                  imageSize.height + insets.top + insets.bottom)
+                }
             } else {
-                contentView.addSubview(view)
+                var width = willWidth - insets.left - insets.right
+                width = width <= 0 ? .greatestFiniteMagnitude : width
+                let textSize = textLabel.text!.textSize(textLabel.font, maxWidth: width)
+                let textWidth = ceil(textSize.width)
+                let textHeight = ceil(textSize.height)
+                self.textSize = CGSize(textWidth, textHeight)
+                return CGSize(textWidth + insets.left + insets.right,
+                              textHeight + insets.top + insets.bottom)
             }
-            constrain(view) {
-                $0.center == $0.superview!.center
-                $0.top <= $0.superview!.top ~ .defaultLow
-                $0.bottom <= $0.superview!.bottom ~ .defaultLow
-                $0.left <= $0.superview!.left ~ .defaultLow
-                $0.right <= $0.superview!.right ~ .defaultLow
+            
+        case .horizontal:
+            if !imageViewHidden {
+                let imageSize = imageView.image!.size
+                if !textLabelHidden {
+                    var width = willWidth - insets.left - insets.right - imageSize.width - padding
+                    width = width <= 0 ? .greatestFiniteMagnitude : width
+                    let textSize = textLabel.text!.textSize(textLabel.font, maxWidth: width)
+                    let textWidth = ceil(textSize.width)
+                    let textHeight = ceil(textSize.height)
+                    self.textSize = CGSize(textWidth, textHeight)
+                    let height = textHeight <= imageSize.height ? imageSize.height : textHeight
+                    return CGSize(imageSize.width + textWidth + insets.left + insets.right + padding,
+                                  height + textHeight + insets.top + insets.bottom)
+                } else {
+                    return CGSize(imageSize.width + insets.left + insets.right,
+                                  imageSize.height + insets.top + insets.bottom)
+                }
+            } else {
+                var width = willWidth - insets.left - insets.right
+                width = width <= 0 ? .greatestFiniteMagnitude : width
+                let textSize = textLabel.text!.textSize(textLabel.font, maxWidth: width)
+                let textWidth = ceil(textSize.width)
+                let textHeight = ceil(textSize.height)
+                self.textSize = CGSize(textWidth, textHeight)
+                return CGSize(textWidth + insets.left + insets.right,
+                              textHeight + insets.top + insets.bottom)
+            }
+            
+        case .allCenter:
+            let imageSize = !imageViewHidden ? imageView.image!.size : CGSize()
+            if !textLabelHidden {
+                var width = willWidth - insets.left - insets.right
+                width = width <= 0 ? .greatestFiniteMagnitude : width
+                let textSize = textLabel.text!.textSize(textLabel.font, maxWidth: width)
+                let textWidth = ceil(textSize.width)
+                let textHeight = ceil(textSize.height)
+                self.textSize = CGSize(textWidth, textHeight)
+                return CGSize(max(imageSize.width, textWidth) + insets.left + insets.right,
+                              max(imageSize.height, textHeight) + insets.top + insets.bottom)
+            } else {
+                return imageSize
             }
         }
-        
-        bringSubviewToFront(button)
     }
     
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        if _isTextLabelHidden != isTextLabelHidden || _isImageViewHidden != isImageViewHidden {
-            layout()
-        }
-    }
-    
-    @objc func clickButton(_ sender: Any) {
+    @objc func clickSelf(_ sender: Any) {
         guard MutexTouch else { return }
         if let delegate = delegate {
             delegate.didClickSimplePromptView(self)
@@ -246,7 +341,8 @@ public class SRSimplePromptView: UIView {
     
     @objc func contentSizeCategoryDidChange() {
         if superview != nil {
-            layout()
+//            needRedraw = true
+            setNeedsLayout()
         }
     }
 }

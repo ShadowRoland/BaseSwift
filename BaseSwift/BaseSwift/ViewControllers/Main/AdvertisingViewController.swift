@@ -9,11 +9,14 @@
 import SRKit
 
 class AdvertisingViewController: BaseViewController {
+    override func viewDidLoad() {
+        setDefaultNavigationBar("是兄弟就来⚔我")
+    }
 
     override func performViewDidLoad() {
         //showAdvertising的结束定义为push完成新页面即可
         if let viewControllers = navigationController?.viewControllers {
-            for i in 0 ..< viewControllers.count {
+            for i in (0 ..< viewControllers.count).reversed() {
                 if self === viewControllers[i] && i > 0,
                     let previousVC = viewControllers[i - 1] as? BaseViewController,
                     let currentEvent = previousVC.stateMachine.currentEvent,

@@ -119,7 +119,7 @@ class ResetPasswordViewController: BaseViewController {
                           Param.Key.password : self.passwordTextField.text!,
                           Param.Key.newPassword : self.newPasswordTextField.text!]
             }
-            self.httpRequest(.post("user/resetPassword", params), success: { response in
+            self.httpRequest(.post("user/resetPassword", params: params), success: { response in
                 let alert = SRAlert()
                 //alert.appearance.showCloseButton = false
                 alert.addButton("OK".localized,

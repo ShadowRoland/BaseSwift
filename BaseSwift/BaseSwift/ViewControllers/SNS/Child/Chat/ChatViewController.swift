@@ -46,8 +46,9 @@ class ChatViewController: RCConversationViewController {
                                          tag: $0,
                                          useCustomView: navigationBarType != .system)
             }
-            switch navigationBarType {
-            case .system:
+            
+            let type = navigationBarType
+            if type == .system {
                 if items.isEmpty {
                     navigationItem.leftBarButtonItem = nil
                     navigationItem.leftBarButtonItems = nil
@@ -56,10 +57,8 @@ class ChatViewController: RCConversationViewController {
                 } else {
                     navigationItem.leftBarButtonItems = items
                 }
-                
-            case .sr:
+            } else if type == .sr {
                 //srNavigationItem.leftBarButtonItems = items
-                break
             }
         }
     }

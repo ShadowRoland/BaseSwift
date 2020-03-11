@@ -58,6 +58,6 @@ class SimpleCell: UITableViewCell {
         }
         sourceLabel.text = string
         let comment = NonNull.number(dictionary[Param.Key.comment]).intValue
-        commentLabel.text = isZhHans ? comment.tenThousands(2) : comment.thousands(2)
+        commentLabel.text = C.isZhHans ? comment.tenThousands(2) : comment.thousands(2)
     }
 }

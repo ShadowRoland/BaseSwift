@@ -10,14 +10,14 @@ import SRKit
 
 class NewsYellowViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var tableView: UITableView!
-    var dataArray: [[AnyHashable : Any]] = []
+    var dataArray: [AnyDictionary] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        tableView.contentInset = UIEdgeInsets(0, 0, TabBarHeight, 0)
-        dataArray = NonNull.array(ResourceDirectory.appending(pathComponent: "json/debug/title_party.json").fileJsonObject) as! [[AnyHashable : Any]]
+        tableView.contentInset = UIEdgeInsets(0, 0, C.tabBarHeight(), 0)
+        dataArray = NonNull.array(C.resourceDirectory.appending(pathComponent: "json/debug/title_party.json").fileJsonObject) as! [AnyDictionary]
     }
 
     override func didReceiveMemoryWarning() {
@@ -45,9 +45,9 @@ class NewsYellowViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier)
+        var cell = tableView.dequeueReusableCell(withIdentifier: C.reuseIdentifier)
         if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: ReuseIdentifier)
+            cell = UITableViewCell(style: .default, reuseIdentifier: C.reuseIdentifier)
             cell?.selectionStyle = .default
             cell?.textLabel?.numberOfLines = 0
             cell?.textLabel?.textColor = UIColor.darkGray

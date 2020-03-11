@@ -602,9 +602,9 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="_tableView" destination="3li-lq-yrC" id="bMx-ns-Xo9"/>
                         <outlet property="backToTopButton" destination="Cav-8T-29x" id="ePs-nU-fZx"/>
                         <outlet property="backToTopButtonBottomConstraint" destination="T9L-ff-BbO" id="Nb1-8T-hcR"/>
-                        <outlet property="tableView" destination="3li-lq-yrC" id="AkB-Dv-bD4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="53C-HV-BtQ" userLabel="First Responder" sceneMemberID="firstResponder"/>

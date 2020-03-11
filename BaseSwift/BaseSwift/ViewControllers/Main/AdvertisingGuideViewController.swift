@@ -8,9 +8,21 @@
 
 import SRKit
 
+protocol AdvertisingGuideDelegate: class {
+    func advertisingGuideShowAdvertising(_ viewController: AdvertisingGuideViewController)
+    func advertisingGuideSkip(_ viewController: AdvertisingGuideViewController)
+    func advertisingDisDimiss(_ viewController: AdvertisingGuideViewController)
+}
+
+extension AdvertisingGuideDelegate {
+    func advertisingGuideShowAdvertising(_ viewController: AdvertisingGuideViewController) { }
+    func advertisingGuideSkip(_ viewController: AdvertisingGuideViewController) { }
+    func advertisingDisDimiss(_ viewController: AdvertisingGuideViewController) { }
+}
+
 class AdvertisingGuideViewController: UIViewController {
+    weak var delegate: AdvertisingGuideDelegate?
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var advertisingButton: UIButton!
     @IBOutlet weak var skipButton: UIButton!
     
     var timer: Timer!
@@ -21,7 +33,7 @@ class AdvertisingGuideViewController: UIViewController {
 
         initTimer()
         skipButton.backgroundImage =
-            UIImage.rect(MaskBackgroundColor, size: CGSize(80.0, TableCellHeight))
+            UIImage.rect(C.maskBackgroundColor, size: CGSize(80.0, C.tableCellHeight))
         skipButton.title = String(format: "See Ad.(%d)".localized, second)
     }
     
@@ -60,17 +72,16 @@ class AdvertisingGuideViewController: UIViewController {
     func dimiss() {
         timer.invalidate()
         view.removeFromSuperview()
+        delegate?.advertisingDisDimiss(self)
     }
     
-    //MARK: - Autorotate Orientation
-    
-    override public var shouldAutorotate: Bool { return false }
-    
-    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+    @IBAction func clickAdvertising(_ sender: Any) {
+        guard MutexTouch else { return }
+        delegate?.advertisingGuideShowAdvertising(self)
     }
     
-    override public var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return .portrait
+    @IBAction func skip(_ sender: Any) {
+        guard MutexTouch else { return }
+        delegate?.advertisingGuideSkip(self)
     }
 }

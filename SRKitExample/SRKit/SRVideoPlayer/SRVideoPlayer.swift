@@ -1069,7 +1069,7 @@ SRAssetResourceLoaderTaskDelegate {
         }
         
         let x = gr.location(in: progressSlider).x
-        let value = Float(x / progressSlider.frame.size.width) * progressSlider.maximumValue
+        let value = Float(x / progressSlider.frame.width) * progressSlider.maximumValue
         progressSlider.value = value
         currentTimeLabel.text = text(playTime: value)
         seek(value)
@@ -1119,7 +1119,7 @@ SRAssetResourceLoaderTaskDelegate {
                     brightnessView.hide()
                 } else if tan > sqrt(3.0) { //滑动角度大于60度的时候, 控制声音或亮度
                     //屏幕左侧控制亮度, 右侧控制音量
-                    if point.x < touchView.frame.size.width / 2.0 {
+                    if point.x < touchView.frame.width / 2.0 {
                         moveControlType = .brightness
                     } else {
                         moveControlType = .volume
@@ -1140,7 +1140,7 @@ SRAssetResourceLoaderTaskDelegate {
             case .volume:
                 //计算滑动后的音量
                 var volume =
-                    touchBeginVolume - ((point.y - touchBeginPoint.y) / touchView.frame.size.height)
+                    touchBeginVolume - ((point.y - touchBeginPoint.y) / touchView.frame.height)
                 volume = max(1.0, min(0, volume))
                 volumeSlider.value = Float(volume)
                 

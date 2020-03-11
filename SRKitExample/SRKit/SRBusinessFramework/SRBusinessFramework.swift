@@ -118,7 +118,7 @@ public class SRBusinessFramework {
         if let module = modules[moduleId]?.module {
             return module.callBusiness(funcId(businessId), params: params)
         }
-        return .failure(BFError.callModule(.moduleNotExist(moduleId)))
+        return .failure(BFError("module not exist"))
     }
     
     public func notify(_ businessId: UInt, params: Any? = nil) {

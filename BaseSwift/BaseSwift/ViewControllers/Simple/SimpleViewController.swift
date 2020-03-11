@@ -19,7 +19,7 @@ class SimpleViewController: BaseViewController {
         setDefaultNavigationBar("Single initialization request page".localized)
         navBarRightButtonOptions = [.text([.title("List".localized)])]
         getSimpleData()
-        setLoadDataFail(.get("data/getSimpleData", nil)) { [weak self] in
+        setLoadDataFail(.get("data/getSimpleData")) { [weak self] in
             self?.getSimpleData()
         }
     }
@@ -41,7 +41,7 @@ class SimpleViewController: BaseViewController {
     
     func getSimpleData() {
         showProgress()
-        httpRequest(.get("data/getSimpleData", nil), success: { [weak self] response in
+        httpRequest(.get("data/getSimpleData"), success: { [weak self] response in
             self?.dismissProgress()
             self?.label.text =
                 (response as! JSON)[HTTP.Key.Response.data][Param.Key.title].string
@@ -52,6 +52,6 @@ class SimpleViewController: BaseViewController {
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
-        show("SimpleTableViewController", storyboard: "Simple")
+        show(SimpleTableViewController(style: .plain))
     }
 }

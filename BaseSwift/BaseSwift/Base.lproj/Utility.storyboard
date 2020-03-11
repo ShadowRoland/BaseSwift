@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Reo-87-wZV">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Reo-87-wZV">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -268,10 +267,8 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Gn-cu-xV5">
-                                    <rect key="frame" x="65.5" y="30" width="92" height="44"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="44" id="qla-wV-HuG"/>
-                                    </constraints>
+                                    <rect key="frame" x="35.5" y="36" width="122" height="38"/>
+                                    <inset key="contentEdgeInsets" minX="15" minY="10" maxX="15" maxY="10"/>
                                     <state key="normal" title="停止服务退出">
                                         <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                     </state>
@@ -280,10 +277,8 @@
                                     </connections>
                                 </button>
                                 <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qBc-ve-YCM">
-                                    <rect key="frame" x="217.5" y="30" width="92" height="44"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="44" id="rKx-2O-G56"/>
-                                    </constraints>
+                                    <rect key="frame" x="217.5" y="36" width="122" height="38"/>
+                                    <inset key="contentEdgeInsets" minX="15" minY="10" maxX="15" maxY="10"/>
                                     <state key="normal" title="保持服务退出">
                                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </state>
@@ -294,8 +289,10 @@
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <constraints>
+                                <constraint firstItem="3Gn-cu-xV5" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="J3X-mh-cY7" secondAttribute="leading" id="6St-wA-gbP"/>
                                 <constraint firstItem="qBc-ve-YCM" firstAttribute="leading" secondItem="J3X-mh-cY7" secondAttribute="centerX" constant="30" id="VKg-g3-PDZ"/>
                                 <constraint firstAttribute="bottom" secondItem="qBc-ve-YCM" secondAttribute="bottom" id="bFo-e5-3Tl"/>
+                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="qBc-ve-YCM" secondAttribute="trailing" id="hvi-GM-pxd"/>
                                 <constraint firstAttribute="centerX" secondItem="3Gn-cu-xV5" secondAttribute="trailing" constant="30" id="oRw-gC-uGv"/>
                                 <constraint firstAttribute="bottom" secondItem="3Gn-cu-xV5" secondAttribute="bottom" id="trd-cC-8RG"/>
                             </constraints>

@@ -8,10 +8,10 @@
 
 import SRKit
 
-typealias Event = SRKit.Event
-typealias TableLoadData = Config.TableLoadData
+public typealias Event = SRKit.Event
+public typealias TableLoadData = Config.TableLoadData
 
-class Config {
+public class Config {
     fileprivate init() { }
     
     //MARK: DEBUG，入口类型
@@ -25,10 +25,10 @@ class Config {
     }
     
     //MARK: 生产环境的参数
-    static let BaseServerURLProduction = "https://api.xxxxxx.com/internal"
+    static let baseServerURLProduction = "https://api.xxxxxx.com/internal"
     
     //MARK: 环境配置参数
-    static let envFilePath = ResourceDirectory.appending(pathComponent: "json/env.json")
+    static let envFilePath = C.resourceDirectory.appending(pathComponent: "json/env.json")
     
     //MARK: - 应用程序可配置项
     
@@ -84,8 +84,8 @@ class Config {
         }
     }
     
-    static let VideosDirectory = DocumentsDirectory.appending(pathComponent: "Videos")
-    static let VideosCacheDirectory = DocumentsDirectory.appending(pathComponent: "VideosCache")
+    static let VideosDirectory = C.documentsDirectory.appending(pathComponent: "Videos")
+    static let VideosCacheDirectory = C.documentsDirectory.appending(pathComponent: "VideosCache")
     
     //MARK: - 列表加载数据
     

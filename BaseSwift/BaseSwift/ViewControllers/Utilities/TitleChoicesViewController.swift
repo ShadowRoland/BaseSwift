@@ -92,9 +92,9 @@ extension TitleChoicesViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier)
+        var cell = tableView.dequeueReusableCell(withIdentifier: C.reuseIdentifier)
         if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: ReuseIdentifier)
+            cell = UITableViewCell(style: .default, reuseIdentifier: C.reuseIdentifier)
             cell?.accessoryType = .checkmark
             cell?.selectionStyle = .default
             cell?.textLabel?.numberOfLines = 0

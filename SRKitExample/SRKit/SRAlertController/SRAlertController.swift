@@ -29,9 +29,11 @@ open class SRAlertController: UIAlertController { //代替UIAlertController
         SRAlertController.append(self)
     }
     
+    #if DEBUG
     deinit {
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
     }
+    #endif
     
     open class func dismissAll() {
         Array<SRAlertController>(allAlerts).forEach { $0.dismiss(animated: false, completion: nil) }

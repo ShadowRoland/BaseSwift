@@ -137,9 +137,11 @@ public final class SRProgressHUD {
     
     var constraintGroup = ConstraintGroup()
     
+    #if DEBUG
     deinit {
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
     }
+    #endif
     
     public func dismiss(_ animated: Bool = true) {
         switch progressType {
@@ -168,7 +170,7 @@ public final class SRProgressHUD {
                 superview.backgroundColor = .clear
                 
             case .translucence:
-                superview.backgroundColor = MaskBackgroundColor
+                superview.backgroundColor = C.maskBackgroundColor
                 
             case .opaque:
                 superview.backgroundColor = opaqueMaskColor
@@ -183,7 +185,7 @@ public final class SRProgressHUD {
                 superview.backgroundColor = .clear
                 
             case .translucence:
-                superview.backgroundColor = MaskBackgroundColor
+                superview.backgroundColor = C.maskBackgroundColor
                 
             case .opaque:
                 superview.backgroundColor = opaqueMaskColor

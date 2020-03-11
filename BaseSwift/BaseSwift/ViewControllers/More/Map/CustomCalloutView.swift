@@ -32,7 +32,7 @@ extension CustomCalloutDelegate {
     }
     
     func selectedRoutePlanningType(of calloutView: CustomCalloutView!) -> RoutePlanningType! {
-        return .none
+        return RoutePlanningType.none
     }
     
     func calloutView(_ calloutView: CustomCalloutView!, didSelected routePlanningType: RoutePlanningType) {

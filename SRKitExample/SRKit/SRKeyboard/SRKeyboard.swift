@@ -136,7 +136,7 @@ public class SRKeyboard: NSObject {
         if let userInfo = notification.userInfo {
             if let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
                 let frame = frameValue.cgRectValue
-                keyboardHeight = frame.size.height
+                keyboardHeight = frame.height
                 if .sr == manager && isVisible {
                     let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
                     SRKeyboardManager.shared.riseView(duration)

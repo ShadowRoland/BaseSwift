@@ -8,6 +8,7 @@
 
 import SRKit
 import SwiftyJSON
+import Alamofire
 
 public class HttpManager: SRHttpManager {
     public class var shared: HttpManager {
@@ -20,24 +21,49 @@ public class HttpManager: SRHttpManager {
         super.init()
     }
     
+    public override var defaultRequestHeaders: ParamHeaders {
+        var params = super.defaultRequestHeaders
+        if let currentProfile = ProfileManager.currentProfile,
+            currentProfile.isLogin,
+            let token = currentProfile.token {
+            params[Param.Key.token] = token
+        }
+        return params
+    }
+    
+    public override var defaultRequestParams: ParamDictionary {
+        var params = super.defaultRequestParams
+        if let currentProfile = ProfileManager.currentProfile, currentProfile.isLogin {
+            if let userId = currentProfile.userId {
+                params[Param.Key.userId] = userId
+            }
+            if let token = currentProfile.token {
+                params[Param.Key.token] = token
+            }
+            return params
+        }
+        return params
+    }
+    
     //MARK: Analysis response data
     
-    override public func analysis(_ method: HTTP.Method, data: Any?) -> BFResult<Any> {
-        var result: BFResult<Any>?
-        switch method {
+    public override func analysis(_ request: SRHTTP.Request) -> SRHTTP.Result<Any> {
+        var result: HTTP.Result<Any>?
+        switch request.method {
         case .get:
-            let url = method.url
+            let url = request.url
             if url == "http://interface.sina.cn/ent/feed.d.json" {
-                result = analysisSina(data)
+                result = analysisSina(request, jsonCallback: "callback")
             } else if url == "http://interface.sina.cn/ajax/jsonp/suggestion" {
-                result = analysisSearchSuggestion(data)
+                result = analysisSearchSuggestion(request)
             } else if url == "http://s.weibo.com" {
-                result = .success(data)
+                result = .success(request.response?.data)
             } else if url == "http://api.cn.ronghub.com/user/getToken.json" {
-                result = analysisIM(data)
+                result = analysisIM(request)
             } else if url.hasPrefix("http://kan.msxiaobing.com/Api") {
-                result = analysisMSXiaoBing(data)
+                result = analysisMSXiaoBing(request)
             }
+            
         default:
             break
         }
@@ -46,12 +72,13 @@ public class HttpManager: SRHttpManager {
             return result
         }
 
-        result = super.analysis(method, data: data)
+        result = super.analysis(request)
         if result!.isSuccess {
-            if method.originUrl == "user/login",
-                let json = result!.value as? JSON,
-                let dictionary = json.dictionary,
+            if request.url == C.baseHttpURL.appending(urlComponent: "user/login"),
+                let json = result!.response as? JSON,
+                let dictionary = json[HTTP.Key.Response.data].dictionaryObject,
                 let profile = ProfileModel(JSON: dictionary) {
+                print("dictionary:----\(String(jsonObject: dictionary))")
                 profile.isLogin = true
                 ProfileManager.currentProfile = profile
             }
@@ -60,15 +87,15 @@ public class HttpManager: SRHttpManager {
         return result!
     }
     
-    func analysisSina(_ data: Any?, jsonCallback: String? = nil) -> BFResult<Any> {
-        guard let data = data as? Data else {
-            return .failure(BFError.http(.responseSerialization(nil)))
+    func analysisSina(_ request: SRHTTP.Request, jsonCallback: String? = nil) -> HTTP.Result<Any> {
+        guard let response = request.response,
+            let jsonData = response.data,
+            let string = String(data: jsonData, encoding: .utf8) else {
+                logResponse(request, data: request.response?.data)
+                return .failure(.http(.responseSerialization))
         }
         
-        guard var jsonString = String(data: data, encoding: .utf8) else {
-            return .failure(BFError.http(.responseSerialization(nil)))
-        }
-        
+        var jsonString = string
         if let jsonCallback = jsonCallback, !isEmptyString(jsonCallback) {
             //jsonP ->json
             let leadText = jsonCallback + "("
@@ -76,7 +103,7 @@ public class HttpManager: SRHttpManager {
             if jsonString.substring(to: leadText.count) == leadText
                 && jsonString.substring(from: max(jsonString.count - tailText.count, 0)) == tailText {
                 jsonString = jsonString.substring(from: leadText.count,
-                                                  to: jsonString.count - tailText.count)
+                                                  to: jsonString.count - tailText.count - 1)
             }
         }
         
@@ -85,33 +112,28 @@ public class HttpManager: SRHttpManager {
             json = try JSON(data: jsonString.data(using: .utf8, allowLossyConversion: false)!,
                             options: .mutableContainers)
         } catch {
-            return .failure(BFError.http(.responseSerialization(error)))
+            logResponse(request, data: jsonData)
+            return .failure(.http(.responseSerialization(error)))
         }
         
-        if Environment != .production {
-            LogInfo("json response string:\n\(json.rawString()!)")
-        }
+        logResponse(request, data: json)
         
         guard let status = json[Param.Key.status].number else {
-            let nsError =
-                NSError(domain: NSCocoaErrorDomain,
-                        code: -9999,
-                        userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format"])
-            return .failure(BFError.http(.responseSerialization(nsError)))
+            return .failure(.http(.responseSerialization("can not find integer \(Param.Key.status) in JSON object")))
         }
         
-        return status.intValue == 1 ? .success(json) : .bfailure(json)
+        return status.intValue == 1 ? .success(json) : .failure(.business(json))
     }
     
-    func analysisSearchSuggestion(_ data: Any?, cb: String? = nil) -> BFResult<Any> {
-        guard let data = data as? Data else {
-            return .failure(BFError.http(.responseSerialization(nil)))
+    func analysisSearchSuggestion(_ request: SRHTTP.Request, cb: String? = nil) -> HTTP.Result<Any> {
+        guard let response = request.response,
+            let jsonData = response.data,
+            let string = String(data: jsonData, encoding: .utf8) else {
+                logResponse(request, data: request.response?.data)
+                return .failure(.http(.responseSerialization))
         }
         
-        guard var jsonString = String(data: data, encoding: .utf8) else {
-            return .failure(BFError.http(.responseSerialization(nil)))
-        }
-        
+        var jsonString = string
         if let cb = cb, !isEmptyString(cb) {
             let leadText = "try{window.\(cb)&\(cb)("
             let tailText = ");}catch(e){}"
@@ -127,73 +149,64 @@ public class HttpManager: SRHttpManager {
             json = try JSON(data: jsonString.data(using: .utf8, allowLossyConversion: false)!,
                             options: .mutableContainers)
         } catch {
-            return .failure(BFError.http(.responseSerialization(error)))
+            logResponse(request, data: jsonData)
+            return .failure(.http(.responseSerialization(error)))
         }
         
-        if Environment != .production {
-            LogInfo("json response string:\n\(json.rawString()!)")
-        }
+        logResponse(request, data: json)
         
         guard let code = json[Param.Key.code].number else {
-            let nsError =
-                NSError(domain: NSCocoaErrorDomain,
-                        code: -9999,
-                        userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format"])
-            return .failure(BFError.http(.responseSerialization(nsError)))
+            return .failure(.http(.responseSerialization("can not find integer \(Param.Key.code) in JSON object")))
         }
         
-        return code.intValue == 100000 ? .success(json) : .bfailure(json)
+        return code.intValue == 100000 ? .success(json) : .failure(.business(json))
     }
     
-    func analysisIM(_ data: Any?) -> BFResult<Any> {
-        guard let data = data as? Data else {
-            return .failure(BFError.http(.responseSerialization(nil)))
+    func analysisIM(_ request: SRHTTP.Request) -> HTTP.Result<Any> {
+        guard let response = request.response, let jsonData = response.data else {
+            logResponse(request, data: request.response?.data)
+            return .failure(.http(.responseSerialization))
         }
         
         var json: JSON!
         do {
-            json = try JSON(data: data, options: .mutableContainers)
+            json = try JSON(data: jsonData, options: .mutableContainers)
         } catch {
-            return .failure(BFError.http(.responseSerialization(error)))
+            logResponse(request, data: jsonData)
+            return .failure(.http(.responseSerialization(error)))
         }
         
-        if Environment != .production {
-            LogInfo("json response string:\n\(json.rawString()!)")
+        logResponse(request, data: json)
+        
+        guard let code = json[HTTP.Key.Response.code].number else {
+            return .failure(.http(.responseSerialization("can not find integer \(HTTP.Key.Response.code) in JSON object")))
         }
         
-        guard let errCode = json[HTTP.Key.Response.errorCode].number else {
-            let nsError =
-                NSError(domain: NSCocoaErrorDomain,
-                        code: -9999,
-                        userInfo: [NSLocalizedDescriptionKey : "Invalid response JSON format"])
-            return .failure(BFError.http(.responseSerialization(nsError)))
-        }
-        
-        return errCode.intValue == HTTP.ErrorCode.imSuccess ? .success(json) : .bfailure(json)
+        return code.intValue == HTTP.Code.Response.imSuccess ? .success(json) : .failure(.business(json))
     }
     
     //MARK: Analysis MSXiaoBing
     
-    func analysisMSXiaoBing(_ data: Any?) -> BFResult<Any> {
-        guard let data = data as? Data else {
-            return .failure(BFError.http(.responseSerialization(nil)))
+    func analysisMSXiaoBing(_ request: SRHTTP.Request) -> HTTP.Result<Any> {
+        guard let response = request.response, let jsonData = response.data else {
+            logResponse(request, data: request.response?.data)
+            return .failure(.http(.responseSerialization))
         }
         
         var json: JSON!
         do {
-            json = try JSON(data: data, options: .mutableContainers)
+            json = try JSON(data: jsonData, options: .mutableContainers)
         } catch {
-            return .failure(BFError.http(.responseSerialization(error)))
+            logResponse(request, data: response.data)
+            return .failure(.http(.responseSerialization(error)))
         }
         
-        if Environment != .production {
-            LogInfo("json response string:\n\(json.rawString()!)")
-        }
+        logResponse(request, data: json)
         
         return .success(json)
     }
 }
 
-extension HTTP.ErrorCode {
+extension HTTP.Code.Response {
     public static let imSuccess = 200  //im http请求完全成功时的错误码
 }

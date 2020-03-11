@@ -9,7 +9,7 @@
 import SRKit
 import SwiftyJSON
 import SDWebImage
-//import MWPhotoBrowser
+import IDMPhotoBrowser
 
 class ProfileForm: SRIndexPath.Form {
     var titleChoices: [TitleChoiceModel]? //可以选择项
@@ -106,14 +106,11 @@ class ProfileViewController: BaseViewController {
     }
     
     var headPortraitURL: URL?
-    //weak var photoBrowser: MWPhotoBrowser?
-    var photoBrowserGR: UITapGestureRecognizer?
-    //var photos: [MWPhoto] = []
     
     var pickerView: SRPickerView!
     lazy var divisionPicker: SRDivisionPicker = {
         let picker = SRDivisionPicker()
-//        let filePath = ResourceDirectory.appending(pathComponent: "china_locations.json.zip")
+//        let filePath = C.resourceDirectory.appending(pathComponent: "china_locations.json.zip")
 //        do {
 //            let data = try Data(contentsOf: URL(fileURLWithPath: filePath)).gunzipped()
 //            picker.chinaLocations = try JSON(data: data).rawValue as? [String : String] ?? [:]
@@ -131,7 +128,7 @@ class ProfileViewController: BaseViewController {
         static let imageViewTag = 103
         static let clearButtonTag = 104
         
-        static let titleViewFont = UIFont.text
+        static let titleViewFont = C.Font.text
         static let inputTextViewFont = UIFont.system(13)
         static let showTextViewFont = inputTextViewFont
         
@@ -251,8 +248,8 @@ class ProfileViewController: BaseViewController {
                                     .isRequired : true,
                                     .isIgnoreParamValue : true]) {
             var showText = ""
-            if let string = item.value as? String, let date = string.date(DateFormat.full) {
-                showText = String(date: date, format: DateFormat.localDate)
+            if let string = item.value as? String, let date = string.date(C.DateFormat.full) {
+                showText = String(date: date, format: C.DateFormat.localDate)
             }
             item.showText = showText
             item.showTextView?.setProperty(.text, value: item.showText)
@@ -318,7 +315,7 @@ class ProfileViewController: BaseViewController {
                     isJsonValueValid = (value as! NSNumber).doubleValue != 0
                     
                 case .array:
-                    isJsonValueValid = !(value as! [Any]).isEmpty
+                    isJsonValueValid = !(value as! AnyArray).isEmpty
                     
                 default:
                     break
@@ -486,7 +483,7 @@ class ProfileViewController: BaseViewController {
         }
         
         let height = item.showText.textSize(label.font, maxWidth: label.width).height
-        item.height = max(TableCellHeight, ceil(height) + 2.0 * Const.signatureMargin)
+        item.height = max(C.tableCellHeight, ceil(height) + 2.0 * Const.signatureMargin)
     }
     
     //MARK: Autorotate Orientation
@@ -530,7 +527,7 @@ class ProfileViewController: BaseViewController {
         }
         
         //        httpReq(.post(.profileDetail), profile, nil)
-        httpRequest(.post("user/profileDetail", nil), success: { response in
+        httpRequest(.post("user/profileDetail"), success: { response in
             SRAlert.showToast("Submit successfully".localized)
             self.dismissProgress()
             self.profile = ProfileManager.currentProfile?.toJSON() ?? [:]
@@ -628,7 +625,7 @@ class ProfileViewController: BaseViewController {
             let datePicker = SRDatePicker()
             datePicker.delegate = strongSelf
             if let string = strongSelf.currentItem?.value as? String,
-                let date = string.date(DateFormat.full) {
+                let date = string.date(C.DateFormat.full) {
                 datePicker.currentDate = date
             }
             strongSelf.pickerView = datePicker
@@ -731,40 +728,19 @@ class ProfileViewController: BaseViewController {
     }
     
     @IBAction func clickHeadPortraitImageView(_ sender: Any) {
-        /*
-         let photoBrowser: MWPhotoBrowser = MWPhotoBrowser(delegate: self)
-         photoBrowser.displayActionButton = false
-         photoBrowser.displayNavArrows = false
-         photoBrowser.displaySelectionButtons = false
-         photoBrowser.alwaysShowControls = false
-         photoBrowser.zoomPhotosToFill = true
-         photoBrowser.enableGrid = false
-         photoBrowser.startOnGrid = false
-         photoBrowser.enableSwipeToDismiss = true
-         photoBrowser.modalTransitionStyle = .crossDissolve
-         photoBrowser.modalPresentationStyle = .popover
-         photos = [MWPhoto(url: headPortraitURL)]
-         self.photoBrowser = photoBrowser
-         navigationController?.present(photoBrowser, animated: true, completion: { [weak self] in
-         var pagingScrollView: UIScrollView?
-         for view in (self?.photoBrowser?.view.subviews)! {
-         if view is UIScrollView {
-         pagingScrollView = view as? UIScrollView
-         break
-         }
-         }
-         
-         if pagingScrollView != nil {
-         //添加消失的手势
-         if self?.photoBrowserGR == nil {
-         self?.photoBrowserGR =
-         UITapGestureRecognizer(target: self,
-         action: #selector(self?.clickPhotoBrowser))
-         }
-         pagingScrollView?.addGestureRecognizer((self?.photoBrowserGR!)!)
-         }
-         })
-         */
+        guard MutexTouch,
+            let url = headPortraitURL,
+            let browser = IDMPhotoBrowser(photoURLs: [url]) else {
+                return
+        }
+        
+        browser.displayActionButton = false
+        browser.displayArrowButton = false
+        browser.displayCounterLabel = false
+        browser.displayDoneButton = false
+        browser.disableVerticalSwipe = true
+        browser.dismissOnTouch = true
+        navigationController?.present(browser, animated: true, completion: nil)
     }
     
     @objc func cleanHeadPortrait() {
@@ -776,33 +752,7 @@ class ProfileViewController: BaseViewController {
         headPortraitTrailingConstraint.constant = 0
         cleanHeadPortraitButton.isHidden = true
     }
-    
-    func clickPhotoBrowser() {
-        //guard MutexTouch else { return }
-        /*
-         photoBrowser?.dismiss(animated: true) { [weak self] in
-         self?.photoBrowser = nil
-         }
-         */
-    }
 }
-
-/*
- //MARK: - MWPhotoBrowserDelegate
- 
- extension ProfileViewController: MWPhotoBrowserDelegate {
- func numberOfPhotos(in photoBrowser: MWPhotoBrowser!) -> UInt {
- return UInt((photos.count))
- }
- 
- func photoBrowser(_ photoBrowser: MWPhotoBrowser!, photoAt index: UInt) -> MWPhotoProtocol! {
- if Int(index) < photos.count {
- return photos[Int(index)]
- }
- return nil
- }
- }
- */
 
 //MARK: - UIImagePickerControllerDelegate
 
@@ -952,7 +902,7 @@ extension ProfileViewController: SRPickerViewDelegate {
         var isChanged = false
         if currentItem.cell === birthDateCell {
             let datePicker = pickerView as! SRDatePicker
-            let newValue = String(date: datePicker.currentDate, format: DateFormat.full)
+            let newValue = String(date: datePicker.currentDate, format: C.DateFormat.full)
             if let string = profile[paramKey] as? String {
                 isChanged = newValue != string
             } else {
@@ -960,7 +910,7 @@ extension ProfileViewController: SRPickerViewDelegate {
             }
             currentItem.value = newValue
             currentItem.showText = String(date: datePicker.currentDate,
-                                          format: DateFormat.localDate)
+                                          format: C.DateFormat.localDate)
             currentItem.showTextView?.setProperty(.text, value: currentItem.showText)
         } else if currentItem.cell === locationCell {
             let divisionPicker = pickerView as! SRDivisionPicker
@@ -1010,7 +960,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    heightForFooterInSection section: Int) -> CGFloat {
-        return section == lastSection ? SectionHeaderHeight : SectionHeaderHeight / 2.0
+        return section == lastSection ? C.sectionHeaderHeight : C.sectionHeaderHeight / 2.0
     }
     
     func tableView(_ tableView: UITableView,

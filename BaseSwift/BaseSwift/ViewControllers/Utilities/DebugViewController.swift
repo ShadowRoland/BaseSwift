@@ -26,7 +26,7 @@ class DebugViewController: BaseViewController {
         setDefaultNavigationBar()
         
         tableView.tableFooterView = UIView()
-        //let filePath = ResourceDirectory.appending(pathComponent: "html/debug_call_app.html")
+        //let filePath = C.resourceDirectory.appending(pathComponent: "html/debug_call_app.html")
         //url = URL(fileURLWithPath: filePath)
         url = URL(string: "http://127.0.0.1:9999/debug_call_app.html")
         safariCell.detailTextLabel?.text = url.absoluteString

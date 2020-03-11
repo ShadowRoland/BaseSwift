@@ -7,7 +7,7 @@
 //
 
 import SRKit
-//import MWPhotoBrowser
+import IDMPhotoBrowser
 import BarrageRenderer
 
 class MoreViewController: BaseViewController {
@@ -40,16 +40,13 @@ class MoreViewController: BaseViewController {
     var stockExchange = ""
     var stockCode = ""
     var stockName = ""
-    //weak var photoBrowser: MWPhotoBrowser?
-    //var photos: [MWPhoto] = []
-    var photoIndexes: [UInt] = [] //已经被置成白色背景的图片序号
     
     //MARK: Barrage
     var barrageView: UIView!
     var barrageRenderer: BarrageRenderer!
     var barrageTimer: Timer?
     var barrageIndex = 0
-    var barrages: [Any]!
+    var barrages: AnyArray!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,7 +80,7 @@ class MoreViewController: BaseViewController {
         static var textFont: UIFont!
         static var detailFont: UIFont!
         static let textLabelMarginVertical = 5.0 as CGFloat
-        static var cellHeight = TableCellHeight
+        static var cellHeight = C.tableCellHeight
     }
     
     func initView() {
@@ -163,14 +160,14 @@ class MoreViewController: BaseViewController {
     //MARK: - 业务处理
     
     @objc func getProfile() {
-        httpRequest(.get("user/profile", [:]), success: { [weak self]  response in
+        httpRequest(.get("user/profile"), success: { [weak self] _ in
             self?.tableView.mj_header.endRefreshing()
             self?.reloadProfile()
-        }, bfail: { [weak self] (url, response) in
-            SRAlert.showToast(self?.logBFail(url, response: response, show: false))
-        }, fail: { _, _ in
-            
-        })
+        }) { failure in
+            if failure.isBusiness {
+                SRAlert.showToast(failure.errorMessage)
+            }
+        }
     }
     
     @objc func reloadProfile() {
@@ -189,7 +186,7 @@ class MoreViewController: BaseViewController {
     func updateCellHeight() {
         Const.textFont = UIFont.preferred.body
         Const.detailFont = UIFont.preferred.subheadline
-        Const.cellHeight = max(TableCellHeight,
+        Const.cellHeight = max(C.tableCellHeight,
                                Const.textFont.lineHeight + 2.0 * Const.textLabelMarginVertical)
     }
     
@@ -235,7 +232,7 @@ class MoreViewController: BaseViewController {
                 }
                 
                 strongSelf.stockCode = text
-                strongSelf.httpRequest(.get("http://hq.sinajs.cn/list=\(strongSelf.stockExchange + text)", nil), success:
+                strongSelf.httpRequest(.get("http://hq.sinajs.cn/list=\(strongSelf.stockExchange + text)"), success:
                     { [weak self] response in
                         guard let strongSelf = self else { return }
                         if let data = response as? Data {
@@ -270,25 +267,30 @@ class MoreViewController: BaseViewController {
     }
     
     func showStockImages(_ stockCode: String) {
-        /*
-         let photoBrowser: MWPhotoBrowser = MWPhotoBrowser(delegate: self)
-         photoBrowser.displayActionButton = false
-         photoBrowser.displayNavArrows = false
-         photoBrowser.displaySelectionButtons = false
-         photoBrowser.alwaysShowControls = false
-         photoBrowser.zoomPhotosToFill = true
-         photoBrowser.enableGrid = false
-         photoBrowser.startOnGrid = false
-         photoBrowser.enableSwipeToDismiss = true
-         photos.removeAll()
-         photos.append(MWPhoto(url: URL(string: String(format: "http://image.sinajs.cn/newchart/min/n/%@.gif", stockCode))))
-         photos.append(MWPhoto(url: URL(string: String(format: "http://image.sinajs.cn/newchart/daily/n/%@.gif", stockCode))))
-         photos.append(MWPhoto(url: URL(string: String(format: "http://image.sinajs.cn/newchart/weekly/n/%@.gif", stockCode))))
-         photos.append(MWPhoto(url: URL(string: String(format: "http://image.sinajs.cn/newchart/monthly/n/%@.gif", stockCode))))
-         self.photoBrowser = photoBrowser
-         photoIndexes.removeAll()
-         present(SRModalViewController.standard(photoBrowser), animated: true, completion:nil)
-         */
+        guard MutexTouch else { return }
+        
+        var urls = [] as [URL]
+        if let url = URL(string: "http://image.sinajs.cn/newchart/min/n/\(stockCode).gif") {
+            urls.append(url)
+        }
+        if let url = URL(string: "http://image.sinajs.cn/newchart/daily/n/\(stockCode).gif") {
+            urls.append(url)
+        }
+        if let url = URL(string: "http://image.sinajs.cn/newchart/weekly/n/\(stockCode).gif") {
+            urls.append(url)
+        }
+        if let url = URL(string: "http://image.sinajs.cn/newchart/monthly/n/\(stockCode).gif") {
+            urls.append(url)
+        }
+        if !urls.isEmpty, let browser = IDMPhotoBrowser(photoURLs: urls) {
+            browser.displayActionButton = false
+            browser.displayArrowButton = !urls.isEmpty
+            browser.displayCounterLabel = !urls.isEmpty
+            browser.displayDoneButton = false
+            browser.disableVerticalSwipe = true
+            browser.dismissOnTouch = true
+            navigationController?.present(browser, animated: true, completion: nil)
+        }
     }
     
     //MARK: - Barrage
@@ -296,7 +298,7 @@ class MoreViewController: BaseViewController {
     func showBarrages() {
         if barrageView == nil {
             barrageView = UIView()
-            barrageView.backgroundColor = MaskBackgroundColor
+            barrageView.backgroundColor = C.maskBackgroundColor
             view.addSubview(barrageView)
             
             barrageRenderer = BarrageRenderer()
@@ -305,8 +307,8 @@ class MoreViewController: BaseViewController {
             barrageRenderer.redisplay = true
             barrageView.addSubview(barrageRenderer.view)
             
-            let filePath = ResourceDirectory.appending(pathComponent: "json/debug/barrages.json")
-            barrages = filePath.fileJsonObject as! [Any]?
+            let filePath = C.resourceDirectory.appending(pathComponent: "json/debug/barrages.json")
+            barrages = filePath.fileJsonObject as! AnyArray?
         }
         view.addSubview(barrageView)
         tableView.isScrollEnabled = false
@@ -437,34 +439,6 @@ class MoreViewController: BaseViewController {
  return ""
  }
  }
- 
- func numberOfPhotos(in photoBrowser: MWPhotoBrowser!) -> UInt {
- return UInt(photos.count)
- }
- 
- func photoBrowser(_ photoBrowser: MWPhotoBrowser!, photoAt index: UInt) -> MWPhotoProtocol! {
- if Int(index) < photos.count {
- return photos[Int(index)]
- }
- return nil
- }
- 
- func photoBrowser(_ photoBrowser: MWPhotoBrowser!, didDisplayPhotoAt index: UInt) {
- guard !photoIndexes.contains(index) else {
- return
- }
- 
- photoIndexes.append(index)
- if let scrollView = photoBrowser.view.viewWithClass(UIScrollView.self) {
- scrollView.subviews.forEach {
- print($0)
- if let imageView = $0.viewWithClass(UIImageView.self) {
- imageView.backgroundColor = UIColor.white
- }
- }
- }
- }
- }
  */
 
 //MARK: - UITextFieldDelegate
@@ -489,14 +463,14 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView,
                    viewForHeaderInSection section: Int) -> UIView? {
-        let view = UIView(frame: CGRect(0, 0, tableView.width, SectionHeaderHeight))
+        let view = UIView(frame: CGRect(0, 0, tableView.width, C.sectionHeaderHeight))
         view.backgroundColor = UIColor.groupTableViewBackground
         return view
     }
     
     func tableView(_ tableView: UITableView,
                    heightForFooterInSection section: Int) -> CGFloat {
-        return SectionHeaderGroupNoHeight
+        return C.sectionHeaderGroupNoHeight
     }
     
     func tableView(_ tableView: UITableView,

@@ -46,7 +46,7 @@ class NewsViewController: BaseViewController {
             addChild(mainVC)
             childBackgroundView.addSubview(mainVC.view)
             currentChildVC = mainVC
-            mainVC.currentNewsListVC?.loadData(progressType: .clearMask)
+            mainVC.currentNewsListVC?.getDataArray(progressType: .clearMask)
         }
         
         //查询当前指令而执行的操作，加入状态机
@@ -122,10 +122,10 @@ class NewsViewController: BaseViewController {
             //为了实现更多列表的tableHeaderView的背景色和导航栏完全一致，需要往上移一点点
             //因为在group模式下的UITableView中tableHeaderView边缘会自带一条分隔线
             currentChildVC.view.frame = CGRect(0,
-                                               topLayoutGuide.length - SectionHeaderGroupNoHeight,
+                                               topLayoutGuide.length - C.sectionHeaderGroupNoHeight,
                                                ScreenWidth,
                                                ScreenHeight - topLayoutGuide.length
-                                                + SectionHeaderGroupNoHeight)
+                                                + C.sectionHeaderGroupNoHeight)
         }
     }
     
@@ -143,8 +143,8 @@ class NewsViewController: BaseViewController {
                 return
         }
         
-        item.setTitleTextAttributes([.foregroundColor : NavigationBar.backgroundColor],
-                                    for: .selected)
+//        item.setTitleTextAttributes([.foregroundColor : NavigationBar.backgroundColor],
+//                                    for: .selected)
         
         guard let normalImage = UIImage(named: normal),
             normalImage.size.width > 0 && normalImage.size.height > 0,
@@ -153,12 +153,12 @@ class NewsViewController: BaseViewController {
                 return
         }
         
-        var width = TabBarImageHeight * normalImage.size.width / normalImage.size.height
-        var image = normalImage.imageScaled(to: CGSize(width, TabBarImageHeight))
+        var width = C.tabBarHeight() * normalImage.size.width / normalImage.size.height
+        var image = normalImage.imageScaled(to: CGSize(width, C.tabBarHeight()))
         item.image = image?.withRenderingMode(.alwaysOriginal)
         
-        width = TabBarImageHeight * highlightedImage.size.width / highlightedImage.size.height
-        image = highlightedImage.imageScaled(to: CGSize(width, TabBarImageHeight))
+        width = C.tabBarHeight() * highlightedImage.size.width / highlightedImage.size.height
+        image = highlightedImage.imageScaled(to: CGSize(width, C.tabBarHeight()))
         item.selectedImage = image?.withRenderingMode(.alwaysOriginal)
     }
     
@@ -200,12 +200,12 @@ class NewsViewController: BaseViewController {
                 if strongSelf.currentChildVC === strongSelf.mainVC {
                     strongSelf.navigationController?.isNavigationBarHidden = true
                     if let vc = strongSelf.mainVC.currentNewsListVC, !vc.isTouched {
-                        vc.loadData(progressType: .clearMask)
+                        vc.getDataArray(progressType: .clearMask)
                     }
                 } else if strongSelf.currentChildVC === strongSelf.secondaryVC {
                     strongSelf.navigationController?.isNavigationBarHidden = true
                     if let vc = strongSelf.secondaryVC.currentNewsListVC, !vc.isTouched {
-                        vc.loadData(progressType: .clearMask)
+                        vc.getDataArray(progressType: .clearMask)
                     }
                 } else  if strongSelf.currentChildVC === strongSelf.yellowVC {
                     strongSelf.navigationController?.isNavigationBarHidden = false
@@ -251,7 +251,7 @@ class NewsViewController: BaseViewController {
                 tabBar.selectedItem = tabBar.items?[3]
                 bringChildVCFront(moreVC)
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + ViewControllerTransitionInterval, execute: { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + C.viewControllerTransitionInterval, execute: { [weak self] in
                 self?.stateMachine.end(event)
             })
             
@@ -264,79 +264,6 @@ class NewsViewController: BaseViewController {
 //MARK: - NewsListDelegate
 
 extension NewsViewController: NewsListDelegate {
-    //使用第三方新闻客户端的请求参数
-    func getNewsList(_ isNextPage: Bool, sendVC: NewsListViewController) {
-        var params = sendVC.params
-        let time = CLongLong(Date().timeIntervalSince1970 * 1000)
-        params["t"] = String(longLong: time)
-        params["_"] = String(longLong: time + 2)
-        params["show_num"] = "10"
-        params["act"] = isNextPage ? "more" : "new"
-        let offset = isNextPage ? sendVC.currentOffset + 1 : 0
-        params["page"] = String(int: offset + 1)
-        var sendChildVC: String?
-        if let parentVC = sendVC.parentVC {
-            sendChildVC = String(pointer: parentVC)
-        }
-        let sendNewsListVC = String(pointer: sendVC)
-        httpRequest(.get("http://interface.sina.cn/ent/feed.d.json", params), success:
-            { [weak self] response in
-                guard let strongSelf = self,
-                    let vc = strongSelf.sendNewsListVC(sendChildVC, sendNewsListVC: sendNewsListVC) else {
-                        return
-                }
-                
-                if isNextPage {
-                    let offset = params[Param.Key.offset] as! Int
-                    if offset == vc.currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
-                        vc.updateMore(NonNull.dictionary(response))
-                    }
-                } else {
-                    vc.updateNew(NonNull.dictionary(response))
-                }
-            }, bfail: { [weak self] (method, response) in
-                guard let strongSelf = self,
-                    let vc = strongSelf.sendNewsListVC(sendChildVC, sendNewsListVC: sendNewsListVC) else {
-                        return
-                }
-                
-                if isNextPage {
-                    let offset = params[Param.Key.offset] as! Int
-                    if offset == vc.currentOffset + 1 {
-                        return
-                    }
-                } else {
-                    if !vc.dataArray.isEmpty { //已经有数据，保留原数据，显示提示框
-                        vc.updateNew(nil)
-                    } else { //当前为空的话则交给列表展示错误信息
-                        vc.updateNew(nil, errMsg: strongSelf.logBFail(method, response: response, show: false))
-                    }
-                }
-            }, fail: { [weak self] (_, error) in
-                guard let strongSelf = self,
-                    let vc = strongSelf.sendNewsListVC(sendChildVC, sendNewsListVC: sendNewsListVC) else {
-                        return
-                }
-                
-                if isNextPage {
-                    let offset = params[Param.Key.offset] as! Int
-                    if offset == vc.currentOffset + 1 {
-                        if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
-                            vc.updateMore(nil)
-                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                            vc.updateMore(nil, errMsg: error.errorDescription)
-                        }
-                    }
-                } else {
-                    if !vc.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
-                        vc.updateNew(nil)
-                    } else { //当前为空的话则交给列表展示错误信息
-                        vc.updateNew(nil, errMsg: error.errorDescription)
-                    }
-                }
-        })
-    }
-    
     func newsListVC(_ newsListVC: NewsListViewController, didSelect model: SinaNewsModel) {
         showWebpage(URL(string: NonNull.string(model.link))!, title: "News".localized)
     }
@@ -359,7 +286,8 @@ extension NewsViewController: UIViewControllerPreviewingDelegate {
             let index = previewingContext.sourceView.tag
             if index < newsListVC.dataArray.count {
                 var dictionary = [:] as ParamDictionary
-                dictionary[Param.Key.url] = URL(string: NonNull.string(newsListVC.dataArray[index].link))
+                let model = newsListVC.dataArray[index] as! SinaNewsModel
+                dictionary[Param.Key.url] = URL(string: NonNull.string(model.link))
                 dictionary[Param.Key.title] = "News".localized
                 let webpageVC = UIViewController.viewController("WebpageViewController",
                                                       storyboard: "Utility") as! WebpageViewController
@@ -401,9 +329,9 @@ extension NewsViewController: UITabBarDelegate {
             bringChildVCFront(childVC)
             if childVC === currentChildVC { //重复点击下方，会重新加载列表或发送请求
                 if childVC === mainVC {
-                    mainVC.currentNewsListVC?.loadData()
+                    mainVC.currentNewsListVC?.getDataArray()
                 } else if childVC === secondaryVC {
-                    secondaryVC.currentNewsListVC?.loadData()
+                    secondaryVC.currentNewsListVC?.getDataArray()
                 }
             }
         }

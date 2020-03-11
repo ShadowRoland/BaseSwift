@@ -94,7 +94,7 @@ class LeftMenuViewController: BaseViewController {
             _selectedIndex = 0
         }
         for i in 0 ..< titles.count {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: ReuseIdentifier)
+            let cell = UITableViewCell(style: .default, reuseIdentifier: C.reuseIdentifier)
             cell.selectionStyle = .none
             cell.accessoryType = .disclosureIndicator
             cell.backgroundColor =
@@ -115,7 +115,7 @@ class LeftMenuViewController: BaseViewController {
         tableHeaderView.frame = frame
         
         //顶部背景图
-        let imageFilePath = ResourceDirectory.appending(pathComponent: "image/snow_house.jpg")
+        let imageFilePath = C.resourceDirectory.appending(pathComponent: "image/snow_house.jpg")
         let image = UIImage(contentsOfFile: imageFilePath)
         headerImageSize = image?.size
         headerImageView.image = image
@@ -151,13 +151,13 @@ class LeftMenuViewController: BaseViewController {
     //MARK: - 业务处理
     
     func getProfile() {
-        httpRequest(.get("user/profile", nil), success: { [weak self] response in
+        httpRequest(.get("user/profile"), success: { [weak self] _ in
             self?.reloadProfile()
-            }, bfail: { [weak self] (method, response) in
-                SRAlert.showToast(self?.logBFail(method, response: response, show: false))
-            }, fail: { (_, _) in
-                
-        })
+        }) { failure in
+            if failure.isBusiness {
+                SRAlert.showToast(failure.errorMessage)
+            }
+        }
     }
     
     @objc func reloadProfile() {

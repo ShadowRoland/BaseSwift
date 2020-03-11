@@ -14,15 +14,21 @@ import DTCoreText
 import Cartography
 
 open class SRBaseViewController: UIViewController,
-    UIScrollViewDelegate,
     SRStateMachineDelegate,
 DTAttributedTextContentViewDelegate {
-    lazy var eventTarget = EventTarget(self)
+    private var _eventTarget: SRBaseViewController.EventTarget!
+    open var eventTarget: SRBaseViewController.EventTarget {
+        if _eventTarget == nil {
+            _eventTarget = EventTarget(self)
+        }
+        return _eventTarget
+    }
+    
     //内部的事件响应类
-    class EventTarget: NSObject {
-        weak var viewController: SRBaseViewController?
+    open class EventTarget: NSObject {
+        public weak var viewController: SRBaseViewController?
         
-        init(_ viewController: SRBaseViewController) {
+        public init(_ viewController: SRBaseViewController) {
             self.viewController = viewController
         }
         
@@ -82,8 +88,11 @@ DTAttributedTextContentViewDelegate {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        self.view.backgroundColor = .white
+        extendedLayoutIncludesOpaqueBars = true
+        edgesForExtendedLayout = .all
+        view.backgroundColor = .white
         stateMachine.delegate = self
+        isPageLongPressEnabled = true
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.contentSizeCategoryDidChange),
                           name: UIContentSizeCategory.didChangeNotification)
@@ -108,7 +117,9 @@ DTAttributedTextContentViewDelegate {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        LogInfo("enter: \(NSStringFromClass(type(of: self)))")
+        if isTop {
+            LogInfo("enter: \(NSStringFromClass(type(of: self)))")
+        }
         
         let component = baseBusinessComponent
         if let navigationController = navigationController,
@@ -137,16 +148,16 @@ DTAttributedTextContentViewDelegate {
             component.isPageLongPressEnabled = enabled
         }
         
-        if !component.isViewDidAppear {
-            component.isViewDidAppear = true
-            if component.needShowProgress {
-                showProgress(component.progressMaskType)
-            }
-            performViewDidLoad()
-        } else {
-            resetProgressPosition()
-        }
-        resetLoadDataFailViewPosition()
+//        if !component.isViewDidAppear {
+//            component.isViewDidAppear = true
+//            if component.needShowProgress {
+//                showProgress(component.progressMaskType)
+//            }
+//            performViewDidLoad()
+//        } else {
+//            resetProgressPosition()
+//        }
+//        resetLoadDataFailViewPosition()
         
 //        if component.navigationBarBackgroundView.superview == view
 //            && component.navigationBarBackgroundView.constraints.isEmpty {
@@ -158,9 +169,16 @@ DTAttributedTextContentViewDelegate {
 //            }
 //        }
         
+        if !component.isViewDidAppear {
+            component.isViewDidAppear = true
+            performViewDidLoad()
+        }
+        
         //广播“触发状态机的完成事件”的通知
         if let event = event {
+            #if DEBUG
             LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), event: \(event)")
+            #endif
             NotifyDefault.post(name: SRKit.didEndStateMachinePageEventNotification, object: params)
         }
     }
@@ -180,12 +198,32 @@ DTAttributedTextContentViewDelegate {
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if navigationBarType == .sr {
-            view.bringSubviewToFront(baseBusinessComponent.navigationBar)
+            let navigationBar = baseBusinessComponent.navigationBar
+            view.bringSubviewToFront(navigationBar)
+            if let constraint = navigationBar.constraints.first(where: {
+                return $0.firstItem === navigationBar
+                    && $0.secondItem === view
+                    && $0.firstAttribute == .top
+                    && $0.firstAttribute == .top
+            }) {
+                constraint.constant = statusBarHeight
+            }
         }
     }
     
+    public init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
+    }
+    
     deinit {
+        #if DEBUG
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
+        #endif
         NotifyDefault.remove(self)
         //SRHttpManager.shared.cancel(sender: String(pointer: self))
     }
@@ -213,11 +251,11 @@ DTAttributedTextContentViewDelegate {
     /// }
     open func deviceOrientationDidChange(_ sender: AnyObject?) {
         guard guardDeviceOrientationDidChange(sender) else { return }
-        //只在屏幕旋转时才更新位置
-        if sender != nil {
-            resetProgressPosition()
-            resetLoadDataFailViewPosition()
-        }
+//        //只在屏幕旋转时才更新位置
+//        if sender != nil {
+//            resetProgressPosition()
+//            resetLoadDataFailViewPosition()
+//        }
     }
     
     /// 导航栏左边按钮的点击响应，通过button的tag(0,1,2,3...)来判断按钮位置，为0时会执行popBack()退回上个页面
@@ -258,16 +296,16 @@ DTAttributedTextContentViewDelegate {
     //MARK: - Autorotate Orientation
     
     /// return ShouldAutorotate
-    override open var shouldAutorotate: Bool { return ShouldAutorotate }
+    override open var shouldAutorotate: Bool { return C.shouldAutorotate }
     
     /// return SupportedInterfaceOrientations
     override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return SupportedInterfaceOrientations
+        return C.supportedInterfaceOrientations
     }
     
     /// return PreferredInterfaceOrientationForPresentation
     override open var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return PreferredInterfaceOrientationForPresentation
+        return C.preferredInterfaceOrientationForPresentation
     }
     
     //MARK: Page
@@ -281,11 +319,10 @@ DTAttributedTextContentViewDelegate {
     
     open override var title: String? {
         didSet {
-            switch navigationBarType {
-            case .system:
-                super.title = self.title
-            case .sr:
-                baseBusinessComponent.navigationItem.title = self.title
+            if navigationBarType == .system {
+                super.title = title
+            } else if navigationBarType == .sr {
+                baseBusinessComponent.navigationItem.title = title
             }
         }
     }
@@ -299,11 +336,9 @@ DTAttributedTextContentViewDelegate {
         self.title = title
         setNavigationBar()
         if self !== navigationController?.viewControllers.first {
-            switch navigationBarType {
-            case .system:
+            if navigationBarType == .system {
                 navBarLeftButtonOptions = options ?? [.image(UIImage.srNamed("sr_page_back")!)]
-                
-            case .sr:
+            } else if navigationBarType == .sr {
                 navBarLeftButtonOptions = options
                     ?? [.image(UIImage.srNamed(navigationBar.barStyle == .black
                         ? "sr_page_back_white" :
@@ -314,16 +349,12 @@ DTAttributedTextContentViewDelegate {
     
     /// 设置导航栏的样式，包括标题文字样式，背景颜色、图片，及tintColor等
     open func setNavigationBar() {
-        switch navigationBarType {
-        case .system:
-            guard let navigationController = navigationController else { return }
-            
+        if navigationBarType == .system, let navigationController = navigationController {
             let navigationBar = navigationController.navigationBar
             navigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
             navigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
             navigationBar.tintColor = NavigationBar.tintColor
-            
-        case .sr:
+        } else if navigationBarType == .sr {
             navigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
             navigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
             navigationBar.tintColor = NavigationBar.tintColor
@@ -347,8 +378,7 @@ DTAttributedTextContentViewDelegate {
                                          tag: $0,
                                          useCustomView: navigationBarType != .system)
             }
-            switch navigationBarType {
-            case .system:
+            if navigationBarType == .system {
                 if items.isEmpty {
                     navigationItem.leftBarButtonItem = nil
                     navigationItem.leftBarButtonItems = nil
@@ -357,8 +387,7 @@ DTAttributedTextContentViewDelegate {
                 } else {
                     navigationItem.leftBarButtonItems = items
                 }
-                
-            case .sr:
+            } else if navigationBarType == .sr {
                 srNavigationItem.leftBarButtonItems = items
             }
         }
@@ -381,16 +410,14 @@ DTAttributedTextContentViewDelegate {
                                          useCustomView: navigationBarType != .system)
             }
             
-            switch navigationBarType {
-            case .system:
+            if navigationBarType == .system {
                 if items.isEmpty {
                     navigationItem.rightBarButtonItem = nil
                     navigationItem.rightBarButtonItems = nil
                 } else {
                     navigationItem.rightBarButtonItems = items
                 }
-                
-            case .sr:
+            } else if navigationBarType == .sr {
                 srNavigationItem.rightBarButtonItems = items
             }
         }
@@ -399,96 +426,110 @@ DTAttributedTextContentViewDelegate {
     //MARK: Progress
     
     /// 加载数据的等待转圈
-    open func showProgress(_ maskType: UIView.SRProgressComponent.MaskType = .clear,
-                             immediately: Bool = false) {
-        guard let view = self.view else { return }
-        
-        let component = baseBusinessComponent
-        
-        if !immediately && !component.isViewDidAppear {
-            component.needShowProgress = true
-            component.progressMaskType = maskType
-            return
-        }
-        
-        view.insertSubview(component.progressContainerView, at: view.subviews.count)
-        switch navigationBarType {
-        case .system:
-            if #available(iOS 11.0, *) {
-                component.progressContainerView.frame =
-                    CGRect(0,
-                           view.safeAreaInsets.top,
-                           view.bounds.size.width,
-                           view.bounds.size.height - view.safeAreaInsets.top)
-            } else {
-                component.progressContainerView.frame =
-                    CGRect(0,
-                           topLayoutGuide.length,
-                           view.bounds.size.width,
-                           view.bounds.size.height - topLayoutGuide.length)
-            }
-            
-        case .sr:
-            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
-            component.progressContainerView.frame =
-                CGRect(0,
-                       y,
-                       view.bounds.size.width,
-                       view.bounds.size.height - y)
-        }
-        
-        //在此可以改变默认的加载转圈样式
-        component.progressContainerView.showProgress([.progressType(.infinite),
-                                                      .maskType(maskType)])
-    }
+//    open func showProgress(_ maskType: UIView.SRProgressComponent.MaskType = .clear,
+//                             immediately: Bool = false) {
+//        let component = baseBusinessComponent
+//
+//        if !immediately && !component.isViewDidAppear {
+//            component.needShowProgress = true
+//            component.progressMaskType = maskType
+//            return
+//        }
+//
+//        view.insertSubview(component.progressContainerView, at: view.subviews.count)
+//        switch navigationBarType {
+//        case .system:
+//            if #available(iOS 11.0, *) {
+//                component.progressContainerView.frame =
+//                    CGRect(0,
+//                           view.safeAreaInsets.top,
+//                           view.bounds.size.width,
+//                           view.bounds.size.height - view.safeAreaInsets.top)
+//            } else {
+//                component.progressContainerView.frame =
+//                    CGRect(0,
+//                           topLayoutGuide.length,
+//                           view.bounds.size.width,
+//                           view.bounds.size.height - topLayoutGuide.length)
+//            }
+//
+//        case .sr:
+//            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
+//            component.progressContainerView.frame =
+//                CGRect(0,
+//                       y,
+//                       view.bounds.size.width,
+//                       view.bounds.size.height - y)
+//        }
+//
+//        //在此可以改变默认的加载转圈样式
+//        component.progressContainerView.showProgress([.progressType(.infinite),
+//                                                      .maskType(maskType)])
+//    }
     
+    /// 加载数据的等待转圈
+    open func showProgress(_ maskType: UIView.SRProgressComponent.MaskType = .clear,
+                           insets: UIEdgeInsets? = nil) {
+        let component = baseBusinessComponent
+        let containerView = component.progressContainerView
+        component.progressMaskType = maskType
+        containerView.removeFromSuperview()
+        view.insertSubview(containerView, at: view.subviews.count)
+        if let insets = insets {
+            constrain(containerView) { view in
+                view.edges == inset(view.superview!.edges, insets)
+            }
+        } else {
+            constrain(containerView) { view in
+                view.edges == inset(view.superview!.edges,
+                                    UIEdgeInsets(navigationHeaderHeight, 0, 0, 0))
+            }
+        }
+        //在此可以改变默认的加载转圈样式
+        containerView.showProgress([.progressType(.infinite), .maskType(maskType)])
+    }
+
     open func dismissProgress() {
         dismissProgress(false)
     }
     
     open func dismissProgress(_ animated: Bool) {
-        guard isShowingProgress else {
-            if baseBusinessComponent.needShowProgress {
-                baseBusinessComponent.needShowProgress = false
-            }
-            return
-        }
-        
+        guard isShowingProgress else { return }
         baseBusinessComponent.progressContainerView.dismissProgress(animated)
         baseBusinessComponent.progressContainerView.removeFromSuperview()
     }
     
-    /// viewDidAppear中执行
-    open func resetProgressPosition() {
-        guard isShowingProgress else { return }
-        
-        let component = baseBusinessComponent
-        switch navigationBarType {
-        case .system:
-            if #available(iOS 11.0, *) {
-                component.progressContainerView.frame =
-                    CGRect(0,
-                           view.safeAreaInsets.top,
-                           view.bounds.size.width,
-                           view.bounds.size.height - view.safeAreaInsets.top)
-            } else {
-                component.progressContainerView.frame =
-                    CGRect(0,
-                           topLayoutGuide.length,
-                           view.bounds.size.width,
-                           view.bounds.size.height - topLayoutGuide.length)
-            }
-            
-        case .sr:
-            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
-            component.progressContainerView.frame =
-                CGRect(0,
-                       y,
-                       view.bounds.size.width,
-                       view.bounds.size.height - y)
-        }
-        component.progressContainerView.resetProgressPosition()
-    }
+//    /// viewDidAppear中执行
+//    open func resetProgressPosition() {
+//        guard isShowingProgress else { return }
+//
+//        let component = baseBusinessComponent
+//        switch navigationBarType {
+//        case .system:
+//            if #available(iOS 11.0, *) {
+//                component.progressContainerView.frame =
+//                    CGRect(0,
+//                           view.safeAreaInsets.top,
+//                           view.bounds.size.width,
+//                           view.bounds.size.height - view.safeAreaInsets.top)
+//            } else {
+//                component.progressContainerView.frame =
+//                    CGRect(0,
+//                           topLayoutGuide.length,
+//                           view.bounds.size.width,
+//                           view.bounds.size.height - topLayoutGuide.length)
+//            }
+//
+//        case .sr:
+//            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
+//            component.progressContainerView.frame =
+//                CGRect(0,
+//                       y,
+//                       view.bounds.size.width,
+//                       view.bounds.size.height - y)
+//        }
+//        component.progressContainerView.resetProgressPosition()
+//    }
     
     open var isShowingProgress: Bool {
         guard let view = view,
@@ -500,36 +541,58 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: Load Data Fail
     
+//    /// 展示加载数据失败时的提示视图，一般配合setLoadDataFail方法使用
+//    /// 一般使用场景为刚进入页面时发送初始化请求，请求返回失败后页面展示错误提示视图
+//    open func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
+//        guard let view = view else { return }
+//
+//        let component = baseBusinessComponent
+//        view.insertSubview(component.loadDataFailContainerView, at: view.subviews.count)
+//        switch navigationBarType {
+//        case .system:
+//            if #available(iOS 11.0, *) {
+//                component.loadDataFailContainerView.frame =
+//                    CGRect(0,
+//                           view.safeAreaInsets.top,
+//                           view.bounds.size.width,
+//                           view.bounds.size.height - view.safeAreaInsets.top)
+//            } else {
+//                component.loadDataFailContainerView.frame =
+//                    CGRect(0,
+//                           topLayoutGuide.length,
+//                           view.bounds.size.width,
+//                           view.bounds.size.height - topLayoutGuide.length)
+//            }
+//
+//        case .sr:
+//            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
+//            component.loadDataFailContainerView.frame =
+//                CGRect(0,
+//                       y,
+//                       view.bounds.size.width,
+//                       view.bounds.size.height - y)
+//        }
+//        component.showLoadDataFailView(text, image: image ?? UIImage.srNamed("sr_load_data_fail")!)
+//    }
+    
     /// 展示加载数据失败时的提示视图，一般配合setLoadDataFail方法使用
     /// 一般使用场景为刚进入页面时发送初始化请求，请求返回失败后页面展示错误提示视图
-    open func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
-        guard let view = view else { return }
-        
+    open func showLoadDataFailView(_ text: String?,
+                                   image: UIImage? = nil,
+                                   insets: UIEdgeInsets? = nil) {
         let component = baseBusinessComponent
-        view.insertSubview(component.loadDataFailContainerView, at: view.subviews.count)
-        switch navigationBarType {
-        case .system:
-            if #available(iOS 11.0, *) {
-                component.loadDataFailContainerView.frame =
-                    CGRect(0,
-                           view.safeAreaInsets.top,
-                           view.bounds.size.width,
-                           view.bounds.size.height - view.safeAreaInsets.top)
-            } else {
-                component.loadDataFailContainerView.frame =
-                    CGRect(0,
-                           topLayoutGuide.length,
-                           view.bounds.size.width,
-                           view.bounds.size.height - topLayoutGuide.length)
+        let containerView = component.loadDataFailContainerView
+        containerView.removeFromSuperview()
+        view.insertSubview(containerView, at: view.subviews.count)
+        if let insets = insets {
+            constrain(containerView) { view in
+                view.edges == inset(view.superview!.edges, insets)
             }
-            
-        case .sr:
-            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
-            component.loadDataFailContainerView.frame =
-                CGRect(0,
-                       y,
-                       view.bounds.size.width,
-                       view.bounds.size.height - y)
+        } else {
+            constrain(containerView) { view in
+                view.edges == inset(view.superview!.edges,
+                                    UIEdgeInsets(navigationHeaderHeight, 0, 0, 0))
+            }
         }
         component.showLoadDataFailView(text, image: image ?? UIImage.srNamed("sr_load_data_fail")!)
     }
@@ -540,54 +603,50 @@ DTAttributedTextContentViewDelegate {
         baseBusinessComponent.dismissLoadDataFailView()
     }
     
-    /// viewDidAppear中执行
-    open func resetLoadDataFailViewPosition() {
-        guard isShowingLoadDataFailView else { return }
-        
-        let component = baseBusinessComponent
-        switch navigationBarType {
-        case .system:
-            if #available(iOS 11.0, *) {
-                component.loadDataFailContainerView.frame =
-                    CGRect(0,
-                           view.safeAreaInsets.top,
-                           view.bounds.size.width,
-                           view.bounds.size.height - view.safeAreaInsets.top)
-            } else {
-                component.loadDataFailContainerView.frame =
-                    CGRect(0,
-                           topLayoutGuide.length,
-                           view.bounds.size.width,
-                           view.bounds.size.height - topLayoutGuide.length)
-            }
-            
-        case .sr:
-            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
-            component.loadDataFailContainerView.frame =
-                CGRect(0,
-                       y,
-                       view.bounds.size.width,
-                       view.bounds.size.height - y)
-        }
-    }
+//    /// viewDidAppear中执行
+//    open func resetLoadDataFailViewPosition() {
+//        guard isShowingLoadDataFailView else { return }
+//
+//        let component = baseBusinessComponent
+//        switch navigationBarType {
+//        case .system:
+//            if #available(iOS 11.0, *) {
+//                component.loadDataFailContainerView.frame =
+//                    CGRect(0,
+//                           view.safeAreaInsets.top,
+//                           view.bounds.size.width,
+//                           view.bounds.size.height - view.safeAreaInsets.top)
+//            } else {
+//                component.loadDataFailContainerView.frame =
+//                    CGRect(0,
+//                           topLayoutGuide.length,
+//                           view.bounds.size.width,
+//                           view.bounds.size.height - topLayoutGuide.length)
+//            }
+//
+//        case .sr:
+//            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
+//            component.loadDataFailContainerView.frame =
+//                CGRect(0,
+//                       y,
+//                       view.bounds.size.width,
+//                       view.bounds.size.height - y)
+//        }
+//    }
     
     open var isShowingLoadDataFailView: Bool {
-        guard let view = view,
-            baseBusinessComponent.loadDataFailContainerView.superview === view else {
-                return false
-                
-        }
-        return baseBusinessComponent.isShowingLoadDataFailView
+        return baseBusinessComponent.loadDataFailContainerView.superview === view
+            && baseBusinessComponent.isShowingLoadDataFailView
     }
     
     /// 一般使用场景为刚进入页面时发送初始化请求，请求返回失败后页面展示错误提示视图，点击错误提示视图后执行retry()
-    open func setLoadDataFail(_ method: HTTP.Method, retry: (() -> Void)?) {
-        baseBusinessComponent.loadDataFailRetryMethod = method
+    open func setLoadDataFail(_ request: SRHTTP.Request, retry: (() -> Void)?) {
+        baseBusinessComponent.loadDataFailRetryRequest = request
         baseBusinessComponent.loadDataFailRetryHandler = retry
     }
     
-    open var loadDataFailMethod: HTTP.Method? {
-        return baseBusinessComponent.loadDataFailRetryMethod
+    open var loadDataFailRequest: SRHTTP.Request? {
+        return baseBusinessComponent.loadDataFailRetryRequest
     }
     
     /// 富文本控件DTAttributedTextContentView及子类点击链接时的响应
@@ -597,62 +656,57 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: - Http Request
     
-    open func httpRequest(_ method: HTTP.Method,
-                            options: [HTTP.Option]? = nil,
+    open var httpManager: SRHttpManager? = nil
+    
+    open func httpRequest(_ request: SRHTTP.Request,
                             success: ((Any) -> Void)? = nil,
-                            bfail: ((HTTP.Method, Any) -> Void)? = nil,
-                            fail: ((HTTP.Method, BFError) -> Void)? = nil) {
-
+                            failure: ((SRHTTP.Result<Any>.Failure<Any>) -> Void)? = nil) {
+        guard let httpManager = httpManager else { return }
+        
+        var successHandler: ((Any) -> Void)!
+        if let success = success {
+            successHandler = success
+        } else {
+            successHandler = { [weak self] response in
+                self?.httpRespond(success: response, request: request)
+            }
+        }
+        
+        var failHandler: ((SRHTTP.Result<Any>.Failure<Any>) -> Void)!
+        if let failure = failure {
+            failHandler = failure
+        } else {
+            failHandler = { [weak self] result in
+                self?.httpRespond(failure: result, request: request)
+            }
+        }
+        
+        var array: [SRHTTP.Request.Option]?
+        if let options = request.options {
+            array = options
+            array!.append(.sender(String(pointer: self)))
+        } else {
+            array = [.sender(String(pointer: self))]
+        }
+        
+        httpManager.request(request, success: successHandler, failure: failHandler)
     }
     
-    /// http请求成功后的操作
-    open func httpRespondSuccess(_ response: Any) {
+    open func httpRespond(success response: Any, request: SRHTTP.Request? = nil) {
         dismissProgress()
         if isTop {
-            SRAlert.show((response as? JSON)?[HTTP.Key.Response.errorMessage].string,
+            SRAlert.show((response as? JSON)?[SRHTTP.Key.Response.message].string,
                          type: .success)
         }
     }
     
-    /// http请求业务失败后的操作
-    open func httpRespondBfail(_ method: HTTP.Method, response: Any) {
+    open func httpRespond(failure result: SRHTTP.Result<Any>.Failure<Any>, request: SRHTTP.Request? = nil) {
         dismissProgress()
-        if method == loadDataFailMethod {
-            showLoadDataFailView(logBFail(method,
-                                          response: response,
-                                          show: false))
+        if request?.method == loadDataFailRequest?.method && request?.url == loadDataFailRequest?.url {
+            showLoadDataFailView(result.errorMessage)
         } else {
-            logBFail(method, response: response)
+            showToast(result.errorMessage)
         }
-    }
-    
-    /// http请求网络失败后的操作
-    open func httpRespondFail(_ method: HTTP.Method, error: BFError) {
-        dismissProgress()
-        if method == loadDataFailMethod {
-            showLoadDataFailView(error.errorDescription)
-        } else {
-            showToast(error.errorDescription)
-        }
-    }
-    
-    /// 解析并记录网络请求业务失败时的返回信息
-    @discardableResult
-    open func logBFail(_ method: HTTP.Method,
-                         response: Any?,
-                         show: Bool = true) -> String {
-        var message = ""
-        if let json = response as? JSON {
-            message = NonNull.string(json[HTTP.Key.Response.errorMessage].string)
-        }
-        LogError(String(format: "request failed, url: %@\nreponse: %@\nmessage: %@",
-                        method.url,
-                        (response as? JSON)?.rawValue as? CVarArg ?? "",
-                        message))
-        if show {
-            SRAlert.show(message: message, type: .error)
-        }
-        return message
     }
     
     //MARK: - DTAttributedTextContentViewDelegate

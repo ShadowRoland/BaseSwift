@@ -37,7 +37,7 @@ class SelectCountryCodeViewController: BaseViewController {
     //MARK: - 业务处理
     
     func loadData() {
-        let filePath = ResourceDirectory.appending(pathComponent: "json/country_codes.json")
+        let filePath = C.resourceDirectory.appending(pathComponent: "json/country_codes.json")
         var countryCodes =
             (filePath.fileJsonObject as! [ParamDictionary]).compactMap { CountryCodeModel(JSON: $0) }
         //先排序
@@ -124,9 +124,9 @@ extension SelectCountryCodeViewController: UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView,
                             cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier)
+        var cell = tableView.dequeueReusableCell(withIdentifier: C.reuseIdentifier)
         if cell == nil {
-            cell = UITableViewCell(style: .value1, reuseIdentifier: ReuseIdentifier)
+            cell = UITableViewCell(style: .value1, reuseIdentifier: C.reuseIdentifier)
             cell?.detailTextLabel?.textColor = UIColor.darkGray
         }
         cell?.textLabel?.font = UIFont.preferred.body

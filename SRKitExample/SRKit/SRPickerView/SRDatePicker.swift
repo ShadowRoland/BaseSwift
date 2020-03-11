@@ -29,7 +29,7 @@ public class SRDatePicker: SRPickerView, UIPickerViewDelegate, UIPickerViewDataS
         }
     }
     
-    public var minDate = "1926-08-26T00:00:00.000GMT+08:00".date(DateFormat.full)!
+    public var minDate = "1926-08-26T00:00:00.000GMT+08:00".date(C.DateFormat.full)!
     public var maxDate = Date()
     public var currentDate = Date()
     
@@ -60,7 +60,7 @@ public class SRDatePicker: SRPickerView, UIPickerViewDelegate, UIPickerViewDataS
         let window = UIApplication.shared.windows.last ?? UIApplication.shared.keyWindow!
         window.addSubview(self)
         frame = window.bounds
-        title = String(date: currentDate, format: DateFormat.localDate)
+        title = String(date: currentDate, format: C.DateFormat.localDate)
         pickerView.reloadAllComponents()
         DispatchQueue.main.async { [weak self] in
             self?.pickerView.selectRow(selectedYearIndex,
@@ -259,6 +259,6 @@ public class SRDatePicker: SRPickerView, UIPickerViewDelegate, UIPickerViewDataS
         dateComponents.second = 0
         dateComponents.nanosecond = 0
         currentDate = dateComponents.date!
-        title = String(date: currentDate, format: DateFormat.localDate)
+        title = String(date: currentDate, format: C.DateFormat.localDate)
     }
 }

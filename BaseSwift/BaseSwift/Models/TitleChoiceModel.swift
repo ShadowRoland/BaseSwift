@@ -47,7 +47,7 @@ extension TitleChoiceModel {
     
     class func updatesChoicesDic() {
         titleChoiceDic =
-            (ResourceDirectory.appending(pathComponent: "json/debug/title_choices.json").fileJsonObject) as? ParamDictionary
+            (C.resourceDirectory.appending(pathComponent: "json/debug/title_choices.json").fileJsonObject) as? ParamDictionary
     }
     
     class func choices(_ key: String) -> [TitleChoiceModel]? {

@@ -9,13 +9,11 @@
 import SRKit
 import SwiftyJSON
 import MJRefresh
-//import MWPhotoBrowser
+import IDMPhotoBrowser
 
-class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDelegate {
+class FindViewController: BaseTableViewController, FindCellDelegate {
     public weak var parentVC: SNSViewController?
     var isTouched = false //视图已经被父视图载入过
-    @IBOutlet weak var tableView: UITableView!
-    private(set) var currentOffset = 0
     var selectedModel: MessageModel?
     private(set) var overlayAlpha = 0 as CGFloat
     
@@ -30,12 +28,9 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
     var headerImageHeightOffset: CGFloat! //图片比tableHeaderHeight多出的高度
     
     var refreshNewImageView: UIImageView!
-    //weak var photoBrowser: MWPhotoBrowser?
-    //var photoBrowserGR: UITapGestureRecognizer?
-    //var photos: [MWPhoto] = []
     
     struct Const {
-        static let tableHeaderHeight = screenSize().width * 10.0 / 16.0 as CGFloat
+        static let tableHeaderHeight = C.screenSize().width * 10.0 / 16.0 as CGFloat
         static let nameFont = UIFont.system(16)
         static let nameTextColor =  UIColor(233.0, 233.0, 216.0)
         static let nameShadowColor = UIColor.black
@@ -56,12 +51,6 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
                                                  refreshNewHeight)
     }
     
-    var loadingDataView: SRSimplePromptView?
-    var noDataView: SRSimplePromptView?
-    var loadDataFailView: SRSimplePromptView?
-    
-    var dataArray: [MessageModel] = []
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -79,15 +68,9 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
     func initView() {
         initTableHeaderView()
         layoutHeaderImage()
-        tableView.tableFooterView = UIView()
-        tableView.separatorInset = UIEdgeInsets(0)
-        tableView.contentInset = UIEdgeInsets(NavigationBarHeight, 0, TabBarHeight, 0)
+        tableView.contentInset = UIEdgeInsets(C.navigationBarHeight(), 0, C.tabBarHeight(), 0)
+        needAddMoreFooter = true
         view.progressMaskColor = tableView.backgroundColor!
-        tableView.mj_footer = MJRefreshBackNormalFooter(refreshingBlock: { [weak self] in
-            self?.loadData(true, progressType: .none)
-        })
-        tableView.mj_footer.endRefreshingWithNoMoreData()
-        tableView.mj_footer.isHidden = true
         
         refreshNewImageView = UIImageView(frame: Const.refreshNewFrameHidden)
         refreshNewImageView.animationImages = SRProgressHUD.defaultGif?.images
@@ -116,7 +99,7 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
         tableHeaderView.frame = frame
         
         //顶部背景图
-        let imageFilePath = ResourceDirectory.appending(pathComponent: "image/snow_house.jpg")
+        let imageFilePath = C.resourceDirectory.appending(pathComponent: "image/snow_house.jpg")
         let image = UIImage(contentsOfFile: imageFilePath)
         headerImageSize = image?.size
         headerImageView.image = image
@@ -146,7 +129,7 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
                 CGRect(0,
                        0,
                        ScreenWidth,
-                       ScreenHeight - NavigationBarHeight - Const.tableHeaderHeight - TabBarHeight)
+                       ScreenHeight - C.navigationBarHeight() - Const.tableHeaderHeight - C.tabBarHeight())
             tableView.tableFooterView = view
         }
         tableView.reloadData()
@@ -155,7 +138,8 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
     //MARK: - 业务处理
     
     override func performViewDidLoad() {
-        loadingDataView = loadPromptView("Loading ...".localized, image: UIImage("loading"))
+        showLoadPromptView("Loading ...".localized, image: UIImage("loading"))
+        (tableView.tableFooterView as? SRSimplePromptView)?.delegate = nil
     }
     
     func reloadProfile() {
@@ -165,201 +149,70 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
         nameLabel.text = ProfileManager.currentProfile?.name?.fullName
     }
     
+    enum RefreshState: Int {
+        case idle
+        case busy
+        case started
+    }
+    
+    private var needStartRefresh = false
+    private var refreshState: RefreshState = .idle
+    
     func startRefreshNew() {
-        guard !refreshNewImageView.isAnimating else {
+        guard refreshState != .idle else {
+            needStartRefresh = true
             return
         }
         
+        refreshState = .busy
         refreshNewImageView.startAnimating()
         refreshNewImageView.frame = Const.refreshNewFrameHidden
         refreshNewImageView.alpha = 0
         UIView.animate(withDuration: 0.5, animations: { [weak self] in
             self?.refreshNewImageView.frame = Const.refreshNewFrameShown
             self?.refreshNewImageView.alpha = 1.0
-        }) { [weak self] (finished) in
-            self?.loadData(progressType: .none)
+        }) { [weak self] _ in
+            guard let strongSelf = self else { return }
+            strongSelf.getDataArray(progressType: .none)
+            strongSelf.refreshState = .started
+            if !strongSelf.needStartRefresh {
+                DispatchQueue.main.async { [weak self] in
+                    self?.endRefreshNew()
+                }
+            }
         }
     }
     
     func endRefreshNew() {
-        guard refreshNewImageView.isAnimating else {
+        guard refreshState != .started else {
+            needStartRefresh = false
             return
         }
         
+        refreshState = .busy
         UIView.animate(withDuration: 0.5, animations: { [weak self] in
             self?.refreshNewImageView.frame = Const.refreshNewFrameHidden
             self?.refreshNewImageView.alpha = 0
-        }) { [weak self] (finished) in
-            self?.refreshNewImageView.stopAnimating()
-        }
-    }
-    
-    func loadData(_ isNextPage: Bool = false,
-                  progressType: TableLoadData.ProgressType = .opaqueMask) {
-        switch progressType {
-        case .clearMask:
-            view.showProgress()
-        case .opaqueMask:
-            view.showProgress(maskType: .opaque)
-        default:
-            break
-        }
-        
-        var params = [:] as ParamDictionary
-        params[Param.Key.limit] = TableLoadData.limit
-        let offset = isNextPage ? currentOffset + 1 : 0
-        params[Param.Key.offset] = offset
-        httpRequest(.get("data/getMessages", params), success: { [weak self] response in
+        }) { [weak self] _ in
             guard let strongSelf = self else { return }
-            let currentOffset = strongSelf.currentOffset
-            if isNextPage {
-                if offset == currentOffset + 1 { //只刷新新的一页数据，旧的或者更新的不刷
-                    strongSelf.updateMore(response as? JSON)
+            strongSelf.refreshNewImageView.stopAnimating()
+            strongSelf.refreshState = .idle
+            if strongSelf.needStartRefresh {
+                DispatchQueue.main.async { [weak self] in
+                    self?.startRefreshNew()
                 }
-            } else {
-                strongSelf.updateNew(response as? JSON)
-            }
-            }, bfail: { [weak self] (method, response) in
-                guard let strongSelf = self else { return }
-                if isNextPage {
-                   if offset == strongSelf.currentOffset + 1 {
-                        if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互，列表恢复刷新状态
-                            strongSelf.updateMore(nil)
-                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                            strongSelf.updateMore(nil,
-                                                  errMsg: strongSelf.logBFail(method,
-                                                                              response: response,
-                                                                              show: false))
-                        }
-                    }
-                } else {
-                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出提示框的交互
-                        strongSelf.updateNew(nil)
-                    } else { //当前为空的话则交给列表展示错误信息
-                        strongSelf.updateNew(nil, errMsg: strongSelf.logBFail(method,
-                                                                              response: response,
-                                                                              show: false))
-                    }
-                }
-            }, fail: { [weak self] (_, error) in
-                guard let strongSelf = self else { return }
-                if isNextPage {
-                    if offset == strongSelf.currentOffset + 1 {
-                        if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互，列表恢复刷新状态
-                            strongSelf.updateMore(nil)
-                        } else { //当前为空的话则交给列表展示错误信息，一般在加载更多的时候是不会走到这个逻辑的，因为空数据的时候上拉加载更多是被禁止的
-                            strongSelf.updateMore(nil, errMsg: error.errorDescription)
-                        }
-                    }
-                } else {
-                    if !strongSelf.dataArray.isEmpty { //若当前有数据，则进行弹出toast的交互
-                        strongSelf.updateNew(nil)
-                    } else { //当前为空的话则交给列表展示错误信息
-                        strongSelf.updateNew(nil, errMsg: error.errorDescription)
-                    }
-                }
-        })
-    }
-    
-    public func updateNew(_ json: JSON?, errMsg: String? = nil) {
-        view.dismissProgress(true)
-        endRefreshNew()
-        guard let json = json?[HTTP.Key.Response.data] else {
-            if dataArray.count == 0 {
-                loadDataFailView = loadPromptView(errMsg, image: UIImage("request_fail"))
-                tableView.reloadData()
-            }
-            return
-        }
-        
-        dataArray = messageModels(json[Param.Key.list])
-        
-        guard !dataArray.isEmpty else { //没有数据
-            noDataView = loadPromptView("No record".localized, image: UIImage("no_data"))
-            tableView.reloadData()
-            return
-        }
-        
-        tableView.tableFooterView = UIView()
-        
-        tableView.mj_footer.isHidden = false
-        if dataArray.isEmpty { //第一页即无数据
-            tableView.mj_footer.endRefreshingWithNoMoreData()
-        } else {
-            tableView.mj_footer.resetNoMoreData()
-        }
-        
-        currentOffset = 0 //页数重置
-        tableView.reloadData()
-        DispatchQueue.main.async { [weak self] in //tableView更新完数据后再设置contentOffset
-            if let strongSelf = self {
-                strongSelf.tableView.setContentOffset(CGPoint(0, -strongSelf.tableView.contentInset.top),
-                                                      animated: true)
             }
         }
     }
     
-    public func updateMore(_ json: JSON?, errMsg: String? = nil) {
-        view.dismissProgress(true)
-        guard let json = json?[HTTP.Key.Response.data] else {
-            if dataArray.count == 0 {
-                loadDataFailView = loadPromptView(errMsg, image: UIImage("request_fail"))
-                tableView.reloadData()
-            } else {
-                tableView.mj_footer.endRefreshing()
-            }
-            return
-        }
-        
-        let list = messageModels(json[Param.Key.list])
-        if list.count == 0 {
-            tableView.mj_footer.endRefreshingWithNoMoreData()
-        } else {
-            tableView.mj_footer.endRefreshing()
-            tableView.mj_footer.resetNoMoreData()
-        }
-        
-        tableView.mj_footer.isHidden = false
-        
-        //去重
-        var array = [] as [MessageModel]
-        list.forEach { model in
-            if let index = (0 ..< dataArray.count).first(where: { model == dataArray[$0] }) {
-                dataArray[index] = model //如果已经存在该数据，更新之
-            } else { //否则添加到新的数据中
-                array.append(model)
-            }
-        }
-        
-        currentOffset += 1 //自动增加页面
-        dataArray += array //拼接数组
-        tableView.reloadData()
-    }
-    
-    func messageModels(_ list: JSON?) -> [MessageModel] {
-        if let list = list, let models = list.array?.compactMap({ (JSON) -> MessageModel? in
-            if let dictionary = JSON.dictionaryObject, let model = MessageModel(JSON: dictionary) {
-                model.cellHeight = FindCell.cellHeight(model)
-                model.cellHeightLandscape = FindCell.cellHeight(model,
-                                                                interfaceOrientation: .landscape)
-                return model
-            }
-            return nil
-        }) {
-            return models
-        }
-        return []
-    }
-    
-    func loadPromptView(_ text: String?, image: UIImage?) -> SRSimplePromptView {
+    func showLoadPromptView(_ text: String?, image: UIImage?) {
         let view = SRSimplePromptView(text, image: image)
-        view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight - NavigationBarHeight - Const.tableHeaderHeight - TabBarHeight)
+        view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight - C.navigationBarHeight() - Const.tableHeaderHeight - C.tabBarHeight())
         view.delegate = self
         view.backgroundColor = tableView.backgroundColor
+        tableView.tableFooterView = view
         tableView.mj_footer.endRefreshingWithNoMoreData()
         tableView.mj_footer.isHidden = true
-        tableView.tableFooterView = view
-        return view
     }
     
     //MARK: - 事件响应
@@ -369,6 +222,83 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
         //photoBrowser?.dismiss(animated: true) { [weak self] in
         //    self?.photoBrowser = nil
         //}
+    }
+    
+    //MARK: - BaseTableLoadData
+    
+    @IBOutlet weak var _tableView: UITableView!
+    public override var tableView: UITableView {
+        return _tableView
+    }
+    
+    private var _dataEqual: ((Any, Any) -> Bool) = { ($0 as! MessageModel) == ($1 as! MessageModel) }
+    public override var dataEqual: ((Any, Any) -> Bool)? {
+        get { return _dataEqual }
+        set { }
+    }
+    
+    override func showNoDataView() {
+        showLoadPromptView("No record".localized, image: UIImage("no_data"))
+        tableView.mj_footer?.endRefreshingWithNoMoreData()
+        tableView.mj_footer?.isHidden = true
+    }
+    
+    override func showLoadDataFailView(_ text: String?,
+                                       image: UIImage? = nil,
+                                       insets: UIEdgeInsets? = nil) {
+        showLoadPromptView(text, image: UIImage("request_fail"))
+        tableView.mj_footer?.endRefreshingWithNoMoreData()
+        tableView.mj_footer?.isHidden = true
+    }
+    
+    func getDataArray(_ addMore: Bool) {
+        getDataArray(addMore, progressType: .none)
+    }
+    
+    func getDataArray(_ addMore: Bool = false,
+                      progressType: TableLoadData.ProgressType = .opaqueMask) {
+        switch progressType {
+        case .clearMask:
+            showProgress()
+        case .opaqueMask:
+            showProgress(.opaque)
+        default:
+            break
+        }
+        
+        var params = [:] as ParamDictionary
+        params[Param.Key.limit] = TableLoadData.limit
+        let offset = addMore ? currentOffset + 1 : 0
+        params[Param.Key.offset] = offset
+        httpRequest(.get("data/getMessages", params: params), success: { [weak self] response in
+            guard let strongSelf = self else { return }
+            if offset == 0 || offset == strongSelf.currentOffset + 1 {
+                strongSelf.endRefreshNew()
+            }
+            if let json = response as? JSON,
+                let array = json[HTTP.Key.Response.data][Param.Key.list].array {
+                let models = array.compactMap({ (element) -> MessageModel? in
+                    if let dictionary = element.dictionaryObject {
+                        let model = MessageModel(JSON: dictionary)!
+                        model.cellHeight = FindCell.cellHeight(model)
+                        model.cellHeightLandscape = FindCell.cellHeight(model,
+                                                                        isLandscape: true)
+                        return model
+                    } else {
+                        return nil
+                    }
+                })
+                strongSelf.httpRespond(success: models, offset: 0)
+            } else {
+                strongSelf.httpRespond(success: [], offset: 0)
+            }
+        }) { [weak self] failure in
+            guard let strongSelf = self else { return }
+            if offset == 0 || offset == strongSelf.currentOffset + 1 {
+                strongSelf.endRefreshNew()
+            }
+            strongSelf.httpRespond(failure: failure, offset: offset)
+        }
     }
     
     /*
@@ -390,42 +320,19 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
     
     func showImage(_ model: MessageModel?, index: Int) {
         selectedModel = model
-        //guard let selectedModel = selectedModel, let images = selectedModel.images else {
-        //    return
-        //}
+        guard let selectedModel = selectedModel,
+            let images = selectedModel.images,
+            let browser = IDMPhotoBrowser(photoURLs: images.compactMap({ URL(string: $0) })) else {
+                return
+        }
         
-        /*
-         let photoBrowser: MWPhotoBrowser = MWPhotoBrowser(delegate: self)
-         photoBrowser.displayActionButton = false
-         photoBrowser.displayNavArrows = false
-         photoBrowser.displaySelectionButtons = false
-         photoBrowser.alwaysShowControls = false
-         photoBrowser.zoomPhotosToFill = true
-         photoBrowser.enableGrid = false
-         photoBrowser.startOnGrid = false
-         photoBrowser.enableSwipeToDismiss = true
-         photoBrowser.modalTransitionStyle = .crossDissolve
-         photoBrowser.modalPresentationStyle = .popover
-         var array = [] as [MWPhoto]
-         images.forEach { array.append(MWPhoto(url: URL(string: NonNull.string($0)))) }
-         photos = array
-         photoBrowser.setCurrentPhotoIndex(UInt(index))
-         self.photoBrowser = photoBrowser
-         navigationController?.present(photoBrowser, animated: true, completion: { [weak self] in
-         guard let strongSelf = self else { return }
-         if let scrollView =
-         strongSelf.photoBrowser?.view.subviews.first(where: { $0 is UIScrollView }) {
-         //添加消失的手势
-         if strongSelf.photoBrowserGR == nil {
-         strongSelf.photoBrowserGR =
-         UITapGestureRecognizer(target: strongSelf,
-         action: #selector(strongSelf.clickPhotoBrowser))
-         }
-         scrollView.addGestureRecognizer(strongSelf.photoBrowserGR!)
-         
-         }
-         })
-         */
+        browser.displayActionButton = false
+//        browser.displayArrowButton = false
+        browser.displayCounterLabel = false
+        browser.displayDoneButton = false
+        browser.disableVerticalSwipe = true
+        browser.dismissOnTouch = true
+        navigationController?.present(browser, animated: true, completion: nil)
     }
     
     func showShareWebpage(_ model: MessageModel?) {
@@ -469,7 +376,7 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
             }
             
             //在上拉至图片下端与导航栏下端齐平时，导航栏背景图片完全不透明
-            let offsetMax = Const.tableHeaderHeight - NavigationHeaderHeight
+            let offsetMax = Const.tableHeaderHeight - C.navigationHeaderHeight()
             if offset >= offsetMax {
                 //                if navigationBar?.overlay.alpha != 1.0 {
                 //                    navigationBar?.overlay.alpha = 1.0
@@ -490,51 +397,33 @@ class FindViewController: BaseViewController, FindCellDelegate, SRSimplePromptDe
     
     //MARK: - SRSimplePromptDelegate
     
-    func didClickSimplePromptView(_ view: SRSimplePromptView) {
-        if view === loadDataFailView {
-            startRefreshNew()
-        }
+    override func didClickSimplePromptView(_ view: SRSimplePromptView) {
+        startRefreshNew()
     }
-}
 
-//MARK: - UITableViewDelegate, UITableViewDataSource
+    //MARK: - UITableViewDelegate, UITableViewDataSource
 
-extension FindViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard indexPath.row < dataArray.count else {
             return 0
         }
         
+        let message = dataArray[indexPath.row] as! MessageModel
         return UIApplication.shared.statusBarOrientation.isPortrait
-            ? dataArray[indexPath.row].cellHeight
-            : dataArray[indexPath.row].cellHeightLandscape
+            ? message.cellHeight
+            : message.cellHeightLandscape
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataArray.count
-    }
-    
-    func tableView(_ tableView: UITableView,
-                   willDisplay cell: UITableViewCell,
-                   forRowAt indexPath: IndexPath) {
-        //实现预加载
-        if indexPath.row == dataArray.count - Const.preloadLastPostion {
-            //print("mj_footer.state: \(tableView.mj_footer.state.hashValue)")
-            if tableView.mj_footer.state == .idle {
-                tableView.mj_footer.beginRefreshing()
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell =
-            tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier) as? FindCell
+            tableView.dequeueReusableCell(withIdentifier: C.reuseIdentifier) as? FindCell
         if cell == nil {
-            cell = FindCell(style: .default, reuseIdentifier: ReuseIdentifier)
+            cell = FindCell(style: .default, reuseIdentifier: C.reuseIdentifier)
             cell?.delegate = self
             cell?.initView()
         }
-        cell?.model = dataArray[indexPath.row]
+        cell?.model =
+            indexPath.row < dataArray.count ? dataArray[indexPath.row] as? MessageModel : nil
         return cell!
     }
     

@@ -35,41 +35,24 @@ public class IMManager {
         return headers
     }
     
-    class func logBFail(_ method: HTTP.Method, response: Any? = nil) {
-        var responseArg = "response can not be printed" as CVarArg
-        var code = ""
-        if let json = response as? JSON {
-            if let arg = response as? CVarArg {
-                responseArg = arg
-            }
-            code = json[HTTP.Key.Response.errorCode].stringValue
-        } else if let arg = response as? CVarArg {
-            responseArg = arg
-        }
-        LogError(String(format: "request failed %@ api: %@\nreponse: %@",
-                        method.type,
-                        method.url,
-                        responseArg))
-        SRAlert.showToast("IM \(method.type) requet: \(method.url) fail, code=\(code)")
-    }
-    
     class func login() {
         RCIM.shared().initWithAppKey("sfci50a7sod0i")
         let current =
             [Param.Key.userId : NonNull.string(ProfileManager.currentProfile?.userId),
              Param.Key.name : NonNull.string(ProfileManager.currentProfile?.name?.fullName),
              Param.Key.portraitUri : NonNull.string(ProfileManager.currentProfile?.headPortrait)]
-        HttpManager.shared.request(.post("http://api.cn.ronghub.com/user/getToken.json", current),
-                                   options: [.sender(String(pointer: self))],
+        HttpManager.shared.request(.post("http://api.cn.ronghub.com/user/getToken.json",
+                                         params: current,
+                                         options: [.sender(String(pointer: self))]),
                                    success:
             { response in
                 if let json = response as? JSON {
                     login(json[Param.Key.token].stringValue)
                 }
-        }, bfail: { method, response in
-            logBFail(method, response: response)
-        }) { _, error in
-            SRAlert.showToast("Chat service: \(error.errorDescription ?? "")")
+        }) { failure in
+            DispatchQueue.main.async {
+                SRAlert.showToast("Chat service: \(failure.errorMessage)")
+            }
         }
     }
     

@@ -8,36 +8,25 @@
 
 import SRKit
 
-class BaseViewController: SRBaseViewController {
-    override public func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
-    override public func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
-    override public func viewDidAppear(_ animated: Bool) {
+open class BaseViewController: SRBaseViewController {
+    open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        isPageLongPressEnabled = true
     }
     
-    override public func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
-    override public func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
     }
     
     deinit {
+        LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
         HttpManager.shared.cancel(sender: String(pointer: self))
     }
     
-    func showWebpage(_ url: URL,
-                     title: String? = nil,
-                     params: ParamDictionary? = [:],
-                     event: Event? = nil) {
+    open func showWebpage(_ url: URL,
+                            title: String? = nil,
+                            params: ParamDictionary? = [:],
+                            event: Event? = nil) {
         var dictionary: ParamDictionary = [Param.Key.url : url]
         if let title = title {
             dictionary[Param.Key.title] = title
@@ -50,69 +39,33 @@ class BaseViewController: SRBaseViewController {
     
     //MARK: -
     
-    override func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
-        super.showLoadDataFailView(text, image: image ?? UIImage("request_fail")!)
+    override open func showLoadDataFailView(_ text: String?,
+                                            image: UIImage? = nil,
+                                            insets: UIEdgeInsets? = nil) {
+        super.showLoadDataFailView(text, image: image ?? UIImage("request_fail")!, insets: insets)
     }
     
     //MARK: - Http Request
-
-    public override func httpRequest(_ method: HTTP.Method,
-                                     options: [HTTP.Option]? = nil,
-                                     success: ((Any) -> Void)? = nil,
-                                     bfail: ((HTTP.Method, Any) -> Void)? = nil,
-                                     fail: ((HTTP.Method, BFError) -> Void)? = nil) {
-        var successHandler: ((Any) -> Void)!
-        if let success = success {
-            successHandler = success
-        } else {
-            successHandler = { [weak self] response in
-                self?.httpRespondSuccess(response)
-            }
+    
+    open override var httpManager: SRHttpManager? {
+        get {
+            return HttpManager.shared
         }
-        
-        var bfailHandler: ((HTTP.Method, Any) -> Void)!
-        if let bfail = bfail {
-            bfailHandler = bfail
-        } else {
-            bfailHandler = { [weak self] (method, response) in
-                self?.httpRespondBfail(method, response: response)
-            }
+        set {
+            
         }
-        
-        var failHandler: ((HTTP.Method, BFError) -> Void)!
-        if let fail = fail {
-            failHandler = fail
-        } else {
-            failHandler = { [weak self] (method, error) in
-                self?.httpRespondFail(method, error: error)
-            }
-        }
-        
-        var array: [HTTP.Option]?
-        if let options = options {
-            array = options
-            array!.append(.sender(String(pointer: self)))
-        } else {
-            array = [.sender(String(pointer: self))]
-        }
-        
-        HttpManager.shared.request(method,
-                                   options: array,
-                                   success: successHandler,
-                                   bfail: bfailHandler,
-                                   fail: failHandler)
     }
     
     //MARK: SRStateMachineDelegate
     
-    public override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) {
+    open override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) {
         #if BASE_FRAMEWORK
         #else
         self.stateMachine(stateMachine, didFireBase: event)
         #endif
     }
     
-    public override func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Event) {
+    open override func stateMachine(_ stateMachine: SRStateMachine, didEnd event: Event) {
         #if BASE_FRAMEWORK
         #else
         self.stateMachine(stateMachine, didEndBase: event)
@@ -164,7 +117,7 @@ extension BaseViewController {
                 Common.clearPops()
                 dismissModals()
                 popBack(to: last)
-                DispatchQueue.main.asyncAfter(deadline: .now() + ViewControllerTransitionInterval, execute: { [weak self] in
+                DispatchQueue.main.asyncAfter(deadline: .now() + C.viewControllerTransitionInterval, execute: { [weak self] in
                     self?.stateMachine.end(event)
                 })
             } else { //视图栈中没有Profile页面，push新的Profile页面入栈
@@ -187,7 +140,7 @@ extension BaseViewController {
                 Common.clearPops()
                 dismissModals()
                 popBack(to: last)
-                DispatchQueue.main.asyncAfter(deadline: .now() + ViewControllerTransitionInterval, execute: { [weak self] in
+                DispatchQueue.main.asyncAfter(deadline: .now() + C.viewControllerTransitionInterval, execute: { [weak self] in
                     self?.stateMachine.end(event)
                 })
             } else { //视图栈中没有Setting页面，push新的Setting页面入栈
@@ -211,4 +164,5 @@ extension BaseViewController {
         
     }
 }
+
 #endif

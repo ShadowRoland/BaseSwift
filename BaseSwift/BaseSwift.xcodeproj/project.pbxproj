@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		49023E76214A822707B05727 /* Pods_BaseSwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F9FBA3E5B5E6278C841CC4A /* Pods_BaseSwiftTests.framework */; };
+		4E02B6D323386BC600072638 /* BaseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E02B6D223386BC600072638 /* BaseTableViewController.swift */; };
 		4E13769A2286BD1C00330EBE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376992286BD1C00330EBE /* BaseViewController.swift */; };
 		4E1376A42286BD2700330EBE /* WebpageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13769C2286BD2700330EBE /* WebpageViewController.swift */; };
 		4E1376A52286BD2700330EBE /* ServerConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13769D2286BD2700330EBE /* ServerConfigViewController.swift */; };
@@ -43,6 +44,10 @@
 		4E1376C62286C4CC00330EBE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376992286BD1C00330EBE /* BaseViewController.swift */; };
 		4E1376C72289188E00330EBE /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF29A652119411F008CFAD5 /* Env.swift */; };
 		4E3DDF85227835E700F6086A /* HttpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3DDF84227835E700F6086A /* HttpServer.swift */; };
+		4E4DB63C23852F3F00179007 /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4DB63A23852F3F00179007 /* NewsCell.swift */; };
+		4E4DB63D23852F3F00179007 /* NewsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4E4DB63B23852F3F00179007 /* NewsCell.xib */; };
+		4E4E4870235455D500F766DD /* SimpleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4E4E486F235455D500F766DD /* SimpleCell.xib */; };
+		4E4E4872235464E300F766DD /* BaseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E02B6D223386BC600072638 /* BaseTableViewController.swift */; };
 		4E89B3F62286717500E98791 /* Base.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E89B3F52286717500E98791 /* Base.xcassets */; };
 		4E89B40D228671E500E98791 /* SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E89B402228671E400E98791 /* SRKit.framework */; };
 		4E89B40E228671E500E98791 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B404228671E400E98791 /* Config.swift */; };
@@ -115,7 +120,6 @@
 		4EABAFB81FF61EE70007CCA7 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAF031FF61EE70007CCA7 /* RegisterViewController.swift */; };
 		4EABAFB91FF61EE70007CCA7 /* NewsSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAF051FF61EE70007CCA7 /* NewsSearchViewController.swift */; };
 		4EABAFBA1FF61EE70007CCA7 /* NewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAF061FF61EE70007CCA7 /* NewsViewController.swift */; };
-		4EABAFBB1FF61EE70007CCA7 /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAF091FF61EE70007CCA7 /* NewsCell.swift */; };
 		4EABAFBC1FF61EE70007CCA7 /* ChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAF0A1FF61EE70007CCA7 /* ChannelCell.swift */; };
 		4EABAFBD1FF61EE70007CCA7 /* CollectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAF0B1FF61EE70007CCA7 /* CollectionHeader.swift */; };
 		4EABAFBE1FF61EE70007CCA7 /* NewsMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EABAF0C1FF61EE70007CCA7 /* NewsMainViewController.swift */; };
@@ -198,6 +202,7 @@
 		22E101976A6539482421B013 /* Pods-BaseSwiftUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseSwiftUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BaseSwiftUITests/Pods-BaseSwiftUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		2ED74351FBEF4CC8E66AA998 /* Pods-BaseSwiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseSwiftTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BaseSwiftTests/Pods-BaseSwiftTests.debug.xcconfig"; sourceTree = "<group>"; };
 		445DE1D0C87480CADBEDB36C /* Pods-BaseSwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseSwiftTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BaseSwiftTests/Pods-BaseSwiftTests.release.xcconfig"; sourceTree = "<group>"; };
+		4E02B6D223386BC600072638 /* BaseTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewController.swift; sourceTree = "<group>"; };
 		4E1376992286BD1C00330EBE /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		4E13769C2286BD2700330EBE /* WebpageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebpageViewController.swift; sourceTree = "<group>"; };
 		4E13769D2286BD2700330EBE /* ServerConfigViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerConfigViewController.swift; sourceTree = "<group>"; };
@@ -207,6 +212,9 @@
 		4E1376A22286BD2700330EBE /* TitleChoicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleChoicesViewController.swift; sourceTree = "<group>"; };
 		4E1376A32286BD2700330EBE /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		4E3DDF84227835E700F6086A /* HttpServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpServer.swift; sourceTree = "<group>"; };
+		4E4DB63A23852F3F00179007 /* NewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
+		4E4DB63B23852F3F00179007 /* NewsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsCell.xib; sourceTree = "<group>"; };
+		4E4E486F235455D500F766DD /* SimpleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SimpleCell.xib; sourceTree = "<group>"; };
 		4E5627122286690F00C6CE1D /* Base.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Base.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E5627152286690F00C6CE1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E56272222866BC600C6CE1D /* BaseRes.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BaseRes.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -304,7 +312,6 @@
 		4EABAF031FF61EE70007CCA7 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		4EABAF051FF61EE70007CCA7 /* NewsSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsSearchViewController.swift; sourceTree = "<group>"; };
 		4EABAF061FF61EE70007CCA7 /* NewsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsViewController.swift; sourceTree = "<group>"; };
-		4EABAF091FF61EE70007CCA7 /* NewsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
 		4EABAF0A1FF61EE70007CCA7 /* ChannelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelCell.swift; sourceTree = "<group>"; };
 		4EABAF0B1FF61EE70007CCA7 /* CollectionHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionHeader.swift; sourceTree = "<group>"; };
 		4EABAF0C1FF61EE70007CCA7 /* NewsMainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsMainViewController.swift; sourceTree = "<group>"; };
@@ -444,6 +451,7 @@
 			isa = PBXGroup;
 			children = (
 				4E1376992286BD1C00330EBE /* BaseViewController.swift */,
+				4E02B6D223386BC600072638 /* BaseTableViewController.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -721,6 +729,7 @@
 			isa = PBXGroup;
 			children = (
 				4EABAEC31FF61EE70007CCA7 /* SimpleCell.swift */,
+				4E4E486F235455D500F766DD /* SimpleCell.xib */,
 				4EABAEC51FF61EE70007CCA7 /* SimpleSubmitViewController.swift */,
 				4EABAEC41FF61EE70007CCA7 /* SimpleTableViewController.swift */,
 				4EABAEC21FF61EE70007CCA7 /* SimpleViewController.swift */,
@@ -926,7 +935,8 @@
 			children = (
 				4EABAF0A1FF61EE70007CCA7 /* ChannelCell.swift */,
 				4EABAF0B1FF61EE70007CCA7 /* CollectionHeader.swift */,
-				4EABAF091FF61EE70007CCA7 /* NewsCell.swift */,
+				4E4DB63A23852F3F00179007 /* NewsCell.swift */,
+				4E4DB63B23852F3F00179007 /* NewsCell.xib */,
 				4EABAF0D1FF61EE70007CCA7 /* NewsListViewController.swift */,
 				4EABAF0C1FF61EE70007CCA7 /* NewsMainViewController.swift */,
 			);
@@ -1241,6 +1251,7 @@
 				4EEFDFD11FF72C95001FB8B1 /* More.storyboard in Resources */,
 				4EEFDFCF1FF72C95001FB8B1 /* SNS.storyboard in Resources */,
 				4E89B3F62286717500E98791 /* Base.xcassets in Resources */,
+				4E4DB63D23852F3F00179007 /* NewsCell.xib in Resources */,
 				4EEFDFD71FF73120001FB8B1 /* LaunchScreen.storyboard in Resources */,
 				4EABB0A71FF71F570007CCA7 /* InfoPlist.strings in Resources */,
 				4EABAFAE1FF61EE70007CCA7 /* CustomCalloutView.xib in Resources */,
@@ -1250,6 +1261,7 @@
 				4EABB0A21FF62CB90007CCA7 /* Main.storyboard in Resources */,
 				4EABAFE11FF61EE70007CCA7 /* README.md in Resources */,
 				4EABAE711FF617A90007CCA7 /* Assets.xcassets in Resources */,
+				4E4E4870235455D500F766DD /* SimpleCell.xib in Resources */,
 				4EEFDFD01FF72C95001FB8B1 /* Simple.storyboard in Resources */,
 				4EEFDFDA1FF73AD2001FB8B1 /* Localizable.strings in Resources */,
 				4EEFDFD51FF72C95001FB8B1 /* Profile.storyboard in Resources */,
@@ -1404,10 +1416,12 @@
 				"${BUILT_PRODUCTS_DIR}/Cartography/Cartography.framework",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/DACircularProgress/DACircularProgress.framework",
 				"${BUILT_PRODUCTS_DIR}/DTCoreText/DTCoreText.framework",
 				"${BUILT_PRODUCTS_DIR}/DTFoundation/DTFoundation.framework",
 				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
 				"${BUILT_PRODUCTS_DIR}/GzipSwift/Gzip.framework",
+				"${BUILT_PRODUCTS_DIR}/IDMPhotoBrowser/IDMPhotoBrowser.framework",
 				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/JZLocationConverter/JZLocationConverter.framework",
 				"${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework",
@@ -1429,6 +1443,7 @@
 				"${BUILT_PRODUCTS_DIR}/Toast/Toast.framework",
 				"${BUILT_PRODUCTS_DIR}/TransitionKit/TransitionKit.framework",
 				"${BUILT_PRODUCTS_DIR}/libPhoneNumber-iOS/libPhoneNumber_iOS.framework",
+				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -1437,10 +1452,12 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cartography.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DACircularProgress.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTCoreText.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTFoundation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Gzip.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IDMPhotoBrowser.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JZLocationConverter.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainSwift.framework",
@@ -1462,6 +1479,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TransitionKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libPhoneNumber_iOS.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1495,6 +1513,7 @@
 			files = (
 				4E89B410228671E500E98791 /* BaseModel.swift in Sources */,
 				4E89B412228671E500E98791 /* HttpManager.swift in Sources */,
+				4E02B6D323386BC600072638 /* BaseTableViewController.swift in Sources */,
 				4E89B40F228671E500E98791 /* Common.swift in Sources */,
 				4E89B411228671E500E98791 /* BaseBusinessModel.swift in Sources */,
 				4E89B40E228671E500E98791 /* Config.swift in Sources */,
@@ -1514,6 +1533,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E4E4872235464E300F766DD /* BaseTableViewController.swift in Sources */,
 				4E1376C02286C4CC00330EBE /* Config.swift in Sources */,
 				4E1376C12286C4CC00330EBE /* Common.swift in Sources */,
 				4E1376C22286C4CC00330EBE /* HttpManager.swift in Sources */,
@@ -1567,6 +1587,7 @@
 				4E1376A42286BD2700330EBE /* WebpageViewController.swift in Sources */,
 				4EABAE6C1FF617A90007CCA7 /* ViewController.swift in Sources */,
 				4EABAF9D1FF61EE70007CCA7 /* M2Theme.m in Sources */,
+				4E4DB63C23852F3F00179007 /* NewsCell.swift in Sources */,
 				4EABAFC61FF61EE70007CCA7 /* AdvertisingGuideViewController.swift in Sources */,
 				4EABAFA01FF61EE70007CCA7 /* M2Overlay.m in Sources */,
 				4EABAFAA1FF61EE70007CCA7 /* MANaviPolyline.m in Sources */,
@@ -1577,7 +1598,6 @@
 				4EABAF9E1FF61EE70007CCA7 /* M2GameManager.m in Sources */,
 				4EABAF881FF61EE70007CCA7 /* UserModel.swift in Sources */,
 				4EABAF8C1FF61EE70007CCA7 /* AggregationViewController.swift in Sources */,
-				4EABAFBB1FF61EE70007CCA7 /* NewsCell.swift in Sources */,
 				4EABAF8B1FF61EE70007CCA7 /* HottestViewController.swift in Sources */,
 				4EABAF9A1FF61EE70007CCA7 /* SimpleTableViewController.swift in Sources */,
 				4EABAFA81FF61EE70007CCA7 /* LineDashPolyline.m in Sources */,
@@ -1988,7 +2008,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = BNJNLWZCKW;
+				DEVELOPMENT_TEAM = 6NH38MACH2;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/BaseSwift/Utilities",
@@ -2016,7 +2036,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = BNJNLWZCKW;
+				DEVELOPMENT_TEAM = 6NH38MACH2;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/BaseSwift/Utilities",

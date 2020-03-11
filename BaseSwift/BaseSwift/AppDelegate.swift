@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         // Override point for customization after application launch.
-        print(try! String(contentsOfFile: ResourceDirectory.appending(pathComponent: "welcome.txt"),
+        print(try! String(contentsOfFile: C.resourceDirectory.appending(pathComponent: "welcome.txt"),
                           encoding: String.Encoding.utf8))
         DispatchQueue.global(qos: .default).async {
             TitleChoiceModel.updatesChoicesDic()
@@ -37,17 +37,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         Env.reload()
+        initDebugMenu()
         initHttpServer()
         
         initShare()
         initMap()
         
         if UserStandard[UDKey.isFreeInterfaceOrientations] == nil {
-            ShouldAutorotate = false
-            SupportedInterfaceOrientations = .portrait
+            C.shouldAutorotate = false
+            C.supportedInterfaceOrientations = .portrait
         } else {
-            ShouldAutorotate = true
-            SupportedInterfaceOrientations = [.portrait, .landscape]
+            C.shouldAutorotate = true
+            C.supportedInterfaceOrientations = .allButUpsideDown
         }
         
         createShortcutItems()
@@ -56,7 +57,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UserStandard[UDKey.showGuide] != nil { //本次显示引导页
             UserStandard[UDKey.showAdvertisingGuide] = nil //本次不显示广告页
             UserStandard[UDKey.showGuide] = nil //下次不显示广告页
-            
             let vc = UIViewController.viewController("AppGuideViewController", storyboard: "Main")
             self.window?.rootViewController = SRNavigationController(rootViewController: vc!)
             self.window?.makeKeyAndVisible()
@@ -65,6 +65,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserStandard[UDKey.showGuide] = true //下次显示广告页
             if UserStandard[UDKey.enterAggregationEntrance] != nil {
                 createSlideMenu()
+            } else {
+                let vc = UIViewController.viewController("ViewController", storyboard: "Main")
+                self.window?.rootViewController = SRNavigationController(rootViewController: vc!)
+                self.window?.makeKeyAndVisible()
             }
         }
         
@@ -301,8 +305,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     //MARK: - 应用初始化
     
+    func initDebugMenu() {
+        var items = [] as [SRNavigationController.DebugMenuItem]
+        
+        func addItem(_ title: String, description: String? = nil, action: @escaping () -> Void) {
+            items.append(.init(title, description: description) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + C.performDelay) {
+                    action()
+                }
+                }
+            )
+        }
+        
+        addItem("Server Configurations".localized,
+                description: "Display or modify the current server configurations".localized)
+        {
+            let vc = UIViewController.viewController("ServerConfigViewController", storyboard: "Utility")
+            UIViewController.top?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
+        }
+        addItem("Built-in Http Service".localized,
+                description: "Display or modify the current server configurations".localized)
+        {
+            let vc = UIViewController.viewController("HttpServerViewController", storyboard: "Utility")
+            UIViewController.top?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
+        }
+        addItem("Debug Tools".localized,
+                description: "Customized debug tools".localized)
+        {
+            let vc = UIViewController.viewController("DebugViewController", storyboard: "Utility")
+            UIViewController.top?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
+        }
+        addItem("User Information".localized,
+                description: "Display the currently logged in user information and copy it to the system clipboard".localized)
+        {
+            if ProfileManager.isLogin {
+                let text = ProfileManager.currentProfile?.toJSONString() ?? ""
+                let alert = SRAlertController(title: nil,
+                                              message: text,
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Cancel".localized, style: .cancel))
+                UIViewController.top?.present(alert, animated: true, completion: nil)
+                UIPasteboard.general.string = text
+            } else {
+                let alert = SRAlertController(title: nil,
+                                              message: "Not logged in".localized,
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Cancel".localized, style: .cancel))
+                UIViewController.top?.present(alert, animated: true, completion: nil)
+            }
+        }
+        SRNavigationController.defaultMenuItems = items
+    }
+    
     func initHttpServer() {
-        guard Environment != .production else { return }
+        guard C.environment != .production else { return }
         HttpServer.shared.start()
     }
     

@@ -11,7 +11,7 @@ import ObjectMapper
 
 public class Env: BaseModel {
     var isProduction: Bool = true
-    var apiBaseUrl: String = Config.BaseServerURLProduction
+    var apiBaseUrl: String = Config.baseServerURLProduction
     var httpsCer: String = "" //https证书
     
     public class var shared: Env {
@@ -26,11 +26,11 @@ public class Env: BaseModel {
     private override init() {
         super.init()
         #if PRODUCTION
-        Environment = .production
+        C.environment = .production
         #elseif TEST
-        Environment = .test
+        C.environment = .test
         #else
-        Environment = .develop
+        C.environment = .develop
         #endif
         
         #if DEBUG
@@ -49,20 +49,20 @@ public class Env: BaseModel {
     
     public class func reload() {
         sharedInstance = Env()
-        guard Environment != .production,
+        guard C.environment != .production,
             let local = Env.local,
             let current = local["current"] as? Int,
             current >= 0,
             let envs = local["envs"] as? [ParamDictionary],
             current < envs.count else {
-                BaseHttpURL = sharedInstance!.apiBaseUrl
+                C.baseHttpURL = sharedInstance!.apiBaseUrl
                 return
         }
         
         print(envs[current])
         sharedInstance = Env(JSON: envs[current])
         sharedInstance?.isProduction = false
-        BaseHttpURL = sharedInstance!.apiBaseUrl
+        C.baseHttpURL = sharedInstance!.apiBaseUrl
     }
     
     public static var local: ParamDictionary? {
@@ -82,7 +82,7 @@ public class Env: BaseModel {
         }
         
         set {
-            guard let local = local else {
+            guard let local = newValue else {
                 UserStandard[UDKey.env] = nil
                 return
             }
