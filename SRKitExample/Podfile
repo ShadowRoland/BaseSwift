@@ -1,27 +1,27 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '9.0'
+platform :ios, '10.0'
 
 ## Keychain，一般用于获取唯一设备标识
-pod 'KeychainSwift', '~> 16.0.1' # Required
+pod 'KeychainSwift', '~> 19.0.0' # Required
 
 ## Http
-pod 'Alamofire', '~> 4.9.0' # Required
+pod 'Alamofire', '~> 5.2.2' # Required
 
 ## 图片请求
-pod 'SDWebImage', '~> 5.1.1' # Optional 将会被其他的第三方库所依赖
+pod 'SDWebImage', '~> 5.8.4' # Optional 将会被其他的第三方库所依赖
 
 ## 日志系统
-pod 'CocoaLumberjack/Swift', '~> 3.5.3' # Required
+pod 'CocoaLumberjack/Swift', '~> 3.6.2' # Required
 
 ## 富文本
-pod 'DTCoreText', '~> 1.6.22' # Required
+pod 'DTCoreText', '~> 1.6.23' # Required
 
 ## 进度控件
-pod 'MBProgressHUD', '~> 1.1.0' # Required
+pod 'MBProgressHUD', '~> 1.2.0' # Required
 pod 'M13ProgressSuite', '~> 1.2.9' # Required
 
 ## 键盘管理
-pod 'IQKeyboardManagerSwift', '~> 6.4.1' # Required
+pod 'IQKeyboardManagerSwift', '~> 6.5.5' # Required
 
 ## 约束布局
 pod 'Cartography', '~> 4.0.0' # Required
@@ -30,30 +30,30 @@ pod 'Cartography', '~> 4.0.0' # Required
 pod 'SwiftyJSON', '~> 5.0.0' # Required
 
 ## Json与数据模型
-pod 'ObjectMapper', '~> 3.5.1'
-
-## gzip压缩和解压缩
-pod 'GzipSwift', '~> 5.0.0' # Recommended, 可以精简http请求和返回的数据量
+pod 'ObjectMapper', '~> 4.2.0'
 
 ## 加密与解密
 pod 'CryptoSwift', :git => "https://github.com/krzyzanowskim/CryptoSwift", :branch => "master" # Optional
+
+## gzip压缩和解压缩
+pod 'GzipSwift', '~> 5.1.1' # Recommended, 可以精简http请求和返回的数据量
 
 ## Toast
 pod 'Toast', '~> 4.0.0' # Required
 #pod 'Toast-Swift', '~> 5.0.0' # Required
 
 ## 上下拉刷新数据的列表控件
-pod 'MJRefresh', '~> 3.2.0' # Required
+pod 'MJRefresh', '~> 3.4.3' # Required
 
 ## 在iOS下搭建web服务器
-pod 'GCDWebServer', '~> 3.5.3' # Optional
+pod 'GCDWebServer', '~> 3.5.4' # Optional
 
 ## 状态机
 pod 'TransitionKit', '~> 2.2.1' # Optional
 
 ## 定制弹出框
 pod 'SCLAlertView', '~> 0.8' # Required, added in project->"ThirdParty" 因SCLAlertView.appearance没有设置为public，已添加到项目工程中的ThirdParty
-pod 'Popover', '~> 1.2.2' # Optional
+pod 'Popover', '~> 1.3.0' # Optional
 
 ## 弹出框
 pod 'REMenu', '~> 1.10' # Optional
@@ -61,16 +61,27 @@ pod 'REMenu', '~> 1.10' # Optional
 ## 电话号码查询
 pod 'libPhoneNumber-iOS', '~> 0.9.15'
 
-target 'SRKitExample' do
-  # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
-  
-  # Pods for SRKitExample
-end
-
 target 'SRKit' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   
   # Pods for SRKit
+
+  target 'SRFramework' do
+    # Comment the next line if you don't want to use dynamic frameworks
+    use_frameworks!
+    
+    # Pods for SRFramework
+
+    pod 'FMDB', '~> 2.7.5'
+
+    target 'SRKitExample' do
+      # Comment the next line if you don't want to use dynamic frameworks
+      use_frameworks!
+      
+      # Pods for SRKitExample
+    end
+    
+  end
+  
 end

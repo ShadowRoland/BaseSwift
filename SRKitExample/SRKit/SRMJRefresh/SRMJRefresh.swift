@@ -15,7 +15,7 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
             guard let gif = gif, let images = gif.images, !images.isEmpty else {
                 stateGifs.removeAll()
                 gifView.removeFromSuperview()
-                lastUpdatedTimeLabel.isHidden = false
+                lastUpdatedTimeLabel?.isHidden = false
                 return
             }
             
@@ -29,7 +29,7 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
             set(gif: gif, for: .idle)
             set(gif: gif, for: .pulling)
             set(gif: gif, for: .refreshing)
-            lastUpdatedTimeLabel.isHidden = true
+            lastUpdatedTimeLabel?.isHidden = true
         }
     }
     
@@ -38,7 +38,7 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
     lazy var gifView = UIImageView()
     lazy var stateGifs: [MJRefreshState : UIImage.SRGif] = [:]
     
-    public init(refreshingBlock: MJRefresh.MJRefreshComponentRefreshingBlock!,
+    public init(refreshingBlock: MJRefresh.MJRefreshComponentAction!,
                 gif: UIImage.SRGif? = nil) {
         super.init(frame: CGRect())
         self.refreshingBlock = refreshingBlock
@@ -88,13 +88,13 @@ public class SRMJRefreshHeader: MJRefreshStateHeader {
         super.placeSubviews()
         if let image = gif?.images?.first {
             let width = mj_h * image.size.width / image.size.height
-            if stateLabel.isHidden && lastUpdatedTimeLabel.isHidden {
+            if let stateLabel = stateLabel, let lastUpdatedTimeLabel = lastUpdatedTimeLabel, stateLabel.isHidden && lastUpdatedTimeLabel.isHidden {
                 gifView.frame = CGRect((mj_w - width) / 2.0, 0, width, mj_h)
             } else {
                 gifView.frame = CGRect(mj_w / 2.0 - width - 15.0, 0, width, mj_h)
-                stateLabel.mj_x = mj_w / 2.0 - 15.0
-                stateLabel.mj_w = mj_w / 2.0 + 15.0
-                stateLabel.textAlignment = .left
+                stateLabel?.mj_x = mj_w / 2.0 - 15.0
+                stateLabel?.mj_w = mj_w / 2.0 + 15.0
+                stateLabel?.textAlignment = .left
             }
         }
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A204C068C3A2330457622F2 /* Pods_SRKit_SRFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F8C73FA381BCE53D3B8485 /* Pods_SRKit_SRFramework.framework */; };
 		4E0EAD5922A255E9001CD195 /* UIApplication+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */; };
 		4E1376122286A0C100330EBE /* NullSafe.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B41E228698F100E98791 /* NullSafe.m */; };
 		4E1376132286A0C100330EBE /* SRAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B41C228698F100E98791 /* SRAlert.swift */; };
@@ -178,17 +179,69 @@
 		4EA178E223B72FE400EDB140 /* JSON+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA178E123B72FE300EDB140 /* JSON+SRExtension.swift */; };
 		4EA178E323B72FE400EDB140 /* JSON+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA178E123B72FE300EDB140 /* JSON+SRExtension.swift */; };
 		4EACFFE22282C10700F563FD /* SRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EACFFE12282C10700F563FD /* SRViewController.swift */; };
+		4EEDC33724EA6954001936D7 /* SRFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 4EEDC33524EA6954001936D7 /* SRFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4EEDC33A24EA6954001936D7 /* SRFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEDC33324EA6954001936D7 /* SRFramework.framework */; };
+		4EEDC33B24EA6954001936D7 /* SRFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEDC33324EA6954001936D7 /* SRFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4EEDC34224EA6B01001936D7 /* SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E7576112264525700394408 /* SRKit.framework */; };
+		4EEDC34324EA6B01001936D7 /* SRKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E7576112264525700394408 /* SRKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4EEDC34824EA758B001936D7 /* SRDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC34724EA758B001936D7 /* SRDBManager.swift */; };
+		4EEDC34A24EA75B1001936D7 /* SRDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC34924EA75B1001936D7 /* SRDownloadManager.swift */; };
+		4EEDC34C24EA75DE001936D7 /* SRBaseBusinessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC34B24EA75DE001936D7 /* SRBaseBusinessModel.swift */; };
 		4EF3E2D323BDF09B00763798 /* SRHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3E2D223BDF09A00763798 /* SRHTTP.swift */; };
 		4EF3E2D423BDF09B00763798 /* SRHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3E2D223BDF09A00763798 /* SRHTTP.swift */; };
+		8165F5599308AC59C886B9A8 /* Pods_SRKit_SRFramework_SRKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02347F4E5359D572AEA7A789 /* Pods_SRKit_SRFramework_SRKitExample.framework */; };
 		A8BAEDC97DA95DBF9A1FF5D4 /* Pods_SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */; };
-		E92A0E02B846C914E90C70A4 /* Pods_SRKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DA932185FB8547E0BCF3D00 /* Pods_SRKitExample.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4EEDC33824EA6954001936D7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E7575502264510800394408 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4EEDC33224EA6954001936D7;
+			remoteInfo = SRFramework;
+		};
+		4EEDC34424EA6B01001936D7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E7575502264510800394408 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4E7576102264525700394408;
+			remoteInfo = SRKit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4EEDC33C24EA6954001936D7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4EEDC33B24EA6954001936D7 /* SRFramework.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4EEDC34624EA6B01001936D7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4EEDC34324EA6B01001936D7 /* SRKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		02347F4E5359D572AEA7A789 /* Pods_SRKit_SRFramework_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit_SRFramework_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		18E447EB153270950130C9EA /* Pods-SRKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKitExample.release.xcconfig"; path = "Target Support Files/Pods-SRKitExample/Pods-SRKitExample.release.xcconfig"; sourceTree = "<group>"; };
 		1A32AF1ACC95A4915FE66BBE /* Pods-abstract_pods-SRKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKitExample.release.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKitExample/Pods-abstract_pods-SRKitExample.release.xcconfig"; sourceTree = "<group>"; };
 		33357D879170AD5317BB11D2 /* Pods-abstract_pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKit/Pods-abstract_pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
-		3DA932185FB8547E0BCF3D00 /* Pods_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3CC44827894B23157AB8D4EF /* Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig"; path = "Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig"; sourceTree = "<group>"; };
+		41F8C73FA381BCE53D3B8485 /* Pods_SRKit_SRFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit_SRFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+SRExtension.swift"; sourceTree = "<group>"; };
 		4E13761022869ADB00330EBE /* SRKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRKeyboard.swift; sourceTree = "<group>"; };
@@ -274,11 +327,20 @@
 		4E89B469228698F200E98791 /* SRBusinessManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBusinessManager.swift; sourceTree = "<group>"; };
 		4EA178E123B72FE300EDB140 /* JSON+SRExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "JSON+SRExtension.swift"; sourceTree = "<group>"; };
 		4EACFFE12282C10700F563FD /* SRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRViewController.swift; sourceTree = "<group>"; };
+		4EEDC33324EA6954001936D7 /* SRFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SRFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4EEDC33524EA6954001936D7 /* SRFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRFramework.h; sourceTree = "<group>"; };
+		4EEDC33624EA6954001936D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4EEDC34724EA758B001936D7 /* SRDBManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDBManager.swift; sourceTree = "<group>"; };
+		4EEDC34924EA75B1001936D7 /* SRDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDownloadManager.swift; sourceTree = "<group>"; };
+		4EEDC34B24EA75DE001936D7 /* SRBaseBusinessModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRBaseBusinessModel.swift; sourceTree = "<group>"; };
 		4EF3E2D223BDF09A00763798 /* SRHTTP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRHTTP.swift; sourceTree = "<group>"; };
 		585A6469429ADC0C53AE68C7 /* Pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-SRKit/Pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
+		6D9528C9C6A950907317827A /* Pods-SRKit-SRFramework.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit-SRFramework.release.xcconfig"; path = "Target Support Files/Pods-SRKit-SRFramework/Pods-SRKit-SRFramework.release.xcconfig"; sourceTree = "<group>"; };
 		BBC7E620349953CE06D68FB4 /* Pods-abstract_pods-SRKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKitExample.debug.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKitExample/Pods-abstract_pods-SRKitExample.debug.xcconfig"; sourceTree = "<group>"; };
 		BF3538143421F07B2D2AE675 /* Pods-SRKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKitExample.debug.xcconfig"; path = "Target Support Files/Pods-SRKitExample/Pods-SRKitExample.debug.xcconfig"; sourceTree = "<group>"; };
 		C29A230CD8EE950F7B5E752D /* Pods-SRKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit.release.xcconfig"; path = "Target Support Files/Pods-SRKit/Pods-SRKit.release.xcconfig"; sourceTree = "<group>"; };
+		C31A85316A2508000844FE79 /* Pods-SRKit-SRFramework-SRKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit-SRFramework-SRKitExample.release.xcconfig"; path = "Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample.release.xcconfig"; sourceTree = "<group>"; };
+		C42F6727A5BB9B4D23E1DDA1 /* Pods-SRKit-SRFramework.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit-SRFramework.debug.xcconfig"; path = "Target Support Files/Pods-SRKit-SRFramework/Pods-SRKit-SRFramework.debug.xcconfig"; sourceTree = "<group>"; };
 		FDB5F1E21D37DD84CF4CD7A3 /* Pods-abstract_pods-SRKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKit.release.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKit/Pods-abstract_pods-SRKit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -294,7 +356,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E92A0E02B846C914E90C70A4 /* Pods_SRKitExample.framework in Frameworks */,
+				4EEDC33A24EA6954001936D7 /* SRFramework.framework in Frameworks */,
+				8165F5599308AC59C886B9A8 /* Pods_SRKit_SRFramework_SRKitExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +366,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8BAEDC97DA95DBF9A1FF5D4 /* Pods_SRKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4EEDC33024EA6954001936D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4EEDC34224EA6B01001936D7 /* SRKit.framework in Frameworks */,
+				1A204C068C3A2330457622F2 /* Pods_SRKit_SRFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +413,7 @@
 				4E75755A2264510800394408 /* SRKitExample */,
 				4E7576122264525800394408 /* SRKit */,
 				4E5626FC2285413500C6CE1D /* SRKitRes */,
+				4EEDC33424EA6954001936D7 /* SRFramework */,
 				4E7575592264510800394408 /* Products */,
 				6D4DD75DD5D3183F65C2A873 /* Pods */,
 				E28088720C99F65CE996C670 /* Frameworks */,
@@ -353,6 +426,7 @@
 				4E7575582264510800394408 /* SRKitExample.app */,
 				4E7576112264525700394408 /* SRKit.framework */,
 				4E5626FB2285413400C6CE1D /* SRKitRes.bundle */,
+				4EEDC33324EA6954001936D7 /* SRFramework.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -609,6 +683,34 @@
 			path = SRBusinessFramework;
 			sourceTree = "<group>";
 		};
+		4EEDC33424EA6954001936D7 /* SRFramework */ = {
+			isa = PBXGroup;
+			children = (
+				4EEDC34024EA69EC001936D7 /* Mangers */,
+				4EEDC34124EA69EC001936D7 /* Models */,
+				4EEDC33524EA6954001936D7 /* SRFramework.h */,
+				4EEDC33624EA6954001936D7 /* Info.plist */,
+			);
+			path = SRFramework;
+			sourceTree = "<group>";
+		};
+		4EEDC34024EA69EC001936D7 /* Mangers */ = {
+			isa = PBXGroup;
+			children = (
+				4EEDC34724EA758B001936D7 /* SRDBManager.swift */,
+				4EEDC34924EA75B1001936D7 /* SRDownloadManager.swift */,
+			);
+			path = Mangers;
+			sourceTree = "<group>";
+		};
+		4EEDC34124EA69EC001936D7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4EEDC34B24EA75DE001936D7 /* SRBaseBusinessModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		6D4DD75DD5D3183F65C2A873 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -620,6 +722,10 @@
 				FDB5F1E21D37DD84CF4CD7A3 /* Pods-abstract_pods-SRKit.release.xcconfig */,
 				BBC7E620349953CE06D68FB4 /* Pods-abstract_pods-SRKitExample.debug.xcconfig */,
 				1A32AF1ACC95A4915FE66BBE /* Pods-abstract_pods-SRKitExample.release.xcconfig */,
+				C42F6727A5BB9B4D23E1DDA1 /* Pods-SRKit-SRFramework.debug.xcconfig */,
+				6D9528C9C6A950907317827A /* Pods-SRKit-SRFramework.release.xcconfig */,
+				3CC44827894B23157AB8D4EF /* Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig */,
+				C31A85316A2508000844FE79 /* Pods-SRKit-SRFramework-SRKitExample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -628,7 +734,8 @@
 			isa = PBXGroup;
 			children = (
 				4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */,
-				3DA932185FB8547E0BCF3D00 /* Pods_SRKitExample.framework */,
+				41F8C73FA381BCE53D3B8485 /* Pods_SRKit_SRFramework.framework */,
+				02347F4E5359D572AEA7A789 /* Pods_SRKit_SRFramework_SRKitExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -667,6 +774,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4EEDC32E24EA6954001936D7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4EEDC33724EA6954001936D7 /* SRFramework.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -697,10 +812,12 @@
 				4E7575552264510800394408 /* Frameworks */,
 				4E7575562264510800394408 /* Resources */,
 				17B634B7026840ED089ED207 /* [CP] Embed Pods Frameworks */,
+				4EEDC33C24EA6954001936D7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4EEDC33924EA6954001936D7 /* PBXTargetDependency */,
 			);
 			name = SRKitExample;
 			productName = SRKitExample;
@@ -727,6 +844,27 @@
 			productReference = 4E7576112264525700394408 /* SRKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		4EEDC33224EA6954001936D7 /* SRFramework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4EEDC33F24EA6954001936D7 /* Build configuration list for PBXNativeTarget "SRFramework" */;
+			buildPhases = (
+				ABBECD56E4FD398699DA6D58 /* [CP] Check Pods Manifest.lock */,
+				4EEDC32E24EA6954001936D7 /* Headers */,
+				4EEDC32F24EA6954001936D7 /* Sources */,
+				4EEDC33024EA6954001936D7 /* Frameworks */,
+				4EEDC33124EA6954001936D7 /* Resources */,
+				4EEDC34624EA6B01001936D7 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4EEDC34524EA6B01001936D7 /* PBXTargetDependency */,
+			);
+			name = SRFramework;
+			productName = SRFramework;
+			productReference = 4EEDC33324EA6954001936D7 /* SRFramework.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -745,6 +883,10 @@
 					};
 					4E7576102264525700394408 = {
 						CreatedOnToolsVersion = 10.2;
+					};
+					4EEDC33224EA6954001936D7 = {
+						CreatedOnToolsVersion = 11.6;
+						LastSwiftMigration = 1160;
 					};
 				};
 			};
@@ -765,6 +907,7 @@
 				4E7575572264510800394408 /* SRKitExample */,
 				4E7576102264525700394408 /* SRKit */,
 				4E5626FA2285413400C6CE1D /* SRKitRes */,
+				4EEDC33224EA6954001936D7 /* SRFramework */,
 			);
 		};
 /* End PBXProject section */
@@ -801,6 +944,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4EEDC33124EA6954001936D7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -810,15 +960,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SRKitExample/Pods-SRKitExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SRKitExample/Pods-SRKitExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SRKitExample/Pods-SRKitExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3436B69D9F723FC70D360F0F /* [CP] Check Pods Manifest.lock */ = {
@@ -836,7 +986,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SRKitExample-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SRKit-SRFramework-SRKitExample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -877,7 +1027,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nbuild_path=\"${BUILD_DIR}\"\nframework_name=\"SRKit\"\nframework=\"${framework_name}.framework\"\niphoneos_path=\"${build_path}/Release-iphoneos/${framework}\"\niphonesimulator_path=\"${build_path}/Release-iphonesimulator/${framework}\"\n\nif [[ ! -d \"${iphoneos_path}\" ]]; then\n  echo \"Release-iphoneos path is invalid: ${iphoneos_path}\"\n  exit 0\nfi\n\nif [[ ! -d \"${iphonesimulator_path}\" ]]; then\n  echo \"Release-iphonesimulator path is invalid: ${iphonesimulator_path}\"\n  exit 0\nfi\n\nout_path=\"${HOME}/Desktop/${framework}\"\ncp -rf \"${iphoneos_path}\" \"${out_path}\"\nlipo -create -output \"${out_path}/${framework_name}\" \"${iphoneos_path}/${framework_name}\" \"${iphonesimulator_path}/${framework_name}\"\ncp -r \"${iphonesimulator_path}/Modules/${framework_name}.swiftmodule/\" \"${out_path}/Modules/${framework_name}.swiftmodule\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nbuild_path=\"${BUILD_DIR}\"\nframework_name=\"SRKit\"\nframework=\"${framework_name}.framework\"\niphoneos_path=\"${build_path}/Release-iphoneos/${framework}\"\niphonesimulator_path=\"${build_path}/Release-iphonesimulator/${framework}\"\niphonesimulator_swiftmodule_path=\"${iphonesimulator_path}/Modules/${framework_name}.swiftmodule\"\n\nif [[ ! -d \"${iphoneos_path}\" ]]; then\n  echo \"Release-iphoneos path is invalid: ${iphoneos_path}\"\n  exit 0\nfi\n\nif [[ ! -d \"${iphonesimulator_path}\" ]]; then\n  echo \"Release-iphonesimulator path is invalid: ${iphonesimulator_path}\"\n  exit 0\nfi\n\nout_path=\"${HOME}/Desktop/${framework}\"\ncp -rf \"${iphoneos_path}\" \"${out_path}\"\nlipo -create -output \"${out_path}/${framework_name}\" \"${iphoneos_path}/${framework_name}\" \"${iphonesimulator_path}/${framework_name}\"\nif [[ -d \"${iphonesimulator_swiftmodule_path}\" ]]; then\n  cp -r \"${iphonesimulator_swiftmodule_path}/\" \"${out_path}/Modules/${framework_name}.swiftmodule\"\nfi\n";
 		};
 		740D71A51AF3D5289AE13EC1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -895,6 +1045,28 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-SRKit-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ABBECD56E4FD398699DA6D58 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SRKit-SRFramework-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1064,7 +1236,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4EEDC32F24EA6954001936D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4EEDC34A24EA75B1001936D7 /* SRDownloadManager.swift in Sources */,
+				4EEDC34824EA758B001936D7 /* SRDBManager.swift in Sources */,
+				4EEDC34C24EA75DE001936D7 /* SRBaseBusinessModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4EEDC33924EA6954001936D7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4EEDC33224EA6954001936D7 /* SRFramework */;
+			targetProxy = 4EEDC33824EA6954001936D7 /* PBXContainerItemProxy */;
+		};
+		4EEDC34524EA6B01001936D7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4E7576102264525700394408 /* SRKit */;
+			targetProxy = 4EEDC34424EA6B01001936D7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		4E75755F2264510800394408 /* Main.storyboard */ = {
@@ -1253,8 +1448,9 @@
 		};
 		4E75756B2264510900394408 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF3538143421F07B2D2AE675 /* Pods-SRKitExample.debug.xcconfig */;
+			baseConfigurationReference = 3CC44827894B23157AB8D4EF /* Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6NH38MACH2;
@@ -1264,6 +1460,7 @@
 					EXAMPLE,
 				);
 				INFOPLIST_FILE = SRKitExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1278,8 +1475,9 @@
 		};
 		4E75756C2264510900394408 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 18E447EB153270950130C9EA /* Pods-SRKitExample.release.xcconfig */;
+			baseConfigurationReference = C31A85316A2508000844FE79 /* Pods-SRKit-SRFramework-SRKitExample.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6NH38MACH2;
@@ -1289,6 +1487,7 @@
 					EXAMPLE,
 				);
 				INFOPLIST_FILE = SRKitExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1316,7 +1515,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = SRKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1348,13 +1547,74 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = SRKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadow.development.SRKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		4EEDC33D24EA6954001936D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C42F6727A5BB9B4D23E1DDA1 /* Pods-SRKit-SRFramework.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 6NH38MACH2;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = SRFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.shadow.development.SRFramework;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		4EEDC33E24EA6954001936D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6D9528C9C6A950907317827A /* Pods-SRKit-SRFramework.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 6NH38MACH2;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = SRFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.shadow.development.SRFramework;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -1399,6 +1659,15 @@
 			buildConfigurations = (
 				4E7576172264525800394408 /* Debug */,
 				4E7576182264525800394408 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4EEDC33F24EA6954001936D7 /* Build configuration list for PBXNativeTarget "SRFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4EEDC33D24EA6954001936D7 /* Debug */,
+				4EEDC33E24EA6954001936D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

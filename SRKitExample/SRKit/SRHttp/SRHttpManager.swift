@@ -256,7 +256,7 @@ open class SRHttpManager {
         if headers != nil,
             let parameterReplace = request.parameterReplace,
             let keyValues = parameterReplace.keyValues?.headers {
-            headers = (headers!.replacingOccurrences(keyValues: keyValues) as! ParamHeaders)
+            headers = HTTPHeaders((headers!.dictionary.replacingOccurrences(keyValues: keyValues)) as! [String : String])
         }
         
         var params = request.params!
@@ -377,11 +377,16 @@ open class SRHttpManager {
         init() { }
         weak var target: NSObject?
         var action: Selector?
+        var queue: DispatchQueue?
     }
     
     private var listeners: [SRHttpListenerObject] = []
     
-    open func addListener(forNetworkStatus target: NSObject?, action: Selector?) {
+    open func addListener(forNetworkStatusChanged target: NSObject?, action: Selector?) {
+        addListener(forNetworkStatusChanged: target, action: action, queue: nil)
+    }
+    
+    open func addListener(forNetworkStatusChanged target: NSObject?, action: Selector?, queue: DispatchQueue?) {
         guard let target = target, let action = action else {
             return
         }
@@ -391,11 +396,16 @@ open class SRHttpManager {
         let object = SRHttpListenerObject()
         object.target = target
         object.action = action
+        if let queue = queue {
+            object.queue = queue
+        } else if Thread.isMainThread {
+            object.queue = DispatchQueue.main
+        }
         listeners.append(object)
         objc_sync_exit(listeners)
     }
     
-    open func removeListener(forNetworkStatus target: NSObject?, action: Selector? = nil) {
+    open func removeListener(forNetworkStatusChanged target: NSObject?, action: Selector? = nil) {
         guard let target = target else {
             return
         }
@@ -417,16 +427,22 @@ open class SRHttpManager {
     private var networkMonitor: NetworkReachabilityManager? {
         if _networkMonitor == nil {
             _networkMonitor = NetworkReachabilityManager()
-            _networkMonitor?.listener = { status in
-                self._networkStatus = status
-                self.listeners.forEach { $0.target?.perform($0.action, with: status) }
-            }
         }
         return _networkMonitor
     }
     
     open func startNetworkMonitor() {
-        networkMonitor?.startListening()
+        networkMonitor?.startListening(onQueue: SRHttpManager.queue, onUpdatePerforming: { [weak self] (status) in
+            guard let strongSelf = self else { return }
+            if strongSelf._networkStatus != status {
+                strongSelf._networkStatus = status
+                strongSelf.listeners.forEach { listener in
+                    listener.queue?.async {
+                        listener.target?.perform(listener.action, with: status)
+                    }
+                }
+            }
+        })
     }
     
     open func stoptNetworkMonitor() {

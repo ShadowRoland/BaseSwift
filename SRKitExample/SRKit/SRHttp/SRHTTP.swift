@@ -105,7 +105,7 @@ public class SRHTTP {
         open var parameterReplace: ParameterReplace? = nil
         
         open var request: DataRequest?
-        open var response: DefaultDataResponse?
+        open var response: DataResponse?
         
         private init(_ method: Method,
                      url: String,
