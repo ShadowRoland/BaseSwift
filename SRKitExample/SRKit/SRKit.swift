@@ -20,7 +20,7 @@ public typealias ParamDictionary = [String : Any]
 public typealias EnumInt = Int
 
 public typealias ParamEncoding = ParameterEncoding
-public typealias ParamHeaders = HTTPHeaders
+public typealias ParamHeaders = [String : String]
 
 public let C = Const.self
 

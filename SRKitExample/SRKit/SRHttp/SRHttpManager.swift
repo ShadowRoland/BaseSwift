@@ -22,7 +22,7 @@ open class SRHttpManager {
     public var requests: [SRHTTP.Request] = []
     
     open var defaultRequestHeaders: ParamHeaders {
-        return Alamofire.SessionManager.defaultHTTPHeaders
+        return [:]
     }
     
     open var defaultRequestParams: ParamDictionary  {
@@ -101,9 +101,8 @@ open class SRHttpManager {
         params += defaultRequestParams
         request.params = params
         
-        if request.headers == nil {
-            request.headers = self.defaultRequestHeaders
-        }
+        var headers = HTTPHeaders.default
+        request.headers?.forEach { headers.update(name: $0.key, value: $0.value) }
         
         let manager = self.manager(request.timeout, retryCount: request.retryCount)
         switch request.method {
@@ -116,7 +115,7 @@ open class SRHttpManager {
                 request.request = manager.post(requestUrl,
                                            params: request.params!,
                                            encoding: request.encoding!,
-                                           headers: request.headers!)
+                                           headers: headers)
                 { response in
                     request.response = response
                     self.complete(request, success: success, failure: failure)
@@ -133,7 +132,7 @@ open class SRHttpManager {
                 request.request = manager.get(requestUrl,
                                               params: request.params!,
                                               encoding: request.encoding!,
-                                              headers: request.headers!)
+                                              headers: headers)
                 { response in
                     request.response = response
                     self.complete(request, success: success, failure: failure)
@@ -150,19 +149,13 @@ open class SRHttpManager {
                     request.files = []
                 }
                 self.logRequest(request)
-                request.request = nil
-                manager.upload(requestUrl,
+                request.request = manager.upload(requestUrl,
                                files: request.files!,
                                params: request.params!,
                                encoding: request.encoding!,
-                               headers: request.headers!)
+                               headers: headers)
                 { response in
-                    request.response = .init(request: response.request,
-                                             response: response.response,
-                                             data: response.data,
-                                             error: response.error,
-                                             timeline: response.timeline,
-                                             metrics: nil)
+                    request.response = response
                     self.complete(request, success: success, failure: failure)
                 }
                 self.requests.append(request)
@@ -252,11 +245,14 @@ open class SRHttpManager {
     open func logRequest(_ request: SRHTTP.Request) {
         guard logRequestEnvironment.contains(C.environment) else { return }
         
-        var headers = request.headers
-        if headers != nil,
+        var headers = HTTPHeaders.default.dictionary
+        if let requestHeaders = request.headers {
+            headers += requestHeaders
+        }
+        if !headers.isEmpty,
             let parameterReplace = request.parameterReplace,
             let keyValues = parameterReplace.keyValues?.headers {
-            headers = HTTPHeaders((headers!.dictionary.replacingOccurrences(keyValues: keyValues)) as! [String : String])
+            headers = headers.replacingOccurrences(keyValues: keyValues) as! ParamHeaders
         }
         
         var params = request.params!
@@ -269,18 +265,11 @@ open class SRHttpManager {
             }
         }
         
-        if let headers = headers, !headers.isEmpty {
-            LogInfo(String(format: "New http request: %@, url: %@\nheader:%@\nbody:\n%@",
-                           request.method.description,
-                           request.url,
-                           String(jsonObject: headers),
-                           String(jsonObject: params)))
-        } else {
-            LogInfo(String(format: "New http request: %@, url: %@\nbody:\n%@",
-                           request.method.description,
-                           request.url,
-                           String(jsonObject: params)))
-        }
+        LogInfo(String(format: "New http request: %@, url: %@\nheader:%@\nbody:\n%@",
+                       request.method.description,
+                       request.url,
+                       String(jsonObject: headers),
+                       String(jsonObject: params)))
         let urlQuery = params.urlQuery
         SRHttpManager.lastRequestUrl = urlQuery.isEmpty ? request.url : request.url + "?" + urlQuery
         LogInfo("url:\n\(SRHttpManager.lastRequestUrl)")
@@ -303,11 +292,11 @@ open class SRHttpManager {
         }
         
         let response = request.response!
-        LogInfo(String(format: "http response %@ url: %@, request duration: %.4fs, total duration: %.4fs",
+        LogInfo(String(format: "http response %@ url: %@, request duration: %@, total duration: %@",
                        request.method.description,
                        request.url,
-                       response.timeline.requestDuration,
-                       response.timeline.totalDuration))
+                       response.metrics.map { "\($0.taskInterval.duration)s" } ?? "None",
+                       "\(response.serializationDuration)"))
         if let error = response.error {
             if let statusCode = response.response?.statusCode {
                 LogError("status code: \(statusCode), description: \(error.localizedDescription)")
