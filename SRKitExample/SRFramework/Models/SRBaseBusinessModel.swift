@@ -10,28 +10,57 @@ import UIKit
 import SRKit
 import ObjectMapper
 
-open class SRBaseBusinessModel: SRBaseModel, SRDBMappable {
-    override public init() { }
+open class SRBaseBusinessModel: SRBaseModel, SRDBModel {
+    override public init() { super.init() }
     
-    required public init?(map: Map) { }
+    //MARK: - Mappable
+    required public init?(map: Map) { super.init(map: map)}
     
     open override func mapping(map: Map) {
         super.mapping(map: map)
     }
     
-    //MARK: - 数据库相关
-
-    //数据库中存储对应的表名
-    open var tableName: String {
-        return ""
+    //MARK: - NSCopying
+    
+    public override func copy(with zone: NSZone? = nil) -> Any {
+        return SRBaseBusinessModel(JSON: toJSON()) ?? SRBaseBusinessModel()
     }
     
-    //创建数据库中表的SQL语句
+    //MARK: - SRDBModel
+    
+    open func modelMapping(map: Map) -> SRDBModel {
+        if let model = SRBaseBusinessModel(map: map) {
+            return model
+        } else {
+            return SRBaseBusinessModel()
+        }
+    }
+
+    open func mappingDB(map: Map) {
+//        if let context = map.context as SRDBMapContext {
+//            if context.contains(SRDBMapContext.selectMain) { ///只获取主要字段
+//                id <- map[Param.Key.id]
+//                timestamp <- map[Param.Key.timestamp]
+//            } else if context.contains(SRDBMapContext.updateMain) { ///只更新主要字段
+//                timestamp <- map[Param.Key.timestamp]
+//            }
+//        }
+        mapping(map: map)
+    }
+
+    open var tableName: String {
+        get {
+            return ""
+        }
+        set {
+            
+        }
+    }
+    
     open var createTableSQL: String {
         return createTableSQL("`id` integer primary key autoincrement, 'timestamp' integer default 0")
     }
     
-    //创建数据库中表的SQL语句，parm sql: 创建其他字段及索引等可追加的sql语句
     open func createTableSQL(_ addSQL: String) -> String {
         var columns = "`id` integer primary key autoincrement, 'timestamp' integer default 0"
         if !addSQL.isEmpty {
@@ -40,11 +69,30 @@ open class SRBaseBusinessModel: SRBaseModel, SRDBMappable {
         return "create table if not exists \(tableName) \(columns));"
     }
     
-    //创建数据库中表的SQL语句，parm sql: 创建其他字段及索引等可追加的sql语句
     open func insertSQL(_ columns: String, values: String) -> String {
-        return String(format: "insert into %@ %@ values (%@);",
-                      tableName,
-                      String(format: "timestamp%@", !columns.isEmpty ? ", \(columns)" : ""),
-                      String(format: "0%@", !values.isEmpty ? ", \(values)" : ""))
-    }    
+        var columnsSQL = "timestamp"
+        var valuesSQL = "0"
+        if !columns.trim.isEmpty && !values.trim.isEmpty {
+            columnsSQL.append(", \(columns)")
+            valuesSQL.append(", \(values)")
+        }
+        return "insert into \(tableName) \(columnsSQL) values (\(valuesSQL));"
+    }
+    
+    open func selectSQL(_ columns: String, where whereSQL: String) -> String {
+        let columnsSQL = !columns.trim.isEmpty ? columns : "*"
+        let newWhereSQL = !whereSQL.trim.isEmpty ? whereSQL : "id = \(id)"
+        return "select \(columnsSQL) from \(tableName) where \(newWhereSQL);"
+    }
+    
+    open func updateSQL(_ setSQL: String, where whereSQL: String) -> String {
+        let newSetSQL = !setSQL.trim.isEmpty ? setSQL : "timestamp = \(NSDate().timeIntervalSince1970)"
+        let newWhereSQL = !whereSQL.trim.isEmpty ? whereSQL : "id = \(id)"
+        return "update \(tableName) set \(newSetSQL) where \(newWhereSQL);"
+    }
+    
+    open func deleteSQL(_ whereSQL: String) -> String {
+        let newWhereSQL = !whereSQL.trim.isEmpty ? whereSQL : "id = \(id)"
+        return "delete from \(tableName) where \(newWhereSQL);"
+    }
 }

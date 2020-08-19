@@ -89,6 +89,7 @@ public enum BFResult<Value>: SRResult, CustomStringConvertible, CustomDebugStrin
 // MARK: - BFError
 
 open class BFError: CustomNSError, LocalizedError {
+    var error: NSError?
     open class AttributedString {
         public struct Key: RawRepresentable, Hashable {
             public typealias RawValue = String
@@ -120,6 +121,12 @@ open class BFError: CustomNSError, LocalizedError {
         }
     }
     
+    public init(error: Error) {
+        self.error = error as NSError
+        _errorDomain = self.error!.domain
+        _errorCode = self.error!.code
+    }
+    
     open var userInfo: [AttributedString.Key : Any]? {
         return _errorUserInfo.isEmpty ? nil : _errorUserInfo
     }
@@ -134,6 +141,9 @@ open class BFError: CustomNSError, LocalizedError {
     
     private var _errorUserInfo = [:] as [AttributedString.Key : Any]
     open var errorUserInfo: [String : Any] {
+        if let error = error {
+            return error.userInfo
+        }
         var dictionary = [:] as [String : Any]
         _errorUserInfo.forEach {  dictionary[$0.key.rawValue] = $0.value}
         return dictionary
@@ -142,18 +152,30 @@ open class BFError: CustomNSError, LocalizedError {
     //MARK: - LocalizedError
 
     open var errorDescription: String? {
+        if let error = error {
+            return error.localizedDescription
+        }
         return _errorUserInfo[.errorDescription] as? String
     }
     
     open var failureReason: String? {
+        if let error = error {
+            return error.localizedFailureReason
+        }
         return _errorUserInfo[.failureReason] as? String
     }
     
     open var recoverySuggestion: String? {
+        if let error = error {
+            return error.localizedRecoverySuggestion
+        }
         return _errorUserInfo[.recoverySuggestion] as? String
     }
     
     open var helpAnchor: String? {
+        if let error = error {
+            return error.helpAnchor
+        }
         return _errorUserInfo[.helpAnchor] as? String
     }
 }

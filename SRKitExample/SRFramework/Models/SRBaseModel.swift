@@ -10,7 +10,7 @@ import UIKit
 import SRKit
 import ObjectMapper
 
-open class SRBaseModel: NSObject, Mappable {
+open class SRBaseModel: NSObject, Mappable, NSCopying {
     open var id: CLongLong = 0
     open var timestamp: Int?
     
@@ -31,6 +31,12 @@ open class SRBaseModel: NSObject, Mappable {
         } else {
             return false
         }
+    }
+    
+    //MARK: - NSCopying
+    
+    public func copy(with zone: NSZone? = nil) -> Any {
+        return SRBaseModel(JSON: toJSON()) ?? SRBaseModel()
     }
 }
 

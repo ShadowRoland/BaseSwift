@@ -184,8 +184,14 @@
 		4EEDC34C24EA75DE001936D7 /* SRBaseBusinessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC34B24EA75DE001936D7 /* SRBaseBusinessModel.swift */; };
 		4EEDC34F24EB720F001936D7 /* SRProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC34E24EB720F001936D7 /* SRProgressHUD.swift */; };
 		4EEDC35024EB7238001936D7 /* SRProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC34E24EB720F001936D7 /* SRProgressHUD.swift */; };
-		4EEDC35424EB7FDA001936D7 /* SRDBMappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35324EB7FDA001936D7 /* SRDBMappable.swift */; };
+		4EEDC35424EB7FDA001936D7 /* SRDBModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35324EB7FDA001936D7 /* SRDBModel.swift */; };
 		4EEDC35624EB84B4001936D7 /* SRBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35524EB84B4001936D7 /* SRBaseModel.swift */; };
+		4EEDC35824ECBCE0001936D7 /* SRDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35724ECBCE0001936D7 /* SRDBManager.swift */; };
+		4EEDC35B24ECE1F5001936D7 /* SRSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35A24ECE1F4001936D7 /* SRSet.swift */; };
+		4EEDC35D24ED0C3B001936D7 /* SRDownloadTaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35C24ED0C3B001936D7 /* SRDownloadTaskModel.swift */; };
+		4EEDC35F24ED0C69001936D7 /* SRDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35E24ED0C69001936D7 /* SRDownloadManager.swift */; };
+		4EEDC36124ED0C82001936D7 /* SRDownloadItemTaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC36024ED0C82001936D7 /* SRDownloadItemTaskModel.swift */; };
+		4EEDC36324ED0C91001936D7 /* SRDownloadGroupTaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC36224ED0C91001936D7 /* SRDownloadGroupTaskModel.swift */; };
 		4EF3E2D323BDF09B00763798 /* SRHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3E2D223BDF09A00763798 /* SRHTTP.swift */; };
 		4EF3E2D423BDF09B00763798 /* SRHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3E2D223BDF09A00763798 /* SRHTTP.swift */; };
 		8165F5599308AC59C886B9A8 /* Pods_SRKit_SRFramework_SRKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02347F4E5359D572AEA7A789 /* Pods_SRKit_SRFramework_SRKitExample.framework */; };
@@ -331,8 +337,14 @@
 		4EEDC33624EA6954001936D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4EEDC34B24EA75DE001936D7 /* SRBaseBusinessModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRBaseBusinessModel.swift; sourceTree = "<group>"; };
 		4EEDC34E24EB720F001936D7 /* SRProgressHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRProgressHUD.swift; sourceTree = "<group>"; };
-		4EEDC35324EB7FDA001936D7 /* SRDBMappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDBMappable.swift; sourceTree = "<group>"; };
+		4EEDC35324EB7FDA001936D7 /* SRDBModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDBModel.swift; sourceTree = "<group>"; };
 		4EEDC35524EB84B4001936D7 /* SRBaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRBaseModel.swift; sourceTree = "<group>"; };
+		4EEDC35724ECBCE0001936D7 /* SRDBManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDBManager.swift; sourceTree = "<group>"; };
+		4EEDC35A24ECE1F4001936D7 /* SRSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRSet.swift; sourceTree = "<group>"; };
+		4EEDC35C24ED0C3B001936D7 /* SRDownloadTaskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDownloadTaskModel.swift; sourceTree = "<group>"; };
+		4EEDC35E24ED0C69001936D7 /* SRDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDownloadManager.swift; sourceTree = "<group>"; };
+		4EEDC36024ED0C82001936D7 /* SRDownloadItemTaskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDownloadItemTaskModel.swift; sourceTree = "<group>"; };
+		4EEDC36224ED0C91001936D7 /* SRDownloadGroupTaskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDownloadGroupTaskModel.swift; sourceTree = "<group>"; };
 		4EF3E2D223BDF09A00763798 /* SRHTTP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRHTTP.swift; sourceTree = "<group>"; };
 		585A6469429ADC0C53AE68C7 /* Pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-SRKit/Pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
 		6D9528C9C6A950907317827A /* Pods-SRKit-SRFramework.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit-SRFramework.release.xcconfig"; path = "Target Support Files/Pods-SRKit-SRFramework/Pods-SRKit-SRFramework.release.xcconfig"; sourceTree = "<group>"; };
@@ -461,6 +473,7 @@
 				4E89B421228698F100E98791 /* SRIndexPath */,
 				4E89B425228698F100E98791 /* SRKeyboard */,
 				4E89B460228698F200E98791 /* SRLog */,
+				4EEDC35924ECE1E7001936D7 /* SRSet */,
 				4E89B41F228698F100E98791 /* SRMJRefresh */,
 				4E89B427228698F100E98791 /* SRModalViewController */,
 				4E1376C82289372D00330EBE /* SRNavigationBar */,
@@ -715,7 +728,8 @@
 		4EEDC35124EB7F93001936D7 /* SRDatabase */ = {
 			isa = PBXGroup;
 			children = (
-				4EEDC35324EB7FDA001936D7 /* SRDBMappable.swift */,
+				4EEDC35724ECBCE0001936D7 /* SRDBManager.swift */,
+				4EEDC35324EB7FDA001936D7 /* SRDBModel.swift */,
 			);
 			path = SRDatabase;
 			sourceTree = "<group>";
@@ -723,8 +737,20 @@
 		4EEDC35224EB7F93001936D7 /* SRDownload */ = {
 			isa = PBXGroup;
 			children = (
+				4EEDC35E24ED0C69001936D7 /* SRDownloadManager.swift */,
+				4EEDC35C24ED0C3B001936D7 /* SRDownloadTaskModel.swift */,
+				4EEDC36224ED0C91001936D7 /* SRDownloadGroupTaskModel.swift */,
+				4EEDC36024ED0C82001936D7 /* SRDownloadItemTaskModel.swift */,
 			);
 			path = SRDownload;
+			sourceTree = "<group>";
+		};
+		4EEDC35924ECE1E7001936D7 /* SRSet */ = {
+			isa = PBXGroup;
+			children = (
+				4EEDC35A24ECE1F4001936D7 /* SRSet.swift */,
+			);
+			path = SRSet;
 			sourceTree = "<group>";
 		};
 		6D4DD75DD5D3183F65C2A873 /* Pods */ = {
@@ -1243,6 +1269,7 @@
 				4E13764A2286A0C100330EBE /* SRTabItem.swift in Sources */,
 				4E13764B2286A0C100330EBE /* SRVideoPlayer.swift in Sources */,
 				4E1376CA2289374D00330EBE /* SRNavigationBar.swift in Sources */,
+				4EEDC35B24ECE1F5001936D7 /* SRSet.swift in Sources */,
 				4E13764C2286A0C100330EBE /* SRBrightnessView.swift in Sources */,
 				4E13764D2286A0C100330EBE /* SRAssetResourceLoader.swift in Sources */,
 				4E13764E2286A0C100330EBE /* SRVideoRequestTask.swift in Sources */,
@@ -1256,9 +1283,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EEDC35424EB7FDA001936D7 /* SRDBMappable.swift in Sources */,
+				4EEDC35424EB7FDA001936D7 /* SRDBModel.swift in Sources */,
+				4EEDC35D24ED0C3B001936D7 /* SRDownloadTaskModel.swift in Sources */,
+				4EEDC35F24ED0C69001936D7 /* SRDownloadManager.swift in Sources */,
 				4EEDC35624EB84B4001936D7 /* SRBaseModel.swift in Sources */,
+				4EEDC36124ED0C82001936D7 /* SRDownloadItemTaskModel.swift in Sources */,
+				4EEDC35824ECBCE0001936D7 /* SRDBManager.swift in Sources */,
 				4EEDC34C24EA75DE001936D7 /* SRBaseBusinessModel.swift in Sources */,
+				4EEDC36324ED0C91001936D7 /* SRDownloadGroupTaskModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
