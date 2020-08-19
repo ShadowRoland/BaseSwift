@@ -28,6 +28,7 @@ open class SRDownloadManager: NSObject {
         }
     }
     
+    open var completionQueue: DispatchQueue?
     private var _operationQueue = OperationQueue()
     public var operationQueue: OperationQueue {
         get {
@@ -47,21 +48,51 @@ open class SRDownloadManager: NSObject {
             _httpCompletionQueue = newValue
         }
     }
-    open var completionQueue: DispatchQueue?
-    open var timeoutInterval: TimeInterval = 0
-    open var maxConcurrentCount = 0
+    private var _timeoutInterval: TimeInterval = 60
+    open var timeoutInterval: TimeInterval {
+        get {
+            return _timeoutInterval
+        }
+        set {
+            if _timeoutInterval != newValue {
+                let configuration = httpSession.sessionConfiguration
+                configuration.timeoutIntervalForRequest = newValue
+                httpSession = Alamofire.Session(configuration: configuration, delegate: sessionDelegate)
+                httpSession.delegate = nil
+            }
+            _timeoutInterval = newValue
+        }
+    }
+    open var maxConcurrentCount = 0 {
+        didSet {
+            
+        }
+    }
     open var allowedNetworkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus = .reachable(.cellular)
     
-    ///记录当前所有的组任务
-    open var groupTasks = [] as [SRDownloadGroupTaskModel]
-    ///记录当前所有的单项任务
-    open var itemTasks = [] as [SRDownloadItemTaskModel]
+    private var  _httpSession = Alamofire.Session()
+    public var httpSession: Alamofire.Session {
+        get {
+            return _httpSession
+        }
+        set {
+            _httpSession.cancelAllRequests()
+            _httpSession = newValue
+        }
+    }
     
+    ///正在处理中的组任务
+    open var didOnGroupTasks = [] as [SRDownloadGroupTaskModel]
+    ///正在处理中的单项任务
+    open var didOnItemTasks = [] as [SRDownloadItemTaskModel]
+    
+    ///正在网络处理中的组任务
     private var _httpDidOnDownloadGroupTasks = [] as [SRDownloadGroupTaskModel]
     public var httpDidOnDownloadGroupTasks: [SRDownloadGroupTaskModel] {
         return _httpDidOnDownloadGroupTasks
     }
     
+    ///正在网络处理中的单项任务
     private var _httpDidOnDownloadItemTasks = [] as [SRDownloadItemTaskModel]
     public var httpDidOnDownloadItemTasks: [SRDownloadItemTaskModel] {
         return _httpDidOnDownloadItemTasks
@@ -100,4 +131,6 @@ open class SRDownloadManager: NSObject {
 public protocol SRDownloadManagerDelegate: NSObjectProtocol {
     func downloadManager(_ manager: SRDownloadManager, groupTaskStatusChanged groupTask: SRDownloadGroupTaskModel)
     func downloadManager(_ manager: SRDownloadManager, groupTaskProgressChanged groupTask: SRDownloadGroupTaskModel)
+    func downloadManager(_ manager: SRDownloadManager, itemTaskStatusChanged itemTask: SRDownloadItemTaskModel)
+    func downloadManager(_ manager: SRDownloadManager, itemTaskProgressChanged itemTask: SRDownloadItemTaskModel)
 }
