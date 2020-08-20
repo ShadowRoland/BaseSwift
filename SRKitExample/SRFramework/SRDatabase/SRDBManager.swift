@@ -66,14 +66,15 @@ open class SRDBManager {
     // MARK: -
 
     open func insertModels(_ model: SRDBModel,
-                           columns: String = "",
-                           values: String = "",
-                           context: MapContext? = nil,
+                           columnsContext: SRDBMapContext? = nil,
+                           addColumns: String = "",
+                           valuesContext: SRDBMapContext? = nil,
+                           addValues: String = "",
                            db inDb: FMDatabase? = nil) throws {
         let db = try open(db: inDb)
         defer { closeIfNeed(db, inDb) }
         do {
-            try executeUpdate(model.insertSQL(columns, values: values), db: db)
+            try executeUpdate(model.insertSQL(addColumns, values: addValues), db: db)
             closeIfNeed(db, inDb)
         } catch {
             throw BFError(error: error)
@@ -82,8 +83,9 @@ open class SRDBManager {
 
     open func selectModels(_ model: SRDBModel,
                            columns: String = "",
+                           columnsContext: SRDBMapContext? = nil,
                            where whereSQL: String = "",
-                           context: MapContext? = nil,
+                           whereContext: SRDBMapContext? = nil,
                            db inDb: FMDatabase? = nil) throws -> [SRDBModel] {
         let db = try open(db: inDb)
         defer { closeIfNeed(db, inDb) }
@@ -99,17 +101,21 @@ open class SRDBManager {
 
     open func updateModels(_ model: SRDBModel,
                            columns: String = "",
+                           columnsContext: SRDBMapContext? = nil,
                            where whereSQL: String = "",
-                           context: MapContext? = nil,
+                           whereContext: SRDBMapContext? = nil,
                            db inDb: FMDatabase? = nil) throws {
         let db = try open(db: inDb)
         defer { closeIfNeed(db, inDb) }
+        if let whereContext = whereContext {
+            
+        }
         try executeUpdate(model.updateSQL(columns, where: whereSQL), db: db)
     }
 
     open func deleteModels(_ model: SRDBModel,
                            where whereSQL: String = "",
-                           context: MapContext? = nil,
+                           context: SRDBMapContext? = nil,
                            db inDb: FMDatabase? = nil) throws {
         let db = try open(db: inDb)
         defer { closeIfNeed(db, inDb) }

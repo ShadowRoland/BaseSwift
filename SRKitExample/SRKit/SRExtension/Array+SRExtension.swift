@@ -13,12 +13,13 @@ public extension Array where Element: AnyObject {
         guard let object = object else { return }
         if isEmpty {
             append(object)
+        } else {
+            objc_sync_enter(self)
+            if !contains(where: { $0 === object }) {
+                append(object)
+            }
+            objc_sync_exit(self)
         }
-        objc_sync_enter(self)
-        if !contains(where: { $0 === object }) {
-            append(object)
-        }
-        objc_sync_exit(self)
     }
     
     mutating func remove(object: Element?) {

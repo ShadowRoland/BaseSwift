@@ -11,11 +11,16 @@ import SRKit
 import ObjectMapper
 
 ///在此定义类属性与数据库集合的对应关系，以便在SRDBModel的mappingDB方法中进行区别甄别
-open class SRDBMapContext: SRSet, MapContext {
-    public static let insertNew = SRElement()
-    public static let selectAll = SRElement()
-    public static let selectMain = SRElement()
-    public static let updateMain = SRElement()
+///可通过扩展SRDBMapContext的成员来创建子集以便对部分字段进行查询/修改，如
+///extension SRDBMapContext {
+///     public static let insertNew = SRElement([elements.)
+open class SRDBMapContext: SRNestedElement, MapContext {
+    public static let insertNew = SRNestedElement()
+    public static let selectAll = SRNestedElement()
+    public static let selectMain = SRNestedElement()
+    public static let updateMain = SRNestedElement()
+    ///适用于SQL语句中where部分
+    public static let whereInSQL = SRNestedElement()
 }
 
 public protocol SRDBModel {
@@ -23,6 +28,7 @@ public protocol SRDBModel {
     func modelMapping(map: Map) -> SRDBModel
     
     ///根据map的context是否为SRDBMapContext的某一集合而进行不同字段的获取与赋值
+    ///建议在此方法中根据(map.context as> SRDBMapContext).contains(SRDBMapContext.selectAll)
     mutating func mappingDB(map: Map)
     
     ///数据库中存储对应的表名

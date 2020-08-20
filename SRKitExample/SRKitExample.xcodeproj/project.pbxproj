@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A204C068C3A2330457622F2 /* Pods_SRKit_SRFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F8C73FA381BCE53D3B8485 /* Pods_SRKit_SRFramework.framework */; };
 		4E0EAD5922A255E9001CD195 /* UIApplication+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */; };
 		4E1376122286A0C100330EBE /* NullSafe.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B41E228698F100E98791 /* NullSafe.m */; };
 		4E1376132286A0C100330EBE /* SRAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B41C228698F100E98791 /* SRAlert.swift */; };
@@ -140,6 +139,8 @@
 		4E28DF722292B3FC0026C78A /* SRSimplePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */; };
 		4E2D4AD822A520D900736722 /* UIApplication+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */; };
 		4E34B391226EF64B00CC37C6 /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 4E34B390226EF64B00CC37C6 /* Resource */; };
+		4E41136024EFBF6C002AC203 /* Array+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED2C85024EE58DB008F94C1 /* Array+SRExtension.swift */; };
+		4E41136124EFBF6C002AC203 /* SRNestedElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35A24ECE1F4001936D7 /* SRNestedElement.swift */; };
 		4E4DF84D23AA2BE500FC379A /* SRKit.swift in Headers */ = {isa = PBXBuildFile; fileRef = 4E89B432228698F200E98791 /* SRKit.swift */; };
 		4E4DF84E23AA2C6300FC379A /* SRAlert.swift in Headers */ = {isa = PBXBuildFile; fileRef = 4E89B41C228698F100E98791 /* SRAlert.swift */; };
 		4E4DF84F23AA2C6300FC379A /* SRAlertController.swift in Headers */ = {isa = PBXBuildFile; fileRef = 4E89B43A228698F200E98791 /* SRAlertController.swift */; };
@@ -178,8 +179,6 @@
 		4EACFFE22282C10700F563FD /* SRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EACFFE12282C10700F563FD /* SRViewController.swift */; };
 		4ED2C85124EE58DB008F94C1 /* Array+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED2C85024EE58DB008F94C1 /* Array+SRExtension.swift */; };
 		4EEDC33724EA6954001936D7 /* SRFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 4EEDC33524EA6954001936D7 /* SRFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4EEDC33A24EA6954001936D7 /* SRFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEDC33324EA6954001936D7 /* SRFramework.framework */; };
-		4EEDC33B24EA6954001936D7 /* SRFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEDC33324EA6954001936D7 /* SRFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4EEDC34224EA6B01001936D7 /* SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E7576112264525700394408 /* SRKit.framework */; };
 		4EEDC34324EA6B01001936D7 /* SRKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E7576112264525700394408 /* SRKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4EEDC34C24EA75DE001936D7 /* SRBaseBusinessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC34B24EA75DE001936D7 /* SRBaseBusinessModel.swift */; };
@@ -188,15 +187,16 @@
 		4EEDC35424EB7FDA001936D7 /* SRDBModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35324EB7FDA001936D7 /* SRDBModel.swift */; };
 		4EEDC35624EB84B4001936D7 /* SRBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35524EB84B4001936D7 /* SRBaseModel.swift */; };
 		4EEDC35824ECBCE0001936D7 /* SRDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35724ECBCE0001936D7 /* SRDBManager.swift */; };
-		4EEDC35B24ECE1F5001936D7 /* SRSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35A24ECE1F4001936D7 /* SRSet.swift */; };
+		4EEDC35B24ECE1F5001936D7 /* SRNestedElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35A24ECE1F4001936D7 /* SRNestedElement.swift */; };
 		4EEDC35D24ED0C3B001936D7 /* SRDownloadTaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35C24ED0C3B001936D7 /* SRDownloadTaskModel.swift */; };
 		4EEDC35F24ED0C69001936D7 /* SRDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC35E24ED0C69001936D7 /* SRDownloadManager.swift */; };
 		4EEDC36124ED0C82001936D7 /* SRDownloadItemTaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC36024ED0C82001936D7 /* SRDownloadItemTaskModel.swift */; };
 		4EEDC36324ED0C91001936D7 /* SRDownloadGroupTaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDC36224ED0C91001936D7 /* SRDownloadGroupTaskModel.swift */; };
 		4EF3E2D323BDF09B00763798 /* SRHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3E2D223BDF09A00763798 /* SRHTTP.swift */; };
 		4EF3E2D423BDF09B00763798 /* SRHTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3E2D223BDF09A00763798 /* SRHTTP.swift */; };
-		8165F5599308AC59C886B9A8 /* Pods_SRKit_SRFramework_SRKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02347F4E5359D572AEA7A789 /* Pods_SRKit_SRFramework_SRKitExample.framework */; };
+		7DFEEF3DD68E660D42E3040F /* Pods_SRFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D157340814B1D44FF69D2D3 /* Pods_SRFramework.framework */; };
 		A8BAEDC97DA95DBF9A1FF5D4 /* Pods_SRKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */; };
+		B5E446B7D9276D97DD143A17 /* Pods_SRKitExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E3270E0E349AFAA947B039A /* Pods_SRKitExample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -223,7 +223,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4EEDC33B24EA6954001936D7 /* SRFramework.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -245,9 +244,9 @@
 		02347F4E5359D572AEA7A789 /* Pods_SRKit_SRFramework_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit_SRFramework_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		18E447EB153270950130C9EA /* Pods-SRKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKitExample.release.xcconfig"; path = "Target Support Files/Pods-SRKitExample/Pods-SRKitExample.release.xcconfig"; sourceTree = "<group>"; };
 		1A32AF1ACC95A4915FE66BBE /* Pods-abstract_pods-SRKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKitExample.release.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKitExample/Pods-abstract_pods-SRKitExample.release.xcconfig"; sourceTree = "<group>"; };
+		2FD9B72F9A2EFCE3E398858C /* Pods-SRFramework.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRFramework.release.xcconfig"; path = "Target Support Files/Pods-SRFramework/Pods-SRFramework.release.xcconfig"; sourceTree = "<group>"; };
 		33357D879170AD5317BB11D2 /* Pods-abstract_pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKit/Pods-abstract_pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
 		3CC44827894B23157AB8D4EF /* Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig"; path = "Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig"; sourceTree = "<group>"; };
-		41F8C73FA381BCE53D3B8485 /* Pods_SRKit_SRFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit_SRFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+SRExtension.swift"; sourceTree = "<group>"; };
 		4E13761022869ADB00330EBE /* SRKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRKeyboard.swift; sourceTree = "<group>"; };
@@ -342,7 +341,7 @@
 		4EEDC35324EB7FDA001936D7 /* SRDBModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDBModel.swift; sourceTree = "<group>"; };
 		4EEDC35524EB84B4001936D7 /* SRBaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRBaseModel.swift; sourceTree = "<group>"; };
 		4EEDC35724ECBCE0001936D7 /* SRDBManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDBManager.swift; sourceTree = "<group>"; };
-		4EEDC35A24ECE1F4001936D7 /* SRSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRSet.swift; sourceTree = "<group>"; };
+		4EEDC35A24ECE1F4001936D7 /* SRNestedElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRNestedElement.swift; sourceTree = "<group>"; };
 		4EEDC35C24ED0C3B001936D7 /* SRDownloadTaskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDownloadTaskModel.swift; sourceTree = "<group>"; };
 		4EEDC35E24ED0C69001936D7 /* SRDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDownloadManager.swift; sourceTree = "<group>"; };
 		4EEDC36024ED0C82001936D7 /* SRDownloadItemTaskModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRDownloadItemTaskModel.swift; sourceTree = "<group>"; };
@@ -350,6 +349,9 @@
 		4EF3E2D223BDF09A00763798 /* SRHTTP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRHTTP.swift; sourceTree = "<group>"; };
 		585A6469429ADC0C53AE68C7 /* Pods-SRKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit.debug.xcconfig"; path = "Target Support Files/Pods-SRKit/Pods-SRKit.debug.xcconfig"; sourceTree = "<group>"; };
 		6D9528C9C6A950907317827A /* Pods-SRKit-SRFramework.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit-SRFramework.release.xcconfig"; path = "Target Support Files/Pods-SRKit-SRFramework/Pods-SRKit-SRFramework.release.xcconfig"; sourceTree = "<group>"; };
+		6E3270E0E349AFAA947B039A /* Pods_SRKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D157340814B1D44FF69D2D3 /* Pods_SRFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SRFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		97BF8C3D67B04A141245F8B7 /* Pods-SRFramework.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRFramework.debug.xcconfig"; path = "Target Support Files/Pods-SRFramework/Pods-SRFramework.debug.xcconfig"; sourceTree = "<group>"; };
 		BBC7E620349953CE06D68FB4 /* Pods-abstract_pods-SRKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abstract_pods-SRKitExample.debug.xcconfig"; path = "Target Support Files/Pods-abstract_pods-SRKitExample/Pods-abstract_pods-SRKitExample.debug.xcconfig"; sourceTree = "<group>"; };
 		BF3538143421F07B2D2AE675 /* Pods-SRKitExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKitExample.debug.xcconfig"; path = "Target Support Files/Pods-SRKitExample/Pods-SRKitExample.debug.xcconfig"; sourceTree = "<group>"; };
 		C29A230CD8EE950F7B5E752D /* Pods-SRKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SRKit.release.xcconfig"; path = "Target Support Files/Pods-SRKit/Pods-SRKit.release.xcconfig"; sourceTree = "<group>"; };
@@ -370,8 +372,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EEDC33A24EA6954001936D7 /* SRFramework.framework in Frameworks */,
-				8165F5599308AC59C886B9A8 /* Pods_SRKit_SRFramework_SRKitExample.framework in Frameworks */,
+				B5E446B7D9276D97DD143A17 /* Pods_SRKitExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,7 +389,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4EEDC34224EA6B01001936D7 /* SRKit.framework in Frameworks */,
-				1A204C068C3A2330457622F2 /* Pods_SRKit_SRFramework.framework in Frameworks */,
+				7DFEEF3DD68E660D42E3040F /* Pods_SRFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,11 +476,11 @@
 				4E89B421228698F100E98791 /* SRIndexPath */,
 				4E89B425228698F100E98791 /* SRKeyboard */,
 				4E89B460228698F200E98791 /* SRLog */,
-				4EEDC35924ECE1E7001936D7 /* SRSet */,
 				4E89B41F228698F100E98791 /* SRMJRefresh */,
 				4E89B427228698F100E98791 /* SRModalViewController */,
 				4E1376C82289372D00330EBE /* SRNavigationBar */,
 				4E89B429228698F100E98791 /* SRNavigationController */,
+				4EEDC35924ECE1E7001936D7 /* SRNestedElement */,
 				4E89B435228698F200E98791 /* SRPickerView */,
 				4E89B462228698F200E98791 /* SRPopover */,
 				4EEDC34D24EB720F001936D7 /* SRProgressHUD */,
@@ -748,12 +749,12 @@
 			path = SRDownload;
 			sourceTree = "<group>";
 		};
-		4EEDC35924ECE1E7001936D7 /* SRSet */ = {
+		4EEDC35924ECE1E7001936D7 /* SRNestedElement */ = {
 			isa = PBXGroup;
 			children = (
-				4EEDC35A24ECE1F4001936D7 /* SRSet.swift */,
+				4EEDC35A24ECE1F4001936D7 /* SRNestedElement.swift */,
 			);
-			path = SRSet;
+			path = SRNestedElement;
 			sourceTree = "<group>";
 		};
 		6D4DD75DD5D3183F65C2A873 /* Pods */ = {
@@ -771,6 +772,8 @@
 				6D9528C9C6A950907317827A /* Pods-SRKit-SRFramework.release.xcconfig */,
 				3CC44827894B23157AB8D4EF /* Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig */,
 				C31A85316A2508000844FE79 /* Pods-SRKit-SRFramework-SRKitExample.release.xcconfig */,
+				97BF8C3D67B04A141245F8B7 /* Pods-SRFramework.debug.xcconfig */,
+				2FD9B72F9A2EFCE3E398858C /* Pods-SRFramework.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -780,8 +783,9 @@
 			children = (
 				4E89B42B228698F100E98791 /* SRProgressHUD */,
 				4A8B362DF0ED9DC2ACD8DFDD /* Pods_SRKit.framework */,
-				41F8C73FA381BCE53D3B8485 /* Pods_SRKit_SRFramework.framework */,
 				02347F4E5359D572AEA7A789 /* Pods_SRKit_SRFramework_SRKitExample.framework */,
+				6E3270E0E349AFAA947B039A /* Pods_SRKitExample.framework */,
+				8D157340814B1D44FF69D2D3 /* Pods_SRFramework.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1005,15 +1009,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SRKitExample/Pods-SRKitExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SRKitExample/Pods-SRKitExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SRKit-SRFramework-SRKitExample/Pods-SRKit-SRFramework-SRKitExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SRKitExample/Pods-SRKitExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3436B69D9F723FC70D360F0F /* [CP] Check Pods Manifest.lock */ = {
@@ -1031,7 +1035,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SRKit-SRFramework-SRKitExample-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SRKitExample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1111,7 +1115,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SRKit-SRFramework-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SRFramework-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1132,6 +1136,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E41136024EFBF6C002AC203 /* Array+SRExtension.swift in Sources */,
+				4E41136124EFBF6C002AC203 /* SRNestedElement.swift in Sources */,
 				4EEDC35024EB7238001936D7 /* SRProgressHUD.swift in Sources */,
 				4E2D4AD822A520D900736722 /* UIApplication+SRExtension.swift in Sources */,
 				4E28DF722292B3FC0026C78A /* SRSimplePromptView.swift in Sources */,
@@ -1273,7 +1279,7 @@
 				4E13764A2286A0C100330EBE /* SRTabItem.swift in Sources */,
 				4E13764B2286A0C100330EBE /* SRVideoPlayer.swift in Sources */,
 				4E1376CA2289374D00330EBE /* SRNavigationBar.swift in Sources */,
-				4EEDC35B24ECE1F5001936D7 /* SRSet.swift in Sources */,
+				4EEDC35B24ECE1F5001936D7 /* SRNestedElement.swift in Sources */,
 				4E13764C2286A0C100330EBE /* SRBrightnessView.swift in Sources */,
 				4E13764D2286A0C100330EBE /* SRAssetResourceLoader.swift in Sources */,
 				4E13764E2286A0C100330EBE /* SRVideoRequestTask.swift in Sources */,
@@ -1500,9 +1506,8 @@
 		};
 		4E75756B2264510900394408 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3CC44827894B23157AB8D4EF /* Pods-SRKit-SRFramework-SRKitExample.debug.xcconfig */;
+			baseConfigurationReference = BF3538143421F07B2D2AE675 /* Pods-SRKitExample.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6NH38MACH2;
@@ -1527,9 +1532,8 @@
 		};
 		4E75756C2264510900394408 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C31A85316A2508000844FE79 /* Pods-SRKit-SRFramework-SRKitExample.release.xcconfig */;
+			baseConfigurationReference = 18E447EB153270950130C9EA /* Pods-SRKitExample.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6NH38MACH2;
@@ -1617,7 +1621,7 @@
 		};
 		4EEDC33D24EA6954001936D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C42F6727A5BB9B4D23E1DDA1 /* Pods-SRKit-SRFramework.debug.xcconfig */;
+			baseConfigurationReference = 97BF8C3D67B04A141245F8B7 /* Pods-SRFramework.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1648,7 +1652,7 @@
 		};
 		4EEDC33E24EA6954001936D7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6D9528C9C6A950907317827A /* Pods-SRKit-SRFramework.release.xcconfig */;
+			baseConfigurationReference = 2FD9B72F9A2EFCE3E398858C /* Pods-SRFramework.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;

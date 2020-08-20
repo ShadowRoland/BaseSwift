@@ -9,6 +9,8 @@
 import UIKit
 import SRKit
 import Alamofire
+import FMDB
+import ObjectMapper
 
 open class SRDownloadManager: NSObject {
     public init(_ directory: String,
@@ -48,7 +50,7 @@ open class SRDownloadManager: NSObject {
                                              delegate: sessionDelegate ?? SessionDelegate())
     }
     
-    public var dbManager: SRDBManager?
+    public var dbManager: SRDBManager!
     ///本地下载文件存储文件夹
     public let downloadDirectory: String
     public let relativeDownloadDirectory: String
@@ -107,21 +109,19 @@ open class SRDownloadManager: NSObject {
         open var processTask:  Any?
         
         ///根据itemTask的处理方式和类型等参数调用processTask对应的resume功能方法
-        public func resume() -> Bool {
-            guard let itemTask = itemTask, let processTask = processTask else { return false }
+        public func resume() throws {
+            guard let itemTask = itemTask, let processTask = processTask else { return }
             switch itemTask.processWway {
                 case .http:
                     switch itemTask.type {
                         case .download:
                             if let downloadTask = processTask as? URLSessionDownloadTask {
                                 downloadTask.resume()
-                                return true
                             }
 
                         case .upload:
                             if let downloadTask = processTask as? URLSessionUploadTask {
                                 downloadTask.resume()
-                                return true
                             }
                             
                         default: break
@@ -129,25 +129,22 @@ open class SRDownloadManager: NSObject {
                 
                 default: break
             }
-            return false
         }
         
         ///根据itemTask的处理方式和类型等参数调用processTask对应的suspend功能方法
-        public func suspend() -> Bool {
-            guard let itemTask = itemTask, let processTask = processTask else { return false }
+        public func suspend() throws {
+            guard let itemTask = itemTask, let processTask = processTask else { return }
             switch itemTask.processWway {
                 case .http:
                     switch itemTask.type {
                         case .download:
                             if let downloadTask = processTask as? URLSessionDownloadTask {
                                 downloadTask.suspend()
-                                return true
                             }
 
                         case .upload:
                             if let downloadTask = processTask as? URLSessionUploadTask {
                                 downloadTask.suspend()
-                                return true
                             }
                             
                         default: break
@@ -155,25 +152,22 @@ open class SRDownloadManager: NSObject {
                 
                 default: break
             }
-            return false
         }
         
         ///根据itemTask的处理方式和类型等参数调用processTask对应的cancel功能方法
-        public func cancel() -> Bool {
-            guard let itemTask = itemTask, let processTask = processTask else { return false }
+        public func cancel() throws {
+            guard let itemTask = itemTask, let processTask = processTask else { return }
             switch itemTask.processWway {
                 case .http:
                     switch itemTask.type {
                         case .download:
                             if let downloadTask = processTask as? URLSessionDownloadTask {
                                 downloadTask.cancel()
-                                return true
                             }
 
                         case .upload:
                             if let downloadTask = processTask as? URLSessionUploadTask {
                                 downloadTask.cancel()
-                                return true
                             }
                             
                         default: break
@@ -181,7 +175,6 @@ open class SRDownloadManager: NSObject {
                 
                 default: break
             }
-            return false
         }
     }
     
@@ -239,9 +232,6 @@ open class SRDownloadManager: NSObject {
     }
     
     func itemTaskStatusChanged(_ itemTask: SRDownloadItemTaskModel) {
-        if itemTask.status == .didOn {
-            
-        }
         if isDelegateRespondItemTaskStatusChanged {
             (completionQueue ?? DispatchQueue.main).async { [weak self] in
                 if let strongSelf = self {
@@ -261,6 +251,180 @@ open class SRDownloadManager: NSObject {
                 }
             }
         }
+    }
+    
+    //MARK: -
+    
+    func itemTaskDidEnd(_ object: SRDownloadProcessTask, db inDB: FMDatabase? = nil) throws {
+        guard let itemTask = object.itemTask else { return }
+        let db = try open(db: inDb)
+        defer { closeIfNeed(db, inDb) }
+        
+//        do {
+//            try dbManager.updateModels(itemTask, context: .up, db: <#T##FMDatabase?#>)
+//        } catch <#pattern#> {
+//            <#statements#>
+//        }
+        
+//            DownloadItemTask *task = (DownloadItemTask *)object.downloadTask;
+//
+//            DB_OPEN_WITH_INDB_ERROR
+//            if (![self updateDownloadItemTaskWithStatusInfo:task inDb:db error:error]) {
+//                RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//            }
+//
+//            @synchronized (_httpOnDownloadGroupTasks) {
+//                for (DownloadItemTask *itemTask in object.associateTasks) {
+//                    DownloadGroupTask *groupTask = itemTask.groupTask;
+//                    if (!groupTask) {
+//                        continue;
+//                    }
+//
+//                    itemTask.status = task.status;
+//                    itemTask.updateTime = task.updateTime;
+//                    itemTask.endTime = task.endTime;
+//                    itemTask.errorMessage = task.errorMessage;
+//
+//                    groupTask.updateTime = itemTask.updateTime;
+//                    groupTask.completed += itemTask.total;
+//
+//                    groupTask.total = groupTask.completed;
+//                    for (NSInteger i = groupTask.downloadingItemIndex + 1; i < groupTask.itemTasks.count; i++) {
+//                        groupTask.total += [(DownloadItemTask *)groupTask.itemTasks[i] total];
+//                    }
+//
+//                    if (groupTask.downloadingItemIndex < groupTask.itemTasks.count) {
+//                        groupTask.downloadingItemIndex++;
+//                        if (!groupTask.downloadingItemTask) { //当前已经没有需要进行的任务组任务完成
+//                            groupTask.status = DownloadTaskStatusDidEnd;
+//                            groupTask.endTime = itemTask.endTime;
+//                            groupTask.errorMessage = itemTask.errorMessage;
+//        //                    if (![self updateDownloadGroupTaskWithStatusInfo:groupTask inDb:db error:error]) { //更新数据库中组任务状态
+//        //                        RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//        //                    }
+//                            if (![self updateDownloadGroupTaskWithStatusInfo:groupTask inDb:db error:error]) {
+//                                RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//                            }
+//                            [_httpOnDownloadGroupTasks removeObject:groupTask];
+//                            [self groupTaskStatusChanged:groupTask];
+//                        } else { //继续进行下一个单项任务，直到所有子单项任务完成或失败为止
+//                            if (![self updateDownloadGroupTaskWithStatusInfo:groupTask inDb:db error:error]
+//                                || ![self resumeDownloadItemTask:groupTask.downloadingItemTask inDb:db error:error]) { //更新数据库中组任务状态
+//                                RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            RETURN_YES_WITH_CLOSE_DB_IF_NEED
+    }
+    
+    //MARK: -
+    
+    open func open(db: FMDatabase?) throws -> FMDatabase {
+        if let db = db {
+            return db
+        } else {
+            return try dbManager.open()
+        }
+    }
+    
+    open func closeIfNeed(_ db: FMDatabase?, _ inDb: FMDatabase?) {
+        if db !== inDb {
+            db?.close()
+        }
+    }
+    
+    open func resume(_ itemTask: SRDownloadItemTaskModel, db inDB: FMDatabase? = nil) throws {
+        let db = try open(db: inDb)
+        defer { closeIfNeed(db, inDb) }
+        
+//        do {
+//            //下载/上传的处理任务仍被本组任务正在下载的单项任务所管理
+//            if let object = didOnOrDidSuspendProcessTasks.first(where: { itemTask === $0.itemTask }) {
+//                if itemTask.status == .didSuspend { //如果已被暂停，重新拉起来
+//                    try object.resume()
+//                    didOnItemTasks.append(nonduplicated: itemTask)
+//                    return
+//                }
+//            }
+//
+//            //首先在正在进行的任务内存列表中进行查询匹配
+//            if let existedItemTask = didOnItemTasks.first(where: { itemTask == $0 }) {
+//                //其他组任务的单项任务已经正在进行中，只需同步单项任务状态
+//                itemTask.mappingDB(map: Map(mappingType: .fromJSON,
+//                                            JSON: existedItemTask.toJSON(),
+//                                            context: SRDBMapContext(elements: [SRDBMapContext.selectAll])))
+//                if let object = didOnOrDidSuspendProcessTasks.first(where: { itemTask === $0.itemTask }) {
+//                    //将当前task加入到关联列表中
+//                    object.itemTasks.append(nonduplicated: itemTask)
+//                }
+//                return
+//            }
+//
+//            let itemTasks = try dbManager.selectModels(itemTask)
+//            if itemTasks.count > 1 {
+//                throw BFError("duplicated record of item task in table: \(itemTask.tableName), id: \(itemTask.id)")
+//            } else if itemTasks.count == 1 {
+//                //数据库中保存着最新的任务状态
+//                let dbItemTask = itemTasks.first as! SRDownloadItemTaskModel
+//                itemTask.mappingDB(map: Map(mappingType: .fromJSON,
+//                                            JSON: dbItemTask.toJSON(),
+//                                            context: SRDBMapContext(elements: [SRDBMapContext.selectAll])))
+//                if itemTask.status == .didEnd { //该文件已下载完成
+//                    try itemTaskDidEnd(itemTask)
+//                    return
+//                }
+//            }
+//
+//            DB_OPEN_WITH_INDB_ERROR
+//            //在数据库中查询匹配，获取最新的任务状态
+//            NSArray *tasks;
+//            if (![self selectDownloadItemTasksWithTask:task inDb:db tasks:&tasks error:error]) {
+//                RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//            } else {
+//                if (tasks.count > 1) {
+//                    *error = LocalError(@"存在重复的单项任务: %@", task.url);
+//                    RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//                }
+//
+//                if (tasks.count == 1) { //数据库中保存着最新的任务状态
+//                    DownloadGroupTask *groupTask = task.groupTask;
+//                    [task syncProperties:tasks.firstObject];
+//                    task.groupTask = groupTask;
+//                    if (task.status == DownloadTaskStatusDidEnd) { //该文件已下载完成
+//                        if ([self downloadItemTaskDidEnd:[DownloadTaskWithWay wayWithTask:task] inDb:db error:error]) {
+//                            RETURN_YES_WITH_CLOSE_DB_IF_NEED
+//                        } else {
+//                            RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//                        }
+//                    }
+//                } else { //插入新的单项任务到数据库中
+//                    task.status = DownloadTaskStatusOn;
+//                    if (![self insertDownloadItemTask:task inDb:db error:error]) {
+//                        RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//                    }
+//                }
+//
+//                @synchronized (_httpOnDownloadItemTasks) {
+//                    task.startTime = [NSDate timeIntervalSinceReferenceDate];
+//                    task.updateTime = task.startTime;
+//                    task.endTime = 0;
+//                    task.errorMessage = @"";
+//                    if (![self updateDownloadItemTaskWithStatusInfo:task inDb:db error:error]) {
+//                        RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//                    }
+//                    if (![_httpOnDownloadItemTasks containsObject:task]) {
+//                        [_httpOnDownloadItemTasks addObject:task];
+//                    }
+//                }
+//                if (![self startDownloadWithHTTP:task error:error]) {
+//                    RETURN_NO_WITH_CLOSE_DB_IF_NEED
+//                }
+//        } catch {
+//            throw BFError(error: error)
+//        }
     }
     
     //MARK: - 网络或使用第三方进行下载/上传

@@ -37,15 +37,17 @@ open class SRBaseBusinessModel: SRBaseModel, SRDBModel {
     }
 
     open func mappingDB(map: Map) {
-//        if let context = map.context as SRDBMapContext {
-//            if context.contains(SRDBMapContext.selectMain) { ///只获取主要字段
-//                id <- map[Param.Key.id]
-//                timestamp <- map[Param.Key.timestamp]
-//            } else if context.contains(SRDBMapContext.updateMain) { ///只更新主要字段
-//                timestamp <- map[Param.Key.timestamp]
-//            }
-//        }
-        mapping(map: map)
+        if let context = map.context as SRDBMapContext {
+            if context.contains(.selectMain) { ///只获取主要字段
+                mapping(map: map)
+            } else if context.contains(.updateMain) { ///只更新主要字段
+                timestamp <- map[Param.Key.timestamp]
+            } else if (context.contains(.whereInSQL)) {
+                id <- map[Param.Key.id]
+            }
+        } else {
+            mapping(map: map)
+        }
     }
 
     open var tableName: String {
