@@ -11,6 +11,9 @@ import SRKit
 import ObjectMapper
 
 open class SRDownloadItemTaskModel: SRDownloadTaskModel {
+    open var planStatus: Status = .default
+    weak open var groupTask: SRDownloadGroupTaskModel?
+    
     override public init() { super.init() }
     
     //MARK: - Mappable

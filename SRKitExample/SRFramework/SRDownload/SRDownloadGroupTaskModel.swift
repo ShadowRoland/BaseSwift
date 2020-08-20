@@ -11,6 +11,9 @@ import SRKit
 import ObjectMapper
 
 open class SRDownloadGroupTaskModel: SRDownloadTaskModel {
+    open var completedConfirm = 0 as Int64
+    open var itemTasks: [SRDownloadItemTaskModel] = []
+    
     override public init() { super.init() }
     
     //MARK: - Mappable

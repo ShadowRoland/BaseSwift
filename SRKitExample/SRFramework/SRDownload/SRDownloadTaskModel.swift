@@ -11,7 +11,7 @@ import SRKit
 import ObjectMapper
 
 open class SRDownloadTaskModel: SRBaseBusinessModel {
-    public struct `Type`: RawRepresentable {
+    public struct `Type`: RawRepresentable, Equatable {
         public let rawValue: Int
         
         public init(rawValue: Int) {
@@ -30,7 +30,7 @@ open class SRDownloadTaskModel: SRBaseBusinessModel {
         public static let upload = Type(2)
     }
     
-    public struct Status: RawRepresentable {
+    public struct Status: RawRepresentable, Equatable {
         public let rawValue: Int
         
         public init(rawValue: Int) {
@@ -57,7 +57,7 @@ open class SRDownloadTaskModel: SRBaseBusinessModel {
         public static let didFail = Status(6)
     }
     
-    public struct Way: RawRepresentable {
+    public struct ProcessWway: RawRepresentable, Equatable {
         public let rawValue: Int
         
         public init(rawValue: Int) {
@@ -69,12 +69,12 @@ open class SRDownloadTaskModel: SRBaseBusinessModel {
         }
         
         ///rawValue: 0
-        public static let `default` = Way(0)
+        public static let `default` = ProcessWway(0)
         ///rawValue: 1
-        public static let http = Way(1)
+        public static let http = ProcessWway(1)
     }
     
-    public struct Usage: RawRepresentable {
+    public struct Usage: RawRepresentable, Equatable {
         public let rawValue: Int
         
         public init(rawValue: Int) {
@@ -89,26 +89,42 @@ open class SRDownloadTaskModel: SRBaseBusinessModel {
         public static let `default` = Usage(0)
     }
     
+    ///处理类型
     open var type: Type = .default
+    ///任务状态
     open var status: Status = .default
-    open var way: Way = .default
+    ///处理方式
+    open var processWway: ProcessWway = .default
+    ///任务用途
     open var usage: Usage = .default
+    ///是否支持断点下载/续传续传
+    open var breakpoint = false
 
+    ///开始时间
     open var startTime = 0
+    ///结束时间
     open var endTime = 0
+    ///更新时间
     open var updateTime = 0
 
     open var name = ""
     open var Description = ""
     open var remark = ""
     open var errorMessage = ""
+    
+    ///可以存放http或第三方请求时的一些参数
+    open var request = ""
+    ///可以存放http或第三方回复后的一些参数
+    open var response = ""
 
     open var url = ""
+    ///本地文件名称
     open var fileName = ""
+    ///本地文件相对与Documents的路径
     open var relativePath = ""
 
-    open var completed = 0
-    open var total = 0
+    open var completed = 0 as Int64
+    open var total = 0 as Int64
     
     override public init() { super.init() }
     
@@ -122,8 +138,9 @@ open class SRDownloadTaskModel: SRBaseBusinessModel {
         super.mapping(map: map)
         type <- map[Param.Key.type]
         status <- map[Param.Key.status]
-        way <- map["way"]
+        processWway <- map["processWway"]
         usage <- map["usage"]
+        breakpoint <- map["breakpoint"]
         
         startTime <- map["startTime"]
         endTime <- map["endTime"]
@@ -134,6 +151,9 @@ open class SRDownloadTaskModel: SRBaseBusinessModel {
         remark <- map["remark"]
         errorMessage <- map["errorMessage"]
         
+        request <- map["request"]
+        response <- map["response"]
+            
         url <- map["url"]
         fileName <- map["fileName"]
         relativePath <- map["relativePath"]

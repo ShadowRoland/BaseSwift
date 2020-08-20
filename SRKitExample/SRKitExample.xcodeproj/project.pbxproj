@@ -176,6 +176,7 @@
 		4EA178E223B72FE400EDB140 /* JSON+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA178E123B72FE300EDB140 /* JSON+SRExtension.swift */; };
 		4EA178E323B72FE400EDB140 /* JSON+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA178E123B72FE300EDB140 /* JSON+SRExtension.swift */; };
 		4EACFFE22282C10700F563FD /* SRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EACFFE12282C10700F563FD /* SRViewController.swift */; };
+		4ED2C85124EE58DB008F94C1 /* Array+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED2C85024EE58DB008F94C1 /* Array+SRExtension.swift */; };
 		4EEDC33724EA6954001936D7 /* SRFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 4EEDC33524EA6954001936D7 /* SRFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4EEDC33A24EA6954001936D7 /* SRFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEDC33324EA6954001936D7 /* SRFramework.framework */; };
 		4EEDC33B24EA6954001936D7 /* SRFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEDC33324EA6954001936D7 /* SRFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -332,6 +333,7 @@
 		4E89B469228698F200E98791 /* SRBusinessManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRBusinessManager.swift; sourceTree = "<group>"; };
 		4EA178E123B72FE300EDB140 /* JSON+SRExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "JSON+SRExtension.swift"; sourceTree = "<group>"; };
 		4EACFFE12282C10700F563FD /* SRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRViewController.swift; sourceTree = "<group>"; };
+		4ED2C85024EE58DB008F94C1 /* Array+SRExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SRExtension.swift"; sourceTree = "<group>"; };
 		4EEDC33324EA6954001936D7 /* SRFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SRFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EEDC33524EA6954001936D7 /* SRFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRFramework.h; sourceTree = "<group>"; };
 		4EEDC33624EA6954001936D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -631,6 +633,7 @@
 		4E89B446228698F200E98791 /* SRExtension */ = {
 			isa = PBXGroup;
 			children = (
+				4ED2C85024EE58DB008F94C1 /* Array+SRExtension.swift */,
 				4E89B453228698F200E98791 /* Bundle+SRExtension.swift */,
 				4E89B452228698F200E98791 /* Data+SRExtension.swift */,
 				4E89B458228698F200E98791 /* Date+SRExtension.swift */,
@@ -1249,6 +1252,7 @@
 				4E1376372286A0C100330EBE /* SRKeyboard.swift in Sources */,
 				4E1376382286A0C100330EBE /* SRKeyboardManager.swift in Sources */,
 				4E1376392286A0C100330EBE /* SRLog.swift in Sources */,
+				4ED2C85124EE58DB008F94C1 /* Array+SRExtension.swift in Sources */,
 				4E13763A2286A0C100330EBE /* SRMJRefresh.swift in Sources */,
 				4E13763B2286A0C100330EBE /* SRModalViewController.swift in Sources */,
 				4E13763C2286A0C100330EBE /* SRNavigationController.swift in Sources */,
