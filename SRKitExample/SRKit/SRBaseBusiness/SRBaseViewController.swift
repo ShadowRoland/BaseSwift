@@ -91,9 +91,9 @@ DTAttributedTextContentViewDelegate {
             
             if let navigationBar = viewController?.navigationController?.navigationBar {
                 if let navigationBarObserved = navigationBarObserved {
-                    navigationBarObserved.removeObserver(self, forKeyPath: "Frame")
+                    navigationBarObserved.removeObserver(self, forKeyPath: "frame")
                 }
-                navigationBar.addObserver(self, forKeyPath: "Frame", options: .new, context: nil)
+                navigationBar.addObserver(self, forKeyPath: "frame", options: .new, context: nil)
                 navigationBarObserved = navigationBar
             }
         }
@@ -263,7 +263,7 @@ DTAttributedTextContentViewDelegate {
         #endif
         NotifyDefault.remove(self)
         //SRHttpManager.shared.cancel(sender: String(pointer: self))
-        eventTarget.navigationBarObserved?.removeObserver(self, forKeyPath: "Frame")
+        eventTarget.navigationBarObserved?.removeObserver(self, forKeyPath: "frame")
     }
     
     override open func didReceiveMemoryWarning() {
