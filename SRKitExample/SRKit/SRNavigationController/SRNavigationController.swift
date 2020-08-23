@@ -11,7 +11,7 @@ import UIKit
 import REMenu
 import SwiftyJSON
 
-open class SRNavigationController: UINavigationController, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+open class SRNavigationController: UINavigationController, UIGestureRecognizerDelegate, UINavigationControllerDelegate, UINavigationBarDelegate {
     public struct DebugMenuItem {
         fileprivate var title: String
         fileprivate var description: String?

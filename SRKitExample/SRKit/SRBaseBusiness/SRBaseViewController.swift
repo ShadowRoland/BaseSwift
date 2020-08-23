@@ -82,6 +82,42 @@ DTAttributedTextContentViewDelegate {
         @objc func clickDTLinkButton(_ sender: Any) {
             viewController?.clickDTLinkButton(sender)
         }
+        
+        weak var navigationBarObserved: UINavigationBar?
+        func observeNavigationBarFrame() {
+            if viewController?.navigationController?.navigationBar  === navigationBarObserved {
+                return
+            }
+            
+            if let navigationBar = viewController?.navigationController?.navigationBar {
+                if let navigationBarObserved = navigationBarObserved {
+                    navigationBarObserved.removeObserver(self, forKeyPath: "Frame")
+                }
+                navigationBar.addObserver(self, forKeyPath: "Frame", options: .new, context: nil)
+                navigationBarObserved = navigationBar
+            }
+        }
+        
+        open override func observeValue(forKeyPath keyPath: String?,
+                                        of object: Any?,
+                                        change: [NSKeyValueChangeKey : Any]?,
+                                        context: UnsafeMutableRawPointer?) {
+            if navigationBarObserved === object as AnyObject? {
+                if let viewController = viewController,
+                    viewController.isTop,
+                    let navigationBar = object as? UINavigationBar,
+                    let view = viewController.view,
+                !navigationBar.isHidden && navigationBar.frame != navigationBarObserved!.frame {
+                    if let window = view.window {
+                        let top = window.convert(view.frame.origin, from: view.superview).y
+                        let bottom = window.convert(CGPoint(x: navigationBar.frame.origin.x,
+                                                            y: navigationBar.frame.origin.y + navigationBar.frame.size.height),
+                                                    from: navigationBar.superview).y
+                        viewController.topInsetSubviewHeightConstraint?.constant = max(bottom - top, 0)
+                    }
+                }
+            }
+        }
     }
     
     override open func viewDidLoad() {
@@ -112,6 +148,7 @@ DTAttributedTextContentViewDelegate {
                           selector: #selector(EventTarget.deviceOrientationDidChange(_:)),
                           name: UIDevice.orientationDidChangeNotification,
                           object: nil)
+        eventTarget.observeNavigationBarFrame()
     }
     
     override open func viewDidAppear(_ animated: Bool) {
@@ -226,6 +263,7 @@ DTAttributedTextContentViewDelegate {
         #endif
         NotifyDefault.remove(self)
         //SRHttpManager.shared.cancel(sender: String(pointer: self))
+        eventTarget.navigationBarObserved?.removeObserver(self, forKeyPath: "Frame")
     }
     
     override open func didReceiveMemoryWarning() {
@@ -423,6 +461,30 @@ DTAttributedTextContentViewDelegate {
         }
     }
     
+    //MARK: -
+    open var topInsetSubviewHeightConstraint: NSLayoutConstraint? {
+        if let constraint = topInsetSubview.constraints.first(where: {
+            return $0.firstItem === topInsetSubview
+                && $0.firstAttribute == .height
+        }) {
+            return constraint
+        }
+        return nil
+    }
+    
+    open lazy var topInsetSubview: UIView = {
+        var view = UIView()
+        self.view.addSubview(view)
+        self.view.insertSubview(view, at: 0)
+        constrain(view) { (view) in
+            view.top == view.superview!.top
+            view.leading == view.superview!.leading
+            view.trailing == view.superview!.trailing
+            view.height == 0
+        }
+        return view
+    }()
+    
     //MARK: Progress
     
     /// 加载数据的等待转圈
@@ -480,9 +542,15 @@ DTAttributedTextContentViewDelegate {
                 view.edges == inset(view.superview!.edges, insets)
             }
         } else {
-            constrain(containerView) { view in
-                view.edges == inset(view.superview!.edges,
-                                    UIEdgeInsets(navigationHeaderHeight, 0, 0, 0))
+//            constrain(containerView) { [weak self] (view, self?.topInsetSubview) in
+//                view.edges == inset(view.superview!.edges,
+//                                    UIEdgeInsets(navigationHeaderHeight, 0, 0, 0))
+//            }
+            constrain(containerView, topInsetSubview) { (view, topInsetSubview) in
+                view.top == topInsetSubview.bottom
+                view.leading == view.superview!.leading
+                view.trailing == view.superview!.trailing
+                view.bottom == view.superview!.bottom
             }
         }
         //在此可以改变默认的加载转圈样式
@@ -589,9 +657,15 @@ DTAttributedTextContentViewDelegate {
                 view.edges == inset(view.superview!.edges, insets)
             }
         } else {
-            constrain(containerView) { view in
-                view.edges == inset(view.superview!.edges,
-                                    UIEdgeInsets(navigationHeaderHeight, 0, 0, 0))
+//            constrain(containerView) { view in
+//                view.edges == inset(view.superview!.edges,
+//                                    UIEdgeInsets(navigationHeaderHeight, 0, 0, 0))
+//            }
+            constrain(containerView, topInsetSubview) { (view, topInsetSubview) in
+                view.top == topInsetSubview.bottom
+                view.leading == view.superview!.leading
+                view.trailing == view.superview!.trailing
+                view.bottom == view.superview!.bottom
             }
         }
         component.showLoadDataFailView(text, image: image ?? UIImage.srNamed("sr_load_data_fail")!)

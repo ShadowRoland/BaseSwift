@@ -30,21 +30,21 @@ extension UIViewController {
                 constrain(navigationBar) {
                     $0.leading == $0.superview!.leading
                     $0.trailing == $0.superview!.trailing
-                    //$0.top == $0.superview!.top + C.statusBarHeight()
+                    $0.top == $0.superview!.top + C.statusBarHeight()
                     $0.height == SRNavigationBar.height
                 }
                 //let group = constrain(navigationBar) {
                 //    $0.top == $0.superview!.top + C.statusBarHeight()
                 //}
-                var constraint =
-                    NSLayoutConstraint(item: navigationBar,
-                                       attribute: .top,
-                                       relatedBy: .equal,
-                                       toItem: decorator.view,
-                                       attribute: .top,
-                                       multiplier: 1.0,
-                                       constant: C.statusBarHeight())
-                navigationBar.addConstraint(constraint)
+//                var constraint =
+//                    NSLayoutConstraint(item: navigationBar,
+//                                       attribute: .top,
+//                                       relatedBy: .equal,
+//                                       toItem: decorator.view,
+//                                       attribute: .top,
+//                                       multiplier: 1.0,
+//                                       constant: C.statusBarHeight())
+//                navigationBar.addConstraint(constraint)
             }
             return navigationBar
         }()
