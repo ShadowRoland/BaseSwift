@@ -32,7 +32,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _title = newValue
-            navigationBar?.layout()
+            navigationBar?.setNeedsLayout()
         }
     }
     
@@ -43,7 +43,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _titleView = newValue
-            navigationBar?.layout()
+            navigationBar?.setNeedsLayout()
         }
     }
     
@@ -56,6 +56,7 @@ open class SRNavigationItem: UINavigationItem {
         set {
             _prompt = newValue
             //navigationBar?.layout()
+            navigationBar?.setNeedsLayout()
         }
     }
     
@@ -105,7 +106,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _leftBarButtonItems = newValue
-            navigationBar?.layout()
+            navigationBar?.setNeedsLayout()
         }
     }
     
@@ -117,7 +118,7 @@ open class SRNavigationItem: UINavigationItem {
         }
         set {
             _rightBarButtonItems = newValue
-            navigationBar?.layout()
+            navigationBar?.setNeedsLayout()
         }
     }
     
@@ -163,6 +164,7 @@ open class SRNavigationItem: UINavigationItem {
                 _leftBarButtonItems = nil
             }
             //navigationBar?.layout()
+            navigationBar?.setNeedsLayout()
         }
     }
     
@@ -178,6 +180,7 @@ open class SRNavigationItem: UINavigationItem {
                 _rightBarButtonItems = nil
             }
             //navigationBar?.layout()
+            navigationBar?.setNeedsLayout()
         }
     }
     

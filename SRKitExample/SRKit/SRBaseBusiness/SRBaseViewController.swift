@@ -428,16 +428,16 @@ DTAttributedTextContentViewDelegate {
     }
     
     //MARK: -
-    open var topInsetSubviewHeightConstraint: NSLayoutConstraint? {
-        return srBaseComponent.topInsetSubviewHeightConstraint
+    open var topLayoutSubviewHeightConstraint: NSLayoutConstraint? {
+        return srBaseComponent.topLayoutSubviewHeightConstraint
     }
     
-    open var topInsetSubview: UIView? {
+    open var topLayoutSubview: UIView? {
         get {
-            return srBaseComponent.topInsetSubview
+            return srBaseComponent.topLayoutSubview
         }
         set {
-            srBaseComponent.topInsetSubview = newValue
+            srBaseComponent.topLayoutSubview = newValue
         }
     }
     
@@ -498,12 +498,12 @@ DTAttributedTextContentViewDelegate {
                 view.edges == inset(view.superview!.edges, insets)
             }
         } else {
-//            constrain(containerView) { [weak self] (view, self?.topInsetSubview) in
+//            constrain(containerView) { [weak self] (view, self?.topLayoutSubview) in
 //                view.edges == inset(view.superview!.edges,
 //                                    UIEdgeInsets(srNavigationHeaderHeight, 0, 0, 0))
 //            }
-            constrain(containerView, topInsetSubview ?? UIView()) { (view, topInsetSubview) in
-                view.top == topInsetSubview.bottom
+            constrain(containerView, topLayoutSubview ?? UIView()) { (view, topLayoutSubview) in
+                view.top == topLayoutSubview.bottom
                 view.leading == view.superview!.leading
                 view.trailing == view.superview!.trailing
                 view.bottom == view.superview!.bottom
@@ -617,8 +617,8 @@ DTAttributedTextContentViewDelegate {
 //                view.edges == inset(view.superview!.edges,
 //                                    UIEdgeInsets(srNavigationHeaderHeight, 0, 0, 0))
 //            }
-            constrain(containerView, topInsetSubview ?? UIView()) { (view, topInsetSubview) in
-                view.top == topInsetSubview.bottom
+            constrain(containerView, topLayoutSubview ?? UIView()) { (view, topLayoutSubview) in
+                view.top == topLayoutSubview.bottom
                 view.leading == view.superview!.leading
                 view.trailing == view.superview!.trailing
                 view.bottom == view.superview!.bottom

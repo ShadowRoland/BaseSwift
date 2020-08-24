@@ -157,32 +157,34 @@ open class SRNavigationBar: UIView {
         }
     }
     
-    var needLayout = false
+    var layoutObserver: CFRunLoopObserver?
     open override func setNeedsLayout() {
-        needLayout = true
-        let observer = CFRunLoopObserverCreateWithHandler(kCFAllocatorDefault,
-                                                          CFRunLoopActivity.allActivities.rawValue, true, 0) { [weak self] (observer, activity) in
-            switch activity {
-            case .exit:
-                if let needLayout = self?.needLayout {
-                    if needLayout {
-                        self?.needLayout = false
-                        self?.layout()
-                    } else {
-                        CFRunLoopRemoveObserver(CFRunLoopGetMain(), observer, .defaultMode)
+        if layoutObserver == nil {
+            let observer = CFRunLoopObserverCreateWithHandler(kCFAllocatorDefault,
+                                                              CFRunLoopActivity.allActivities.rawValue, true, 0) { [weak self] (observer, activity) in
+                switch activity {
+                case .beforeWaiting:
+                    self?.layout()
+                    if let layoutObserver = self?.layoutObserver {
+                        CFRunLoopRemoveObserver(CFRunLoopGetMain(), layoutObserver, .defaultMode)
+                        self?.layoutObserver = nil
                     }
+                default: break
                 }
-                
-            default: break
             }
+            CFRunLoopAddObserver(CFRunLoopGetMain(), observer, .defaultMode)
+            layoutObserver = observer
+            super.setNeedsLayout()
         }
-        CFRunLoopAddObserver(CFRunLoopGetMain(), observer, .defaultMode)
-        
     }
     
     open override func layoutIfNeeded() {
-        needLayout = false
+        if let layoutObserver = layoutObserver {
+            CFRunLoopRemoveObserver(CFRunLoopGetMain(), layoutObserver, .defaultMode)
+            self.layoutObserver = nil
+        }
         layout()
+        super.layoutIfNeeded()
     }
     
     func layout() {

@@ -244,10 +244,10 @@ extension UIViewController {
         }
         
         //MARK: 导航栏或状态栏下的子视图
-        open var topInsetSubviewHeightConstraint: NSLayoutConstraint? {
-            if let topInsetSubview = topInsetSubview,
-                let constraint = topInsetSubview.constraints.first(where: {
-                return $0.firstItem === topInsetSubview
+        open var topLayoutSubviewHeightConstraint: NSLayoutConstraint? {
+            if let topLayoutSubview = topLayoutSubview,
+                let constraint = topLayoutSubview.constraints.first(where: {
+                return $0.firstItem === topLayoutSubview
                     && $0.firstAttribute == .height
             }) {
                 return constraint
@@ -255,29 +255,33 @@ extension UIViewController {
             return nil
         }
         
-        var _topInsetSubview: UIView? = .init()
-        open var topInsetSubview: UIView? {
+        var _topLayoutSubview: UIView? = .init()
+        open var topLayoutSubview: UIView? {
             get {
                 if let view = viewController?.view,
-                    let topInsetSubview = _topInsetSubview,
-                    !view.subviews.contains(topInsetSubview) {
-                    view.addSubview(topInsetSubview)
-                    view.insertSubview(topInsetSubview, at: 0)
-                    constrain(topInsetSubview) { (view) in
+                    let topLayoutSubview = _topLayoutSubview,
+                    !view.subviews.contains(topLayoutSubview) {
+                    view.addSubview(topLayoutSubview)
+                    view.insertSubview(topLayoutSubview, at: 0)
+                    constrain(topLayoutSubview) { (view) in
                         view.top == view.superview!.top
                         view.leading == view.superview!.leading
                         view.trailing == view.superview!.trailing
                         view.height == 0
                     }
                 }
-                return _topInsetSubview
+                return _topLayoutSubview
             }
             set {
-                if newValue !== _topInsetSubview {
-                    _topInsetSubview?.removeFromSuperview()
+                if newValue !== _topLayoutSubview {
+                    _topLayoutSubview?.removeFromSuperview()
                 }
-                _topInsetSubview = newValue
+                _topLayoutSubview = newValue
             }
+        }
+        
+        open func refreshTopLayout() {
+            let bottom = topLayoutGuide
         }
         
         //MARK: - KVO
@@ -285,18 +289,18 @@ extension UIViewController {
         fileprivate func topLayoutGuideNavigationBar(_ observed: Observed, update: Bool = false) -> CGFloat {
             let viewController = self.viewController!
             let view = viewController.view!
-            if let uinavigationBar = observed.object, !uinavigationBar.isHidden {
+            if let navigationBar = observed.object, !navigationBar.isHidden {
                 //如果可以获取到系统导航栏位置，直接取导航栏位置做参照物
-                let condition = update ? uinavigationBar.frame != uiNavigationBarObserved.frame : true
+                let condition = update ? navigationBar.frame != observed.frame : true
                 if condition {
                     let window = view.window != nil ? view.window! : UIApplication.shared.keyWindow!
                     let top = window.convert(view.frame.origin, from: view.superview).y
-                    var bottom = window.convert(CGPoint(x: uinavigationBar.frame.origin.x,
-                                                        y: uinavigationBar.frame.origin.y + uinavigationBar.frame.size.height),
-                                                from: uinavigationBar.superview).y
+                    var bottom = window.convert(CGPoint(x: navigationBar.frame.origin.x,
+                                                        y: navigationBar.frame.origin.y + navigationBar.frame.size.height),
+                                                from: navigationBar.superview).y
                     bottom = max(bottom - top, 0)
                     if update {
-                        observed.frame = uinavigationBar.frame
+                        observed.frame = navigationBar.frame
                         observed.bottom = bottom
                     }
                     return bottom
@@ -317,7 +321,7 @@ extension UIViewController {
                 if let viewController = viewController as? SRBaseViewController,
                     viewController.srIsTop && viewController.view != nil {
                     let bottom = topLayoutGuideNavigationBar(uiNavigationBarObserved, update: true)
-                    let constraint = viewController.topInsetSubviewHeightConstraint
+                    let constraint = viewController.topLayoutSubviewHeightConstraint
                     if bottom != constraint?.constant {
                         constraint?.constant = bottom
                     }
@@ -325,8 +329,8 @@ extension UIViewController {
             } else if srNavigationBarObserved.object === object as AnyObject? {
                 if let viewController = viewController as? SRBaseViewController,
                     viewController.srIsTop && viewController.view != nil {
-                    let bottom = topLayoutGuideNavigationBar(uiNavigationBarObserved, update: true)
-                    let constraint = viewController.topInsetSubviewHeightConstraint
+                    let bottom = topLayoutGuideNavigationBar(srNavigationBarObserved, update: true)
+                    let constraint = viewController.topLayoutSubviewHeightConstraint
                     if bottom != constraint?.constant {
                         constraint?.constant = bottom
                     }
@@ -340,7 +344,7 @@ extension UIViewController {
                     } else if viewController.srNavigationBarType == .sr {
                         bottom = topLayoutGuideNavigationBar(srNavigationBarObserved)
                     }
-                    let constraint = viewController.topInsetSubviewHeightConstraint
+                    let constraint = viewController.topLayoutSubviewHeightConstraint
                     if bottom != constraint?.constant {
                         constraint?.constant = bottom
                     }

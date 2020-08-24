@@ -20,6 +20,8 @@ class ViewController: SRBaseViewController {
 //        navigationItem.backBarButtonItem = nil
         navBarRightButtonOptions = [.text([.title("Base".localized)])]
         showLoadDataFailView("加载中……")
+        C.shouldAutorotate = true
+        C.supportedInterfaceOrientations = .allButUpsideDown
     }
 
     override func viewDidAppear(_ animated: Bool) {
