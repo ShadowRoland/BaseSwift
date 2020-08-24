@@ -253,7 +253,7 @@ extension UIView {
     /**
      *  将UIView的userInteractionEnabled置为NO一段时间，
      *  后面会调用SRCommon.shared的方法将userInteractionEnabled恢复
-     *  用于[UIViewController showToast]方法中
+     *  用于[UIViewController srShowToast]方法中
      *
      *  @param view   view
      *  @param second second

@@ -81,7 +81,7 @@ public class SRModalViewController: SRNavigationController {
 //                              shouldPop item: UINavigationItem) -> Bool {
 //        if viewControllers.count == 2 {
 //            DispatchQueue.main.async {
-//                self.topViewController?.popBack(false)
+//                self.topViewController?.srPopBack(false)
 //            }
 //            return false
 //        }
@@ -92,7 +92,7 @@ public class SRModalViewController: SRNavigationController {
     
     public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer === interactivePopGestureRecognizer  {
-            if let topViewController = topViewController, topViewController.isModalRootViewController {
+            if let topViewController = topViewController, topViewController.srIsModalRootViewController {
                 return false
             }
         }
@@ -112,7 +112,7 @@ public class SRModalViewController: SRNavigationController {
                                               animated: Bool) {
         if viewController === rootVC {
             isPageSwipeEnabled = false
-            isPageLongPressEnabled = viewController.isPageLongPressEnabled
+            srIsPageLongPressEnabled = viewController.srIsPageLongPressEnabled
         } else {
             super.navigationController(navigationController,
                                        didShow: viewController,

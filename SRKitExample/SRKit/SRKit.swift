@@ -38,6 +38,7 @@ public var IsLandscape: Bool {
 
 public class SRKit {
     public static let shared = SRKit()
+    public func initialize() { }
     private init() {
         C.initialScreenScale()
     }
@@ -320,20 +321,20 @@ public class Const {
             } else if size.equalTo(CGSize(width: 1125, height: 2436)) && isFullScreen {
                 _screenScale = .iPhoneX
                 _statusBarHeight = 44.0
-                _statusBarHeightLandscape = 0
+                _statusBarHeightNotPortrait = 20.0
             } else if size.equalTo(CGSize(width: 828, height: 1792)) && isFullScreen {
                 _screenScale = .iPhoneXR
                 _statusBarHeight = 44.0
-                _statusBarHeightLandscape = 0
+                _statusBarHeightNotPortrait = 20.0
             } else if size.equalTo(CGSize(width: 1242, height: 2688)) && isFullScreen {
                 _screenScale = .iPhoneXMax
                 _statusBarHeight = 44.0
-                _statusBarHeightLandscape = 0
+                _statusBarHeightNotPortrait = 20.0
             } else {
                 _screenScale = .iPhoneUnknown
                 if isFullScreen {
                     _statusBarHeight = 44.0
-                    _statusBarHeightLandscape = 0
+                    _statusBarHeightNotPortrait = 0
                 }
             }
             
@@ -372,13 +373,14 @@ public class Const {
     /// 实时获取屏幕高度
     public static var screenHeight: CGFloat { return UIScreen.main.bounds.size.height }
     /// 实时获取当前屏幕方向
+    public static var screenOrientation: UIInterfaceOrientation { return UIApplication.shared.statusBarOrientation }
     public static var isLandscape: Bool { return UIApplication.shared.statusBarOrientation.isLandscape }
     
     /// 状态栏高度
     fileprivate static var _statusBarHeight = 20.0 as CGFloat
-    fileprivate static var _statusBarHeightLandscape = 20.0 as CGFloat
-    public static func statusBarHeight(_ isLandscape: Bool = false) -> CGFloat {
-        return isLandscape ? _statusBarHeightLandscape : _statusBarHeight
+    fileprivate static var _statusBarHeightNotPortrait = 20.0 as CGFloat
+    public static func statusBarHeight(_ isPortrait: Bool = true) -> CGFloat {
+        return isPortrait ? _statusBarHeight : _statusBarHeightNotPortrait
     }
     
     /// 导航栏高度（竖屏）
@@ -396,7 +398,7 @@ public class Const {
     }
     
     /// 导航栏上部默认高度（竖屏）, 返回statusBarHeight + navigationBarHeight
-    public static func navigationHeaderHeight(_ isLandscape: Bool = false,
+    public static func NavigationHeaderHeight(_ isLandscape: Bool = false,
                                               type navigationBarType: UIViewController.NavigationBarType = .system) -> CGFloat {
         return statusBarHeight(isLandscape) + navigationBarHeight(isLandscape, type: navigationBarType)
     }

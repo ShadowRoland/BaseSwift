@@ -33,7 +33,7 @@ extension UIView {
             opaque //完全不透明的背景，默认白色
         }
         
-        public weak var decorator: UIView?
+        public weak var view: UIView?
         
         #if DEBUG
         deinit {
@@ -140,7 +140,7 @@ extension UIView {
                 progressHUD.gif = gif
             }
 
-            decorator?.addSubview(maskView)
+            view?.addSubview(maskView)
             constraintGroup = constrain(maskView, replace: constraintGroup) {
                 $0.edges == inset($0.superview!.edges, 0)
             }
@@ -192,34 +192,34 @@ extension SRProgressProtocol where Self: UIView {
     }
     
     public func showProgress(_ options: [UIView.SRProgressComponent.Option]?) {
-        progressComponent.show(options)
+        srProgressComponent.show(options)
     }
     
     public func dismissProgress() {
-        progressComponent.dismiss(true)
+        srProgressComponent.dismiss(true)
     }
     
     public func dismissProgress(_ animated: Bool) {
-        progressComponent.dismiss(animated)
+        srProgressComponent.dismiss(animated)
     }
     
     public var isShowingProgress: Bool {
-        return progressComponent.isShowing
+        return srProgressComponent.isShowing
     }
     
     //public func resetProgressPosition() {
-    //    progressComponent.resetPosition()
+    //    srProgressComponent.resetPosition()
     //}
 }
 
 extension UIView: SRProgressProtocol {
-    public var progressComponent: SRProgressComponent {
+    public var srProgressComponent: SRProgressComponent {
         if let component = objc_getAssociatedObject(self, &SRProgressComponent.AssociatedKeys.progress) as? SRProgressComponent {
             return component
         }
         
         let component = SRProgressComponent()
-        component.decorator = self
+        component.view = self
         objc_setAssociatedObject(self,
                                  &SRProgressComponent.AssociatedKeys.progress,
                                  component,
@@ -227,12 +227,12 @@ extension UIView: SRProgressProtocol {
         return component
     }
     
-    public var progressMaskColor: UIColor {
+    public var srProgressMaskColor: UIColor {
         get {
-            return progressComponent.opaqueMaskColor
+            return srProgressComponent.opaqueMaskColor
         }
         set {
-            progressComponent.opaqueMaskColor = newValue
+            srProgressComponent.opaqueMaskColor = newValue
         }
     }
 }

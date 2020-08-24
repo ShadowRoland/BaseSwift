@@ -115,7 +115,7 @@ open class SRAlert: SCLAlertView {
     }
     
     @discardableResult
-    public class func showToast(_ message: String?,
+    public class func srShowToast(_ message: String?,
                                 in view: UIView = UIApplication.shared.keyWindow!,
                                 duration: TimeInterval = 2.0) -> Bool {
         guard !isEmptyString(message) else { return false }

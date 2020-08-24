@@ -65,7 +65,7 @@ DTAttributedTextContentViewDelegate {
         @objc func newAction(_ notification: Notification) {
             if let event = notification.object as? SRKit.Event,
                 let viewController = viewController {
-                viewController.stateMachine.append(event)
+                viewController.srStateMachine.append(event)
             }
         }
         
@@ -75,48 +75,12 @@ DTAttributedTextContentViewDelegate {
             if let event = notification.object as? SRKit.Event,
                 let viewController = viewController,
                 viewController === event.sender {
-                viewController.stateMachine(viewController.stateMachine, didEnd: event)
+                viewController.stateMachine(viewController.srStateMachine, didEnd: event)
             }
         }
         
         @objc func clickDTLinkButton(_ sender: Any) {
             viewController?.clickDTLinkButton(sender)
-        }
-        
-        weak var navigationBarObserved: UINavigationBar?
-        func observeNavigationBarFrame() {
-            if viewController?.navigationController?.navigationBar  === navigationBarObserved {
-                return
-            }
-            
-            if let navigationBar = viewController?.navigationController?.navigationBar {
-                if let navigationBarObserved = navigationBarObserved {
-                    navigationBarObserved.removeObserver(self, forKeyPath: "frame")
-                }
-                navigationBar.addObserver(self, forKeyPath: "frame", options: .new, context: nil)
-                navigationBarObserved = navigationBar
-            }
-        }
-        
-        open override func observeValue(forKeyPath keyPath: String?,
-                                        of object: Any?,
-                                        change: [NSKeyValueChangeKey : Any]?,
-                                        context: UnsafeMutableRawPointer?) {
-            if navigationBarObserved === object as AnyObject? {
-                if let viewController = viewController,
-                    viewController.isTop,
-                    let navigationBar = object as? UINavigationBar,
-                    let view = viewController.view,
-                !navigationBar.isHidden && navigationBar.frame != navigationBarObserved!.frame {
-                    if let window = view.window {
-                        let top = window.convert(view.frame.origin, from: view.superview).y
-                        let bottom = window.convert(CGPoint(x: navigationBar.frame.origin.x,
-                                                            y: navigationBar.frame.origin.y + navigationBar.frame.size.height),
-                                                    from: navigationBar.superview).y
-                        viewController.topInsetSubviewHeightConstraint?.constant = max(bottom - top, 0)
-                    }
-                }
-            }
         }
     }
     
@@ -127,8 +91,8 @@ DTAttributedTextContentViewDelegate {
         extendedLayoutIncludesOpaqueBars = true
         edgesForExtendedLayout = .all
         view.backgroundColor = .white
-        stateMachine.delegate = self
-        isPageLongPressEnabled = true
+        srStateMachine.delegate = self
+        srIsPageLongPressEnabled = true
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.contentSizeCategoryDidChange),
                           name: UIContentSizeCategory.didChangeNotification)
@@ -142,36 +106,36 @@ DTAttributedTextContentViewDelegate {
     
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let appear = navigationBarAppear
-        navigationBarAppear = appear
+        let appear = srNavigationBarAppear
+        srNavigationBarAppear = appear
         NotifyDefault.add(eventTarget,
                           selector: #selector(EventTarget.deviceOrientationDidChange(_:)),
                           name: UIDevice.orientationDidChangeNotification,
                           object: nil)
-        eventTarget.observeNavigationBarFrame()
+        srBaseComponent.observeNavigationBarFrame()
     }
     
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if isTop {
+        if srIsTop {
             LogInfo("enter: \(NSStringFromClass(type(of: self)))")
         }
         
-        let component = baseBusinessComponent
+        let component = srBaseComponent
         if let navigationController = navigationController,
             navigationController.viewControllers.contains(self) {
-            if navigationBarType == .system {
-                if navigationBarAppear == .visible {
+            if srNavigationBarType == .system {
+                if srNavigationBarAppear == .visible {
                     if navigationController.isNavigationBarHidden {
                         navigationController.setNavigationBarHidden(false, animated: false)
                     }
-                    ensureNavigationBarHidden(false)
-                } else if navigationBarAppear == .hidden {
+                    srEnsureNavigationBarHidden(false)
+                } else if srNavigationBarAppear == .hidden {
                     if !navigationController.isNavigationBarHidden {
                         navigationController.setNavigationBarHidden(true, animated: false)
                     }
-                    ensureNavigationBarHidden(true)
+                    srEnsureNavigationBarHidden(true)
                 }
             }
             
@@ -179,8 +143,8 @@ DTAttributedTextContentViewDelegate {
             SRKeyboardManager.shared.viewController = self
             
             component.isNavigationBarButtonsActive = true
-            //let style = component.pageBackGestureStyle
-            //component.pageBackGestureStyle = style
+            //let style = component.srPageBackGestureStyle
+            //component.srPageBackGestureStyle = style
             let enabled = component.isPageLongPressEnabled
             component.isPageLongPressEnabled = enabled
         }
@@ -196,9 +160,9 @@ DTAttributedTextContentViewDelegate {
 //        }
 //        resetLoadDataFailViewPosition()
         
-//        if component.navigationBarBackgroundView.superview == view
-//            && component.navigationBarBackgroundView.constraints.isEmpty {
-//            constrain(component.navigationBarBackgroundView, self.car_topLayoutGuide) { (view, topLayoutGuide) in
+//        if component.srNavigationBarBackgroundView.superview == view
+//            && component.srNavigationBarBackgroundView.constraints.isEmpty {
+//            constrain(component.srNavigationBarBackgroundView, self.car_topLayoutGuide) { (view, topLayoutGuide) in
 //                view.top == view.superview!.top
 //                view.leading == view.superview!.leading
 //                view.trailing == view.superview!.trailing
@@ -212,11 +176,11 @@ DTAttributedTextContentViewDelegate {
         }
         
         //广播“触发状态机的完成事件”的通知
-        if let event = event {
+        if let event = srEvent {
             #if DEBUG
             LogDebug(NSStringFromClass(type(of: self)) + ".\(#function), event: \(event)")
             #endif
-            NotifyDefault.post(name: SRKit.didEndStateMachinePageEventNotification, object: params)
+            NotifyDefault.post(name: SRKit.didEndStateMachinePageEventNotification, object: srParams)
         }
     }
     
@@ -226,7 +190,7 @@ DTAttributedTextContentViewDelegate {
             navigationController.viewControllers.contains(self) {
             Keyboard.manager = .unable
             SRKeyboardManager.shared.viewController = nil
-            baseBusinessComponent.isNavigationBarButtonsActive = false
+            srBaseComponent.isNavigationBarButtonsActive = false
         }
         
         NotifyDefault.remove(self, name: UIDevice.orientationDidChangeNotification)
@@ -234,18 +198,18 @@ DTAttributedTextContentViewDelegate {
     
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if navigationBarType == .sr {
-            let navigationBar = baseBusinessComponent.navigationBar
-            view.bringSubviewToFront(navigationBar)
-            if let constraint = navigationBar.constraints.first(where: {
-                return $0.firstItem === navigationBar
-                    && $0.secondItem === view
-                    && $0.firstAttribute == .top
-                    && $0.firstAttribute == .top
-            }) {
-                constraint.constant = statusBarHeight
+        layoutSRNavigationBar()
+    }
+    
+    public func layoutSRNavigationBar() {
+//        DispatchQueue.main.async { [weak self] in
+//            guard let strongSelf = self else { return }
+            if let constraint = srNavigationBarTopConstraint {
+                let bottom = srTopLayoutGuideStatusBar
+                print("bottom: \(bottom)")
+                    constraint.constant = bottom
             }
-        }
+//        }
     }
     
     public init() {
@@ -263,7 +227,6 @@ DTAttributedTextContentViewDelegate {
         #endif
         NotifyDefault.remove(self)
         //SRHttpManager.shared.cancel(sender: String(pointer: self))
-        eventTarget.navigationBarObserved?.removeObserver(self, forKeyPath: "frame")
     }
     
     override open func didReceiveMemoryWarning() {
@@ -284,11 +247,11 @@ DTAttributedTextContentViewDelegate {
     /// 子类覆盖该方法时，务必按照如下格式执行
     /// override func deviceOrientationDidChange(_ sender: AnyObject?) {
     ///      super.func deviceOrientationDidChange(sender)
-    ///      guard guardDeviceOrientationDidChange(sender) else { return }
+    ///      guard srGuardDeviceOrientationDidChange(sender) else { return }
     ///      ... // your subclass code
     /// }
     open func deviceOrientationDidChange(_ sender: AnyObject?) {
-        guard guardDeviceOrientationDidChange(sender) else { return }
+        guard srGuardDeviceOrientationDidChange(sender) else { return }
 //        //只在屏幕旋转时才更新位置
 //        if sender != nil {
 //            resetProgressPosition()
@@ -296,11 +259,11 @@ DTAttributedTextContentViewDelegate {
 //        }
     }
     
-    /// 导航栏左边按钮的点击响应，通过button的tag(0,1,2,3...)来判断按钮位置，为0时会执行popBack()退回上个页面
+    /// 导航栏左边按钮的点击响应，通过button的tag(0,1,2,3...)来判断按钮位置，为0时会执行srPopBack()退回上个页面
     open func clickNavigationBarLeftButton(_ button: UIButton) {
         guard MutexTouch else { return }
         if button.tag == 0 {
-            popBack()
+            srPopBack()
         }
     }
     
@@ -357,28 +320,31 @@ DTAttributedTextContentViewDelegate {
     
     open override var title: String? {
         didSet {
-            if navigationBarType == .system {
+            if srNavigationBarType == .system {
                 super.title = title
-            } else if navigationBarType == .sr {
-                baseBusinessComponent.navigationItem.title = title
+            } else if srNavigationBarType == .sr {
+                srBaseComponent.navigationBar.navigationItem.title = title
             }
         }
     }
     
     open var srNavigationItem: SRNavigationItem {
-            return baseBusinessComponent.navigationItem
+            return srBaseComponent.navigationItem
     }
     
     /// 设置默认的导航栏，title: 页面标题，left: 页面左上角按钮的设置，默认提供箭头图片
     open func setDefaultNavigationBar(_ title: String? = nil, left options: [NavigationBar.ButtonItemOption]? = nil) {
-        self.title = title
         setNavigationBar()
-        if self !== navigationController?.viewControllers.first {
-            if navigationBarType == .system {
+        if srNavigationBarType == .system {
+            self.title = title
+            if self !== navigationController?.viewControllers.first {
                 navBarLeftButtonOptions = options ?? [.image(UIImage.srNamed("sr_page_back")!)]
-            } else if navigationBarType == .sr {
+            }
+        } else if srNavigationBarType == .sr {
+            srNavigationBar.title = title
+            if self !== navigationController?.viewControllers.first {
                 navBarLeftButtonOptions = options
-                    ?? [.image(UIImage.srNamed(navigationBar.barStyle == .black
+                    ?? [.image(UIImage.srNamed(srNavigationBar.barStyle == .black
                         ? "sr_page_back_white" :
                         "sr_page_back")!)]
             }
@@ -387,15 +353,15 @@ DTAttributedTextContentViewDelegate {
     
     /// 设置导航栏的样式，包括标题文字样式，背景颜色、图片，及tintColor等
     open func setNavigationBar() {
-        if navigationBarType == .system, let navigationController = navigationController {
-            let navigationBar = navigationController.navigationBar
-            navigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
-            navigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
-            navigationBar.tintColor = NavigationBar.tintColor
-        } else if navigationBarType == .sr {
-            navigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
-            navigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
-            navigationBar.tintColor = NavigationBar.tintColor
+        if srNavigationBarType == .system, let navigationController = navigationController {
+            let srNavigationBar = navigationController.navigationBar
+            srNavigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
+            srNavigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
+            srNavigationBar.tintColor = NavigationBar.tintColor
+        } else if srNavigationBarType == .sr {
+            srNavigationBar.titleTextAttributes = NavigationBar.titleTextAttributes
+            srNavigationBar.setBackgroundImage(NavigationBar.backgroundImage, for: .default)
+            srNavigationBar.tintColor = NavigationBar.tintColor
         }
     }
     
@@ -414,9 +380,9 @@ DTAttributedTextContentViewDelegate {
                                          target: eventTarget,
                                          action: #selector(EventTarget.clickNavigationBarLeftButton(_:)),
                                          tag: $0,
-                                         useCustomView: navigationBarType != .system)
+                                         useCustomView: srNavigationBarType != .system)
             }
-            if navigationBarType == .system {
+            if srNavigationBarType == .system {
                 if items.isEmpty {
                     navigationItem.leftBarButtonItem = nil
                     navigationItem.leftBarButtonItems = nil
@@ -425,7 +391,7 @@ DTAttributedTextContentViewDelegate {
                 } else {
                     navigationItem.leftBarButtonItems = items
                 }
-            } else if navigationBarType == .sr {
+            } else if srNavigationBarType == .sr {
                 srNavigationItem.leftBarButtonItems = items
             }
         }
@@ -445,17 +411,17 @@ DTAttributedTextContentViewDelegate {
                                          target: eventTarget,
                                          action: #selector(EventTarget.clickNavigationBarRightButton(_:)),
                                          tag: $0,
-                                         useCustomView: navigationBarType != .system)
+                                         useCustomView: srNavigationBarType != .system)
             }
             
-            if navigationBarType == .system {
+            if srNavigationBarType == .system {
                 if items.isEmpty {
                     navigationItem.rightBarButtonItem = nil
                     navigationItem.rightBarButtonItems = nil
                 } else {
                     navigationItem.rightBarButtonItems = items
                 }
-            } else if navigationBarType == .sr {
+            } else if srNavigationBarType == .sr {
                 srNavigationItem.rightBarButtonItems = items
             }
         }
@@ -463,34 +429,24 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: -
     open var topInsetSubviewHeightConstraint: NSLayoutConstraint? {
-        if let constraint = topInsetSubview.constraints.first(where: {
-            return $0.firstItem === topInsetSubview
-                && $0.firstAttribute == .height
-        }) {
-            return constraint
-        }
-        return nil
+        return srBaseComponent.topInsetSubviewHeightConstraint
     }
     
-    open lazy var topInsetSubview: UIView = {
-        var view = UIView()
-        self.view.addSubview(view)
-        self.view.insertSubview(view, at: 0)
-        constrain(view) { (view) in
-            view.top == view.superview!.top
-            view.leading == view.superview!.leading
-            view.trailing == view.superview!.trailing
-            view.height == 0
+    open var topInsetSubview: UIView? {
+        get {
+            return srBaseComponent.topInsetSubview
         }
-        return view
-    }()
+        set {
+            srBaseComponent.topInsetSubview = newValue
+        }
+    }
     
     //MARK: Progress
     
     /// 加载数据的等待转圈
 //    open func showProgress(_ maskType: UIView.SRProgressComponent.MaskType = .clear,
 //                             immediately: Bool = false) {
-//        let component = baseBusinessComponent
+//        let component = srBaseComponent
 //
 //        if !immediately && !component.isViewDidAppear {
 //            component.needShowProgress = true
@@ -499,7 +455,7 @@ DTAttributedTextContentViewDelegate {
 //        }
 //
 //        view.insertSubview(component.progressContainerView, at: view.subviews.count)
-//        switch navigationBarType {
+//        switch srNavigationBarType {
 //        case .system:
 //            if #available(iOS 11.0, *) {
 //                component.progressContainerView.frame =
@@ -516,7 +472,7 @@ DTAttributedTextContentViewDelegate {
 //            }
 //
 //        case .sr:
-//            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
+//            let y = srNavigationBar.isHidden ? 0 : srNavigationBar.bottom
 //            component.progressContainerView.frame =
 //                CGRect(0,
 //                       y,
@@ -532,7 +488,7 @@ DTAttributedTextContentViewDelegate {
     /// 加载数据的等待转圈
     open func showProgress(_ maskType: UIView.SRProgressComponent.MaskType = .clear,
                            insets: UIEdgeInsets? = nil) {
-        let component = baseBusinessComponent
+        let component = srBaseComponent
         let containerView = component.progressContainerView
         component.progressMaskType = maskType
         containerView.removeFromSuperview()
@@ -544,9 +500,9 @@ DTAttributedTextContentViewDelegate {
         } else {
 //            constrain(containerView) { [weak self] (view, self?.topInsetSubview) in
 //                view.edges == inset(view.superview!.edges,
-//                                    UIEdgeInsets(navigationHeaderHeight, 0, 0, 0))
+//                                    UIEdgeInsets(srNavigationHeaderHeight, 0, 0, 0))
 //            }
-            constrain(containerView, topInsetSubview) { (view, topInsetSubview) in
+            constrain(containerView, topInsetSubview ?? UIView()) { (view, topInsetSubview) in
                 view.top == topInsetSubview.bottom
                 view.leading == view.superview!.leading
                 view.trailing == view.superview!.trailing
@@ -563,16 +519,16 @@ DTAttributedTextContentViewDelegate {
     
     open func dismissProgress(_ animated: Bool) {
         guard isShowingProgress else { return }
-        baseBusinessComponent.progressContainerView.dismissProgress(animated)
-        baseBusinessComponent.progressContainerView.removeFromSuperview()
+        srBaseComponent.progressContainerView.dismissProgress(animated)
+        srBaseComponent.progressContainerView.removeFromSuperview()
     }
     
 //    /// viewDidAppear中执行
 //    open func resetProgressPosition() {
 //        guard isShowingProgress else { return }
 //
-//        let component = baseBusinessComponent
-//        switch navigationBarType {
+//        let component = srBaseComponent
+//        switch srNavigationBarType {
 //        case .system:
 //            if #available(iOS 11.0, *) {
 //                component.progressContainerView.frame =
@@ -589,7 +545,7 @@ DTAttributedTextContentViewDelegate {
 //            }
 //
 //        case .sr:
-//            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
+//            let y = srNavigationBar.isHidden ? 0 : srNavigationBar.bottom
 //            component.progressContainerView.frame =
 //                CGRect(0,
 //                       y,
@@ -601,10 +557,10 @@ DTAttributedTextContentViewDelegate {
     
     open var isShowingProgress: Bool {
         guard let view = view,
-            baseBusinessComponent.progressContainerView.superview === view else {
+            srBaseComponent.progressContainerView.superview === view else {
                 return false
         }
-        return baseBusinessComponent.progressContainerView.isShowingProgress
+        return srBaseComponent.progressContainerView.isShowingProgress
     }
     
     //MARK: Load Data Fail
@@ -614,9 +570,9 @@ DTAttributedTextContentViewDelegate {
 //    open func showLoadDataFailView(_ text: String?, image: UIImage? = nil) {
 //        guard let view = view else { return }
 //
-//        let component = baseBusinessComponent
+//        let component = srBaseComponent
 //        view.insertSubview(component.loadDataFailContainerView, at: view.subviews.count)
-//        switch navigationBarType {
+//        switch srNavigationBarType {
 //        case .system:
 //            if #available(iOS 11.0, *) {
 //                component.loadDataFailContainerView.frame =
@@ -633,7 +589,7 @@ DTAttributedTextContentViewDelegate {
 //            }
 //
 //        case .sr:
-//            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
+//            let y = srNavigationBar.isHidden ? 0 : srNavigationBar.bottom
 //            component.loadDataFailContainerView.frame =
 //                CGRect(0,
 //                       y,
@@ -648,7 +604,7 @@ DTAttributedTextContentViewDelegate {
     open func showLoadDataFailView(_ text: String?,
                                    image: UIImage? = nil,
                                    insets: UIEdgeInsets? = nil) {
-        let component = baseBusinessComponent
+        let component = srBaseComponent
         let containerView = component.loadDataFailContainerView
         containerView.removeFromSuperview()
         view.insertSubview(containerView, at: view.subviews.count)
@@ -659,9 +615,9 @@ DTAttributedTextContentViewDelegate {
         } else {
 //            constrain(containerView) { view in
 //                view.edges == inset(view.superview!.edges,
-//                                    UIEdgeInsets(navigationHeaderHeight, 0, 0, 0))
+//                                    UIEdgeInsets(srNavigationHeaderHeight, 0, 0, 0))
 //            }
-            constrain(containerView, topInsetSubview) { (view, topInsetSubview) in
+            constrain(containerView, topInsetSubview ?? UIView()) { (view, topInsetSubview) in
                 view.top == topInsetSubview.bottom
                 view.leading == view.superview!.leading
                 view.trailing == view.superview!.trailing
@@ -673,16 +629,16 @@ DTAttributedTextContentViewDelegate {
     
     open func dismissLoadDataFailView() {
         guard isShowingLoadDataFailView else { return }
-        baseBusinessComponent.loadDataFailContainerView.removeFromSuperview()
-        baseBusinessComponent.dismissLoadDataFailView()
+        srBaseComponent.loadDataFailContainerView.removeFromSuperview()
+        srBaseComponent.dismissLoadDataFailView()
     }
     
 //    /// viewDidAppear中执行
 //    open func resetLoadDataFailViewPosition() {
 //        guard isShowingLoadDataFailView else { return }
 //
-//        let component = baseBusinessComponent
-//        switch navigationBarType {
+//        let component = srBaseComponent
+//        switch srNavigationBarType {
 //        case .system:
 //            if #available(iOS 11.0, *) {
 //                component.loadDataFailContainerView.frame =
@@ -699,7 +655,7 @@ DTAttributedTextContentViewDelegate {
 //            }
 //
 //        case .sr:
-//            let y = navigationBar.isHidden ? 0 : navigationBar.bottom
+//            let y = srNavigationBar.isHidden ? 0 : srNavigationBar.bottom
 //            component.loadDataFailContainerView.frame =
 //                CGRect(0,
 //                       y,
@@ -709,18 +665,18 @@ DTAttributedTextContentViewDelegate {
 //    }
     
     open var isShowingLoadDataFailView: Bool {
-        return baseBusinessComponent.loadDataFailContainerView.superview === view
-            && baseBusinessComponent.isShowingLoadDataFailView
+        return srBaseComponent.loadDataFailContainerView.superview === view
+            && srBaseComponent.isShowingLoadDataFailView
     }
     
     /// 一般使用场景为刚进入页面时发送初始化请求，请求返回失败后页面展示错误提示视图，点击错误提示视图后执行retry()
     open func setLoadDataFail(_ request: SRHTTP.Request, retry: (() -> Void)?) {
-        baseBusinessComponent.loadDataFailRetryRequest = request
-        baseBusinessComponent.loadDataFailRetryHandler = retry
+        srBaseComponent.loadDataFailRetryRequest = request
+        srBaseComponent.loadDataFailRetryHandler = retry
     }
     
     open var loadDataFailRequest: SRHTTP.Request? {
-        return baseBusinessComponent.loadDataFailRetryRequest
+        return srBaseComponent.loadDataFailRetryRequest
     }
     
     /// 富文本控件DTAttributedTextContentView及子类点击链接时的响应
@@ -768,7 +724,7 @@ DTAttributedTextContentViewDelegate {
     
     open func httpRespond(success response: Any, request: SRHTTP.Request? = nil) {
         dismissProgress()
-        if isTop {
+        if srIsTop {
             SRAlert.show((response as? JSON)?[SRHTTP.Key.Response.message].string,
                          type: .success)
         }
@@ -779,7 +735,7 @@ DTAttributedTextContentViewDelegate {
         if request?.method == loadDataFailRequest?.method && request?.url == loadDataFailRequest?.url {
             showLoadDataFailView(result.errorMessage)
         } else {
-            showToast(result.errorMessage)
+            srShowToast(result.errorMessage)
         }
     }
     

@@ -14,8 +14,8 @@ class ViewController: SRBaseViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         LogInfo("喵喵喵")
-//        navigationBarType = .sr
-//        navigationBarAppear = .hidden
+        srNavigationBarType = .sr
+//        srNavigationBarAppear = .hidden
         setDefaultNavigationBar("Root")
 //        navigationItem.backBarButtonItem = nil
         navBarRightButtonOptions = [.text([.title("Base".localized)])]

@@ -207,7 +207,7 @@ public class SRShareTool: UIViewController {
     }
     
     @objc func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
-        guard guardDeviceOrientationDidChange(sender) else {
+        guard srGuardDeviceOrientationDidChange(sender) else {
             self.orientation = UIDevice.current.orientation
             return
         }

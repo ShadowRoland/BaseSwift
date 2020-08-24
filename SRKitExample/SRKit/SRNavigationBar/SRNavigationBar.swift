@@ -12,6 +12,7 @@ import Cartography
 open class SRNavigationBar: UIView {
     public init() {
         super.init(frame: CGRect())
+        self._navigationItem.navigationBar = self
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -27,10 +28,14 @@ open class SRNavigationBar: UIView {
     }
     
     //MARK: -
-    
-    open weak var navigationItem: SRNavigationItem? {
-        didSet {
-            navigationItem?.navigationBar = self
+
+    fileprivate var _navigationItem = SRNavigationItem()
+    open var navigationItem: SRNavigationItem {
+        get {
+            return _navigationItem
+        }
+        set {
+            _navigationItem = newValue
         }
     }
     
@@ -44,7 +49,7 @@ open class SRNavigationBar: UIView {
                 backgroundBlurView?.alpha = 1.0
                 backgroundView.insertSubview(backgroundBlurView!, at: 0)
                 constrain(backgroundBlurView!) { $0.edges == inset($0.superview!.edges, 0) }
-                layout()
+                setNeedsLayout()
             } else {
                 tintColor = .black
                 barBackgroundColor = .white
@@ -53,7 +58,7 @@ open class SRNavigationBar: UIView {
                 backgroundBlurView?.alpha = 1.0
                 backgroundView.insertSubview(backgroundBlurView!, at: 0)
                 constrain(backgroundBlurView!) { $0.edges == inset($0.superview!.edges, 0) }
-                layout()
+                setNeedsLayout()
             }
         }
     }
@@ -103,6 +108,13 @@ open class SRNavigationBar: UIView {
         return view
     }()
     
+    public var title: String? {
+        didSet {
+            navigationItem.title = title
+            setNeedsLayout()
+        }
+    }
+    
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.adjustsFontSizeToFitWidth = true
@@ -128,7 +140,7 @@ open class SRNavigationBar: UIView {
                     backgroundShadowImageView.image = nil
                     backgroundShadowImageView.removeFromSuperview()
                 }
-                layout()
+                setNeedsLayout()
             } else {
                 backgroundShadowImageView.image = nil
                 backgroundShadowImageView.backgroundColor = "D".color
@@ -140,17 +152,45 @@ open class SRNavigationBar: UIView {
                     $0.top == $0.superview!.bottom
                     $0.height == 1.0
                 }
-                layout()
+                setNeedsLayout()
             }
         }
     }
     
-    open func layout() {
+    var needLayout = false
+    open override func setNeedsLayout() {
+        needLayout = true
+        let observer = CFRunLoopObserverCreateWithHandler(kCFAllocatorDefault,
+                                                          CFRunLoopActivity.allActivities.rawValue, true, 0) { [weak self] (observer, activity) in
+            switch activity {
+            case .exit:
+                if let needLayout = self?.needLayout {
+                    if needLayout {
+                        self?.needLayout = false
+                        self?.layout()
+                    } else {
+                        CFRunLoopRemoveObserver(CFRunLoopGetMain(), observer, .defaultMode)
+                    }
+                }
+                
+            default: break
+            }
+        }
+        CFRunLoopAddObserver(CFRunLoopGetMain(), observer, .defaultMode)
+        
+    }
+    
+    open override func layoutIfNeeded() {
+        needLayout = false
+        layout()
+    }
+    
+    func layout() {
         // Layout left items
         contentView.subviews.forEach { $0.removeFromSuperview() }
         var leftWidth = SRNavigationBar.Const.contentPadding
         var leftPrevious: UIView! = nil
-        if let items = navigationItem?.leftBarButtonItems {
+        if let items = navigationItem.leftBarButtonItems {
             let count = items.count
             (0 ..< count).forEach { index in
                 if let customView = items[index].customView {
@@ -186,7 +226,7 @@ open class SRNavigationBar: UIView {
         // Layout right items
         var rightWidth = SRNavigationBar.Const.contentPadding
         var rightPrevious: UIView! = nil
-        if let items = navigationItem?.rightBarButtonItems {
+        if let items = navigationItem.rightBarButtonItems {
             let count = items.count
             (0 ..< count).forEach { index in
                 if let customView = items[count - 1 - index].customView {
@@ -223,13 +263,13 @@ open class SRNavigationBar: UIView {
         
         // Layout titleView
         var titleView: UIView!
-        if let view = navigationItem?.titleView {
+        if let view = navigationItem.titleView {
             titleView = view
             titleLabel.isHidden = true
         } else {
             titleView = titleLabel
             titleLabel.isHidden = false
-            if let title = navigationItem?.title, !title.isEmpty {
+            if let title = navigationItem.title, !title.isEmpty {
                 if let attributes = titleTextAttributes, !attributes.isEmpty {
                     titleLabel.textColor = tintColor
                     titleLabel.attributedText = NSAttributedString.init(string: title,
@@ -316,7 +356,7 @@ open class SRNavigationBar: UIView {
         }
         
         layoutBackground()
-        layoutIfNeeded()
+        //layoutIfNeeded()
     }
     
     var statusBarOrientation: UIInterfaceOrientation?

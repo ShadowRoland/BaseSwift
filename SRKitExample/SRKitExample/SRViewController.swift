@@ -14,10 +14,10 @@ class SRViewController: SRBaseViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-//        navigationBarType = .sr
-        navigationBarAppear = .visible
+//        srNavigationBarType = .sr
+        srNavigationBarAppear = .visible
         setDefaultNavigationBar("Base")
-        //pageBackGestureStyle = .edge
+        //srPageBackGestureStyle = .edge
         showLoadDataFailView("标记为需要重新布局，异步调用layoutIfNeeded刷新布局，不立即刷新，但layoutSubviews一定会被调用-layoutIfNeeded方法：",
                              image: UIImage("sr_load_data_fail"))
     }

@@ -118,14 +118,14 @@ open class SRNavigationController: UINavigationController, UIGestureRecognizerDe
         guard !debugMenu.isOpen && !debugMenu.isAnimating,
             let viewController = topViewController else { return }
         var y = 0 as CGFloat
-        if navigationBarType == .system {
+        if srNavigationBarType == .system {
             if #available(iOS 11.0, *) {
                 y = viewController.view.safeAreaInsets.top
             } else {
                 y = viewController.topLayoutGuide.length
             }
-        } else if navigationBarType == .sr {
-            y = viewController.navigationBar.isHidden ? 0 : viewController.navigationBar.bottom
+        } else if srNavigationBarType == .sr {
+            y = viewController.srNavigationBar.isHidden ? 0 : viewController.srNavigationBar.bottom
         }
         var rect = view.bounds
         rect.origin.y = y
@@ -173,7 +173,7 @@ open class SRNavigationController: UINavigationController, UIGestureRecognizerDe
     open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer === interactivePopGestureRecognizer  {
             if let topViewController = topViewController {
-                return topViewController.pageBackGestureStyle.contains(.edge)
+                return topViewController.srPageBackGestureStyle.contains(.edge)
             }
         }
         return true
@@ -184,7 +184,7 @@ open class SRNavigationController: UINavigationController, UIGestureRecognizerDe
     open func navigationController(_ navigationController: UINavigationController,
                               didShow viewController: UIViewController,
                               animated: Bool) {
-        isPageSwipeEnabled = viewController.pageBackGestureStyle.contains(.page)
-        isPageLongPressEnabled = viewController.isPageLongPressEnabled
+        isPageSwipeEnabled = viewController.srPageBackGestureStyle.contains(.page)
+        srIsPageLongPressEnabled = viewController.srIsPageLongPressEnabled
     }
 }
