@@ -532,19 +532,29 @@ extension UIViewController {
 
 public extension UIViewController {
     var srBaseComponent: SRBaseBusinessComponent {
-        if let component =
-            objc_getAssociatedObject(self, &SRBaseBusinessComponent.AssociatedKeys.baseBusiness)
-                as? SRBaseBusinessComponent {
+        get {
+            if let component =
+                objc_getAssociatedObject(self, &SRBaseBusinessComponent.AssociatedKeys.baseBusiness)
+                    as? SRBaseBusinessComponent {
+                return component
+            }
+            
+            let component = SRBaseBusinessComponent()
+            component.viewController = self
+            objc_setAssociatedObject(self,
+                                     &SRBaseBusinessComponent.AssociatedKeys.baseBusiness,
+                                     component,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return component
         }
-        
-        let component = SRBaseBusinessComponent()
-        component.viewController = self
-        objc_setAssociatedObject(self,
-                                 &SRBaseBusinessComponent.AssociatedKeys.baseBusiness,
-                                 component,
-                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        return component
+        set {
+            let component = newValue
+            component.viewController = self
+            objc_setAssociatedObject(self,
+                                     &SRBaseBusinessComponent.AssociatedKeys.baseBusiness,
+                                     component,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
     var srParams: ParamDictionary {

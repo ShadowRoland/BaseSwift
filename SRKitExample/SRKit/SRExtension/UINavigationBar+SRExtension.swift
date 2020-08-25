@@ -14,20 +14,32 @@ public extension UINavigationBar {
     }
     
     var overlay: UIView {
-        if let overlay = objc_getAssociatedObject(self, &AssociatedKeys.overlay)
-            as? UIView {
+        get {
+            if let overlay = objc_getAssociatedObject(self, &AssociatedKeys.overlay)
+                as? UIView {
+                return overlay
+            }
+            
+            let overlay = UIView()
+            overlay.isUserInteractionEnabled = false
+            overlay.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+            addSubview(overlay)
+            objc_setAssociatedObject(self,
+                                     &AssociatedKeys.overlay,
+                                     overlay,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return overlay
         }
-        
-        let overlay = UIView()
-        overlay.isUserInteractionEnabled = false
-        overlay.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        addSubview(overlay)
-        objc_setAssociatedObject(self,
-                                 &AssociatedKeys.overlay,
-                                 overlay,
-                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        return overlay
+        set {
+            let overlay = newValue
+            overlay.isUserInteractionEnabled = false
+            overlay.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+            addSubview(overlay)
+            objc_setAssociatedObject(self,
+                                     &AssociatedKeys.overlay,
+                                     overlay,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
     var srBackgroundColor: UIColor? {

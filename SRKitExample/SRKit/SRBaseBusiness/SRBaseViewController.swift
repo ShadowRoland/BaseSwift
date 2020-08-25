@@ -301,7 +301,7 @@ DTAttributedTextContentViewDelegate {
     
     //MARK: Page
     
-    /// 在第一次执行viewDidAppear时执行该方法，一般用户初始化请求的操作
+    /// 在第一次执行viewDidAppear时执行该方法，一般执行用户初始化请求的操作
     open func performViewDidLoad() {
         
     }

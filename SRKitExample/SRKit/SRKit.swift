@@ -587,6 +587,7 @@ public class NavigationBar {
         case custom(UIView)
         /// 空白间距
         case space(CGFloat)
+        case state(_ nomarl: State, highlighted: State? = nil, disabled: State? = nil)
         
         public enum Text {
             case title(String)
@@ -594,6 +595,12 @@ public class NavigationBar {
             case textColor(UIColor)
             /// 只在navigationType为.sr时有效
             case attributedText(NSAttributedString)
+        }
+        
+        public indirect enum State {
+            case nomarl(ButtonItemOption)
+            case highlighted(ButtonItemOption)
+            case disabled(ButtonItemOption)
         }
     }
     
@@ -604,6 +611,46 @@ public class NavigationBar {
                                  action: Selector? = nil,
                                  tag: NSInteger? = nil,
                                  useCustomView: Bool = false) -> UIBarButtonItem? {
+        
+    }
+    
+    fileprivate class func buttonItem(_ option: ButtonItemOption,
+                                      target: Any?,
+                                      action: Selector? = nil,
+                                      tag: NSInteger?,
+                                      useCustomView: Bool,
+                                      state: ButtonItemOption.State?,
+                                      buttonItem: AnyObject?,
+                                      dictionary: inout [String : AnyObject]?) -> UIBarButtonItem? {
+        func perform(set: (UIControl.State) -> Void) {
+            if let state = state {
+                switch state {
+                case .nomarl:
+                    set(.normal)
+                    
+                case .highlighted:
+                    set(.highlighted)
+                    
+                case .disabled:
+                    set(.disabled)
+                    
+                default: break
+                }
+            } else {
+                set(.normal)
+            }
+        }
+
+        func setButtonItem(text: [Text],
+                                            state: ButtonItemOption.State?,
+                                            barButtonItem: UIBarButtonItem) {
+            
+        }
+        
+        func setButtonItem(text: [Text], state: ButtonItemOption.State?, button: UIButton) {
+            
+        }
+        
         var item: UIBarButtonItem?
         switch option {
         case .text(let array):
@@ -627,8 +674,12 @@ public class NavigationBar {
                 }
             }
             if !useCustomView, let title = title {
-                item = UIBarButtonItem(title: title, style: .plain, target: target, action: action)
-                var attributes : [NSAttributedString.Key : Any] =
+                if let buttonItem = buttonItem as? UIBarButtonItem {
+                    item = buttonItem
+                } else {
+                    item = UIBarButtonItem(title: title, style: .plain, target: target, action: action)
+                }
+                var attributes : [NSAttributedString.Key : Any]! =
                     [.font : Const.Font.text, .foregroundColor : tintColor]
                 
                 if let font = font {
@@ -639,23 +690,31 @@ public class NavigationBar {
                     attributes[.foregroundColor] = textColor
                 }
                 
-                item?.setTitleTextAttributes(attributes, for: .normal)
+                perform() { state in
+                    item?.setTitleTextAttributes(attributes, for: state)
+                }
             } else {
-                let button = UIButton(type: .custom)
+                var button: UIButton!
+                if let buttonItem = buttonItem as? UIButton {
+                    button = buttonItem
+                } else {
+                    button = UIButton(type: .custom)
+                }
                 if let attributedText = attributedText {
                     if let font = font {
                         button.titleLabel?.font = font
                     } else {
                         button.titleLabel?.font = Const.Font.text
                     }
-                    
-                    if let textColor = textColor {
-                        button.setTitleColor(textColor, for: .normal)
-                    } else {
-                        button.setTitleColor(tintColor, for: .normal)
+
+                    perform() { state in
+                        if let textColor = textColor {
+                            button.setTitleColor(textColor, for: state)
+                        } else {
+                            button.setTitleColor(tintColor, for: state)
+                        }
+                        button.setAttributedTitle(attributedText, for: state)
                     }
-                    
-                    button.titleLabel?.attributedText = attributedText
                 } else if let title = title {
                     if let font = font {
                         button.titleLabel?.font = font
@@ -663,13 +722,14 @@ public class NavigationBar {
                         button.titleLabel?.font = Const.Font.text
                     }
                     
-                    if let textColor = textColor {
-                        button.setTitleColor(textColor, for: .normal)
-                    } else {
-                        button.setTitleColor(tintColor, for: .normal)
+                    perform(containerOption) { state in
+                        if let textColor = textColor {
+                            button.setTitleColor(textColor, for: state)
+                        } else {
+                            button.setTitleColor(tintColor, for: state)
+                        }
+                        button.setTitle(title, for: state)
                     }
-                    
-                    button.setTitle(title, for: .normal)
                 }
                 
                 if let action = action {
@@ -687,7 +747,9 @@ public class NavigationBar {
                 item = UIBarButtonItem(image: image, style: .plain, target: target, action: action)
             } else {
                 let button = UIButton(type: .custom)
-                button.setImage(image, for: .normal)
+                perform(containerOption) { state in
+                    button.setImage(image, for: state)
+                }
                 if let action = action {
                     button.clicked(target, action: action)
                 }
@@ -704,6 +766,14 @@ public class NavigationBar {
             } else {
                 item = UIBarButtonItem(customView: UIView(frame: CGRect(0, 0, width, 0)))
             }
+            
+        case .state(let normal, let highlighted, let disabled):
+            if let item = buttonItem(option,
+                                  target: target,
+                                  action: action,
+                                  tag: tag,
+                                  useCustomView: useCustomView) {
+            
         }
         
         if let tag = tag {

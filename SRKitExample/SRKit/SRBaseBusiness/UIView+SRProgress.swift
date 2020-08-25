@@ -214,17 +214,27 @@ extension SRProgressProtocol where Self: UIView {
 
 extension UIView: SRProgressProtocol {
     public var srProgressComponent: SRProgressComponent {
-        if let component = objc_getAssociatedObject(self, &SRProgressComponent.AssociatedKeys.progress) as? SRProgressComponent {
+        get {
+            if let component = objc_getAssociatedObject(self, &SRProgressComponent.AssociatedKeys.progress) as? SRProgressComponent {
+                return component
+            }
+            
+            let component = SRProgressComponent()
+            component.view = self
+            objc_setAssociatedObject(self,
+                                     &SRProgressComponent.AssociatedKeys.progress,
+                                     component,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return component
         }
-        
-        let component = SRProgressComponent()
-        component.view = self
-        objc_setAssociatedObject(self,
-                                 &SRProgressComponent.AssociatedKeys.progress,
-                                 component,
-                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        return component
+        set {
+            let component = newValue
+            component.view = self
+            objc_setAssociatedObject(self,
+                                     &SRProgressComponent.AssociatedKeys.progress,
+                                     component,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
     public var srProgressMaskColor: UIColor {
