@@ -45,6 +45,7 @@ DTAttributedTextContentViewDelegate {
         
         @objc func deviceOrientationDidChange(_ sender: AnyObject?) {
             DispatchQueue.main.async { [weak self] in
+                self?.viewController?.srRegainTopLayout()
                 self?.viewController?.deviceOrientationDidChange(sender)
             }
         }
@@ -112,7 +113,12 @@ DTAttributedTextContentViewDelegate {
                           selector: #selector(EventTarget.deviceOrientationDidChange(_:)),
                           name: UIDevice.orientationDidChangeNotification,
                           object: nil)
-        srBaseComponent.observeNavigationBarFrame()
+        srRegainTopLayout()
+    }
+    
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        srRegainTopLayout()
     }
     
     override open func viewDidAppear(_ animated: Bool) {
@@ -194,22 +200,6 @@ DTAttributedTextContentViewDelegate {
         }
         
         NotifyDefault.remove(self, name: UIDevice.orientationDidChangeNotification)
-    }
-    
-    open override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        layoutSRNavigationBar()
-    }
-    
-    public func layoutSRNavigationBar() {
-//        DispatchQueue.main.async { [weak self] in
-//            guard let strongSelf = self else { return }
-            if let constraint = srNavigationBarTopConstraint {
-                let bottom = srTopLayoutGuideStatusBar
-                print("bottom: \(bottom)")
-                    constraint.constant = bottom
-            }
-//        }
     }
     
     public init() {

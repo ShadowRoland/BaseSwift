@@ -36,7 +36,7 @@ class ViewController: SRBaseViewController {
     override func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
 //        show(SRViewController())
-        let vc = UIViewController()
+        let vc = ViewController()
         vc.view.backgroundColor = .white
         navigationController?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
     }

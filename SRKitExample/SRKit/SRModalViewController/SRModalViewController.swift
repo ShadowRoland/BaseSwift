@@ -110,7 +110,7 @@ public class SRModalViewController: SRNavigationController {
     public override func navigationController(_ navigationController: UINavigationController,
                                               didShow viewController: UIViewController,
                                               animated: Bool) {
-        if viewController === rootVC {
+        if viewController === modalVC {
             isPageSwipeEnabled = false
             srIsPageLongPressEnabled = viewController.srIsPageLongPressEnabled
         } else {

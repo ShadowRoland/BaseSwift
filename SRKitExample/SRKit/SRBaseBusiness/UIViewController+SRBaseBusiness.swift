@@ -15,7 +15,7 @@ import DTCoreText
 import Cartography
 
 extension UIViewController {
-    public class SRBaseBusinessComponent: NSObject, UIGestureRecognizerDelegate, SRSimplePromptDelegate {
+    public class SRBaseBusinessComponent: NSObject, UIGestureRecognizerDelegate, SRSimplePromptDelegate, SRNavigationBarDelegate {
         public weak var viewController: UIViewController?
         
         public var navigationBarType: NavigationBarType = .system
@@ -28,10 +28,10 @@ extension UIViewController {
                 let navigationBar = self.navigationBar
                 if /*!navigationBar.isHidden,*/
                     let constraint = navigationBar.superview?.constraints.first(where: {
-                    $0.firstItem === navigationBar
-                    && $0.secondItem === viewController.view
+                    (($0.firstItem === navigationBar && $0.secondItem === viewController.view)
+                        || ($0.firstItem === viewController.view && $0.secondItem === navigationBar))
                     && $0.firstAttribute == .top
-                    && $0.firstAttribute == .top
+                    && $0.secondAttribute == .top
                 }) {
                     return constraint
                 }
@@ -43,6 +43,7 @@ extension UIViewController {
             let navigationBar = SRNavigationBar()
             navigationBar.barStyle = .default
             navigationBar.shadowImage = nil
+            navigationBar.delegate = self
             if let viewController = viewController {
                 viewController.view.addSubview(navigationBar)
                 constrain(navigationBar) {
@@ -107,7 +108,7 @@ extension UIViewController {
         let uiNavigationBarObserved = Observed()
         let srNavigationBarObserved = Observed()
         
-        public func observeNavigationBarFrame() {
+        private func observeNavigationBarFrame() {
             guard let viewController = viewController else {
                 return
             }
@@ -244,11 +245,18 @@ extension UIViewController {
         }
         
         //MARK: 导航栏或状态栏下的子视图
+        
+        open func regainTopLayout() {
+            let bottom = topLayoutGuide
+            if let constraint = topLayoutSubviewHeightConstraint, bottom != constraint.constant {
+                constraint.constant = bottom
+            }
+        }
+        
         open var topLayoutSubviewHeightConstraint: NSLayoutConstraint? {
             if let topLayoutSubview = topLayoutSubview,
                 let constraint = topLayoutSubview.constraints.first(where: {
-                return $0.firstItem === topLayoutSubview
-                    && $0.firstAttribute == .height
+                $0.firstItem === topLayoutSubview && $0.firstAttribute == .height
             }) {
                 return constraint
             }
@@ -278,10 +286,6 @@ extension UIViewController {
                 }
                 _topLayoutSubview = newValue
             }
-        }
-        
-        open func refreshTopLayout() {
-            let bottom = topLayoutGuide
         }
         
         //MARK: - KVO
@@ -321,7 +325,7 @@ extension UIViewController {
                 if let viewController = viewController as? SRBaseViewController,
                     viewController.srIsTop && viewController.view != nil {
                     let bottom = topLayoutGuideNavigationBar(uiNavigationBarObserved, update: true)
-                    let constraint = viewController.topLayoutSubviewHeightConstraint
+                    let constraint = topLayoutSubviewHeightConstraint
                     if bottom != constraint?.constant {
                         constraint?.constant = bottom
                     }
@@ -330,7 +334,7 @@ extension UIViewController {
                 if let viewController = viewController as? SRBaseViewController,
                     viewController.srIsTop && viewController.view != nil {
                     let bottom = topLayoutGuideNavigationBar(srNavigationBarObserved, update: true)
-                    let constraint = viewController.topLayoutSubviewHeightConstraint
+                    let constraint = topLayoutSubviewHeightConstraint
                     if bottom != constraint?.constant {
                         constraint?.constant = bottom
                     }
@@ -348,6 +352,16 @@ extension UIViewController {
                     if bottom != constraint?.constant {
                         constraint?.constant = bottom
                     }
+                }
+            }
+        }
+        
+        //MARK: - SRNavigationBarDelegate
+        public func navigationBarDidLayout(_ navigationBar: SRNavigationBar) {
+            if let constraint = navigationBarTopConstraint {
+                let bottom = topLayoutGuideStatusBar()
+                if constraint.constant != bottom {
+                    constraint.constant = bottom
                 }
             }
         }
@@ -781,6 +795,50 @@ extension UIViewController {
         return viewController
     }
     
+    @available(iOS 13.0, *)
+    @discardableResult
+    public func srModal(_ identifier: String,
+                        storyboard: String,
+                        animated: Bool = true,
+                        presentationStyle style: UIModalPresentationStyle = .automatic,
+                        params: ParamDictionary? = nil,
+                        event: SRKit.Event? = nil,
+                        completion: (() -> Void)? = nil) -> UIViewController? {
+        return srModal(UIViewController.srViewController(identifier, storyboard: storyboard),
+                       animated: animated,
+                       params: params,
+                       event: event,
+                       completion: completion)
+    }
+    
+    @available(iOS 13.0, *)
+    @discardableResult
+    public func srModal(_ viewController: UIViewController?,
+                        animated: Bool = true,
+                        presentationStyle style: UIModalPresentationStyle = .automatic,
+                        params: ParamDictionary? = nil,
+                        event: SRKit.Event? = nil,
+                        completion: (() -> Void)? = nil) -> UIViewController? {
+        guard let viewController = viewController else { return nil }
+        if let params = params {
+            viewController.srParams = params
+        }
+        if let event = event {
+            viewController.srEvent = event
+            viewController.srEvent?.sender = self
+        }
+        Keyboard.hide { [weak self] in
+            if let strongSelf = self {
+                let modalVC = SRModalViewController.standard(viewController)
+                modalVC.modalPresentationStyle = style
+                strongSelf.present(modalVC,
+                          animated: animated,
+                          completion: completion)
+            }
+        }
+        return viewController
+    }
+    
     @discardableResult
     public func srModal(_ identifier: String,
                         storyboard: String,
@@ -810,9 +868,12 @@ extension UIViewController {
             viewController.srEvent?.sender = self
         }
         Keyboard.hide { [weak self] in
-            self?.present(SRModalViewController.standard(viewController),
+            if let strongSelf = self {
+                let modalVC = SRModalViewController.standard(viewController)
+                strongSelf.present(modalVC,
                           animated: animated,
                           completion: completion)
+            }
         }
         return viewController
     }
@@ -916,6 +977,10 @@ extension UIViewController {
         if SRAlert.srShowToast(message, in: view) {
             view.unableTimed()
         }
+    }
+    
+    public func srRegainTopLayout() {
+        srBaseComponent.regainTopLayout()
     }
     
     public var srTopLayoutGuide: CGFloat {

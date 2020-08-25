@@ -21,6 +21,8 @@ open class SRNavigationBar: UIView {
     
     public static var height: CGFloat = 44.0
     
+    var delegate: SRNavigationBarDelegate?
+    
     //MARK: Customize
     
     public struct Const {
@@ -163,7 +165,7 @@ open class SRNavigationBar: UIView {
             let observer = CFRunLoopObserverCreateWithHandler(kCFAllocatorDefault,
                                                               CFRunLoopActivity.allActivities.rawValue, true, 0) { [weak self] (observer, activity) in
                 switch activity {
-                case .beforeWaiting:
+                case .beforeSources:
                     self?.layout()
                     if let layoutObserver = self?.layoutObserver {
                         CFRunLoopRemoveObserver(CFRunLoopGetMain(), layoutObserver, .defaultMode)
@@ -359,6 +361,7 @@ open class SRNavigationBar: UIView {
         
         layoutBackground()
         //layoutIfNeeded()
+        delegate?.navigationBarDidLayout(self)
     }
     
     var statusBarOrientation: UIInterfaceOrientation?
@@ -401,4 +404,8 @@ open class SRNavigationBar: UIView {
             layoutBackground()
         }
     }
+}
+
+public protocol SRNavigationBarDelegate {
+    func navigationBarDidLayout(_ navigationBar: SRNavigationBar)
 }
