@@ -587,7 +587,13 @@ public class NavigationBar {
         case custom(UIView)
         /// 空白间距
         case space(CGFloat)
-        case state(_ nomarl: State, highlighted: State? = nil, disabled: State? = nil)
+        indirect case state(_ normal: ButtonItemOption, highlighted: ButtonItemOption? = nil, disabled: ButtonItemOption? = nil)
+        
+        static func auto(_ title: String) -> ButtonItemOption {
+            return .state(.text([.title(title)]),
+                          highlighted: .text([.textColor(.darkGray)]),
+                          disabled: .text([.textColor(.lightGray)]))
+        }
         
         public enum Text {
             case title(String)
@@ -597,10 +603,10 @@ public class NavigationBar {
             case attributedText(NSAttributedString)
         }
         
-        public indirect enum State {
-            case nomarl(ButtonItemOption)
-            case highlighted(ButtonItemOption)
-            case disabled(ButtonItemOption)
+        public enum State {
+            case normal
+            case highlighted
+            case disabled
         }
     }
     
@@ -611,176 +617,218 @@ public class NavigationBar {
                                  action: Selector? = nil,
                                  tag: NSInteger? = nil,
                                  useCustomView: Bool = false) -> UIBarButtonItem? {
-        
-    }
-    
-    fileprivate class func buttonItem(_ option: ButtonItemOption,
-                                      target: Any?,
-                                      action: Selector? = nil,
-                                      tag: NSInteger?,
-                                      useCustomView: Bool,
-                                      state: ButtonItemOption.State?,
-                                      buttonItem: AnyObject?,
-                                      dictionary: inout [String : AnyObject]?) -> UIBarButtonItem? {
-        func perform(set: (UIControl.State) -> Void) {
+        func perform(_ state: ButtonItemOption.State?, set: (UIControl.State) -> Void) {
             if let state = state {
                 switch state {
-                case .nomarl:
+                case .normal:
                     set(.normal)
-                    
                 case .highlighted:
                     set(.highlighted)
-                    
                 case .disabled:
                     set(.disabled)
-                    
-                default: break
                 }
             } else {
                 set(.normal)
             }
         }
 
-        func setButtonItem(text: [Text],
-                                            state: ButtonItemOption.State?,
-                                            barButtonItem: UIBarButtonItem) {
-            
+        func setButtonItem(text option: ButtonItemOption,
+                           state: ButtonItemOption.State,
+                           item inItem: UIBarButtonItem? = nil,
+                           button inButton: UIButton? = nil,
+                           completion: ((UIBarButtonItem?, UIButton?) -> Void)? = nil) {
+            switch option {
+            case .text(let array):
+                var title: String?
+                var font: UIFont?
+                var textColor: UIColor?
+                var attributedText: NSAttributedString?
+                for text in array {
+                    switch text {
+                    case .title(let s):
+                        title = s
+                        
+                    case .font(let f):
+                        font = f
+                        
+                    case .textColor(let t):
+                        textColor = t
+                        
+                    case .attributedText(let a):
+                        attributedText = a
+                    }
+                }
+                if !useCustomView && (state == .normal || inItem != nil) {
+                    var item: UIBarButtonItem!
+                    if let inItem = inItem {
+                        item = inItem
+                    } else {
+                        item = UIBarButtonItem(title: title, style: .plain, target: target, action: action)
+                    }
+                    var attributes: [NSAttributedString.Key : Any]!
+                    if state == .normal {
+                        attributes = [.font : Const.Font.text, .foregroundColor : tintColor]
+                    } else {
+                        attributes = item.titleTextAttributes(for: .normal) ?? [:]
+                    }
+                        
+                    if let font = font {
+                        attributes[.font] = font
+                    }
+                    
+                    if let textColor = textColor {
+                        attributes[.foregroundColor] = textColor
+                    }
+                    
+                    perform(state) { state in
+                        item.setTitleTextAttributes(attributes, for: state)
+                    }
+                    
+                    completion?(item, nil)
+                } else if useCustomView && (state == .normal || inButton != nil) {
+                    var button: UIButton!
+                    if let inButton = inButton {
+                        button = inButton
+                    } else {
+                        button = UIButton(type: .custom)
+                        button.titleLabel?.font = Const.Font.text
+                    }
+                    if let attributedText = attributedText {
+                        if let font = font, state == .normal {
+                            button.titleLabel?.font = font
+                        }
+                        
+                        perform(state) { state in
+                            if let textColor = textColor {
+                                button.setTitleColor(textColor, for: state)
+                            } else {
+                                button.setTitleColor(tintColor, for: state)
+                            }
+                            button.setAttributedTitle(attributedText, for: state)
+                        }
+                    } else {
+                        if let font = font, state == .normal {
+                            button.titleLabel?.font = font
+                        }
+                        
+                        perform(state) { state in
+                            if let textColor = textColor {
+                                button.setTitleColor(textColor, for: state)
+                            } else {
+                                button.setTitleColor(tintColor, for: state)
+                            }
+                            button.setTitle(title, for: state)
+                        }
+                    }
+                    
+                    if let action = action, state == .normal {
+                        button.clicked(target, action: action)
+                    }
+                    
+                    completion?(nil, button)
+                }
+            default: break
+            }
         }
         
-        func setButtonItem(text: [Text], state: ButtonItemOption.State?, button: UIButton) {
-            
+        func setButtonItem(image option: ButtonItemOption,
+                           state: ButtonItemOption.State,
+                           button inButton: UIButton? = nil,
+                           completion: ((UIBarButtonItem?, UIButton?) -> Void)? = nil) {
+            switch option {
+            case .image(let image):
+                if !useCustomView && state == .normal {
+                    let item = UIBarButtonItem(image: image, style: .plain, target: target, action: action)
+                    completion?(item, nil)
+                } else if useCustomView && (state == .normal || inButton != nil) {
+                    var button: UIButton!
+                    if let inButton = inButton {
+                        button = inButton
+                    } else {
+                        button = UIButton(type: .custom)
+                    }
+                    perform(state) { state in
+                        button.setImage(image, for: state)
+                    }
+                    
+                    if let action = action, state == .normal {
+                        button.clicked(target, action: action)
+                    }
+                    
+                    completion?(nil, button)
+                }
+            default: break
+            }
         }
         
-        var item: UIBarButtonItem?
+        var barButtonItem: UIBarButtonItem?
         switch option {
-        case .text(let array):
-            var title: String?
-            var font: UIFont?
-            var textColor: UIColor?
-            var attributedText: NSAttributedString?
-            for text in array {
-                switch text {
-                case .title(let s):
-                    title = s
-                    
-                case .font(let f):
-                    font = f
-                    
-                case .textColor(let t):
-                    textColor = t
-                    
-                case .attributedText(let a):
-                    attributedText = a
+        case .text:
+            setButtonItem(text: option, state: .normal) { (item, button) in
+                if let item = item {
+                    barButtonItem = item
+                } else if let button = button {
+                    barButtonItem = UIBarButtonItem(customView: button)
                 }
             }
-            if !useCustomView, let title = title {
-                if let buttonItem = buttonItem as? UIBarButtonItem {
-                    item = buttonItem
-                } else {
-                    item = UIBarButtonItem(title: title, style: .plain, target: target, action: action)
+            
+        case .image:
+            setButtonItem(image: option, state: .normal) { (item, button) in
+                if let item = item {
+                    barButtonItem = item
+                } else if let button = button {
+                    barButtonItem = UIBarButtonItem(customView: button)
                 }
-                var attributes : [NSAttributedString.Key : Any]! =
-                    [.font : Const.Font.text, .foregroundColor : tintColor]
-                
-                if let font = font {
-                    attributes[.font] = font
-                }
-                
-                if let textColor = textColor {
-                    attributes[.foregroundColor] = textColor
-                }
-                
-                perform() { state in
-                    item?.setTitleTextAttributes(attributes, for: state)
-                }
-            } else {
-                var button: UIButton!
-                if let buttonItem = buttonItem as? UIButton {
-                    button = buttonItem
-                } else {
-                    button = UIButton(type: .custom)
-                }
-                if let attributedText = attributedText {
-                    if let font = font {
-                        button.titleLabel?.font = font
-                    } else {
-                        button.titleLabel?.font = Const.Font.text
-                    }
+            }
 
-                    perform() { state in
-                        if let textColor = textColor {
-                            button.setTitleColor(textColor, for: state)
-                        } else {
-                            button.setTitleColor(tintColor, for: state)
-                        }
-                        button.setAttributedTitle(attributedText, for: state)
-                    }
-                } else if let title = title {
-                    if let font = font {
-                        button.titleLabel?.font = font
-                    } else {
-                        button.titleLabel?.font = Const.Font.text
-                    }
-                    
-                    perform(containerOption) { state in
-                        if let textColor = textColor {
-                            button.setTitleColor(textColor, for: state)
-                        } else {
-                            button.setTitleColor(tintColor, for: state)
-                        }
-                        button.setTitle(title, for: state)
-                    }
-                }
-                
-                if let action = action {
-                    button.clicked(target, action: action)
-                }
-                item = UIBarButtonItem(customView: button)
-            }
-            
-        case .image(let image):
-            guard image.size.width > 0 && image.size.height > 0 else {
-                break
-            }
-            
-            if !useCustomView {
-                item = UIBarButtonItem(image: image, style: .plain, target: target, action: action)
-            } else {
-                let button = UIButton(type: .custom)
-                perform(containerOption) { state in
-                    button.setImage(image, for: state)
-                }
-                if let action = action {
-                    button.clicked(target, action: action)
-                }
-                item = UIBarButtonItem(customView: button)
-            }
-            
         case .custom(let view):
-            item = UIBarButtonItem(customView: view)
+            barButtonItem = UIBarButtonItem(customView: view)
             
         case .space(let width):
             if !useCustomView {
-                item = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-                item?.width = width
+                barButtonItem = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+                barButtonItem?.width = width
             } else {
-                item = UIBarButtonItem(customView: UIView(frame: CGRect(0, 0, width, 0)))
+                barButtonItem = UIBarButtonItem(customView: UIView(frame: CGRect(0, 0, width, 0)))
             }
             
-        case .state(let normal, let highlighted, let disabled):
-            if let item = buttonItem(option,
-                                  target: target,
-                                  action: action,
-                                  tag: tag,
-                                  useCustomView: useCustomView) {
-            
+        case .state(let normal, highlighted: let highlighted, disabled: let disabled):
+            switch normal {
+            case .text:
+                setButtonItem(text: normal, state: .normal) { (item, button) in
+                    if let highlighted = highlighted {
+                        setButtonItem(text: highlighted, state: .highlighted, item: item, button: button)
+                    }
+                    if let disabled = disabled {
+                        setButtonItem(text: disabled, state: .disabled, item: item, button: button)
+                    }
+                    if let item = item {
+                        barButtonItem = item
+                    } else if let button = button {
+                        barButtonItem = UIBarButtonItem(customView: button)
+                    }
+                }
+                
+            case .image:
+                setButtonItem(image: normal, state: .normal) { (item, button) in
+                    if let highlighted = highlighted {
+                        setButtonItem(image: highlighted, state: .highlighted, button: button)
+                    }
+                    if let disabled = disabled {
+                        setButtonItem(image: disabled, state: .disabled, button: button)
+                    }
+                    if let item = item {
+                        barButtonItem = item
+                    } else if let button = button {
+                        barButtonItem = UIBarButtonItem(customView: button)
+                    }
+                }
+                
+            default: break
+            }
         }
         
-        if let tag = tag {
-            item?.tag = tag
-        }
-        
-        return item
+        return barButtonItem
     }
 }
 
