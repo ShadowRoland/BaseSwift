@@ -147,6 +147,6 @@ extension SelectCountryCodeViewController: UITableViewDelegate, UITableViewDataS
         if let didSelectBlock = didSelectBlock {
             didSelectBlock(letters[indexPath.section][indexPath.row])
         }
-        popBack()
+        srPopBack()
     }
 }

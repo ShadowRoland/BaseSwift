@@ -984,7 +984,7 @@ extension UIViewController {
     //MARK: - Common Features
     
     public func srShowToast(_ message: String?) {
-        if SRAlert.srShowToast(message, in: view) {
+        if SRAlert.showToast(message, in: view) {
             view.unableTimed()
         }
     }

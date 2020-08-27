@@ -338,7 +338,7 @@ class QRCodeReaderViewController: BaseViewController {
     //MARKL: Application become active
     
     @objc func didBecomeActive(_ notification: Notification) {
-        guard isTop else {
+        guard srIsTop else {
             return
         }
         

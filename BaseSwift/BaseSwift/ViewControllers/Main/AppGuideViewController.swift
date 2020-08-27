@@ -87,7 +87,7 @@ class AppGuideViewController: BaseViewController, UIScrollViewDelegate {
     
     func next() {
         if UserStandard[UDKey.enterAggregationEntrance] == nil {
-            show("ViewController", storyboard: "Main", animated: false)
+            srShow("ViewController", storyboard: "Main", animated: false)
             return;
         }
         
@@ -109,7 +109,7 @@ class AppGuideViewController: BaseViewController, UIScrollViewDelegate {
         mainMenuVC.aggregationVC = aggregationVC
         mainMenuVC.leftMenuVC = leftMenuVC
         
-        show(aggregationVC, animated: false)
+        srShow(aggregationVC, animated: false)
     }
     
     //MARK: - 事件响应

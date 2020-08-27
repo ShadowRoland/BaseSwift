@@ -61,18 +61,16 @@ public class IMManager {
             return
         }
         
-        RCIM.shared().connect(withToken: token, success: { (userId) in
+        RCIM.shared()?.connect(withToken: token, timeLimit: 60, dbOpened: { code in
+            
+        }, success: { userId in
             LogInfo("IM login success")
             let profile = ProfileManager.currentProfile
             profile?.imToken = token
             profile?.isIMLogin = true
-        }, error: { (code) in
+        }) { errorCode in
             DispatchQueue.main.async {
-                SRAlert.showToast("IM login fail, code=\(code)")
-            }
-        }) {
-            DispatchQueue.main.async {
-                SRAlert.showToast("IM token incorrect")
+                SRAlert.showToast("IM login fail, code=\(errorCode)")
             }
         }
     }

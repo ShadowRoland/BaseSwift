@@ -162,6 +162,6 @@ class ChatListViewController: BaseTableViewController {
         vc.targetId = message?.userId
         vc.nickname = message?.userName
         vc.conversationType = .ConversationType_PRIVATE
-        show(vc)
+        srShow(vc)
     }
 }

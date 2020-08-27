@@ -242,7 +242,7 @@ class ServerConfigViewController: BaseViewController {
                 saveEnv()
             }
         }
-        popBack()
+        srPopBack()
     }
     
     func checkEmpty() -> Bool {

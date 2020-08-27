@@ -64,7 +64,7 @@ class ChatViewController: RCConversationViewController {
     }
     
     @objc public func pageBack() {
-        popBack()
+        srPopBack()
     }
     
     //MARK: 3D Touch actions
@@ -77,7 +77,7 @@ class ChatViewController: RCConversationViewController {
         { (action, previewViewController) in
             if let viewControllers = Common.rootVC?.navigationController?.viewControllers,
                 let vc = viewControllers.last(where: { $0 is SNSViewController }) {
-                vc.show(previewViewController, sender: vc)
+                vc.srShow(previewViewController, sender: vc)
             }
         }
         actions.append(seeAction)

@@ -129,14 +129,14 @@ class ResetPasswordViewController: BaseViewController {
                         guard let strongSelf = self else { return }
                         
                         if strongSelf.resetPasswordType == .smsCode {
-                            strongSelf.popBack(toClasses: [LoginViewController.self])
+                            strongSelf.srPopBack(toClasses: [LoginViewController.self])
                         } else {
                             if Config.entrance == .sns {
-                                strongSelf.popBack(toClasses: [LoginViewController.self])
+                                strongSelf.srPopBack(toClasses: [LoginViewController.self])
                             } else if Config.entrance == .news || Config.entrance == .aggregation {
                                 ProfileManager.currentProfile?.isLogin = false
                                 NotifyDefault.post(Config.reloadProfileNotification)
-                                strongSelf.popBack(toClasses: [MoreViewController.self])
+                                strongSelf.srPopBack(toClasses: [MoreViewController.self])
                             }
                         }
                 })

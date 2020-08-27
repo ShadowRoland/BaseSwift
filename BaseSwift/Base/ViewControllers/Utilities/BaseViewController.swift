@@ -34,7 +34,7 @@ open class BaseViewController: SRBaseViewController {
         if let params = params {
             dictionary += params
         }
-        show("WebpageViewController", storyboard: "Utility", params: dictionary, event: event)
+        srShow("WebpageViewController", storyboard: "Utility", params: dictionary, event: event)
     }
     
     //MARK: -
@@ -79,13 +79,13 @@ open class BaseViewController: SRBaseViewController {
 
 extension BaseViewController {
     func presentLoginVC(_ params: ParamDictionary? = nil) {
-        modal("LoginViewController", storyboard: "Profile", params: params)
+        srModal("LoginViewController", storyboard: "Profile", params: params)
     }
     
     func stateMachine(_ stateMachine: SRStateMachine, didFireBase event: Event) {
         switch event.option {
         case .openWebpage: //FIXME: FOR DEBUG，在所有的视图上弹出网页视图，也可以处理其他全局型的业务，如跳转到聊天页面，此处业务不是必需的，可按照具体需求操作
-            guard isTop,
+            guard srIsTop,
                 let string = event.params?[Param.Key.url] as? String,
                 let url = URL(string: string) else {
                     break
@@ -93,60 +93,60 @@ extension BaseViewController {
             
             if let vc = self as? WebpageViewController {
                 Common.clearPops()
-                dismissModals()
+                srDismissModals()
                 var params = [Param.Key.url : url] as ParamDictionary
                 if let title = event.params?[Param.Key.title] as? String {
                     params[Param.Key.title] = title
                 }
-                vc.params = params
+                vc.srParams = params
                 vc.reload()
                 stateMachine.end(event)
             } else {
                 Common.clearPops()
-                dismissModals()
+                srDismissModals()
                 showWebpage(url, title: event.params?[Param.Key.title] as? String, event: event)
             }
             
         case .showProfile:
-            guard isTop else { break }
+            guard srIsTop else { break }
             
             if isKind(of: ProfileViewController.self) { //当前页面是Profile页面
                 stateMachine.end(event)
             } else if let viewControllers = navigationController?.viewControllers,
                 let last = viewControllers.filter ({ $0.isKind(of: ProfileViewController.self) }).last { //Profile页面在当前页面之前
                 Common.clearPops()
-                dismissModals()
-                popBack(to: last)
+                srDismissModals()
+                srPopBack(to: last)
                 DispatchQueue.main.asyncAfter(deadline: .now() + C.viewControllerTransitionInterval, execute: { [weak self] in
                     self?.stateMachine.end(event)
                 })
             } else { //视图栈中没有Profile页面，push新的Profile页面入栈
                 Common.clearPops()
-                dismissModals()
+                srDismissModals()
                 if !ProfileManager.isLogin { //若是非登录状态，弹出登录页面，因为查看个人信息需要先登录
                     presentLoginVC()
                 } else { //push新的Profile页面入栈
-                    show("ProfileViewController", storyboard: "Profile", event: event)
+                    srShow("ProfileViewController", storyboard: "Profile", event: event)
                 }
             }
             
         case .showSetting:
-            guard isTop else { break }
+            guard srIsTop else { break }
             
             if isKind(of: SettingViewController.self) { //当前页面是Setting页面
                 stateMachine.end(event)
             } else if let viewControllers = navigationController?.viewControllers,
                 let last = viewControllers.filter ({ $0.isKind(of: SettingViewController.self) }).last { //Setting页面在当前页面之前
                 Common.clearPops()
-                dismissModals()
-                popBack(to: last)
+                srDismissModals()
+                srPopBack(to: last)
                 DispatchQueue.main.asyncAfter(deadline: .now() + C.viewControllerTransitionInterval, execute: { [weak self] in
                     self?.stateMachine.end(event)
                 })
             } else { //视图栈中没有Setting页面，push新的Setting页面入栈
                 Common.clearPops()
-                dismissModals()
-                show("SettingViewController", storyboard: "Profile", event: event)
+                srDismissModals()
+                srShow("SettingViewController", storyboard: "Profile", event: event)
             }
         default:
             break

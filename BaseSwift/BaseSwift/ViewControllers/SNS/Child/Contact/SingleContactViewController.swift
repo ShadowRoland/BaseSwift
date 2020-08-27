@@ -206,6 +206,6 @@ extension SingleContactViewController: UITableViewDelegate, UITableViewDataSourc
         vc.targetId = letters[indexPath.section][indexPath.row].userId
         vc.nickname = letters[indexPath.section][indexPath.row].nickname
         vc.conversationType = .ConversationType_PRIVATE
-        show(vc)
+        srShow(vc)
     }
 }

@@ -610,7 +610,7 @@ class ProfileViewController: BaseViewController {
                 }
             }
         }
-        show(vc)
+        srShow(vc)
     }
     
     func showDatePicker(_ item: ProfileForm) {
@@ -666,7 +666,7 @@ class ProfileViewController: BaseViewController {
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
-        show("ProfileDetailViewController", storyboard: "Profile")
+        srShow("ProfileDetailViewController", storyboard: "Profile")
     }
     
     //最大长度的限制

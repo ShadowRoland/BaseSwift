@@ -53,7 +53,7 @@ class NewsSecondaryViewController: BaseViewController {
     
     override func deviceOrientationDidChange(_ sender: AnyObject? = nil) {
         super.deviceOrientationDidChange(sender)
-        guard guardDeviceOrientationDidChange(sender) else { return }
+        guard srGuardDeviceOrientationDidChange(sender) else { return }
         
         tabHeader.layout()
         if let vc = currentNewsListVC, let channelId = vc.channelId {

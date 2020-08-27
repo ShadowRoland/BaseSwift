@@ -73,7 +73,7 @@ class TitleChoicesViewController: BaseViewController {
                 $0.id != String(int: -1) && $0.isSelected
             })
         }
-        popBack()
+        srPopBack()
     }
     
     //MARK: - 事件响应

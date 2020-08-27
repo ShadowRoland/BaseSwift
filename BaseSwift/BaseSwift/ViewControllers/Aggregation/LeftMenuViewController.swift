@@ -181,7 +181,7 @@ class LeftMenuViewController: BaseViewController {
         if !ProfileManager.isLogin {
             mainMenuVC.presentLoginVC()
         } else {
-            mainMenuVC.show("ProfileViewController", storyboard: "Profile")
+            mainMenuVC.srShow("ProfileViewController", storyboard: "Profile")
         }
     }
     
@@ -192,7 +192,7 @@ class LeftMenuViewController: BaseViewController {
     @IBAction func clickSettingButton(_ sender: Any) {
         guard MutexTouch else { return }
         aggregationVC.closeLeft()
-        mainMenuVC.show("SettingViewController", storyboard: "Profile")
+        mainMenuVC.srShow("SettingViewController", storyboard: "Profile")
     }
     
     @IBAction func clickExitButton(_ sender: Any) {

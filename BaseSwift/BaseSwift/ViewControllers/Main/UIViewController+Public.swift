@@ -51,8 +51,8 @@ extension UIViewController {
                 return
             }
             
-            vc.dismissModals()
-            vc.show("AdvertisingViewController", storyboard: "Main")
+            vc.srDismissModals()
+            vc.srShow("AdvertisingViewController", storyboard: "Main")
         }
         
         //MARK: - AdvertisingGuideDelegate

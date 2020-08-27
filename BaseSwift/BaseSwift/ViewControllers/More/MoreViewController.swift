@@ -353,7 +353,7 @@ class MoreViewController: BaseViewController {
     @IBAction func clickTableHeaderButton(_ sender: Any) {
         guard MutexTouch else { return }
         if ProfileManager.isLogin {
-            show("ProfileViewController", storyboard: "Profile")
+            srShow("ProfileViewController", storyboard: "Profile")
         } else {
             presentLoginVC()
         }
@@ -498,7 +498,7 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
         
         let cell = tableView.cellForRow(at: indexPath)
         if cell === settingCell {
-            show("SettingViewController", storyboard: "Profile")
+            srShow("SettingViewController", storyboard: "Profile")
             return
         }
         
@@ -520,14 +520,14 @@ extension MoreViewController: UITableViewDelegate, UITableViewDataSource {
                 showStockExchangeAlert()
             }
         } else if cell === qiuYiCell {
-            show("MapViewController", storyboard: "More")
+            srShow("MapViewController", storyboard: "More")
         } else if cell === danMuCell {
             showBarrages()
         } else if cell === youXiCell {
             if !UIApplication.shared.statusBarOrientation.isPortrait {
                 SRAlert.showToast("Please rotate screen to portrait!")
             } else {
-                show("M2ViewController", storyboard: "More")
+                srShow("M2ViewController", storyboard: "More")
             }
         }
     }

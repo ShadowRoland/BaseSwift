@@ -105,15 +105,15 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         switch indexPath.row {
         case 0:
             Config.entrance = .simple
-            show("SimpleViewController", storyboard: "Simple")
+            srShow("SimpleViewController", storyboard: "Simple")
             
         case 1:
             Config.entrance = .sns
-            show("LoginViewController", storyboard: "Profile")
+            srShow("LoginViewController", storyboard: "Profile")
             
         case 2:
             Config.entrance = .news
-            show("NewsViewController", storyboard: "News")
+            srShow("NewsViewController", storyboard: "News")
             
         case 3:
             /*

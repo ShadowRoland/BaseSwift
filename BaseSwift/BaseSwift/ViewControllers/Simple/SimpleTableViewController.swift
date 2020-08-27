@@ -122,7 +122,7 @@ class SimpleTableViewController: BaseTableViewController {
     
     override func deviceOrientationDidChange(_ sender: AnyObject?) {
         super.deviceOrientationDidChange(sender)
-        guard guardDeviceOrientationDidChange(sender) else { return }
+        guard srGuardDeviceOrientationDidChange(sender) else { return }
         
         if !headerImageViews.isEmpty {
             tableHeaderView.frame = CGRect(0, 0, ScreenWidth, headerImageHeight)
@@ -196,7 +196,7 @@ class SimpleTableViewController: BaseTableViewController {
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
-        show("SimpleSubmitViewController", storyboard: "Simple")
+        srShow("SimpleSubmitViewController", storyboard: "Simple")
     }
     
     //MARK: - UITableViewDelegate, UITableViewDataSource

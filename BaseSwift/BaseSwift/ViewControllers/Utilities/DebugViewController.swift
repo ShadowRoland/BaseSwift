@@ -62,7 +62,7 @@ extension DebugViewController: UITableViewDelegate, UITableViewDataSource {
 
         let cell = tableView.cellForRow(at: indexPath)!
         if safariCell === cell {
-            popBack()
+            srPopBack()
             UIApplication.shared.openURL(url)
         } else if localNotificationCell === cell {
             let notification = UILocalNotification()
@@ -73,7 +73,7 @@ extension DebugViewController: UITableViewDelegate, UITableViewDataSource {
             notification.soundName = UILocalNotificationDefaultSoundName
             notification.applicationIconBadgeNumber = 1
             UIApplication.shared.scheduleLocalNotification(notification)
-            popBack()
+            srPopBack()
         }
     }
 }

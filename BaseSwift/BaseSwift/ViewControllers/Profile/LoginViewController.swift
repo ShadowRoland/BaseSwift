@@ -336,10 +336,10 @@ class LoginViewController: BaseViewController {
                 UserStandard[UDKey.lastLoginPassword] = strongSelf.passwordTextField.text!
                 IMManager.login()
                 if Config.entrance == .sns {
-                    strongSelf.show("SNSViewController", storyboard: "SNS")
+                    strongSelf.srShow("SNSViewController", storyboard: "SNS")
                 } else if Config.entrance == .news || Config.entrance == .aggregation {
                     NotifyDefault.post(name:Config.reloadProfileNotification, object: nil)
-                    strongSelf.popBack()
+                    strongSelf.srPopBack()
                 }
             }) { [weak self] failure in
                 guard let strongSelf = self else { return }
@@ -353,7 +353,7 @@ class LoginViewController: BaseViewController {
     
     @IBAction func clickCloseButton(_ sender: Any) {
         guard MutexTouch else { return }
-        popBack()
+        srPopBack()
     }
     
     @objc func textFieldEditingChanged(_ notification: Notification?) {
@@ -362,12 +362,12 @@ class LoginViewController: BaseViewController {
     
     @IBAction func clickForgetPasswordButton(_ sender: Any) {
         guard MutexTouch else { return }
-        show("ForgetPasswordViewController", storyboard: "Profile")
+        srShow("ForgetPasswordViewController", storyboard: "Profile")
     }
     
     @IBAction func clickRegisterButton(_ sender: Any) {
         guard MutexTouch else { return }
-        show("RegisterViewController", storyboard: "Profile")
+        srShow("RegisterViewController", storyboard: "Profile")
     }
     
     @IBAction func clickSubmitButton(_ sender: Any) {

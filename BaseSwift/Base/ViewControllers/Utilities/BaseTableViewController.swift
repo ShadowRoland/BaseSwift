@@ -124,7 +124,7 @@ SRSimplePromptDelegate {
         
         tableView.frame = CGRect(0, top, view.width, view.height - top - bottom)
         if let view = tableView.tableFooterView,
-            view === baseBusinessComponent.loadDataFailView {
+            view === srBaseComponent.loadDataFailView {
             var height = tableView.height
             if let tableHeaderView = tableView.tableHeaderView {
                 height -= tableHeaderView.height
@@ -174,7 +174,7 @@ SRSimplePromptDelegate {
     
     override open func deviceOrientationDidChange(_ sender: AnyObject?) {
         super.deviceOrientationDidChange(sender)
-        guard guardDeviceOrientationDidChange(sender) else { return }
+        guard srGuardDeviceOrientationDidChange(sender) else { return }
         
         layoutSubviews()
     }
@@ -342,7 +342,7 @@ SRSimplePromptDelegate {
                 showLoadDataFailView(noDataMessage, image: UIImage("request_fail")) //加载失败
                 tableView.reloadData()
             } else {
-                showToast(errorMessage)
+                srShowToast(errorMessage)
             }
             return
         }
@@ -377,7 +377,7 @@ SRSimplePromptDelegate {
                 showLoadDataFailView(noDataMessage, image: UIImage("request_fail")) //加载失败
                 tableView.reloadData()
             } else {
-                showToast(errorMessage)
+                srShowToast(errorMessage)
             }
             return
         }
@@ -446,18 +446,18 @@ SRSimplePromptDelegate {
         tableView.tableFooterView = view
         tableView.mj_footer?.endRefreshingWithNoMoreData()
         tableView.mj_footer?.isHidden = true
-        baseBusinessComponent.loadDataFailView = view
+        srBaseComponent.loadDataFailView = view
     }
     
     public func dismissNoDataView() {
         tableView.tableFooterView = UIView()
         tableView.mj_footer?.resetNoMoreData()
         tableView.mj_footer?.isHidden = true
-        baseBusinessComponent.loadDataFailView = nil
+        srBaseComponent.loadDataFailView = nil
     }
     
     open override var isShowingLoadDataFailView: Bool {
-        if let view = baseBusinessComponent.loadDataFailView,
+        if let view = srBaseComponent.loadDataFailView,
             view === tableView.tableFooterView {
             return true
         } else {

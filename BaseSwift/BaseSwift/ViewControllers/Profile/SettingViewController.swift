@@ -84,7 +84,7 @@ class SettingViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if baseBusinessComponent.isViewDidAppear {
+        if srBaseComponent.isViewDidAppear {
             initSections()
             tableView.reloadData()
             DispatchQueue.main.async {

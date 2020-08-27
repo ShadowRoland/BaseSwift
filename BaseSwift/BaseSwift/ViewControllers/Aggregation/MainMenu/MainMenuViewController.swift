@@ -239,7 +239,7 @@ class MainMenuViewController: BaseViewController {
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
-        show("NewsSearchViewController", storyboard: "News")
+        srShow("NewsSearchViewController", storyboard: "News")
     }
     
     //MARK: - SRStateMachineDelegate

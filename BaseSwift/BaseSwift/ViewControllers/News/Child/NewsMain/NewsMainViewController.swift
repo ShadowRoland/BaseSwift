@@ -502,7 +502,7 @@ SRTabHeaderDelegate {
     
     @IBAction func clickSearchButton(_ sender: Any) {
         guard MutexTouch else { return }
-        show("NewsSearchViewController", storyboard: "News")
+        srShow("NewsSearchViewController", storyboard: "News")
     }
     
     @IBAction func clickTabAddButton(_ sender: Any) {

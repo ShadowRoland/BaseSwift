@@ -240,14 +240,14 @@ class NewsViewController: BaseViewController {
         case .showMore:
             guard let viewControllers = navigationController?.viewControllers,
                 let top = viewControllers.last,
-                top.isTop else {
+                top.srIsTop else {
                     break
             }
             
             if !(moreVC === currentChildVC) {
                 Common.clearPops()
-                top.dismissModals()
-                popBack(to: self)
+                top.srDismissModals()
+                srPopBack(to: self)
                 tabBar.selectedItem = tabBar.items?[3]
                 bringChildVCFront(moreVC)
             }
@@ -303,7 +303,7 @@ extension NewsViewController: UIViewControllerPreviewingDelegate {
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                                   commit viewControllerToCommit: UIViewController) {
-        show(viewControllerToCommit, sender: self)
+        srShow(viewControllerToCommit, sender: self)
     }
 }
 

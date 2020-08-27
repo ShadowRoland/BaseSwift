@@ -281,7 +281,7 @@ class RegisterViewController: BaseViewController {
                                 backgroundColor: NavigationBar.backgroundColor,
                                 action:
                     { [weak self] in
-                        self?.popBack(toClasses: [LoginViewController.self])
+                        self?.srPopBack(toClasses: [LoginViewController.self])
                 })
                 alert.show(.notice,
                            title: "Registered successfully".localized,
@@ -350,7 +350,7 @@ extension RegisterViewController: UITableViewDelegate, UITableViewDataSource {
         guard MutexTouch else { return }
         
         if indexPath.section == 0 && indexPath.row == 0 {
-            let vc = show("SelectCountryCodeViewController", storyboard: "Profile") as! SelectCountryCodeViewController
+            let vc = srShow("SelectCountryCodeViewController", storyboard: "Profile") as! SelectCountryCodeViewController
             vc.didSelectBlock = { [weak self] model in
                 self?.countryNameLabel.text = model.name
                 self?.countryCodeLabel.text = model.code

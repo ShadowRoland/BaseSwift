@@ -29,7 +29,7 @@ class SRShareToolDefaultDelegate: NSObject {
     
     func sms(_ shareTool: SRShareTool) {
         guard MFMessageComposeViewController.canSendText() else {
-            SRAlert.srShowToast("[SR]The device does not support SMS function".srLocalized)
+            SRAlert.showToast("[SR]The device does not support SMS function".srLocalized)
             return
         }
         
@@ -246,7 +246,7 @@ extension SRShareToolDefaultDelegate: SRShareToolDelegate {
         switch type {
         case .tool(.copyLink):
             UIPasteboard.general.string = shareTool.option.url
-            SRAlert.srShowToast("[SR]Link has been copied to clipboard".srLocalized)
+            SRAlert.showToast("[SR]Link has been copied to clipboard".srLocalized)
             
         case .tool(.openLinkInSafari):
             if let url = shareTool.option.url, let openURL = URL(string: url) {

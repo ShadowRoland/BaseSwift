@@ -52,6 +52,6 @@ class SimpleViewController: BaseViewController {
     
     override func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
-        show(SimpleTableViewController(style: .plain))
+        srShow(SimpleTableViewController(style: .plain))
     }
 }

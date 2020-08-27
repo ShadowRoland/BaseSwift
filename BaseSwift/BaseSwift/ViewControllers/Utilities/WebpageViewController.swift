@@ -109,7 +109,7 @@ SRShareToolDelegate {
             webView.stopLoading()
             webView.goBack()
         } else {
-            popBack()
+            srPopBack()
         }
     }
     

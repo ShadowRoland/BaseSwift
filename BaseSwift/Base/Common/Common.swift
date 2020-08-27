@@ -96,10 +96,10 @@ extension Common {
                     presentedViewController.dismiss(animated: false, completion: nil)
                 }
             }
-            rootvC.popBack(toClasses: [LoginViewController.self])
+            rootvC.srPopBack(toClasses: [LoginViewController.self])
         } else if Config.entrance == .news { //在当前页面弹出登录页
             if let rootVC = Common.rootVC, rootVC.presentedViewController == nil {
-                rootVC.modal("LoginViewController", storyboard: "Profile")
+                rootVC.srModal("LoginViewController", storyboard: "Profile")
             }
         }
         if let message = message {

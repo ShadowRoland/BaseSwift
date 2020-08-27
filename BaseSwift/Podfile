@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '9.0'
+platform :ios, '10.0'
 
 def podSRKit
   ## Keychain，一般用于获取唯一设备标识
@@ -65,7 +65,7 @@ end
 
 def podBaseSwift
   ## Swfit项目语言本地化支持框架
-  pod 'Localize-Swift', '~> 2.0.0' # Required
+  pod 'Localize-Swift', '~> 3.1.0' # Required
 
   ## 数据库
   # pod 'FMDB', '~> 2.7.5' # Recommended
@@ -87,8 +87,8 @@ def podBaseSwift
   # pod 'MarqueeLabel', '~> 4.0.0' # Recommended
 
   ## 地图
-  pod 'AMap3DMap', '~> 6.7.0' # Recommended
-  pod 'AMapSearch', '~> 6.6.0' # Recommended
+  pod 'AMap3DMap', '~> 7.5.0' # Recommended
+  pod 'AMapSearch', '~> 7.4.0' # Recommended
   # pod 'BaiduMap-iOS-SDK', '~> 3.0' # Recommended
 
   ## 坐标转换工具
@@ -130,8 +130,8 @@ def podBaseSwift
   pod 'SlideMenuControllerSwift', :git => 'https://github.com/grizzly/SlideMenuControllerSwift.git'
 
   ## 第三方聊天工具
-  pod 'RongCloudIM/IMLib', '~> 2.9.23' # Optional
-  pod 'RongCloudIM/IMKit', '~> 2.9.23' # Optional
+  pod 'RongCloudIM/IMLib', '~> 4.0.1.1' # Optional
+  pod 'RongCloudIM/IMKit', '~> 4.0.1.1' # Optional
 
   ## 弹幕控件
   pod 'BarrageRenderer', '~> 2.1.0' # Optional
@@ -151,6 +151,8 @@ target 'BaseSwift' do
   use_frameworks!
   
   # Pods for BaseSwift
+  podSRKit
+  podBaseSwift
   
   target 'BaseSwiftTests' do
     inherit! :search_paths
@@ -167,5 +169,6 @@ target 'Base' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   
-  # Pods for SRKit
+  # Pods for Base
+  podSRKit
 end

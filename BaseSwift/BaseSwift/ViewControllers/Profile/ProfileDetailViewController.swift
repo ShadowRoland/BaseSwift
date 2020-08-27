@@ -816,14 +816,14 @@ class ProfileDetailViewController: BaseViewController {
     
     func pageBack() {
         if !isEditingProfile {
-            popBack()
+            srPopBack()
             return
         }
         
         Keyboard.hide {
             let alert = SRAlert()
             alert.addButton("Exit".localized, backgroundColor: NavigationBar.backgroundColor, action: { [weak self] in
-                self?.popBack()
+                self?.srPopBack()
             })
             alert.show(.notice,
                        title: "Are you sure?".localized,
@@ -1046,7 +1046,7 @@ class ProfileDetailViewController: BaseViewController {
             item.showText = item.selectedChoicesTitle!
             item.showTextView?.setProperty(.text, value: item.showText)
         }
-        show(vc)
+        srShow(vc)
     }
     
     func popText(_ view: UIView?) {

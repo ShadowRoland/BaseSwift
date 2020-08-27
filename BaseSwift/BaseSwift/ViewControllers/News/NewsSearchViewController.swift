@@ -252,7 +252,7 @@ extension NewsSearchViewController: UISearchBarDelegate {
     }
     
     public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) { // called when cancel button pressed
-        popBack()
+        srPopBack()
     }
     
     public func searchBarResultsListButtonClicked(_ searchBar: UISearchBar) { // called when search results button pressed

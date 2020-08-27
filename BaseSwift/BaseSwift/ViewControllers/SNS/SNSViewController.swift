@@ -179,7 +179,7 @@ class SNSViewController: BaseViewController {
         guard MutexTouch else { return }
         
         if currentChildVC === chatListVC {
-            show("QRCodeReaderViewController", storyboard: "Utility")
+            srShow("QRCodeReaderViewController", storyboard: "Utility")
         }
     }
     
@@ -192,10 +192,10 @@ class SNSViewController: BaseViewController {
     override func stateMachine(_ stateMachine: SRStateMachine, didFire event: Event) {
         switch event.option {
         case .showMore:
-            if !(isTop && moreVC === currentChildVC) {
+            if !(srIsTop && moreVC === currentChildVC) {
                 Common.clearPops()
-                dismissModals()
-                popBack(to: self)
+                srDismissModals()
+                srPopBack(to: self)
                 tabBar.selectedItem = tabBar.items?[3]
                 bringChildVC(toFront: moreVC)
             }
@@ -230,7 +230,7 @@ extension SNSViewController: UIViewControllerPreviewingDelegate {
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                                   commit viewControllerToCommit: UIViewController) {
-        show(viewControllerToCommit, sender: self)
+        srShow(viewControllerToCommit, sender: self)
     }
 }
 

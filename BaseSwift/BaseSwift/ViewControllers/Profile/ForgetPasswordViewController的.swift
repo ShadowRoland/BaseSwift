@@ -224,12 +224,13 @@ class ForgetPasswordViewController: BaseViewController {
     
     func clickSubmitButton(_ sender: Any) {
         guard MutexTouch else { return }
-        Keyboard.hide {
-            self.show("ResetPasswordViewController",
-                      storyboard: "Profile",
-                      params: [Param.Key.countryCode : Int(self.countryCodeLabel.text!)!,
-                               Param.Key.phone : self.phoneTextField.text!,
-                               Param.Key.code : self.verifyTextField.text!])
+        Keyboard.hide { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.srShow("ResetPasswordViewController",
+                              storyboard: "Profile",
+                              params: [Param.Key.countryCode : Int(strongSelf.countryCodeLabel.text!)!,
+                                       Param.Key.phone : strongSelf.phoneTextField.text!,
+                                       Param.Key.code : strongSelf.verifyTextField.text!])
         }
     }
 }
@@ -276,7 +277,7 @@ extension ForgetPasswordViewController: UITableViewDelegate, UITableViewDataSour
         guard MutexTouch else { return }
         
         if indexPath.row == 0 {
-            let vc = show("SelectCountryCodeViewController", storyboard: "Profile") as! SelectCountryCodeViewController
+            let vc = srShow("SelectCountryCodeViewController", storyboard: "Profile") as! SelectCountryCodeViewController
             vc.didSelectBlock = { [weak self] model in
                 self?.countryNameLabel.text = model.name
                 self?.countryCodeLabel.text = model.code
