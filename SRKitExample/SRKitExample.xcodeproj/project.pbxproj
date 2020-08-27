@@ -135,9 +135,7 @@
 		4E13768F2286A16900330EBE /* SRKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E89B432228698F200E98791 /* SRKit.swift */; };
 		4E1376922286A21D00330EBE /* SRKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4E1376902286A20300330EBE /* SRKit.bundle */; };
 		4E1376CA2289374D00330EBE /* SRNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376C92289374D00330EBE /* SRNavigationBar.swift */; };
-		4E1376CC228937C600330EBE /* SRNavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376CB228937C600330EBE /* SRNavigationItem.swift */; };
 		4E28DF6D228D30660026C78A /* SRNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376C92289374D00330EBE /* SRNavigationBar.swift */; };
-		4E28DF6E228D30670026C78A /* SRNavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1376CB228937C600330EBE /* SRNavigationItem.swift */; };
 		4E28DF712292B3DB0026C78A /* SRSimplePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */; };
 		4E28DF722292B3FC0026C78A /* SRSimplePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */; };
 		4E2D4AD822A520D900736722 /* UIApplication+SRExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0EAD5822A255E8001CD195 /* UIApplication+SRExtension.swift */; };
@@ -242,7 +240,6 @@
 		4E13761022869ADB00330EBE /* SRKeyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRKeyboard.swift; sourceTree = "<group>"; };
 		4E1376902286A20300330EBE /* SRKit.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SRKit.bundle; sourceTree = "<group>"; };
 		4E1376C92289374D00330EBE /* SRNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRNavigationBar.swift; sourceTree = "<group>"; };
-		4E1376CB228937C600330EBE /* SRNavigationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRNavigationItem.swift; sourceTree = "<group>"; };
 		4E28DF702292B3DB0026C78A /* SRSimplePromptView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRSimplePromptView.swift; sourceTree = "<group>"; };
 		4E34B390226EF64B00CC37C6 /* Resource */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resource; sourceTree = "<group>"; };
 		4E5626FB2285413400C6CE1D /* SRKitRes.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SRKitRes.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -384,7 +381,6 @@
 			isa = PBXGroup;
 			children = (
 				4E1376C92289374D00330EBE /* SRNavigationBar.swift */,
-				4E1376CB228937C600330EBE /* SRNavigationItem.swift */,
 			);
 			path = SRNavigationBar;
 			sourceTree = "<group>";
@@ -1116,7 +1112,6 @@
 				4E2D4AD822A520D900736722 /* UIApplication+SRExtension.swift in Sources */,
 				4E28DF722292B3FC0026C78A /* SRSimplePromptView.swift in Sources */,
 				4E28DF6D228D30660026C78A /* SRNavigationBar.swift in Sources */,
-				4E28DF6E228D30670026C78A /* SRNavigationItem.swift in Sources */,
 				4E1376512286A16900330EBE /* NullSafe.m in Sources */,
 				4E1376522286A16900330EBE /* SRAlert.swift in Sources */,
 				4E1376532286A16900330EBE /* SRAlertController.swift in Sources */,
@@ -1192,7 +1187,6 @@
 			files = (
 				4E1376122286A0C100330EBE /* NullSafe.m in Sources */,
 				4E1376132286A0C100330EBE /* SRAlert.swift in Sources */,
-				4E1376CC228937C600330EBE /* SRNavigationItem.swift in Sources */,
 				4E1376142286A0C100330EBE /* SRAlertController.swift in Sources */,
 				4E1376152286A0C100330EBE /* UIView+SRProgress.swift in Sources */,
 				4E1376162286A0C100330EBE /* UIViewController+SRBaseBusiness.swift in Sources */,

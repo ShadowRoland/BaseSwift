@@ -616,7 +616,7 @@ public class NavigationBar {
                                  target: Any? = nil,
                                  action: Selector? = nil,
                                  tag: NSInteger? = nil,
-                                 useCustomView: Bool = false) -> UIBarButtonItem? {
+                                 useCustomView: Bool = false) -> SRNavigationBarButtonItem? {
         func perform(_ state: ButtonItemOption.State?, set: (UIControl.State) -> Void) {
             if let state = state {
                 switch state {
@@ -634,9 +634,9 @@ public class NavigationBar {
 
         func setButtonItem(text option: ButtonItemOption,
                            state: ButtonItemOption.State,
-                           item inItem: UIBarButtonItem? = nil,
+                           item inItem: SRNavigationBarButtonItem? = nil,
                            button inButton: UIButton? = nil,
-                           completion: ((UIBarButtonItem?, UIButton?) -> Void)? = nil) {
+                           completion: ((SRNavigationBarButtonItem?, UIButton?) -> Void)? = nil) {
             switch option {
             case .text(let array):
                 var title: String?
@@ -659,11 +659,12 @@ public class NavigationBar {
                     }
                 }
                 if !useCustomView && (state == .normal || inItem != nil) {
-                    var item: UIBarButtonItem!
+                    var item: SRNavigationBarButtonItem!
                     if let inItem = inItem {
                         item = inItem
                     } else {
-                        item = UIBarButtonItem(title: title, style: .plain, target: target, action: action)
+                        item = SRNavigationBarButtonItem(title: title, style: .plain, target: target, action: action)
+                        item.option = option
                     }
                     var attributes: [NSAttributedString.Key : Any]!
                     if state == .normal {
@@ -734,11 +735,12 @@ public class NavigationBar {
         func setButtonItem(image option: ButtonItemOption,
                            state: ButtonItemOption.State,
                            button inButton: UIButton? = nil,
-                           completion: ((UIBarButtonItem?, UIButton?) -> Void)? = nil) {
+                           completion: ((SRNavigationBarButtonItem?, UIButton?) -> Void)? = nil) {
             switch option {
             case .image(let image):
                 if !useCustomView && state == .normal {
-                    let item = UIBarButtonItem(image: image, style: .plain, target: target, action: action)
+                    let item = SRNavigationBarButtonItem(image: image, style: .plain, target: target, action: action)
+                    item.option = option
                     completion?(item, nil)
                 } else if useCustomView && (state == .normal || inButton != nil) {
                     var button: UIButton!
@@ -761,14 +763,15 @@ public class NavigationBar {
             }
         }
         
-        var barButtonItem: UIBarButtonItem?
+        var barButtonItem: SRNavigationBarButtonItem?
         switch option {
         case .text:
             setButtonItem(text: option, state: .normal) { (item, button) in
                 if let item = item {
                     barButtonItem = item
                 } else if let button = button {
-                    barButtonItem = UIBarButtonItem(customView: button)
+                    barButtonItem = SRNavigationBarButtonItem(customView: button)
+                    barButtonItem?.option = option
                 }
             }
             
@@ -777,19 +780,23 @@ public class NavigationBar {
                 if let item = item {
                     barButtonItem = item
                 } else if let button = button {
-                    barButtonItem = UIBarButtonItem(customView: button)
+                    barButtonItem = SRNavigationBarButtonItem(customView: button)
+                    barButtonItem?.option = option
                 }
             }
 
         case .custom(let view):
-            barButtonItem = UIBarButtonItem(customView: view)
+            barButtonItem = SRNavigationBarButtonItem(customView: view)
+            barButtonItem?.option = option
             
         case .space(let width):
             if !useCustomView {
-                barButtonItem = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+                barButtonItem = SRNavigationBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+                barButtonItem?.option = option
                 barButtonItem?.width = width
             } else {
-                barButtonItem = UIBarButtonItem(customView: UIView(frame: CGRect(0, 0, width, 0)))
+                barButtonItem = SRNavigationBarButtonItem(customView: UIView(frame: CGRect(0, 0, width, 0)))
+                barButtonItem?.option = option
             }
             
         case .state(let normal, highlighted: let highlighted, disabled: let disabled):
@@ -805,7 +812,8 @@ public class NavigationBar {
                     if let item = item {
                         barButtonItem = item
                     } else if let button = button {
-                        barButtonItem = UIBarButtonItem(customView: button)
+                        barButtonItem = SRNavigationBarButtonItem(customView: button)
+                        barButtonItem?.option = normal
                     }
                 }
                 
@@ -820,7 +828,8 @@ public class NavigationBar {
                     if let item = item {
                         barButtonItem = item
                     } else if let button = button {
-                        barButtonItem = UIBarButtonItem(customView: button)
+                        barButtonItem = SRNavigationBarButtonItem(customView: button)
+                        barButtonItem?.option = normal
                     }
                 }
                 
