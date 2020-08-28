@@ -144,7 +144,7 @@ class HttpServerViewController: UITableViewController {
                 alert.addAction(UIAlertAction(title: result?.description ?? "如实返回",
                                               style: .default,
                                               handler:
-                    { [weak self] (action) in
+                    { [weak self] action in
                         self?.responseSuccessCell.detailTextLabel?.text = result?.description ?? "如实返回"
                         HttpServer.shared.responseResult = result
                 }))
@@ -166,7 +166,7 @@ class HttpServerViewController: UITableViewController {
                 alert.addAction(UIAlertAction(title: responseSpeed.description,
                                               style: .default,
                                               handler:
-                    { [weak self] (action) in
+                    { [weak self] action in
                         self?.responseTimeCell.detailTextLabel?.text =
                             responseSpeed.description
                         HttpServer.shared.responseSpeed = responseSpeed
@@ -188,7 +188,7 @@ class HttpServerViewController: UITableViewController {
             alert.addAction(UIAlertAction(title: "确定",
                                           style: .default,
                                           handler:
-                { [weak self] (action) in
+                { [weak self] action in
                     self?.clearTokenCell.detailTextLabel?.text = "已失效"
                     HttpServer.token = "Expired"
             }))

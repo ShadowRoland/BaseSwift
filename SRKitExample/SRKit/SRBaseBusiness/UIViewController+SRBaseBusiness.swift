@@ -16,18 +16,28 @@ import Cartography
 
 extension UIViewController {
     public class SRBaseBusinessComponent: NSObject, UIGestureRecognizerDelegate, SRSimplePromptDelegate, SRNavigationBarDelegate {
+        fileprivate override init() {
+            self.navigationBarType = SRBaseBusinessComponent.defaultNavigationBarType
+            self.navigationBarTypeSetCount = 0
+//            self.isInheritNavigationBarType = true
+        }
         public weak var viewController: UIViewController?
         
-        private static var navigationBarTypeSetCount = 0
+        fileprivate static var defaultNavigationBarType: NavigationBarType = .system
+        private var navigationBarTypeSetCount = 0
         fileprivate var navigationBarType: NavigationBarType = .system {
             willSet {
                 if newValue != navigationBarType {
-                    UIViewController.SRBaseBusinessComponent.navigationBarTypeSetCount += 1
+                    navigationBarTypeSetCount += 1
                 }
-                assert(UIViewController.SRBaseBusinessComponent.navigationBarTypeSetCount <= 1,
-                       "Can not set navigationBarType to different value twice")
+                assert(navigationBarTypeSetCount <= 1, "Can not set navigationBarType to different value twice")
             }
+//            didSet {
+//                isInheritNavigationBarType = false
+//            }
         }
+//        ///是否继承同一个导航栏类型，当设置一次navigationBarType后将设置为false
+//        public var isInheritNavigationBarType = true
         public var navigationBackgroundAlpha = 0.5 as CGFloat
         
         //MARK: 导航栏或状态栏下的子视图
@@ -617,6 +627,15 @@ public extension UIViewController {
         
         public static let system = NavigationBarType(0)
         public static let sr = NavigationBarType(1)
+    }
+    
+    var srDefaultNavigationBarType: NavigationBarType {
+        get {
+            return SRBaseBusinessComponent.defaultNavigationBarType
+        }
+        set {
+            SRBaseBusinessComponent.defaultNavigationBarType = newValue
+        }
     }
     
     ///导航栏类型，只可以赋不同的值一次

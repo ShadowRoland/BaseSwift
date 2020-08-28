@@ -979,7 +979,7 @@ class ProfileDetailViewController: BaseViewController {
                                       message: nil,
                                       preferredStyle: .actionSheet)
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            alert.addAction(UIAlertAction(title: "Take photo".localized, style: .default, handler: { [weak self] (action) in
+            alert.addAction(UIAlertAction(title: "Take photo".localized, style: .default, handler: { [weak self] action in
                 if let strongSelf = self {
                     let vc = UIImagePickerController()
                     vc.allowsEditing = true
@@ -990,7 +990,7 @@ class ProfileDetailViewController: BaseViewController {
             }))
         }
         if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            alert.addAction(UIAlertAction(title: "Photo album".localized, style: .default, handler: { [weak self] (action) in
+            alert.addAction(UIAlertAction(title: "Photo album".localized, style: .default, handler: { [weak self] action in
                 if let strongSelf = self {
                     let vc = UIImagePickerController()
                     vc.allowsEditing = true
@@ -1117,7 +1117,7 @@ class ProfileDetailViewController: BaseViewController {
         let alert = SRAlertController(title: "Test your beauty level".localized,
                                       message: "Use the iPhone self-timer, then upload the photo to the Microsoft ice for color value identification, this operation is best under the Wifi".localized,
                                       preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "OK".localized, style: .default, handler: { [weak self] (action) in
+        alert.addAction(UIAlertAction(title: "OK".localized, style: .default, handler: { [weak self] action in
             if let strongSelf = self {
                 let vc = UIImagePickerController()
                 vc.allowsEditing = true
@@ -1161,7 +1161,7 @@ class ProfileDetailViewController: BaseViewController {
     
     func getFaceImageCookie() {
         let url = try! "http://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi".asURL()
-        Session.default.request(url).response { [weak self] (response) in
+        Session.default.request(url).response { [weak self] response in
             guard let strongSelf = self else { return }
             
             if let error = response.error {

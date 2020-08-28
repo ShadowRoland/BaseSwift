@@ -12,7 +12,7 @@ import Cartography
 class NewsViewController: BaseViewController {
     @IBOutlet weak var childBackgroundView: UIView!
     @IBOutlet weak var tabBar: UITabBar!
-    @IBOutlet weak var tabBarBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var tabBarHeightConstraint: NSLayoutConstraint!
     
     weak var currentChildVC: UIViewController!
     var mainVC: NewsMainViewController!
@@ -30,6 +30,7 @@ class NewsViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         setDefaultNavigationBar()
+        srNavigationBarAppear = .hidden
         srPageBackGestureStyle = .edge
         initView()
         
@@ -63,6 +64,11 @@ class NewsViewController: BaseViewController {
         navigationController?.isNavigationBarHidden = true
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateTabBarFrame()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -74,6 +80,7 @@ class NewsViewController: BaseViewController {
         super.deviceOrientationDidChange(sender)
         
         updateChildViewFrame()
+        updateTabBarFrame()
         if currentChildVC === mainVC {
             mainVC.deviceOrientationDidChange(sender)
         } else if currentChildVC === secondaryVC {
@@ -91,6 +98,9 @@ class NewsViewController: BaseViewController {
     }
     
     func initView() {
+        childBackgroundView.removeFromSuperview()
+        srAddSubview(underTop: childBackgroundView)
+        view.insertSubview(childBackgroundView, belowSubview: tabBar)
         initTabBar()
         
         mainVC = UIViewController.srViewController("NewsMainViewController",
@@ -110,22 +120,50 @@ class NewsViewController: BaseViewController {
     
     //添加约束，可以比较方便地进行横竖屏的屏幕适配
     func updateChildViewFrame() {
-        if currentChildVC === mainVC || currentChildVC === secondaryVC {
-            currentChildVC.view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight)
-        } else if currentChildVC === yellowVC { //不带导航栏的子视图frame
-            currentChildVC.view.frame =
-                CGRect(0,
-                       topLayoutGuide.length,
-                       ScreenWidth,
-                       ScreenHeight - topLayoutGuide.length)
-        } else if currentChildVC === moreVC {
-            //为了实现更多列表的tableHeaderView的背景色和导航栏完全一致，需要往上移一点点
-            //因为在group模式下的UITableView中tableHeaderView边缘会自带一条分隔线
-            currentChildVC.view.frame = CGRect(0,
-                                               topLayoutGuide.length - C.sectionHeaderGroupNoHeight,
-                                               ScreenWidth,
-                                               ScreenHeight - topLayoutGuide.length
-                                                + C.sectionHeaderGroupNoHeight)
+        currentChildVC.view.isHidden = false
+        if currentChildVC.view.superview == nil {
+            view.addSubview(currentChildVC.view)
+            constrain(currentChildVC.view) { $0.edges == inset($0.superview!.edges, 0) }
+//            if currentChildVC === mainVC || currentChildVC === secondaryVC {
+//                currentChildVC.view.frame = CGRect(0, 0, ScreenWidth, ScreenHeight)
+//            } else if currentChildVC === yellowVC { //不带导航栏的子视图frame
+//                currentChildVC.view.frame =
+//                    CGRect(0,
+//                           srTopLayoutGuide,
+//                           childBackgroundView.frame.size.width,
+//                           childBackgroundView.frame.size.height)
+//            } else if currentChildVC === moreVC {
+//                //为了实现更多列表的tableHeaderView的背景色和导航栏完全一致，需要往上移一点点
+//                //因为在group模式下的UITableView中tableHeaderView边缘会自带一条分隔线
+//                currentChildVC.view.frame = CGRect(0,
+//                                                   topLayoutGuide.length - C.sectionHeaderGroupNoHeight,
+//                                                   ScreenWidth,
+//                                                   ScreenHeight - topLayoutGuide.length
+//                                                    + C.sectionHeaderGroupNoHeight)
+//            }
+        }
+    }
+    
+    func updateTabBarFrame() {
+        let window = view.window != nil ? view.window! : UIApplication.shared.keyWindow!
+        var safeBottom = 0 as CGFloat
+        if #available(iOS 11.0, *) {
+            safeBottom = window.safeAreaInsets.bottom
+        } else {
+            // Fallback on earlier versions
+        }
+        if safeBottom > 0 {
+            let frame = window.convert(view.frame, from: view.superview)
+            let bottom = frame.origin.y + frame.size.height
+            if bottom > safeBottom {
+                safeBottom = 34.0
+            } else {
+                safeBottom = 0
+            }
+        }
+        let height = 49.0 + safeBottom
+        if height != tabBarHeightConstraint.constant {
+            tabBarHeightConstraint.constant = height
         }
     }
     
@@ -153,12 +191,12 @@ class NewsViewController: BaseViewController {
                 return
         }
         
-        var width = C.tabBarHeight() * normalImage.size.width / normalImage.size.height
-        var image = normalImage.imageScaled(to: CGSize(width, C.tabBarHeight()))
+        var width = C.tabBarImageHeight * normalImage.size.width / normalImage.size.height
+        var image = normalImage.imageScaled(to: CGSize(width, C.tabBarImageHeight))
         item.image = image?.withRenderingMode(.alwaysOriginal)
         
-        width = C.tabBarHeight() * highlightedImage.size.width / highlightedImage.size.height
-        image = highlightedImage.imageScaled(to: CGSize(width, C.tabBarHeight()))
+        width = C.tabBarImageHeight * highlightedImage.size.width / highlightedImage.size.height
+        image = highlightedImage.imageScaled(to: CGSize(width, C.tabBarImageHeight))
         item.selectedImage = image?.withRenderingMode(.alwaysOriginal)
     }
     
@@ -183,7 +221,7 @@ class NewsViewController: BaseViewController {
                    options: UIView.AnimationOptions(rawValue: 0),
                    animations: nil,
                    completion:
-            { [weak self] (finished) in
+            { [weak self] finished in
                 guard finished, let strongSelf = self else {
                     childVC.removeFromParent()
                     self?.currentChildVC?.view.isUserInteractionEnabled = true
@@ -192,26 +230,46 @@ class NewsViewController: BaseViewController {
                 
                 childVC.didMove(toParent: strongSelf)
                 childVC.view.isUserInteractionEnabled = true
-                strongSelf.currentChildVC?.willMove(toParent: self)
-                strongSelf.currentChildVC?.removeFromParent()
+                strongSelf.currentChildVC.willMove(toParent: strongSelf)
+                strongSelf.currentChildVC.removeFromParent()
+                strongSelf.currentChildVC.view.isHidden = true
                 strongSelf.currentChildVC = childVC
-                strongSelf.childBackgroundView.addSubview((strongSelf.currentChildVC.view)!)
-                strongSelf.updateChildViewFrame()
+                strongSelf.currentChildVC.view.isHidden = false
+                if strongSelf.currentChildVC.view.superview == nil {
+                    strongSelf.view.addSubview(strongSelf.currentChildVC.view)
+                    constrain(strongSelf.currentChildVC.view) { $0.edges == inset($0.superview!.edges, 0) }
+                    if strongSelf.srNavigationBarType == .sr {
+                        if strongSelf.currentChildVC === strongSelf.secondaryVC {
+                            
+                        }
+                    }
+                }
                 if strongSelf.currentChildVC === strongSelf.mainVC {
-                    strongSelf.navigationController?.isNavigationBarHidden = true
+                    if strongSelf.srNavigationBarType == .system {
+                        strongSelf.navigationController?.isNavigationBarHidden = true
+                    }
                     if let vc = strongSelf.mainVC.currentNewsListVC, !vc.isTouched {
                         vc.getDataArray(progressType: .clearMask)
                     }
                 } else if strongSelf.currentChildVC === strongSelf.secondaryVC {
-                    strongSelf.navigationController?.isNavigationBarHidden = true
+                    if strongSelf.srNavigationBarType == .system {
+                        strongSelf.navigationController?.isNavigationBarHidden = true
+                        strongSelf.currentChildVC.srNavigationBarAppear = .hidden
+                    }
                     if let vc = strongSelf.secondaryVC.currentNewsListVC, !vc.isTouched {
                         vc.getDataArray(progressType: .clearMask)
                     }
                 } else  if strongSelf.currentChildVC === strongSelf.yellowVC {
-                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    if strongSelf.srNavigationBarType == .system {
+                        strongSelf.navigationController?.isNavigationBarHidden = false
+                        strongSelf.currentChildVC.srNavigationBarAppear = .visible
+                    }
                     strongSelf.title = "Title Party".localized
                 } else if strongSelf.currentChildVC === strongSelf.moreVC {
-                    strongSelf.navigationController?.isNavigationBarHidden = false
+                    if strongSelf.srNavigationBarType == .system {
+                        strongSelf.navigationController?.isNavigationBarHidden = false
+                        strongSelf.currentChildVC.srNavigationBarAppear = .visible
+                    }
                     strongSelf.title = "Me".localized
                     strongSelf.moreVC.deviceOrientationDidChange()
                 }

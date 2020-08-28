@@ -381,7 +381,7 @@ class QRCodeReaderViewController: BaseViewController {
                                Const.scanSize.width,
                                Const.scanLineHeight)
                 }
-        }) { [weak self] (finished) in
+        }) { [weak self] finished in
             if finished {
                 self?.isScanLineMoving = false
                 if let strongSelf = self, strongSelf.isScanLineMovable {

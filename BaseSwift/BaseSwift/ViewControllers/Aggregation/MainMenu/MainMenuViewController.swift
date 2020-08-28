@@ -145,7 +145,7 @@ class MainMenuViewController: BaseViewController {
                    options: UIView.AnimationOptions(rawValue: 0),
                    animations: nil,
                    completion:
-            { [weak self] (finished) in
+            { [weak self] finished in
                 guard finished, let strongSelf = self else {
                     childVC.removeFromParent()
                     self?.currentChildVC?.view.isUserInteractionEnabled = true

@@ -14,9 +14,12 @@ class ViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the vivar typically from a nib.
+        srDefaultNavigationBarType = .sr
+        srNavigationBarType = .sr
         setDefaultNavigationBar("Root")
-        setNavigationBar()
-        navBarLeftButtonOptions = nil
+        navBarLeftButtonOptions = []
+        tableView.removeFromSuperview()
+        srAddSubview(underTop: tableView)
         tableView.backgroundColor = UIColor.groupTableViewBackground
         tableView.tableFooterView = UIView()
         if #available(iOS 11.0, *) {

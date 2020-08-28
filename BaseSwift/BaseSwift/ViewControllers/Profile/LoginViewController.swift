@@ -213,7 +213,7 @@ class LoginViewController: BaseViewController {
                 strongSelf.rightHandHeightConstraint.constant = Const.rightHandHeightConstraintHide
                 
                 strongSelf.view.layoutIfNeeded()
-                }, completion: { [weak self] (finished) in
+                }, completion: { [weak self] finished in
                     if finished, let strongSelf = self {
                         strongSelf.isSecurityAnimating = false
                         if strongSelf.isSecurity { strongSelf.securityAnimate() }
@@ -239,7 +239,7 @@ class LoginViewController: BaseViewController {
                 strongSelf.rightHandHeightConstraint.constant = Const.rightHandHeightConstraintShow
                 
                 strongSelf.view.layoutIfNeeded()
-                }, completion: { [weak self] (finished) in
+                }, completion: { [weak self] finished in
                     if finished, let strongSelf = self {
                         strongSelf.isSecurityAnimating = false
                         if strongSelf.isSecurity { strongSelf.securityAnimate() }

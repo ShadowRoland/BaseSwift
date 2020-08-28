@@ -410,7 +410,7 @@ SRTabHeaderDelegate {
         UIView.animate(withDuration: Const.channelAnimationDuration, animations: { [weak self] in
             guard let strongSelf = self else { return }
             
-            strongSelf.parentVC?.tabBarBottomConstraint.constant = -C.tabBarHeight(IsLandscape)
+            //strongSelf.parentVC?.tabBarBottomConstraint.constant = -C.tabBarHeight(IsLandscape)
             strongSelf.parentVC?.view.layoutIfNeeded()
             
             strongSelf.isEditViewAnimating = false
@@ -481,7 +481,7 @@ SRTabHeaderDelegate {
             
             strongSelf.channelEditView.frame = frame
             strongSelf.channelEditBackgroundView.alpha = 0
-            strongSelf.parentVC?.tabBarBottomConstraint.constant = 0
+            //strongSelf.parentVC?.tabBarBottomConstraint.constant = 0
             strongSelf.parentVC?.view.layoutIfNeeded()
             }, completion: { [weak self] finished in
                 guard finished, let strongSelf = self else { return }
@@ -562,7 +562,7 @@ SRTabHeaderDelegate {
         editingUnselectedChannels.insert(channel, at: 0)
         channelCollectionView.performBatchUpdates({ [weak self] in
             self?.channelCollectionView.moveItem(at: indexPath, to: IndexPath(row: 0, section: 1))
-        }) { [weak self] (finished) in
+        }) { [weak self] finished in
             self?.channelCollectionView.reloadData()
         }
     }

@@ -114,14 +114,15 @@ open class SRNavigationBar: UIView {
     public var title: String? {
         didSet {
             navigationItem.title = title
-            layout()
+            //layout()
         }
     }
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.adjustsFontSizeToFitWidth = true
+        //label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .center
+        label.numberOfLines = 0
         contentView.addSubview(label)
         return label
     }()
@@ -148,11 +149,12 @@ open class SRNavigationBar: UIView {
                 backgroundShadowImageView.image = nil
                 backgroundShadowImageView.backgroundColor = "D".color
                 backgroundShadowImageView.removeFromSuperview()
-                backgroundView.insertSubview(backgroundShadowImageView, at: 0)
+                backgroundView.addSubview(backgroundShadowImageView)
+//                backgroundView.insertSubview(backgroundShadowImageView, at: 0)
                 constrain(backgroundShadowImageView) {
                     $0.leading == $0.superview!.leading
                     $0.trailing == $0.superview!.trailing
-                    $0.top == $0.superview!.bottom
+                    $0.bottom == $0.superview!.bottom - 1.0
                     $0.height == 1.0
                 }
                 layout()
@@ -178,9 +180,10 @@ open class SRNavigationBar: UIView {
             CFRunLoopAddObserver(CFRunLoopGetMain(), observer, .defaultMode)
             layoutObserver = observer
         }
+        layoutItems()
     }
     
-    fileprivate func layoutItems() {
+    fileprivate func autoLayoutItems() {
         // Layout left items
         contentView.subviews.forEach { $0.removeFromSuperview() }
         var leftWidth = SRNavigationBar.Const.contentPadding
@@ -233,7 +236,7 @@ open class SRNavigationBar: UIView {
                 $0.centerY == $0.superview!.centerY
             }
 
-            leftWidth += width
+            leftWidth += size.width
             leftPrevious = customView
         }
         
@@ -304,7 +307,7 @@ open class SRNavigationBar: UIView {
                 $0.centerY == $0.superview!.centerY
             }
 
-            rightWidth += width
+            rightWidth += size.width
             rightPrevious = customView
         }
         
@@ -361,30 +364,206 @@ open class SRNavigationBar: UIView {
                 $0.centerX == $0.superview!.centerX
             }
             
-            let left = NSLayoutConstraint(item: titleView,
-                                          attribute: .left,
-                                          relatedBy: .greaterThanOrEqual,
-                                          toItem: contentView,
-                                          attribute: .left,
-                                          multiplier: 1.0,
-                                          constant: titleMargin)
-            left.priority = .defaultLow
-            contentView.addConstraint(left)
+            let leading = NSLayoutConstraint(item: titleView,
+                                             attribute: .leading,
+                                             relatedBy: .greaterThanOrEqual,
+                                             toItem: contentView,
+                                             attribute: .trailing,
+                                             multiplier: 1.0,
+                                             constant: titleMargin)
+            leading.priority = .defaultLow
+            contentView.addConstraint(leading)
             
-            let right = NSLayoutConstraint(item: titleView,
-                                           attribute: .right,
-                                           relatedBy: .lessThanOrEqual,
-                                           toItem: contentView,
-                                           attribute: .right,
-                                           multiplier: 1.0,
-                                           constant: -titleMargin)
-            right.priority = .defaultLow
-            contentView.addConstraint(right)
+            let trailing = NSLayoutConstraint(item: titleView,
+                                              attribute: .trailing,
+                                              relatedBy: .lessThanOrEqual,
+                                              toItem: contentView,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: -titleMargin)
+            trailing.priority = .defaultLow
+            contentView.addConstraint(trailing)
         } else {
             constrain(titleView) {
                 $0.centerX == $0.superview!.centerX
                 $0.width == titleView.width
             }
+        }
+        
+        // Layout background
+        let statusBarOrientation = UIApplication.shared.statusBarOrientation
+        var image: UIImage? = nil
+        if statusBarOrientation.isPortrait,
+            let defaultImage = backgroundImageDictionary[.default] {
+            image = defaultImage
+        } else if let compactImage = backgroundImageDictionary[.compact] {
+            image = compactImage
+        }
+        if let image = image {
+            backgroundView.backgroundColor = nil
+            backgroundBlurView?.isHidden = !isTranslucent
+            backgroundImageView.image = image
+            backgroundImageView.isHidden = false
+        } else {
+            backgroundImageView.isHidden = true
+            if let barTintColor = barTintColor {
+                backgroundView.backgroundColor = barTintColor
+                backgroundBlurView?.isHidden = !isTranslucent
+            } else {
+                if isTranslucent {
+                    backgroundView.backgroundColor = nil
+                    backgroundBlurView?.isHidden = false
+                } else {
+                    backgroundView.backgroundColor = barBackgroundColor
+                    backgroundBlurView?.isHidden = true
+                }
+            }
+        }
+        
+        layoutBackground()
+        //layoutIfNeeded()
+        delegate?.navigationBarDidLayout(self)
+    }
+    
+    fileprivate func layoutItems() {
+        let superWidth = frame.size.width > 0 ? frame.size.width : ScreenWidth
+        let superHeight = frame.size.height > 0 ? frame.size.height : SRNavigationBar.height
+        contentView.subviews.forEach { $0.removeFromSuperview() }
+        var leftWidth = SRNavigationBar.Const.contentPadding
+        var leftPrevious: UIView! = nil
+        
+        func setLeftButtonItem(_ item: SRNavigationBarButtonItem) {
+            let button = item.customView as! UIButton
+            contentView.addSubview(button)
+            var frame = CGRect(x: 0, y: 0, width: 0, height: superHeight)
+            if leftPrevious == nil {
+                frame.origin.x = SRNavigationBar.Const.contentPadding
+            } else {
+                frame.origin.x = SRNavigationBar.Const.contentPadding + leftPrevious.frame.origin.x + leftPrevious.frame.size.width
+            }
+            var width = button.intrinsicContentSize.width
+            if width < 0 {
+                width = button.frame.size.width
+            } else if width > 0 && width < SRNavigationBar.Const.minButtonItemWidth {
+                width = SRNavigationBar.Const.minButtonItemWidth
+            }
+            frame.size.width = width
+            button.frame = frame
+
+            leftWidth += width
+            leftPrevious = button
+        }
+        
+        func setLeftButtonItem(customView item: SRNavigationBarButtonItem) {
+            let customView = item.customView!
+            contentView.addSubview(customView)
+            let size = customView.frame.size
+            var frame = CGRect(x: 0,
+                               y: (superHeight - size.height) / 2.0,
+                               width: size.width,
+                               height: size.height)
+            if leftPrevious == nil {
+                frame.origin.x = SRNavigationBar.Const.contentPadding
+            } else {
+                frame.origin.x = SRNavigationBar.Const.contentPadding + leftPrevious.frame.origin.x + leftPrevious.frame.size.width
+            }
+
+            leftWidth += size.width
+            leftPrevious = customView
+        }
+        
+        if let items = navigationItem.leftBarButtonItems {
+            let count = items.count
+            (0 ..< count).forEach { index in
+                let item = items[index] as! SRNavigationBarButtonItem
+                let option = item.option!
+                switch option {
+                case .text, .image:
+                    setLeftButtonItem(item)
+                    
+                default:
+                    setLeftButtonItem(customView: item)
+                }
+            }
+        }
+        
+        // Layout right items
+        var rightWidth = SRNavigationBar.Const.contentPadding
+        var rightPrevious: UIView! = nil
+        
+        func setRightButtonItem(_ item: SRNavigationBarButtonItem) {
+            let button = item.customView as! UIButton
+            contentView.addSubview(button)
+            var frame = CGRect(x: 0, y: 0, width: 0, height: superHeight)
+            var width = button.intrinsicContentSize.width
+            if width < 0 {
+                width = button.frame.size.width
+            } else if width > 0 && width < SRNavigationBar.Const.minButtonItemWidth {
+                width = SRNavigationBar.Const.minButtonItemWidth
+            }
+            if rightPrevious == nil {
+                frame.origin.x = superWidth - SRNavigationBar.Const.contentPadding - width
+            } else {
+                frame.origin.x = rightPrevious.frame.origin.x - width
+            }
+            frame.size.width = width
+            button.frame = frame
+            
+            rightWidth += width
+            rightPrevious = button
+        }
+        
+        func setRightButtonItem(customView item: SRNavigationBarButtonItem) {
+            let customView = item.customView!
+            contentView.addSubview(customView)
+            let size = customView.frame.size
+            var frame = CGRect(x: 0,
+                               y: (superHeight - size.height) / 2.0,
+                               width: size.width,
+                               height: size.height)
+            if rightPrevious == nil {
+                frame.origin.x = superWidth - SRNavigationBar.Const.contentPadding - size.width
+            } else {
+                frame.origin.x = rightPrevious.frame.origin.x - size.width
+            }
+
+            rightWidth += size.width
+            rightPrevious = customView
+        }
+        
+        if let items = navigationItem.rightBarButtonItems {
+            let count = items.count
+            (0 ..< count).forEach { index in
+                let item = items[index] as! SRNavigationBarButtonItem
+                let option = item.option!
+                switch option {
+                case .text, .image:
+                    setRightButtonItem(item)
+                    
+                default:
+                    setRightButtonItem(customView: item)
+                }
+            }
+        }
+        
+        // Layout titleView
+        let titleMargin = max(leftWidth, rightWidth, SRNavigationBar.Const.contentPadding)
+        if let titleView = navigationItem.titleView {
+            titleLabel.isHidden = true
+            contentView.addSubview(titleView)
+            titleView.center = CGPoint(x: superWidth / 2.0, y: superHeight / 2.0)
+        } else if let title = navigationItem.title, !title.isEmpty {
+            titleLabel.isHidden = false
+            contentView.addSubview(titleLabel)
+            if let attributes = titleTextAttributes, !attributes.isEmpty {
+                titleLabel.textColor = tintColor
+                titleLabel.attributedText = NSAttributedString.init(string: title,
+                                                                    attributes: attributes)
+            } else {
+                titleLabel.textColor = tintColor
+                titleLabel.text = title
+            }
+            titleLabel.frame = CGRect(titleMargin, 0, superWidth - 2.0 * titleMargin, superHeight)
         }
         
         // Layout background
@@ -456,10 +635,14 @@ open class SRNavigationBar: UIView {
         }
     }
     
+    private var previousFrame: CGRect = .zero
     open override func layoutSubviews() {
         let statusBarOrientation = UIApplication.shared.statusBarOrientation
         if statusBarOrientation != self.statusBarOrientation {
             layoutBackground()
+        }
+        if frame != previousFrame {
+            layout()
         }
     }
 }

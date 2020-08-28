@@ -541,7 +541,7 @@ class ProfileViewController: BaseViewController {
                                       message: nil,
                                       preferredStyle: .actionSheet)
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            alert.addAction(UIAlertAction(title: "Take photo".localized, style: .default, handler: { [weak self] (action) in
+            alert.addAction(UIAlertAction(title: "Take photo".localized, style: .default, handler: { [weak self] action in
                 if let strongSelf = self {
                     let vc = UIImagePickerController()
                     vc.allowsEditing = true
@@ -552,7 +552,7 @@ class ProfileViewController: BaseViewController {
             }))
         }
         if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            alert.addAction(UIAlertAction(title: "Photo album".localized, style: .default, handler: { [weak self] (action) in
+            alert.addAction(UIAlertAction(title: "Photo album".localized, style: .default, handler: { [weak self] action in
                 if let strongSelf = self {
                     let vc = UIImagePickerController()
                     vc.allowsEditing = true

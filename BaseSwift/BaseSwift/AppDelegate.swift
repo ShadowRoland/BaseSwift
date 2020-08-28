@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         // Override point for customization after application launch.
+        SRKit.shared.initialize()
         print(try! String(contentsOfFile: C.resourceDirectory.appending(pathComponent: "welcome.txt"),
                           encoding: String.Encoding.utf8))
         DispatchQueue.global(qos: .default).async {
