@@ -100,7 +100,7 @@ SRSimplePromptDelegate {
     open func layoutSubviews() {
         guard isViewLoaded else { return }
         
-        var top = navigationHeaderHeight
+        var top = srTopLayoutGuide
         if let pageHeaderView = pageHeaderView,
             !pageHeaderView.isHidden && pageHeaderView.alpha != 0 {
             var frame = pageHeaderView.frame

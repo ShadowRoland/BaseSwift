@@ -276,7 +276,7 @@ SRTabHeaderDelegate {
     
     public class func createNewsListVC(_ channel: ChannelModel) -> NewsListViewController {
         let vc =
-            UIViewController.viewController("NewsListViewController",
+            UIViewController.srViewController("NewsListViewController",
                                   storyboard: "News") as! NewsListViewController
         vc.channelId = channel.id
         
@@ -334,7 +334,7 @@ SRTabHeaderDelegate {
         }
         params["ch"] = newsType
         params["col"] = newsType
-        vc.params = params
+        vc.srParams = params
         return vc
     }
     

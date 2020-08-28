@@ -966,7 +966,7 @@ class ProfileDetailViewController: BaseViewController {
                 (response as? JSON)?[HTTP.Key.Response.data].rawValue as? ParamDictionary {
                 strongSelf.profile = dictionary
                 strongSelf.isEditingProfile = false
-                strongSelf.pageBackGestureStyle = .page
+                strongSelf.srPageBackGestureStyle = .page
                 strongSelf.initSections()
                 strongSelf.tableView.reloadData()
                 strongSelf.setNavigationBarRightButtonItems()
@@ -1006,7 +1006,7 @@ class ProfileDetailViewController: BaseViewController {
     
     func showTitleChoicesVC(_ item: ProfileDetailForm) {
         currentItem = item
-        let vc = UIViewController.viewController("TitleChoicesViewController",
+        let vc = UIViewController.srViewController("TitleChoicesViewController",
                                        storyboard: "Utility") as! TitleChoicesViewController
         vc.title = isEditingProfile ? String(format: "Select %@".localized, item.title) : item.title
         vc.titleChoices = item.titleChoicesUpdatedIsSelected
@@ -1161,13 +1161,13 @@ class ProfileDetailViewController: BaseViewController {
     
     func getFaceImageCookie() {
         let url = try! "http://kan.msxiaobing.com/ImageGame/Portal?task=yanzhi".asURL()
-        SessionManager.default.request(url).response(completionHandler: { [weak self] response in
+        Session.default.request(url).response { [weak self] (response) in
             guard let strongSelf = self else { return }
             
             if let error = response.error {
                 LogError(error.localizedDescription)
                 strongSelf.dismissProgress()
-                strongSelf.showToast(error.localizedDescription)
+                strongSelf.srShowToast(error.localizedDescription)
                 return
             }
             
@@ -1193,7 +1193,7 @@ class ProfileDetailViewController: BaseViewController {
             strongSelf.faceImageCookie = array.joined(separator: ";")
             strongSelf.showProgress()
             strongSelf.faceImageAnalyze()
-        })
+        }
     }
     
     func faceImageAnalyze() {
@@ -1349,7 +1349,7 @@ class ProfileDetailViewController: BaseViewController {
         
         if !isEditingProfile {
             isEditingProfile = true
-            pageBackGestureStyle = .none
+            srPageBackGestureStyle = .none
             initSections()
             tableView.reloadData()
             setNavigationBarRightButtonItems()

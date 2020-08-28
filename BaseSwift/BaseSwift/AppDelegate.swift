@@ -57,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if UserStandard[UDKey.showGuide] != nil { //本次显示引导页
             UserStandard[UDKey.showAdvertisingGuide] = nil //本次不显示广告页
             UserStandard[UDKey.showGuide] = nil //下次不显示广告页
-            let vc = UIViewController.viewController("AppGuideViewController", storyboard: "Main")
+            let vc = UIViewController.srViewController("AppGuideViewController", storyboard: "Main")
             self.window?.rootViewController = SRNavigationController(rootViewController: vc!)
             self.window?.makeKeyAndVisible()
         } else {
@@ -66,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if UserStandard[UDKey.enterAggregationEntrance] != nil {
                 createSlideMenu()
             } else {
-                let vc = UIViewController.viewController("ViewController", storyboard: "Main")
+                let vc = UIViewController.srViewController("ViewController", storyboard: "Main")
                 self.window?.rootViewController = SRNavigationController(rootViewController: vc!)
                 self.window?.makeKeyAndVisible()
             }
@@ -320,20 +320,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         addItem("Server Configurations".localized,
                 description: "Display or modify the current server configurations".localized)
         {
-            let vc = UIViewController.viewController("ServerConfigViewController", storyboard: "Utility")
-            UIViewController.top?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
+            let vc = UIViewController.srViewController("ServerConfigViewController", storyboard: "Utility")
+            UIViewController.srTop?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
         }
         addItem("Built-in Http Service".localized,
                 description: "Display or modify the current server configurations".localized)
         {
-            let vc = UIViewController.viewController("HttpServerViewController", storyboard: "Utility")
-            UIViewController.top?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
+            let vc = UIViewController.srViewController("HttpServerViewController", storyboard: "Utility")
+            UIViewController.srTop?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
         }
         addItem("Debug Tools".localized,
                 description: "Customized debug tools".localized)
         {
-            let vc = UIViewController.viewController("DebugViewController", storyboard: "Utility")
-            UIViewController.top?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
+            let vc = UIViewController.srViewController("DebugViewController", storyboard: "Utility")
+            UIViewController.srTop?.present(SRModalViewController.standard(vc), animated: true, completion: nil)
         }
         addItem("User Information".localized,
                 description: "Display the currently logged in user information and copy it to the system clipboard".localized)
@@ -344,14 +344,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                               message: text,
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Cancel".localized, style: .cancel))
-                UIViewController.top?.present(alert, animated: true, completion: nil)
+                UIViewController.srTop?.present(alert, animated: true, completion: nil)
                 UIPasteboard.general.string = text
             } else {
                 let alert = SRAlertController(title: nil,
                                               message: "Not logged in".localized,
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Cancel".localized, style: .cancel))
-                UIViewController.top?.present(alert, animated: true, completion: nil)
+                UIViewController.srTop?.present(alert, animated: true, completion: nil)
             }
         }
         SRNavigationController.defaultMenuItems = items
@@ -412,9 +412,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Config.entrance = .aggregation
         
         SlideMenuOptions.leftViewWidth = 240.0
-        let mainMenuVC = UIViewController.viewController("MainMenuViewController", storyboard: "Aggregation")
+        let mainMenuVC = UIViewController.srViewController("MainMenuViewController", storyboard: "Aggregation")
             as! MainMenuViewController
-        let leftMenuVC = UIViewController.viewController("LeftMenuViewController", storyboard: "Aggregation")
+        let leftMenuVC = UIViewController.srViewController("LeftMenuViewController", storyboard: "Aggregation")
             as! LeftMenuViewController
         let navigationVC = SRNavigationController(rootViewController: mainMenuVC)
         let aggregationVC = AggregationViewController(mainViewController: navigationVC,

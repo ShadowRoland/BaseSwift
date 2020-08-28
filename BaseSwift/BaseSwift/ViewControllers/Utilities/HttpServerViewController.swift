@@ -23,7 +23,7 @@ class HttpServerViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        HttpManager.shared.addListener(forNetworkStatus: self,
+        HttpManager.shared.addListener(forNetworkStatusChanged: self,
                                         action: #selector(updateNetworkStatus))
         initView()
         HttpServer.shared.start()
@@ -36,7 +36,7 @@ class HttpServerViewController: UITableViewController {
     
     deinit {
         LogDebug("\(NSStringFromClass(type(of: self))).\(#function)")
-        HttpManager.shared.removeListener(forNetworkStatus: self)
+        HttpManager.shared.removeListener(forNetworkStatusChanged: self)
     }
     
     override func didReceiveMemoryWarning() {

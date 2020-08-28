@@ -70,7 +70,7 @@ class FindViewController: BaseTableViewController, FindCellDelegate {
         layoutHeaderImage()
         tableView.contentInset = UIEdgeInsets(C.navigationBarHeight(), 0, C.tabBarHeight(), 0)
         needAddMoreFooter = true
-        view.progressMaskColor = tableView.backgroundColor!
+        view.srProgressMaskColor = tableView.backgroundColor!
         
         refreshNewImageView = UIImageView(frame: Const.refreshNewFrameHidden)
         refreshNewImageView.animationImages = SRProgressHUD.defaultGif?.images
@@ -211,8 +211,8 @@ class FindViewController: BaseTableViewController, FindCellDelegate {
         view.delegate = self
         view.backgroundColor = tableView.backgroundColor
         tableView.tableFooterView = view
-        tableView.mj_footer.endRefreshingWithNoMoreData()
-        tableView.mj_footer.isHidden = true
+        tableView.mj_footer?.endRefreshingWithNoMoreData()
+        tableView.mj_footer?.isHidden = true
     }
     
     //MARK: - 事件响应
@@ -376,7 +376,7 @@ class FindViewController: BaseTableViewController, FindCellDelegate {
             }
             
             //在上拉至图片下端与导航栏下端齐平时，导航栏背景图片完全不透明
-            let offsetMax = Const.tableHeaderHeight - C.navigationHeaderHeight()
+            let offsetMax = Const.tableHeaderHeight - srTopLayoutGuide
             if offset >= offsetMax {
                 //                if navigationBar?.overlay.alpha != 1.0 {
                 //                    navigationBar?.overlay.alpha = 1.0

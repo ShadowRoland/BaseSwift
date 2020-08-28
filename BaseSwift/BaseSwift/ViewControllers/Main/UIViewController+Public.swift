@@ -11,7 +11,7 @@ import Cartography
 
 extension UIViewController {
     public class PublicBusinessComponent: AdvertisingGuideDelegate {
-        public weak var decorator: UIViewController?
+        public weak var viewController: UIViewController?
         
         fileprivate struct AssociatedKeys {
             static var publicBusiness = "UIViewController.PublicBusinessComponent.publicBusiness"
@@ -33,11 +33,11 @@ extension UIViewController {
         //MARK: - Advertising
         
         func showAdvertisingGuard() {
-            guard decorator != nil, advertisingVC == nil else {
+            guard viewController != nil, advertisingVC == nil else {
                 return
             }
             
-            let vc = UIViewController.viewController("AdvertisingGuideViewController", storyboard: "Main")
+            let vc = UIViewController.srViewController("AdvertisingGuideViewController", storyboard: "Main")
                 as! AdvertisingGuideViewController
             vc.delegate = self
             let window = UIApplication.shared.keyWindow! as UIWindow
@@ -47,7 +47,7 @@ extension UIViewController {
         }
         
         func showAdvertising() {
-            guard let vc = decorator?.navigationController?.topViewController else {
+            guard let vc = viewController?.navigationController?.topViewController else {
                 return
             }
             
@@ -57,21 +57,22 @@ extension UIViewController {
         
         //MARK: - AdvertisingGuideDelegate
         
-        func advertisingGuideShowAdvertising(_ viewController: AdvertisingGuideViewController) {                viewController.dimiss()
-            decorator?.stateMachine.end(Event(.showAdvertisingGuard))
+        func advertisingGuideShowAdvertising(_ viewController: AdvertisingGuideViewController) {
+            viewController.dimiss()
+            self.viewController?.srStateMachine.end(Event(.showAdvertisingGuard))
         }
         
         func advertisingGuideSkip(_ viewController: AdvertisingGuideViewController) {
             viewController.dimiss()
-            decorator?.stateMachine.clearEvents()
-            decorator?.stateMachine.append(Event(.showAdvertising))
+            self.viewController?.srStateMachine.clearEvents()
+            self.viewController?.srStateMachine.append(Event(.showAdvertising))
         }
         
         func advertisingDisDimiss(_ viewController: AdvertisingGuideViewController) {
             let pointer = String(pointer: viewController)
             if pointer != _advertisingVC { //保证只触发一次事件的结束
                 _advertisingVC = pointer
-                decorator?.stateMachine.end(Event(.showAdvertisingGuard))
+                self.viewController?.srStateMachine.end(Event(.showAdvertisingGuard))
                 DispatchQueue.main.async { [weak self] in
                     self?.advertisingVC = nil
                 }
@@ -80,18 +81,28 @@ extension UIViewController {
     }
     
     var publicBusinessComponent: PublicBusinessComponent {
-        if let component =
-            objc_getAssociatedObject(self, &PublicBusinessComponent.AssociatedKeys.publicBusiness)
-            as? PublicBusinessComponent {
+        get {
+            if let component =
+                objc_getAssociatedObject(self, &PublicBusinessComponent.AssociatedKeys.publicBusiness)
+                as? PublicBusinessComponent {
+                return component
+            }
+            
+            let component = PublicBusinessComponent()
+            component.viewController = self
+            objc_setAssociatedObject(self,
+                                     &PublicBusinessComponent.AssociatedKeys.publicBusiness,
+                                     component,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return component
         }
-        
-        let component = PublicBusinessComponent()
-        component.decorator = self
-        objc_setAssociatedObject(self,
-                                 &PublicBusinessComponent.AssociatedKeys.publicBusiness,
-                                 component,
-                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        return component
+        set {
+            let component = newValue
+            component.viewController = self
+            objc_setAssociatedObject(self,
+                                     &PublicBusinessComponent.AssociatedKeys.publicBusiness,
+                                     component,
+                                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
 }

@@ -187,7 +187,11 @@ class CustomCalloutView: UIView {
     
     @IBAction func clickPhoneButton(_ sender: Any) {
         DispatchQueue.main.async {
-            UIApplication.shared.openURL(URL(string: "tel://\(self.phoneLabel.text!)")!)
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(URL(string: "tel://\(self.phoneLabel.text!)")!)
+            } else {
+                UIApplication.shared.openURL(URL(string: "tel://\(self.phoneLabel.text!)")!)
+            }
         }
     }
     

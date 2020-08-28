@@ -20,8 +20,8 @@ SRShareToolDelegate {
     
     lazy var webView: WKWebView = {
         let webView = WKWebView()
-        view.addSubview(webView)
-        constrain(webView) { $0.edges == inset($0.superview!.edges, 0) }
+        srAddSubview(underTop: webView)
+//        constrain(webView) { $0.edges == inset($0.superview!.edges, 0) }
         webView.navigationDelegate = self
         webView.uiDelegate = self
         webView.addObserver(self, forKeyPath:"estimatedProgress", options:.new, context: nil)
@@ -79,10 +79,10 @@ SRShareToolDelegate {
 
     func reload() {
         webView.stopLoading()
-        if let title = params[Param.Key.title] as? String {
+        if let title = srParams[Param.Key.title] as? String {
             self.title = title
         }
-        if let url = params[Param.Key.url] as? URL {
+        if let url = srParams[Param.Key.url] as? URL {
             self.url = url
             currentUrl = url
             webView.load(URLRequest(url: url))
@@ -127,7 +127,7 @@ SRShareToolDelegate {
     override public func clickNavigationBarRightButton(_ button: UIButton) {
         guard MutexTouch else { return }
         
-        if let url = params[Param.Key.url] as? URL {
+        if let url = srParams[Param.Key.url] as? URL {
             SRShareTool.shared.option = SRShareOption(title: title,
                                                       description: title,
                                                       url: url.absoluteString,
@@ -171,7 +171,7 @@ SRShareToolDelegate {
                 setNavigationBarLeftButtonItems()
             }
         } else if keyPath == "title" {
-            if !NonNull.check(params[Param.Key.title])  {
+            if !NonNull.check(srParams[Param.Key.title])  {
                 title = webView.title
             }
         }
@@ -194,7 +194,7 @@ SRShareToolDelegate {
     }
     
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        if !NonNull.check(params[Param.Key.title]) {
+        if !NonNull.check(srParams[Param.Key.title]) {
             updateProgressView(1.0, animated: true)
             title = webView.title
         }

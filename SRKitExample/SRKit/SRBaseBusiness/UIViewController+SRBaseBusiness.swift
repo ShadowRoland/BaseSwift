@@ -18,7 +18,16 @@ extension UIViewController {
     public class SRBaseBusinessComponent: NSObject, UIGestureRecognizerDelegate, SRSimplePromptDelegate, SRNavigationBarDelegate {
         public weak var viewController: UIViewController?
         
-        public var navigationBarType: NavigationBarType = .system
+        private static var navigationBarTypeSetCount = 0
+        fileprivate var navigationBarType: NavigationBarType = .system {
+            willSet {
+                if newValue != navigationBarType {
+                    UIViewController.SRBaseBusinessComponent.navigationBarTypeSetCount += 1
+                }
+                assert(UIViewController.SRBaseBusinessComponent.navigationBarTypeSetCount <= 1,
+                       "Can not set navigationBarType to different value twice")
+            }
+        }
         public var navigationBackgroundAlpha = 0.5 as CGFloat
         
         //MARK: 导航栏或状态栏下的子视图
@@ -610,6 +619,7 @@ public extension UIViewController {
         public static let sr = NavigationBarType(1)
     }
     
+    ///导航栏类型，只可以赋不同的值一次
     var srNavigationBarType: NavigationBarType {
         get {
             return srBaseComponent.navigationBarType
@@ -999,5 +1009,16 @@ extension UIViewController {
     
     public var srTopLayoutGuideStatusBar: CGFloat {
         return srBaseComponent.topLayoutGuideStatusBar()
+    }
+    
+    public func srAddSubview(underTop view: UIView) {
+        guard let topLayoutSubview = srBaseComponent.topLayoutSubview else { return }
+        self.view.addSubview(view)
+        constrain(view, topLayoutSubview) { (view, topLayoutSubview) in
+            view.top == topLayoutSubview.bottom
+            view.leading == view.superview!.leading
+            view.trailing == view.superview!.trailing
+            view.bottom == view.superview!.bottom
+        }
     }
 }

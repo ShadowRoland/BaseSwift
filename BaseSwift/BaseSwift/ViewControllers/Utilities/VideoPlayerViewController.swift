@@ -16,9 +16,9 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        HttpManager.shared.addListener(forNetworkStatus: self,
+        HttpManager.shared.addListener(forNetworkStatusChanged: self,
                                         action: #selector(updateNetworkStatus))
-        pageBackGestureStyle = .none
+        srPageBackGestureStyle = .none
         setDefaultNavigationBar("")
         player = SRVideoPlayer()
         player.delegate = self
@@ -40,7 +40,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
     }
     
     deinit {
-        HttpManager.shared.removeListener(forNetworkStatus: self)
+        HttpManager.shared.removeListener(forNetworkStatusChanged: self)
     }
 
     override func didReceiveMemoryWarning() {
@@ -64,7 +64,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
     // MARK: - 事件响应
     
     @objc func updateNetworkStatus() {
-        if HttpManager.shared.networkStatus == .reachable(.wwan) {
+        if HttpManager.shared.networkStatus == .reachable(.ethernetOrWiFi) {
             player.connectWwan()
         }
     }
@@ -76,7 +76,7 @@ class VideoPlayerViewController: BaseViewController, SRVideoPlayerDelegate {
     }
         
     func player(isConnectingWwan player: SRVideoPlayer!) -> Bool {
-        return HttpManager.shared.networkStatus == .reachable(.wwan)
+        return HttpManager.shared.networkStatus == .reachable(.ethernetOrWiFi)
     }
     
     func player(controlViewsDidShow player: SRVideoPlayer!) {

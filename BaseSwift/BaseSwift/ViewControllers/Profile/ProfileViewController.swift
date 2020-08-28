@@ -568,7 +568,7 @@ class ProfileViewController: BaseViewController {
     
     func showTitleChoicesVC(_ item: ProfileForm) {
         currentItem = item
-        let vc = UIViewController.viewController("TitleChoicesViewController",
+        let vc = UIViewController.srViewController("TitleChoicesViewController",
                                        storyboard: "Utility") as! TitleChoicesViewController
         vc.title = String(format: "Select %@".localized, item.title)
         vc.titleChoices = item.titleChoicesUpdatedIsSelected

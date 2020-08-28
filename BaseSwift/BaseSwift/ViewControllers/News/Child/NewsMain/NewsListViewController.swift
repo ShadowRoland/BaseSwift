@@ -61,11 +61,11 @@ class NewsListViewController: BaseTableViewController {
         tableView.tableFooterView = UIView()
         tableView.separatorStyle = .singleLine
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        view.progressMaskColor = tableView.backgroundColor!
+        view.srProgressMaskColor = tableView.backgroundColor!
         
         needRefreshNewHeader = true
         needAddMoreFooter = true
-        tableView.mj_footer.isHidden = true
+        tableView.mj_footer?.isHidden = true
         backToTopButton.isHidden = true
     }
     
@@ -99,7 +99,7 @@ class NewsListViewController: BaseTableViewController {
         if let dataSource = dataSource {
             dataSource.getNewsList(self, addMore: addMore)
         } else {
-            var params = self.params
+            var params = srParams
             let time = CLongLong(Date().timeIntervalSince1970 * 1000)
             params["t"] = String(longLong: time)
             params["_"] = String(longLong: time + 2)

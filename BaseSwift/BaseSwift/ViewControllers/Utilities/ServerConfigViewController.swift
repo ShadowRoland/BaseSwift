@@ -32,7 +32,7 @@ class ServerConfigViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        pageBackGestureStyle = .none
+        srPageBackGestureStyle = .none
         setDefaultNavigationBar("Server Configurations".localized)
         initView()
     }

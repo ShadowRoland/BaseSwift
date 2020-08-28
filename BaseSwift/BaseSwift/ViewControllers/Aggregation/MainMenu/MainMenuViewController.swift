@@ -34,7 +34,7 @@ class MainMenuViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         setDefaultNavigationBar()
-        pageBackGestureStyle = .none
+        srPageBackGestureStyle = .none
         Common.rootVC = self
         initView()
         
@@ -47,14 +47,14 @@ class MainMenuViewController: BaseViewController {
         
         if UserStandard[UDKey.showAdvertisingGuide] != nil {
             UserStandard[UDKey.showAdvertisingGuide] = nil
-            stateMachine.append(Event(.showAdvertisingGuard))
+            srStateMachine.append(Event(.showAdvertisingGuard))
         }
         
         //查询当前指令而执行的操作，加入状态机
         if let event = Common.events.first(where: { $0.option == .showProfile || $0.option == .showSetting }) {
             Common.removeEvent(event)
             DispatchQueue.main.async { [weak self] in
-                self?.stateMachine.append(event)
+                self?.srStateMachine.append(event)
             }
         }
     }
@@ -86,7 +86,7 @@ class MainMenuViewController: BaseViewController {
         latestVC.delegate = self
         
         hottestVC =
-            UIViewController.viewController("HottestViewController",
+            UIViewController.srViewController("HottestViewController",
                                             storyboard: "Aggregation") as? HottestViewController
         hottestVC.parentVC = self
         

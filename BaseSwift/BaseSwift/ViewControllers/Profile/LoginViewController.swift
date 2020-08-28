@@ -55,8 +55,8 @@ class LoginViewController: BaseViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        pageBackGestureStyle = .none
-        navigationBarAppear = .hidden
+        srPageBackGestureStyle = .none
+        srNavigationBarAppear = .hidden
         initView()
         
         NotifyDefault.add(self,

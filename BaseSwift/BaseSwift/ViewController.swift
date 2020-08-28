@@ -26,20 +26,20 @@ class ViewController: BaseViewController {
         
         if UserStandard[UDKey.showAdvertisingGuide] != nil {
             UserStandard[UDKey.showAdvertisingGuide] = nil
-            stateMachine.append(Event(.showAdvertisingGuard))
+            srStateMachine.append(Event(.showAdvertisingGuard))
         }
         
         //启动程序检查并执行可以执行的option
         if let event = Common.events.first(where: { $0.option == .openWebpage }) {
-            DispatchQueue.main.async {
-                self.stateMachine.append(event)
+            DispatchQueue.main.async { [weak self] in
+                self?.srStateMachine.append(event)
             }
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        pageBackGestureStyle = .none
+        srPageBackGestureStyle = .none
     }
     
     override func didReceiveMemoryWarning() {
@@ -118,8 +118,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         case 3:
             /*
              Entrance = .aggregation
-             let mainMenuVC = UIViewController.viewController("MainMenuViewController", "Aggregation")
-             let leftMenuVC = UIViewController.viewController("LeftMenuViewController", "Aggregation")
+             let mainMenuVC = UIViewController.srViewController("MainMenuViewController", "Aggregation")
+             let leftMenuVC = UIViewController.srViewController("LeftMenuViewController", "Aggregation")
              let navigationVC = SRNavigationController(rootViewController: mainMenuVC)
              let aggregationVC = AggregationViewController(mainViewController: navigationVC,
              leftMenuViewController: leftMenuVC)

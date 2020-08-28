@@ -56,7 +56,7 @@ class ResetPasswordViewController: BaseViewController {
         super.viewDidLoad()
         
         setDefaultNavigationBar("Reset Password".localized)
-        resetPasswordType = params.isEmpty ? .password : .smsCode
+        resetPasswordType = srParams.isEmpty ? .password : .smsCode
         submitButton.set(submit: false)
     }
     
@@ -107,19 +107,20 @@ class ResetPasswordViewController: BaseViewController {
             return
         }
         
-        Keyboard.hide {
-            self.showProgress()
+        Keyboard.hide { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.showProgress()
             var params: ParamDictionary?
-            if self.resetPasswordType == .smsCode {
-                params = self.params
+            if strongSelf.resetPasswordType == .smsCode {
+                params = strongSelf.srParams
                 params?[Param.Key.type] = ResetPasswordType.smsCode.rawValue
-                params?[Param.Key.newPassword] = self.newPasswordTextField.text!
+                params?[Param.Key.newPassword] = strongSelf.newPasswordTextField.text!
             } else {
                 params = [Param.Key.type : ResetPasswordType.password.rawValue,
-                          Param.Key.password : self.passwordTextField.text!,
-                          Param.Key.newPassword : self.newPasswordTextField.text!]
+                          Param.Key.password : strongSelf.passwordTextField.text!,
+                          Param.Key.newPassword : strongSelf.newPasswordTextField.text!]
             }
-            self.httpRequest(.post("user/resetPassword", params: params), success: { response in
+            strongSelf.httpRequest(.post("user/resetPassword", params: params), success: { response in
                 let alert = SRAlert()
                 //alert.appearance.showCloseButton = false
                 alert.addButton("OK".localized,

@@ -170,6 +170,7 @@ open class SRHttpManager {
             manager = SRHttpTool(timeout ?? SRHTTP.defaultTimeout,
                                  retryCount: retryCount ?? SRHTTP.defaultRetryCount,
                                  sessionDelegate: sessionDelegate)
+            manager?.queue = SRHttpManager.queue
             managers[key] = manager
         }
         return manager!

@@ -429,7 +429,7 @@ class FindCell: UITableViewCell {
                         error == nil else {
                         return
                     }
-                    imageButton.progressComponent.dismiss(true)
+                    imageButton.srProgressComponent.dismiss(true)
                     if let model = strongSelf.model,
                         let images = model.images,
                         images.count == 1,

@@ -13,10 +13,10 @@ class ContactsViewController: BaseViewController, UIScrollViewDelegate {
     public weak var currentChildVC: UIViewController!
     @IBOutlet weak var scrollView: UIScrollView!
     lazy var singleVC: SingleContactViewController =
-        UIViewController.viewController("SingleContactViewController", storyboard: "SNS")
+        UIViewController.srViewController("SingleContactViewController", storyboard: "SNS")
             as! SingleContactViewController
     lazy var officialAccountVC: OfficialAccountsViewController =
-        UIViewController.viewController("OfficialAccountsViewController", storyboard: "SNS")
+        UIViewController.srViewController("OfficialAccountsViewController", storyboard: "SNS")
             as! OfficialAccountsViewController
     
     override func viewDidLoad() {

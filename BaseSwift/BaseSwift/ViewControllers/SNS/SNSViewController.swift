@@ -19,25 +19,25 @@ class SNSViewController: BaseViewController {
     
     weak var currentChildVC: UIViewController?
     lazy var chatListVC: ChatListViewController = {
-        let vc = UIViewController.viewController("ChatListViewController", storyboard: "SNS")
+        let vc = UIViewController.srViewController("ChatListViewController", storyboard: "SNS")
             as! ChatListViewController
         vc.parentVC = self
         return vc
     }()
     lazy var contactsVC: ContactsViewController = {
-        let vc = UIViewController.viewController("ContactsViewController", storyboard: "SNS")
+        let vc = UIViewController.srViewController("ContactsViewController", storyboard: "SNS")
             as! ContactsViewController
         vc.parentVC = self
         return vc
     }()
     lazy var findVC: FindViewController = {
-        let vc = UIViewController.viewController("FindViewController", storyboard: "SNS")
+        let vc = UIViewController.srViewController("FindViewController", storyboard: "SNS")
             as! FindViewController
         vc.parentVC = self
         return vc
     }()
     lazy var moreVC: MoreViewController =
-        UIViewController.viewController("MoreViewController", storyboard: "More") as! MoreViewController
+        UIViewController.srViewController("MoreViewController", storyboard: "More") as! MoreViewController
     
     lazy var contactsSC: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Friends".localized, "Official Accounts".localized])
@@ -57,7 +57,7 @@ class SNSViewController: BaseViewController {
         // Do any additional setup after loading the view.
         setNavigationBar()
         navBarLeftButtonOptions = [.text([.title("".localized)])]
-        pageBackGestureStyle = .none
+        srPageBackGestureStyle = .none
         tabBarHeightConstraint.constant = C.tabBarHeight()
         tabBar.backgroundColor = UIColor.clear
         tabBar.isTranslucent = true
@@ -76,7 +76,7 @@ class SNSViewController: BaseViewController {
         if let event = Common.events.first(where: { $0.option == .showProfile || $0.option == .showSetting }) {
             Common.removeEvent(event)
             DispatchQueue.main.async { [weak self] in
-                self?.stateMachine.append(event)
+                self?.srStateMachine.append(event)
             }
         }
     }
@@ -109,7 +109,7 @@ class SNSViewController: BaseViewController {
     
     //直接计算和更新frame，可以更有效的进行屏幕适配 添加约束，可以比较方便地进行横竖屏的屏幕适配
     func updateChildViewFrame() {
-        let height = view.height - C.navigationHeaderHeight()
+        let height = view.height - srTopLayoutGuide
         let frame = CGRect(0, 0, view.width, height) //正常带导航栏的子视图frame
         
         if currentChildVC === chatListVC || currentChildVC === contactsVC {
@@ -217,10 +217,10 @@ extension SNSViewController: UIViewControllerPreviewingDelegate {
         if index < chatListVC.dataArray.count {
             let message = chatListVC.dataArray[index] as! MessageModel
             let vc = ChatViewController()
-            vc.targetId = message.userId
             vc.nickname = message.userName
-            vc.conversationType = .ConversationType_PRIVATE
             vc.previewedIndex = index
+            vc.conversation.targetId = message.userId
+            vc.conversation.conversationType = .ConversationType_PRIVATE
             return vc
         }
         
@@ -230,7 +230,7 @@ extension SNSViewController: UIViewControllerPreviewingDelegate {
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                                   commit viewControllerToCommit: UIViewController) {
-        srShow(viewControllerToCommit, sender: self)
+        srShow(viewControllerToCommit)
     }
 }
 

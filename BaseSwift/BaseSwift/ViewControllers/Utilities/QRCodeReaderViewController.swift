@@ -31,7 +31,7 @@ class QRCodeReaderViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         setDefaultNavigationBar("Scan QR Code".localized)
-        pageBackGestureStyle = .none
+        srPageBackGestureStyle = .none
     }
     
     override public func viewWillAppear(_ animated: Bool) {

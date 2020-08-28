@@ -19,11 +19,12 @@ class ViewController: SRBaseViewController {
         setDefaultNavigationBar("Root")
 //        navigationItem.backBarButtonItem = nil
         navBarRightButtonOptions = [.auto("Base".localized)]
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
 //            self?.srNavigationItem.rightBarButtonItems?.forEach {
 //                $0.isEnabled = false
 //            }
-//        }
+            self?.srNavigationBarType = .system
+        }
         showLoadDataFailView("加载中……")
         C.shouldAutorotate = true
         C.supportedInterfaceOrientations = .allButUpsideDown

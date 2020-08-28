@@ -159,9 +159,9 @@ class ChatListViewController: BaseTableViewController {
         
         let message = dataArray[indexPath.row] as? MessageModel
         let vc = ChatViewController()
-        vc.targetId = message?.userId
         vc.nickname = message?.userName
-        vc.conversationType = .ConversationType_PRIVATE
+        vc.conversation.targetId = message?.userId
+        vc.conversation.conversationType = .ConversationType_PRIVATE
         srShow(vc)
     }
 }

@@ -11,7 +11,7 @@ import SRKit
 open class BaseViewController: SRBaseViewController {
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        isPageLongPressEnabled = true
+        srIsPageLongPressEnabled = true
     }
     
     open override func viewDidLayoutSubviews() {
@@ -118,7 +118,7 @@ extension BaseViewController {
                 srDismissModals()
                 srPopBack(to: last)
                 DispatchQueue.main.asyncAfter(deadline: .now() + C.viewControllerTransitionInterval, execute: { [weak self] in
-                    self?.stateMachine.end(event)
+                    self?.srStateMachine.end(event)
                 })
             } else { //视图栈中没有Profile页面，push新的Profile页面入栈
                 Common.clearPops()
@@ -141,7 +141,7 @@ extension BaseViewController {
                 srDismissModals()
                 srPopBack(to: last)
                 DispatchQueue.main.asyncAfter(deadline: .now() + C.viewControllerTransitionInterval, execute: { [weak self] in
-                    self?.stateMachine.end(event)
+                    self?.srStateMachine.end(event)
                 })
             } else { //视图栈中没有Setting页面，push新的Setting页面入栈
                 Common.clearPops()

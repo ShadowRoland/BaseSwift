@@ -18,7 +18,7 @@ class AppGuideViewController: BaseViewController, UIScrollViewDelegate {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        navigationBarAppear = .hidden
+        srNavigationBarAppear = .hidden
         initView()
     }
     
@@ -94,9 +94,9 @@ class AppGuideViewController: BaseViewController, UIScrollViewDelegate {
         Config.entrance = .aggregation
         
         SlideMenuOptions.leftViewWidth = 240.0
-        let mainMenuVC = UIViewController.viewController("MainMenuViewController", storyboard: "Aggregation")
+        let mainMenuVC = UIViewController.srViewController("MainMenuViewController", storyboard: "Aggregation")
             as! MainMenuViewController
-        let leftMenuVC = UIViewController.viewController("LeftMenuViewController", storyboard: "Aggregation")
+        let leftMenuVC = UIViewController.srViewController("LeftMenuViewController", storyboard: "Aggregation")
             as! LeftMenuViewController
         let navigationVC = SRNavigationController(rootViewController: mainMenuVC)
         let aggregationVC = AggregationViewController(mainViewController: navigationVC,

@@ -53,12 +53,12 @@ class SimpleTableViewController: BaseTableViewController {
                                       progress:
                     { [weak imageView] (current, total, url) in
                         if let imageView = imageView, current > 0 && total > 0 {
-                            imageView.progressComponent.setProgress(CGFloat(current / total),
-                                                                    animated: true)
+                            imageView.srProgressComponent.setProgress(CGFloat(current / total),
+                                                                      animated: true)
                         }
                 }, completed: { [weak imageView]  (image, error, cacheType, url) in
                     if let imageView = imageView {
-                        imageView.progressComponent.dismiss(true)
+                        imageView.srProgressComponent.dismiss(true)
                     }
                 })
                 tableHeaderScrollView.addSubview(imageView)
@@ -100,7 +100,7 @@ class SimpleTableViewController: BaseTableViewController {
         // Do any additional setup after loading the view.
         setDefaultNavigationBar("List".localized)
         navBarRightButtonOptions = [.text([.title("Submit".localized)])]
-        pageBackGestureStyle = .edge
+        srPageBackGestureStyle = .edge
         initView()
         showProgress(.opaque)
         getDataArray()

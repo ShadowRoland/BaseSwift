@@ -199,9 +199,9 @@ extension OfficialAccountsViewController: UITableViewDelegate, UITableViewDataSo
         guard MutexTouch else { return }
         
         let vc = ChatViewController()
-        vc.targetId = letters[indexPath.section][indexPath.row].userId
         vc.nickname = letters[indexPath.section][indexPath.row].nickname
-        vc.conversationType = .ConversationType_PRIVATE
+        vc.conversation.targetId = letters[indexPath.section][indexPath.row].userId
+        vc.conversation.conversationType = .ConversationType_PRIVATE
         srShow(vc)
     }
 }

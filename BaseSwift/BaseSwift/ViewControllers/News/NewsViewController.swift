@@ -30,7 +30,7 @@ class NewsViewController: BaseViewController {
         
         // Do any additional setup after loading the view.
         setDefaultNavigationBar()
-        pageBackGestureStyle = .edge
+        srPageBackGestureStyle = .edge
         initView()
         
         if let event = Common.events.first(where: { $0.option == .showMore }) {
@@ -53,7 +53,7 @@ class NewsViewController: BaseViewController {
         if let event = Common.events.first(where: { $0.option == .showProfile || $0.option == .showSetting }) {
             Common.removeEvent(event)
             DispatchQueue.main.async { [weak self] in
-                self?.stateMachine.append(event)
+                self?.srStateMachine.append(event)
             }
         }
     }
@@ -93,18 +93,18 @@ class NewsViewController: BaseViewController {
     func initView() {
         initTabBar()
         
-        mainVC = UIViewController.viewController("NewsMainViewController",
+        mainVC = UIViewController.srViewController("NewsMainViewController",
                                        storyboard: "News") as? NewsMainViewController
         mainVC.parentVC = self
         
-        secondaryVC = UIViewController.viewController("NewsSecondaryViewController",
+        secondaryVC = UIViewController.srViewController("NewsSecondaryViewController",
                                             storyboard: "News") as? NewsSecondaryViewController
         secondaryVC.parentVC = self
         
-        yellowVC = UIViewController.viewController("NewsYellowViewController",
+        yellowVC = UIViewController.srViewController("NewsYellowViewController",
                                          storyboard: "News") as? NewsYellowViewController
         
-        moreVC = UIViewController.viewController("MoreViewController",
+        moreVC = UIViewController.srViewController("MoreViewController",
                                        storyboard: "More") as? MoreViewController
     }
     
@@ -252,7 +252,7 @@ class NewsViewController: BaseViewController {
                 bringChildVCFront(moreVC)
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + C.viewControllerTransitionInterval, execute: { [weak self] in
-                self?.stateMachine.end(event)
+                self?.srStateMachine.end(event)
             })
             
         default:
@@ -289,10 +289,10 @@ extension NewsViewController: UIViewControllerPreviewingDelegate {
                 let model = newsListVC.dataArray[index] as! SinaNewsModel
                 dictionary[Param.Key.url] = URL(string: NonNull.string(model.link))
                 dictionary[Param.Key.title] = "News".localized
-                let webpageVC = UIViewController.viewController("WebpageViewController",
+                let webpageVC = UIViewController.srViewController("WebpageViewController",
                                                       storyboard: "Utility") as! WebpageViewController
-                webpageVC.params = dictionary
-                webpageVC.isPreviewed = true
+                webpageVC.srParams = dictionary
+                webpageVC.srIsPreviewed = true
                 return webpageVC
             }
         }
@@ -303,7 +303,7 @@ extension NewsViewController: UIViewControllerPreviewingDelegate {
     @available(iOS 9.0, *)
     public func previewingContext(_ previewingContext: UIViewControllerPreviewing,
                                   commit viewControllerToCommit: UIViewController) {
-        srShow(viewControllerToCommit, sender: self)
+        srShow(viewControllerToCommit)
     }
 }
 

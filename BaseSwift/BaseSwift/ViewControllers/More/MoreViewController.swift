@@ -89,12 +89,12 @@ class MoreViewController: BaseViewController {
             if ProfileManager.isLogin {
                 strongSelf.getProfile()
             } else {
-                strongSelf.tableView.mj_header.endRefreshing()
+                strongSelf.tableView.mj_header?.endRefreshing()
                 strongSelf.presentLoginVC()
             }
         })
-        freshHeader.stateLabel.isHidden = true
-        freshHeader.lastUpdatedTimeLabel.isHidden = true
+        freshHeader.stateLabel?.isHidden = true
+        freshHeader.lastUpdatedTimeLabel?.isHidden = true
         tableView.mj_header = freshHeader
         tableView.tableFooterView = UIView()
         initSections()
@@ -161,7 +161,7 @@ class MoreViewController: BaseViewController {
     
     @objc func getProfile() {
         httpRequest(.get("user/profile"), success: { [weak self] _ in
-            self?.tableView.mj_header.endRefreshing()
+            self?.tableView.mj_header?.endRefreshing()
             self?.reloadProfile()
         }) { failure in
             if failure.isBusiness {
